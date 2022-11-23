@@ -20,8 +20,10 @@ bases_list = dict()
 
 @bot.event
 async def on_ready():
+    global bases_list
     update_stockpiles.start()
     print(f'Logged in as {bot.user} (ID:{bot.user.id})')
+    bases_list = utils.load_bases()
 
 
 @bot.command()
@@ -34,6 +36,7 @@ async def base_new(ctx, *, base_name: str = None):
         return
     bases_list[base_name] = Base(base_name)
     await ctx.send(f"> La base {base_name} a été crée.")
+    utils.save_bases(bases_list)
 
 
 @bot.command()
@@ -46,6 +49,8 @@ async def base_del(ctx, *, base_name: str = None):
         return
     bases_list.pop(base_name, None)
     await ctx.send(f"> La base {base_name} a été supprimé.")
+    utils.save_bases(bases_list)
+
 
 @bot.command()
 async def base_list(ctx):
@@ -76,15 +81,15 @@ async def base_consumption(ctx, resource_type: str = None, hourly_consumption: i
     else:
         await ctx.send("> Le type de ressource précisé est invalide.\n`Ressources acceptées: bsup | gsup`.")
         return
-    await ctx.send(
-        f"> La base {base_name} a maintenant un taux de consomation horaire de {resource_type} de {hourly_consumption}.")
+    await ctx.send(f"> La base {base_name} a maintenant un taux de consomation horaire de {resource_type} de {hourly_consumption}.")
+    utils.save_bases(bases_list)
 
 
 @bot.command()
-async def base_stockpile(ctx, resource_type: str = None, stock: int = None, *, base_name: str = None):
+async def base_set_stockpile(ctx, resource_type: str = None, stock: int = None, *, base_name: str = None):
     if not resource_type or not base_name or not stock:
         await ctx.send(
-            "> Paramètres incorrects.\nCommande: `!base_stockpile [bsup/gsup] [stock] [nom de la base]`")
+            "> Paramètres incorrects.\nCommande: `!base_set_stockpile [bsup/gsup] [stock] [nom de la base]`")
         return
     resource_type = resource_type.lower()
     if base_name not in bases_list.keys():
@@ -97,13 +102,35 @@ async def base_stockpile(ctx, resource_type: str = None, stock: int = None, *, b
     else:
         await ctx.send("> Le type de ressource précisé est invalide.\n`Ressources acceptées: bsup | gsup`.")
         return
-    await ctx.send(
-        f"> La base {base_name} a maintenant un stock de {resource_type} de {stock} unités.")
+    await ctx.send(f"> La base {base_name} a maintenant un stock de {resource_type} de {stock} unités.")
+    utils.save_bases(bases_list)
+
+
+@bot.command()
+async def base_add_stockpile(ctx, resource_type: str = None, stock: int = None, *, base_name: str = None):
+    if not resource_type or not base_name or not stock:
+        await ctx.send(
+            "> Paramètres incorrects.\nCommande: `!base_add_stockpile [bsup/gsup] [stock] [nom de la base]`")
+        return
+    resource_type = resource_type.lower()
+    if base_name not in bases_list.keys():
+        await ctx.send(f"> La base {base_name} n'existe pas.")
+        return
+    current_stockpile = bases_list[base_name].get_maintenance_stockpile()
+    if resource_type == "bsup":
+        bases_list[base_name].set_maintenance_stockpile(0, stock + current_stockpile[0])
+    elif resource_type == "gsup":
+        bases_list[base_name].set_maintenance_stockpile(1, stock + current_stockpile[1])
+    else:
+        await ctx.send("> Le type de ressource précisé est invalide.\n`Ressources acceptées: bsup | gsup`.")
+        return
+    await ctx.send(f"> La base {base_name} a maintenant un stock de {resource_type} de {stock} unités.")
+    utils.save_bases(bases_list)
 
 
 @tasks.loop(seconds=10)
 async def update_stockpiles():
-    channel = bot.get_channel(1044270821029457964)
+    channel = bot.get_channel(1044270821029457964)  # replace with correct channel
 
     if len(bases_list.keys()) == 0:
         return
@@ -117,6 +144,7 @@ async def update_stockpiles():
             stockpile[0] = 0
         if stockpile[1] < 0:
             stockpile[1] = 0
+        utils.save_bases(bases_list)
 
         threshold = 5
 

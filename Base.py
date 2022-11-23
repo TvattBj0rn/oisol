@@ -1,10 +1,6 @@
 class Base:
     def __init__(self, name):
         self.name = name  # base name
-        self.bsup = 0  # base bsup stock
-        self.gsup = 0  # base gsup stock
-        self.consumption_bsup = 0  # bsup consumption
-        self.consumption_gsup = 0  # gsup consumption
         self.__stockpile_maintenance = [0, 0]  # bsup | gsup
         self.__consumption_maintenance = [0, 0]  # bsup | gsup
 

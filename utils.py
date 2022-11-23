@@ -1,3 +1,6 @@
+import json
+import os.path
+
 from Base import Base
 
 
@@ -33,3 +36,23 @@ def get_base_maintenance_status(base: Base) -> str:
     if consumption_rate[1] > 0:
         result += get_base_time_left(base)
     return result + "\n"
+
+
+def save_bases(bases: [Base]):
+    print([bases[key].__dict__ for key in bases.keys()])
+    with open("saves/bases.json", "w") as file:
+        json.dump([bases[key].__dict__ for key in bases.keys()], file)
+
+
+def load_bases() -> dict:
+    if not os.path.isfile("saves/bases.json"):
+        return dict()
+    final_data = dict()
+    try:
+        with open("saves/bases.json", "r") as file:
+            data = json.load(file)
+        for elem in data:
+            final_data[elem["name"]] = Base(elem)
+    except json.decoder.JSONDecodeError:
+        return dict()
+    return final_data
