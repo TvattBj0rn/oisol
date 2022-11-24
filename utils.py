@@ -39,7 +39,6 @@ def get_base_maintenance_status(base: Base) -> str:
 
 
 def save_bases(bases: [Base]):
-    print([bases[key].__dict__ for key in bases.keys()])
     with open("saves/bases.json", "w") as file:
         json.dump([bases[key].__dict__ for key in bases.keys()], file)
 

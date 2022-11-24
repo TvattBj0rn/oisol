@@ -65,6 +65,19 @@ async def base_list(ctx):
 
 
 @bot.command()
+async def base_status(ctx, base_name: str = None):
+    if not base_name:
+        await ctx.send("> Le nom de la base n'a pas été précisé.\nCommande: `!base_new [nom de la base]`")
+        return
+    elif base_name not in bases_list.keys():
+        await ctx.send(f"> La base {base_name} n'existe pas.")
+        return
+    base_list_display = f"**{base_name}**\n"
+    base_list_display += utils.get_base_maintenance_status(bases_list[base_name])
+    await ctx.send(base_list_display)
+
+
+@bot.command()
 async def base_consumption(ctx, resource_type: str = None, hourly_consumption: int = None, *, base_name: str = None):
     if not resource_type or not base_name or not hourly_consumption:
         await ctx.send(
