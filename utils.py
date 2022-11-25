@@ -51,7 +51,7 @@ def load_bases() -> dict:
         with open("saves/bases.json", "r") as file:
             data = json.load(file)
         for elem in data:
-            final_data[elem["name"]] = Base(elem)
+            final_data[elem["name"]] = Base(elem["name"])
     except json.decoder.JSONDecodeError:
         return dict()
     return final_data
