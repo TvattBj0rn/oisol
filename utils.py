@@ -35,23 +35,26 @@ def get_base_maintenance_status(base: Base) -> str:
     result += consumption_rate[0]
     if consumption_rate[1] > 0:
         result += get_base_time_left(base)
-    return result + "\n"
+    return f"{result}\n"
 
 
-def save_bases(bases: [Base]):
-    with open("saves/bases.json", "w") as file:
+def save_bases(bases: dict, server_id: str = ""):
+    os.mkdir(f"saves/{server_id}") if not os.path.isdir(f"saves/{server_id}") else None
+    with open(f"saves/{server_id}/bases.json", "w") as file:
         json.dump([bases[key].__dict__ for key in bases.keys()], file)
 
 
-def load_bases() -> dict:
-    if not os.path.isfile("saves/bases.json"):
+# Path correspond to the path to the server files directory
+def load_bases(server_id: str = "") -> dict:
+    path = f"saves/{server_id}/bases.json"
+    if not os.path.isfile(path):
         return dict()
     final_data = dict()
     try:
-        with open("saves/bases.json", "r") as file:
+        with open(path, "r") as file:
             data = json.load(file)
         for elem in data:
-            final_data[elem["name"]] = Base(elem["name"])
+            final_data[elem["name"]] = Base(elem["name"], elem)
     except json.decoder.JSONDecodeError:
         return dict()
     return final_data
