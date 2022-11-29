@@ -21,6 +21,9 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     update_stockpiles.start()
     print(f'Logged in as {bot.user} (ID:{bot.user.id})')
+    for directory in os.listdir("saves/"):
+        if os.path.isdir(f"saves/{directory}"):
+            utils.config.create_config_file(directory)
 
 
 @bot.command()
@@ -77,9 +80,9 @@ async def base_status(ctx, base_name: str = None):
 
 
 @bot.command()
-async def base_set_consumption(ctx, resource_type: str = None, hourly_consumption: int = None, *, base_name: str = None):
-    if not resource_type or not base_name or not hourly_consumption:
-        await ctx.send("> Paramètres incorrects.\nCommande: `!base_consumption [bsup/gsup] [consommation horaire] [nom de la base]`")
+async def base_set_consumption(ctx, resource_type: str = None, hourly_consumption: int = 0, *, base_name: str = None):
+    if not resource_type or not base_name or hourly_consumption < 0:
+        await ctx.send("> Paramètres incorrects.\nCommande: `!base_set_consumption [bsup/gsup] [consommation horaire] [nom de la base]`")
         return
     bases_list = utils.bases.load_bases(ctx.message.guild.id)
     resource_type = resource_type.lower()
@@ -141,13 +144,23 @@ async def base_add_stockpile(ctx, resource_type: str = None, stock: int = None, 
     utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
-@tasks.loop(seconds=10)
+@bot.command()
+async def config_alert_channel(ctx, channel_id=None):
+    if not channel_id:
+        await ctx.send("> Paramètres incorrects.\nCommande: `!config_alert_channel [channel d'alerte]`")
+        return
+    config = utils.config.load_config(ctx.message.guild.id)
+    config["alert_channel"] = int(channel_id[2:-1])
+    utils.config.update_config(ctx.message.guild.id, config)
+
+
+@tasks.loop(hours=1)
 async def update_stockpiles():
-    # todo: get check if config.json has a server channel
-    alert_channel = bot.get_channel(1044270821029457964)  # replace with correct channel
     for directory in os.listdir("saves/"):
         if os.path.isdir(f"saves/{directory}"):  # This corresponds to the actions to do per server
             bases_list = utils.bases.load_bases(directory)
+            config = utils.config.load_config(directory)
+            alert_channel = bot.get_channel(config["alert_channel"])
 
             if len(bases_list.keys()) == 0:
                 continue
@@ -164,11 +177,9 @@ async def update_stockpiles():
 
                 threshold = 5
                 if consumption_rate[0] > 0 and int(stockpile[0] / consumption_rate[0]) < threshold:
-                    await alert_channel.send(
-                        f"> Le stock de bsup restant ({stockpile[0]}) dans {key} est critique. Temps restant: {int(stockpile[0] / consumption_rate[0])}h.")
+                    await alert_channel.send(f"> Le stock de bsup restant ({stockpile[0]}) dans {key} est critique. Temps restant: {int(stockpile[0] / consumption_rate[0])}h.")
                 if consumption_rate[1] > 0 and int(stockpile[1] / consumption_rate[1]) < threshold:
-                    await alert_channel.send(
-                        f"> Le stock de gsup restant ({stockpile[1]}) dans {key} est critique. Temps restant: {int(stockpile[0] / consumption_rate[0])}h.")
+                    await alert_channel.send(f"> Le stock de gsup restant ({stockpile[1]}) dans {key} est critique. Temps restant: {int(stockpile[1] / consumption_rate[1])}h.")
 
 
 if __name__ == "__main__":
