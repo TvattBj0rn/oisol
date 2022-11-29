@@ -4,7 +4,8 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 
-import utils
+import utils.bases
+import utils.config
 from Base import Base
 
 # Bot settings
@@ -24,7 +25,7 @@ async def on_ready():
 
 @bot.command()
 async def base_new(ctx, *, base_name: str = None):
-    bases_list = utils.load_bases(ctx.message.guild.id)
+    bases_list = utils.bases.load_bases(ctx.message.guild.id)
     if not base_name:
         await ctx.send("> Le nom de la base n'a pas été précisé.\nCommande: `!base_new [nom de la base]`")
         return
@@ -33,12 +34,12 @@ async def base_new(ctx, *, base_name: str = None):
         return
     bases_list[base_name] = Base(base_name)
     await ctx.send(f"> La base {base_name} a été crée.")
-    utils.save_bases(bases_list, ctx.message.guild.id)
+    utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
 @bot.command()
 async def base_del(ctx, *, base_name: str = None):
-    bases_list = utils.load_bases(ctx.message.guild.id)
+    bases_list = utils.bases.load_bases(ctx.message.guild.id)
     if not base_name:
         await ctx.send("> Le nom de la base n'a pas été précisé.\nCommande: `!base_new [nom de la base]`")
         return
@@ -47,32 +48,32 @@ async def base_del(ctx, *, base_name: str = None):
         return
     bases_list.pop(base_name, None)
     await ctx.send(f"> La base {base_name} a été supprimé.")
-    utils.save_bases(bases_list, ctx.message.guild.id)
+    utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
 @bot.command()
 async def base_list(ctx):
-    bases_list = utils.load_bases(ctx.message.guild.id)
+    bases_list = utils.bases.load_bases(ctx.message.guild.id)
     if len(bases_list.keys()) == 0:
         await ctx.send(f"> Aucune base n'est actuellement enregistrée.")
         return
     base_list_display = ""
     for key in bases_list.keys():
         base_list_display += f"**{key}**\n"
-        base_list_display += utils.get_base_maintenance_status(bases_list[key])
+        base_list_display += utils.bases.get_base_maintenance_status(bases_list[key])
     await ctx.send(base_list_display)
 
 
 @bot.command()
 async def base_status(ctx, base_name: str = None):
-    bases_list = utils.load_bases(ctx.message.guild.id)
+    bases_list = utils.bases.load_bases(ctx.message.guild.id)
     if not base_name:
         await ctx.send("> Le nom de la base n'a pas été précisé.\nCommande: `!base_new [nom de la base]`")
         return
     elif base_name not in bases_list.keys():
         await ctx.send(f"> La base {base_name} n'existe pas.")
         return
-    await ctx.send(f"**{base_name}**\n" + utils.get_base_maintenance_status(bases_list[base_name]))
+    await ctx.send(f"**{base_name}**\n" + utils.bases.get_base_maintenance_status(bases_list[base_name]))
 
 
 @bot.command()
@@ -80,7 +81,7 @@ async def base_set_consumption(ctx, resource_type: str = None, hourly_consumptio
     if not resource_type or not base_name or not hourly_consumption:
         await ctx.send("> Paramètres incorrects.\nCommande: `!base_consumption [bsup/gsup] [consommation horaire] [nom de la base]`")
         return
-    bases_list = utils.load_bases(ctx.message.guild.id)
+    bases_list = utils.bases.load_bases(ctx.message.guild.id)
     resource_type = resource_type.lower()
     if base_name not in bases_list.keys():
         await ctx.send(f"> La base {base_name} n'existe pas.")
@@ -94,7 +95,7 @@ async def base_set_consumption(ctx, resource_type: str = None, hourly_consumptio
         return
     await ctx.send(
         f"> La base {base_name} a maintenant un taux de consomation horaire de {resource_type} de {hourly_consumption}.")
-    utils.save_bases(bases_list, ctx.message.guild.id)
+    utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
 @bot.command()
@@ -102,7 +103,7 @@ async def base_set_stockpile(ctx, resource_type: str = None, stock: int = None, 
     if not resource_type or not base_name or not stock:
         await ctx.send("> Paramètres incorrects.\nCommande: `!base_set_stockpile [bsup/gsup] [stock] [nom de la base]`")
         return
-    bases_list = utils.load_bases(ctx.message.guild.id)
+    bases_list = utils.bases.load_bases(ctx.message.guild.id)
     resource_type = resource_type.lower()
     if base_name not in bases_list.keys():
         await ctx.send(f"> La base {base_name} n'existe pas.")
@@ -115,7 +116,7 @@ async def base_set_stockpile(ctx, resource_type: str = None, stock: int = None, 
         await ctx.send("> Le type de ressource précisé est invalide.\n`Ressources acceptées: bsup | gsup`.")
         return
     await ctx.send(f"> La base {base_name} a maintenant un stock de {resource_type} de {stock} unités.")
-    utils.save_bases(bases_list, ctx.message.guild.id)
+    utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
 @bot.command()
@@ -123,7 +124,7 @@ async def base_add_stockpile(ctx, resource_type: str = None, stock: int = None, 
     if not resource_type or not base_name or not stock:
         await ctx.send("> Paramètres incorrects.\nCommande: `!base_add_stockpile [bsup/gsup] [stock] [nom de la base]`")
         return
-    bases_list = utils.load_bases(ctx.message.guild.id)
+    bases_list = utils.bases.load_bases(ctx.message.guild.id)
     resource_type = resource_type.lower()
     if base_name not in bases_list.keys():
         await ctx.send(f"> La base {base_name} n'existe pas.")
@@ -137,7 +138,7 @@ async def base_add_stockpile(ctx, resource_type: str = None, stock: int = None, 
         await ctx.send("> Le type de ressource précisé est invalide.\n`Ressources acceptées: bsup | gsup`.")
         return
     await ctx.send(f"> La base {base_name} a maintenant un stock de {resource_type} de {stock} unités.")
-    utils.save_bases(bases_list, ctx.message.guild.id)
+    utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
 @tasks.loop(seconds=10)
@@ -146,7 +147,7 @@ async def update_stockpiles():
     alert_channel = bot.get_channel(1044270821029457964)  # replace with correct channel
     for directory in os.listdir("saves/"):
         if os.path.isdir(f"saves/{directory}"):  # This corresponds to the actions to do per server
-            bases_list = utils.load_bases(directory)
+            bases_list = utils.bases.load_bases(directory)
 
             if len(bases_list.keys()) == 0:
                 continue
@@ -159,7 +160,7 @@ async def update_stockpiles():
                     stockpile[0] = 0
                 if stockpile[1] < 0:
                     stockpile[1] = 0
-                utils.save_bases(bases_list, directory)
+                utils.bases.save_bases(bases_list, directory)
 
                 threshold = 5
                 if consumption_rate[0] > 0 and int(stockpile[0] / consumption_rate[0]) < threshold:
