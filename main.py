@@ -4,12 +4,12 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 
+import discord_token
 import utils.bases
 import utils.config
 from Base import Base
 
 # Bot settings
-token = "MTA0NDI3MDMwMjI3MzczNjcwNA.Gotgim.n8HEX34t1aTGY7Sd_Gn_tcRa-DxDZoJXHeFcSQ"
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -183,4 +183,4 @@ async def update_stockpiles():
 
 
 if __name__ == "__main__":
-    bot.run(token, reconnect=True)
+    bot.run(discord_token.token, reconnect=True)
