@@ -96,8 +96,7 @@ async def base_set_consumption(ctx, resource_type: str = None, hourly_consumptio
     else:
         await ctx.send("> Le type de ressource précisé est invalide.\n`Ressources acceptées: bsup | gsup`.")
         return
-    await ctx.send(
-        f"> La base {base_name} a maintenant un taux de consomation horaire de {resource_type} de {hourly_consumption}.")
+    await ctx.send(f"> La base {base_name} a maintenant un taux de consomation horaire de {resource_type} de {hourly_consumption}.")
     utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
@@ -123,7 +122,7 @@ async def base_set_stockpile(ctx, resource_type: str = None, stock: int = None, 
 
 
 @bot.command()
-async def base_add_stockpile(ctx, resource_type: str = None, stock: int = None, *, base_name: str = None):
+async def base_add_stockpile(ctx, resource_type: str = None, stock: str = None, *, base_name: str = None):
     if not resource_type or not base_name or not stock:
         await ctx.send("> Paramètres incorrects.\nCommande: `!base_add_stockpile [bsup/gsup] [stock] [nom de la base]`")
         return
@@ -133,14 +132,16 @@ async def base_add_stockpile(ctx, resource_type: str = None, stock: int = None, 
         await ctx.send(f"> La base {base_name} n'existe pas.")
         return
     current_stockpile = bases_list[base_name].get_maintenance_stockpile()
+    stock = int(stock[:-1]) * 150 if stock[-1] == 'c' else int(stock)
     if resource_type == "bsup":
         bases_list[base_name].set_maintenance_stockpile(0, stock + current_stockpile[0])
+        await ctx.send(f"> La base {base_name} a maintenant un stock de {resource_type} de {current_stockpile[0]} unités.")
     elif resource_type == "gsup":
         bases_list[base_name].set_maintenance_stockpile(1, stock + current_stockpile[1])
+        await ctx.send(f"> La base {base_name} a maintenant un stock de {resource_type} de {current_stockpile[1]} unités.")
     else:
         await ctx.send("> Le type de ressource précisé est invalide.\n`Ressources acceptées: bsup | gsup`.")
         return
-    await ctx.send(f"> La base {base_name} a maintenant un stock de {resource_type} de {stock} unités.")
     utils.bases.save_bases(bases_list, ctx.message.guild.id)
 
 
