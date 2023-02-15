@@ -1,7 +1,7 @@
 import json
 import os.path
 
-from Base import Base
+from modules.base_upkeep.Base import Base
 
 
 def get_base_consumption(base: Base) -> (str, int):
