@@ -31,5 +31,4 @@ jobs:
         context: .
         push: true
         tags: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-        platforms:
-        - arm
+        platforms: linux/arm64
