@@ -79,6 +79,7 @@ async def stats(ctx, tank_name: str=''):
     if not tank_name:
         await ctx.send('> Command is missing a parameter: `!stats tank_name`')
     else:
+        tank_name = tank_name.lower()
         tank_search_keys = check_name_validity(tank_name)
         if not tank_search_keys:
             await ctx.send('> Tank name is incorrect')
