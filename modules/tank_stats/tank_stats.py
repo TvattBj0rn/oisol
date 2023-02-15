@@ -56,6 +56,24 @@ def scrap_wiki_page(tank_tup: tuple) -> dict:
     return tank_stats
 
 
+def scrap_health_page(tank_name: str) -> dict:
+    tank_health_stats = dict()
+    url = 'https://foxhole.fandom.com/wiki/Vehicle_Health'
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    tank_soup = soup.find('tbody') # First one of the page is tanks
+
+    for tr in tank_soup.find_all('tr'):
+        td_list = tr.find_all('td')
+        if len(td_list) == 0:
+            continue
+        if td_list[1].findNext('a', attrs={'title': tank_name}):
+            print()
+            tank_health_stats['HP'] = td_list[3].text.strip()
+
+    return tank_health_stats
+
+
 @commands.command()
 async def stats(ctx, tank_name: str=''):
     if not tank_name:
@@ -66,7 +84,7 @@ async def stats(ctx, tank_name: str=''):
             await ctx.send('> Tank name is incorrect')
         else:
             tank_general_stats = scrap_wiki_page(tank_search_keys)
-            # tank_health_stats = scrap_health_page(tank_search_keys)
+            tank_health_stats = scrap_health_page(tank_search_keys)
 
             embed = discord.Embed(title=tank_search_keys[0], description=tank_general_stats['description'], color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
             embed.set_thumbnail(url=tank_general_stats['icon'])
@@ -78,15 +96,17 @@ async def stats(ctx, tank_name: str=''):
             embed.add_field(name='Inventory Slots', value=tank_general_stats['general']['Inventory Slots'], inline=True)
             await ctx.send(embed=embed)
 
-            print(tank_general_stats)
-            for key, value in tank_general_stats['armament'].items():
+            embed = discord.Embed(title='HP', color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
+            embed.add_field(name=tank_health_stats['HP'], value='', inline=True)
+            await ctx.send(embed=embed)
 
+            for key, value in tank_general_stats['armament'].items():
                 embed = discord.Embed(title=key, color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
                 embed.add_field(name='Ammo', value=value['Ammo'], inline=True)
                 try:
                     embed.add_field(name='Max. Range', value=value['Maximum Range'], inline=True)
                     embed.add_field(name='Reload Time', value=value['Reload Time'], inline=True)
-                except KeyError:
+                except KeyError: # Error expected here as the commander does not have a range/reload time
                     pass
                 await ctx.send(embed=embed)
 
