@@ -36,22 +36,29 @@ def scrap_wiki_page(tank_tup: tuple) -> dict:
     soup = BeautifulSoup(page.content, 'html.parser')
     tank_paper = soup.find('aside')
 
+    # Get the icon for the thumbnail
     tank_stats['icon'] = tank_paper.find('img')['src']
+
+    # Get the vehicle's description
     for tag in soup.find_all('i'):
-        if tag.text != 'could':
+        if tag.parent.name == 'td':
             tank_stats['description'] = tag.text
             break
 
+    # Get stats from the tank wiki page
     for stat in tank_paper.find_all('h3'):
         if stat.text in general_stats:
             tank_stats['general'][stat.text] = stat.findNext('div', attrs={'class': 'pi-data-value pi-font'}).text
     armament_section = tank_paper.find('section', attrs={'class': 'pi-item pi-panel pi-border-color wds-tabber'})
 
+    # Get stats from the health page
     for div in armament_section.find_all('div', attrs={'class': 'wds-tabs__tab-label'}):
         tank_stats['armament'][div.text.strip()] = dict()
     armament_subsections = armament_section.findAll('div', attrs={'class': re.compile('^wds-tab__content')})
     for index in range(len(list(tank_stats['armament'].keys()))):
         tank_stats['armament'][list(tank_stats['armament'].keys())[index]] = scrap_wiki_page_armament_section(armament_subsections[index])
+        if list(tank_stats['armament'].keys())[index] == 'Commander':
+            del tank_stats['armament']['Commander']
 
     return tank_stats
 
@@ -68,17 +75,19 @@ def scrap_health_page(tank_name: str) -> dict:
         if len(td_list) == 0:
             continue
         if td_list[1].findNext('a', attrs={'title': tank_name}):
-            print()
             tank_health_stats['HP'] = td_list[3].text.strip()
 
     return tank_health_stats
 
 
 @commands.command()
-async def stats(ctx, tank_name: str=''):
+async def stats(ctx, *, tank_name: str=''):
     if not tank_name:
         await ctx.send('> Command is missing a parameter: `!stats tank_name`')
     else:
+        general_stats_list = ['Faction', 'Vehicle Type', 'Disabled Under', 'Repair Cost', 'Crew', 'Inventory Slots']
+        armament_stats_list = ['Ammo', 'Maximum Range', 'Reload Time']
+
         tank_name = tank_name.lower()
         tank_search_keys = check_name_validity(tank_name)
         if not tank_search_keys:
@@ -89,26 +98,21 @@ async def stats(ctx, tank_name: str=''):
 
             embed = discord.Embed(title=tank_search_keys[0], description=tank_general_stats['description'], color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
             embed.set_thumbnail(url=tank_general_stats['icon'])
-            embed.add_field(name='Faction', value=tank_general_stats['general']['Faction'], inline=True)
-            embed.add_field(name='Vehicle Type', value=tank_general_stats['general']['Vehicle Type'], inline=True)
-            embed.add_field(name='Disable Under', value=tank_general_stats['general']['Disabled Under'], inline=True)
-            embed.add_field(name='Repair Cost', value=tank_general_stats['general']['Repair Cost'], inline=True)
-            embed.add_field(name='Crew', value=tank_general_stats['general']['Crew'], inline=True)
-            embed.add_field(name='Inventory Slots', value=tank_general_stats['general']['Inventory Slots'], inline=True)
+            general_stats_list = [field for field in general_stats_list if field in tank_general_stats['general']]
+            for stat in general_stats_list:
+                embed.add_field(name=stat, value=tank_general_stats['general'][stat], inline=True)
+            embed.add_field(name='', value=f'[Wiki Page]({tank_search_keys[1]})', inline=False)
             await ctx.send(embed=embed)
 
             embed = discord.Embed(title='HP', color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
-            embed.add_field(name=tank_health_stats['HP'], value='', inline=True)
+            embed.add_field(name=tank_health_stats['HP'] if tank_health_stats['HP'] else 'N/A', value='', inline=True)
             await ctx.send(embed=embed)
 
             for key, value in tank_general_stats['armament'].items():
                 embed = discord.Embed(title=key, color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
-                embed.add_field(name='Ammo', value=value['Ammo'], inline=True)
-                try:
-                    embed.add_field(name='Max. Range', value=value['Maximum Range'], inline=True)
-                    embed.add_field(name='Reload Time', value=value['Reload Time'], inline=True)
-                except KeyError: # Error expected here as the commander does not have a range/reload time
-                    pass
+                armament_stats_list = [field for field in armament_stats_list if field in value] # allow to only embed tag present in the dict
+                for stat in armament_stats_list:
+                    embed.add_field(name=stat, value=value[stat])
                 await ctx.send(embed=embed)
 
 
