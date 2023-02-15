@@ -6,8 +6,8 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  IMAGE_NAME: my-image
-  IMAGE_TAG: arm
+  IMAGE_NAME: tvattbj0rn/wardb0t
+  IMAGE_TAG: latest
 
 jobs:
   build-and-push:
