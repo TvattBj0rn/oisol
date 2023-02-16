@@ -18,7 +18,7 @@ WardB0t is a discord bot designed to alleviate mental charges about Foxhole base
 
 The prefix used for this bot is `$`, but the commands are hybrid so `/` also works.
 
-- `stats tank_name`: this command allow the user to get stats of a specific tank.
+- `fstats tank_name`: this command allow the user to get stats of a specific tank.
 
 
 ## Planned features

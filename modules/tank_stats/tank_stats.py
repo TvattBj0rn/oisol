@@ -81,7 +81,7 @@ def scrap_health_page(tank_name: str) -> dict:
 
 
 @commands.hybrid_command()
-async def stats(ctx, *, tank_name: str=''):
+async def fstats(ctx, *, tank_name: str=''):
     if not tank_name:
         await ctx.send('> Command is missing a parameter: `!stats tank_name`')
     else:
@@ -121,4 +121,4 @@ async def stats(ctx, *, tank_name: str=''):
 
 
 async def setup(bot):
-    bot.add_command(stats)
+    bot.add_command(fstats)
