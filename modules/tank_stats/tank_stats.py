@@ -1,8 +1,8 @@
 import json
 import re
-
 import discord
 import requests
+
 from discord.ext import commands
 from bs4 import BeautifulSoup, Tag
 
@@ -80,7 +80,7 @@ def scrap_health_page(tank_name: str) -> dict:
     return tank_health_stats
 
 
-@commands.command()
+@commands.hybrid_command()
 async def stats(ctx, *, tank_name: str=''):
     if not tank_name:
         await ctx.send('> Command is missing a parameter: `!stats tank_name`')
@@ -93,27 +93,30 @@ async def stats(ctx, *, tank_name: str=''):
         if not tank_search_keys:
             await ctx.send('> Tank name is incorrect')
         else:
+            embeds_list = []
             tank_general_stats = scrap_wiki_page(tank_search_keys)
             tank_health_stats = scrap_health_page(tank_search_keys)
 
-            embed = discord.Embed(title=tank_search_keys[0], description=tank_general_stats['description'], color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
-            embed.set_thumbnail(url=tank_general_stats['icon'])
+            embed_general_stats = discord.Embed(title=tank_search_keys[0], description=tank_general_stats['description'], color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
+            embed_general_stats.set_thumbnail(url=tank_general_stats['icon'])
             general_stats_list = [field for field in general_stats_list if field in tank_general_stats['general']]
             for stat in general_stats_list:
-                embed.add_field(name=stat, value=tank_general_stats['general'][stat], inline=True)
-            embed.add_field(name='', value=f'[Wiki Page]({tank_search_keys[1]})', inline=False)
-            await ctx.send(embed=embed)
+                embed_general_stats.add_field(name=stat, value=tank_general_stats['general'][stat], inline=True)
+            embed_general_stats.add_field(name='', value=f'[Wiki Page]({tank_search_keys[1]})', inline=False)
+            embeds_list.append(embed_general_stats)
 
-            embed = discord.Embed(title='HP', color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
-            embed.add_field(name=tank_health_stats['HP'] if tank_health_stats['HP'] else 'N/A', value='', inline=True)
-            await ctx.send(embed=embed)
+            embed_health = discord.Embed(title='HP', color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
+            embed_health.add_field(name=tank_health_stats['HP'] if tank_health_stats['HP'] else 'N/A', value='', inline=True)
+            embeds_list.append(embed_health)
 
             for key, value in tank_general_stats['armament'].items():
                 embed = discord.Embed(title=key, color=(0x245682 if tank_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
                 armament_stats_list = [field for field in armament_stats_list if field in value] # allow to only embed tag present in the dict
                 for stat in armament_stats_list:
                     embed.add_field(name=stat, value=value[stat])
-                await ctx.send(embed=embed)
+                embeds_list.append(embed)
+
+            await ctx.send(embeds=embeds_list)
 
 
 
