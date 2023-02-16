@@ -24,4 +24,4 @@ async def on_ready():
 
 
 if __name__ == '__main__':
-    bot.run(discord_token.dev, reconnect=True)
+    bot.run(discord_token.token, reconnect=True)
