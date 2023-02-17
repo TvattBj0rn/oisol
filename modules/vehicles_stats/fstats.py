@@ -10,6 +10,7 @@ async def fstats(ctx, *, vehicle_name: str=''):
     else:
         general_stats_list = ['Faction', 'Vehicle Type', 'Disabled Under', 'Repair Cost', 'Crew', 'Inventory Slots']
         armament_stats_list = ['Ammo', 'Maximum Range', 'Reload Time']
+        faction_color = {'Warden': 0x245682, 'Colonial': 0x516C4B, 'Both': 0xffffff}
 
         vehicle_name = vehicle_name.lower()
         vehicle_search_keys = fstats_utils.check_name_validity(vehicle_name)
@@ -20,7 +21,7 @@ async def fstats(ctx, *, vehicle_name: str=''):
             vehicle_general_stats = fstats_utils.scrap_wiki_page(vehicle_search_keys)
             vehicle_health_stats = fstats_utils.scrap_health_page(vehicle_search_keys)
 
-            embed_general_stats = discord.Embed(title=vehicle_search_keys[0], description=vehicle_general_stats['description'], color=(0x245682 if vehicle_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
+            embed_general_stats = discord.Embed(title=vehicle_search_keys[0], description=vehicle_general_stats['description'], color=faction_color[vehicle_general_stats['general']['Faction']])
             embed_general_stats.set_thumbnail(url=vehicle_general_stats['icon'])
             general_stats_list = [field for field in general_stats_list if field in vehicle_general_stats['general']]
 
@@ -29,13 +30,12 @@ async def fstats(ctx, *, vehicle_name: str=''):
             embed_general_stats.add_field(name='', value=f'[Wiki Page]({vehicle_search_keys[1]})', inline=False)
             embeds_list.append(embed_general_stats)
 
-            embed_health = discord.Embed(title='HP', color=(0x245682 if vehicle_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
-            # embed_health.add_field(name=vehicle_health_stats['HP'] if vehicle_health_stats['HP'] else 'N/A', value='', inline=True)
+            embed_health = discord.Embed(title='HP', color=faction_color[vehicle_general_stats['general']['Faction']])
             embed_health.add_field(name=vehicle_health_stats['HP'] if 'HP' in vehicle_health_stats else 'N/A', value='', inline=True)
             embeds_list.append(embed_health)
 
             for key, value in vehicle_general_stats['armament'].items():
-                embed = discord.Embed(title=key, color=(0x245682 if vehicle_general_stats['general']['Faction'] == 'Warden' else 0x516C4B))
+                embed = discord.Embed(title=key, color=faction_color[vehicle_general_stats['general']['Faction']])
                 armament_stats_list = [field for field in armament_stats_list if field in value] # allow to only embed tag present in the dict
                 for stat in armament_stats_list:
                     embed.add_field(name=stat, value=value[stat])

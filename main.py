@@ -8,7 +8,10 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = commands.Bot(command_prefix='$', intents=intents)
+bot = commands.Bot(command_prefix='$',
+                   intents=intents,
+                   help_command=commands.DefaultHelpCommand(no_category='Commands')
+                   )
 
 
 @bot.event
@@ -24,4 +27,4 @@ async def on_ready():
 
 
 if __name__ == '__main__':
-    bot.run(discord_token.token, reconnect=True)
+    bot.run(discord_token.dev, reconnect=True)

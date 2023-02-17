@@ -157,5 +157,17 @@
   "T14 “Vesta” Tankette": [
     "vesta",
     "https://foxhole.fandom.com/wiki/T14_%E2%80%9CVesta%E2%80%9D_Tankette"
+  ],
+
+
+
+
+  "O'Brien V.101 Freeman": [
+    "freeman",
+    "https://foxhole.fandom.com/wiki/O%27Brien_V.101_Freeman"
+  ],
+  "BMS Mineseeker": [
+    "small train",
+    "https://foxhole.fandom.com/wiki/Small_Train_Locomotive"
   ]
 }
