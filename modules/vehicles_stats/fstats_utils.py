@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup, Tag
 
 ## This function is used to check if the vehicle name
 def check_name_validity(vehicle_name: str) -> tuple or None:
-    with open('modules/vehicles_stats/vehicles_names_data/tanks_names.json') as tank_names_file:
+    with open('modules/vehicles_stats/vehicles_names_data/vehicles_names.json') as tank_names_file:
         tank_names = json.load(tank_names_file)
 
     for tank_key in tank_names:
