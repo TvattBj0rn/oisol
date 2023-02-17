@@ -13,7 +13,7 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 
 @bot.event
 async def on_ready():
-    await bot.load_extension('modules.tank_stats.tank_stats')
+    await bot.load_extension('modules.vehicles_stats.fstats')
     try:
         synced = await bot.tree.sync()
         print(f'Synced {len(synced)} command(s)')
@@ -24,4 +24,4 @@ async def on_ready():
 
 
 if __name__ == '__main__':
-    bot.run(discord_token.token, reconnect=True)
+    bot.run(discord_token.dev, reconnect=True)
