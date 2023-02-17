@@ -41,7 +41,8 @@ async def fstats(ctx, *, vehicle_name: str=''):
                     embed.add_field(name=stat, value=value[stat])
                 embeds_list.append(embed)
 
-            await ctx.send(embeds=embeds_list)
+            await ctx.send('> Stat was sent !', ephemeral=True)
+            await ctx.author.send(embeds=embeds_list)
 
 
 async def setup(bot):
