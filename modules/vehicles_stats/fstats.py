@@ -6,7 +6,7 @@ from discord.ext import commands
 @commands.hybrid_command()
 async def fstats(ctx, *, vehicle_name: str=''):
     if not vehicle_name:
-        await ctx.send('> Command is missing a parameter: `!stats vehicle_name`')
+        await ctx.send('> Command is missing a parameter: `!stats vehicle_name`', ephemeral=True)
     else:
         general_stats_list = ['Faction', 'Vehicle Type', 'Disabled Under', 'Repair Cost', 'Crew', 'Inventory Slots']
         armament_stats_list = ['Ammo', 'Maximum Range', 'Reload Time']
@@ -15,7 +15,7 @@ async def fstats(ctx, *, vehicle_name: str=''):
         vehicle_name = vehicle_name.lower()
         vehicle_search_keys = fstats_utils.check_name_validity(vehicle_name)
         if not vehicle_search_keys:
-            await ctx.send('> Tank name is incorrect')
+            await ctx.send('> Tank name is incorrect', ephemeral=True)
         else:
             embeds_list = []
             vehicle_general_stats = fstats_utils.scrap_wiki_page(vehicle_search_keys)
@@ -41,8 +41,7 @@ async def fstats(ctx, *, vehicle_name: str=''):
                     embed.add_field(name=stat, value=value[stat])
                 embeds_list.append(embed)
 
-            await ctx.send('> Stat was sent !', ephemeral=True)
-            await ctx.author.send(embeds=embeds_list)
+            await ctx.send(embeds=embeds_list, ephemeral=True)
 
 
 async def setup(bot):
