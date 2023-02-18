@@ -60,7 +60,8 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
     vehicle_stats['icon'] = vehicle_box.find('img')['src']
 
     # Get the vehicle's description
-    for tag in soup.find_all('i'):
+    description_box = soup.find('table', attrs={'style': 'background:transparent'})
+    for tag in description_box.find_all('i'):
         if tag.parent.name == 'td':
             vehicle_stats['description'] = tag.text
             break
