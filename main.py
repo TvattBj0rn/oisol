@@ -1,7 +1,7 @@
+import os
 import discord
-import discord_token
 from discord.ext import commands
-
+from dotenv import load_dotenv
 
 # Bot settings
 intents = discord.Intents.default()
@@ -27,4 +27,5 @@ async def on_ready():
 
 
 if __name__ == '__main__':
-    bot.run(discord_token.token, reconnect=True)
+    load_dotenv()
+    bot.run(os.getenv('DISCORD_TOKEN'), reconnect=True)
