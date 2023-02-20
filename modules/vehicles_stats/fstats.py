@@ -21,25 +21,35 @@ async def fstats(ctx, *, vehicle_name: str=''):
             vehicle_general_stats = fstats_utils.scrap_wiki_page(vehicle_search_keys)
             vehicle_health_stats = fstats_utils.scrap_health_page(vehicle_search_keys)
 
-            embed_general_stats = discord.Embed(title=vehicle_search_keys[0], description=vehicle_general_stats['description'], color=faction_color[vehicle_general_stats['general']['Faction']])
-            embed_general_stats.set_thumbnail(url=vehicle_general_stats['icon'])
+            embed = discord.Embed(title=vehicle_search_keys[0], description=vehicle_general_stats['description'], color=faction_color[vehicle_general_stats['general']['Faction']])
+            embed.set_thumbnail(url=vehicle_general_stats['icon'])
+
             general_stats_list = [field for field in general_stats_list if field in vehicle_general_stats['general']]
 
+            embed.add_field(name='HP', value=vehicle_health_stats['HP'] if 'HP' in vehicle_health_stats else 'N/A', inline=False)
             for stat in general_stats_list:
-                embed_general_stats.add_field(name=stat, value=vehicle_general_stats['general'][stat], inline=True)
-            embed_general_stats.add_field(name='', value=f'[Wiki Page]({vehicle_search_keys[1]})', inline=False)
-            embeds_list.append(embed_general_stats)
+                embed.add_field(name=stat, value=vehicle_general_stats['general'][stat], inline=True)
 
-            embed_health = discord.Embed(title='HP', color=faction_color[vehicle_general_stats['general']['Faction']])
-            embed_health.add_field(name=vehicle_health_stats['HP'] if 'HP' in vehicle_health_stats else 'N/A', value='', inline=True)
-            embeds_list.append(embed_health)
+            if vehicle_general_stats['general']['Vehicle Type'] in fstats_utils.MILITARY_VEHICLE:
+                embed.add_field(name=u'\u200B', value='', inline=False)
+                embed.add_field(name='Armament', value='', inline=False)
+                for key, value in vehicle_general_stats['armament'].items():
+                    embed.add_field(name=key, value='', inline=False)
+                    armament_stats_list = [field for field in armament_stats_list if field in value] # allow to only embed tag present in the dict
+                    for stat in armament_stats_list:
+                        embed.add_field(name=stat, value=value[stat], inline=True)
+            embed.add_field(name='', value=f'[Wiki Page]({vehicle_search_keys[1]})', inline=False)
+            embeds_list.append(embed)
 
-            for key, value in vehicle_general_stats['armament'].items():
-                embed = discord.Embed(title=key, color=faction_color[vehicle_general_stats['general']['Faction']])
-                armament_stats_list = [field for field in armament_stats_list if field in value] # allow to only embed tag present in the dict
-                for stat in armament_stats_list:
-                    embed.add_field(name=stat, value=value[stat])
-                embeds_list.append(embed)
+            vehicle_health_stats.pop('HP')
+            embed = discord.Embed(title='Shell Resistance', color=faction_color[vehicle_general_stats['general']['Faction']])
+            for key, value in vehicle_health_stats.items():
+                embed.add_field(name=key, value='', inline=False)
+                for subkey, sub_value in value.items():
+                    embed.add_field(name=subkey, value=sub_value, inline=True)
+                embed.add_field(name=u'\u200B', value='', inline=False)
+            embed.add_field(name='', value=f"[Wiki Page]({'https://foxhole.fandom.com/wiki/Vehicle_Health'})", inline=False)
+            embeds_list.append(embed)
 
             await ctx.send(embeds=embeds_list, ephemeral=True)
 

@@ -4,6 +4,9 @@ import json
 from bs4 import BeautifulSoup, Tag
 
 
+MILITARY_VEHICLE = ['Armoured Car', 'Assault Tank', 'Battle Tank', 'Combat Car', 'Cruiser Tank', 'Destroyer Tank', 'Field Artillery', 'Field AT Gun', 'Field Cannon', 'Field Gun', 'Field Launcher', 'Field Machine Gun', 'Field Mortar', 'Gunboat', 'Half-Track', 'Heavy Field Cannon', 'Heavy Field Gun', 'Infantry Car', 'Light Infantry Tank', 'Light Tank', 'Long-Range Artillery Car', 'Scout Tank', 'Siege Tank', 'Super Tank', 'Tankette']
+
+
 ## This function is used to check if the vehicle name
 def check_name_validity(vehicle_name: str) -> tuple or None:
     with open('modules/vehicles_stats/vehicles_names_data/vehicles_names.json') as tank_names_file:
@@ -30,6 +33,14 @@ def scrap_health_page(vehicle_name: str) -> dict:
                 continue
             if td_list[1].text.strip() == vehicle_name[0]:
                 vehicle_health_stats['HP'] = td_list[3].text.strip()
+                vehicle_health_stats['Explosive Type'] = dict()
+                vehicle_health_stats['Piercing Type'] = dict()
+                vehicle_health_stats['Explosive Type']['<:30mm:1077033326407335956>'] = f"{td_list[16].get_text(' | ')}"
+                vehicle_health_stats['Explosive Type']['<:40mm:1077032968310239292>'] = f"{td_list[18].get_text(' | ')}"
+                vehicle_health_stats['Explosive Type']['<:75mm:1077033155749482546>'] = f"{td_list[19].get_text(' | ')}"
+                vehicle_health_stats['Piercing Type']['<:68mm:1077033006881063003>'] = f"{td_list[29].get_text(' | ')}"
+                vehicle_health_stats['Piercing Type']['<:94mm:1077033020856483880>'] = f"{td_list[30].get_text(' | ')}"
+
     return vehicle_health_stats
 
 
@@ -72,7 +83,7 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
             vehicle_stats['general'][stat.text] = stat.findNext('div', attrs={'class': 'pi-data-value pi-font'}).text
     armament_section = vehicle_box.find('section', attrs={'class': 'pi-item pi-panel pi-border-color wds-tabber'})
 
-    try:
+    if vehicle_stats['general']['Vehicle Type'] in MILITARY_VEHICLE:
         # Get armament stats from the wiki page
         for div in armament_section.find_all('div', attrs={'class': 'wds-tabs__tab-label'}):
             vehicle_stats['armament'][div.text.strip()] = dict()
@@ -81,7 +92,5 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
             vehicle_stats['armament'][list(vehicle_stats['armament'].keys())[index]] = scrap_wiki_page_armament_section(armament_subsections[index])
             if list(vehicle_stats['armament'].keys())[index] == 'Commander':
                 del vehicle_stats['armament']['Commander']
-    except AttributeError: # Vehicle is a civil vehicle
-        pass
 
     return vehicle_stats
