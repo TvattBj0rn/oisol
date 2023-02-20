@@ -35,11 +35,11 @@ def scrap_health_page(vehicle_name: str) -> dict:
                 vehicle_health_stats['HP'] = td_list[3].text.strip()
                 vehicle_health_stats['Explosive Type'] = dict()
                 vehicle_health_stats['Piercing Type'] = dict()
-                vehicle_health_stats['Explosive Type']['<:30mm:1077033326407335956>'] = f"{td_list[16].get_text(' | ')}"
-                vehicle_health_stats['Explosive Type']['<:40mm:1077032968310239292>'] = f"{td_list[18].get_text(' | ')}"
-                vehicle_health_stats['Explosive Type']['<:75mm:1077033155749482546>'] = f"{td_list[19].get_text(' | ')}"
-                vehicle_health_stats['Piercing Type']['<:68mm:1077033006881063003>'] = f"{td_list[29].get_text(' | ')}"
-                vehicle_health_stats['Piercing Type']['<:94mm:1077033020856483880>'] = f"{td_list[30].get_text(' | ')}"
+                vehicle_health_stats['Explosive Type']['<:30mm:1077033326407335956>'] = f"{td_list[16].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive Type']['<:40mm:1077032968310239292>'] = f"{td_list[18].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive Type']['<:75mm:1077033155749482546>'] = f"{td_list[19].get_text(' **|** ')}"
+                vehicle_health_stats['Piercing Type']['<:68mm:1077033006881063003>'] = f"{td_list[29].get_text(' **|** ')}"
+                vehicle_health_stats['Piercing Type']['<:94mm:1077033020856483880>'] = f"{td_list[30].get_text(' **|** ')}"
 
     return vehicle_health_stats
 

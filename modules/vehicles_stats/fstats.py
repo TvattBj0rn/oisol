@@ -26,13 +26,13 @@ async def fstats(ctx, *, vehicle_name: str=''):
 
             general_stats_list = [field for field in general_stats_list if field in vehicle_general_stats['general']]
 
-            embed.add_field(name='HP', value=vehicle_health_stats['HP'] if 'HP' in vehicle_health_stats else 'N/A', inline=False)
+            embed.add_field(name='**HP**', value=vehicle_health_stats['HP'] if 'HP' in vehicle_health_stats else 'N/A', inline=False)
             for stat in general_stats_list:
                 embed.add_field(name=stat, value=vehicle_general_stats['general'][stat], inline=True)
 
             if vehicle_general_stats['general']['Vehicle Type'] in fstats_utils.MILITARY_VEHICLE:
                 embed.add_field(name=u'\u200B', value='', inline=False)
-                embed.add_field(name='Armament', value='', inline=False)
+                embed.add_field(name='**Armament**', value='', inline=False)
                 for key, value in vehicle_general_stats['armament'].items():
                     embed.add_field(name=key, value='', inline=False)
                     armament_stats_list = [field for field in armament_stats_list if field in value] # allow to only embed tag present in the dict
@@ -42,7 +42,7 @@ async def fstats(ctx, *, vehicle_name: str=''):
             embeds_list.append(embed)
 
             vehicle_health_stats.pop('HP')
-            embed = discord.Embed(title='Shell Resistance', color=faction_color[vehicle_general_stats['general']['Faction']])
+            embed = discord.Embed(title='**Shell Resistance**', color=faction_color[vehicle_general_stats['general']['Faction']])
             for key, value in vehicle_health_stats.items():
                 embed.add_field(name=key, value='', inline=False)
                 for subkey, sub_value in value.items():
