@@ -6,7 +6,7 @@ from discord.ext import commands
 @commands.hybrid_command()
 async def fstats(ctx, *, vehicle_name: str=''):
     if not vehicle_name:
-        await ctx.send('> Command is missing a parameter: `$stats vehicle_name` or `/stats vehicle_name`', ephemeral=True)
+        await ctx.send('> Command is missing a parameter: `$fstats vehicle_name` or `/fstats vehicle_name`', ephemeral=True)
     else:
         general_stats_list = ['Faction', 'Vehicle Type', 'Disabled Under', 'Repair Cost', 'Crew', 'Inventory Slots']
         armament_stats_list = ['Ammo', 'Maximum Range', 'Reload Time']
