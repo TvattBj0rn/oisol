@@ -31,11 +31,12 @@ def get_all_stockpiles() -> dict:
     worksheets_list = STOCKPILE_SHEET.worksheets()
 
     for worksheet in worksheets_list:
-        if worksheet.acell('C2').value == 'template':
+        raw_data = worksheet.get('StockpileStatus')
+        worksheet_name = raw_data[0][1]
+        if worksheet_name == 'template':
             continue
-        stockpiles_list[worksheet.acell('C2').value] = dict()
-        stockpiles_list[worksheet.acell('C2').value]['localisation'] = worksheet.acell('C3').value
-        stockpiles_list[worksheet.acell('C2').value]['code'] = worksheet.acell('C4').value
-        stockpiles_list[worksheet.acell('C2').value]['type'] = worksheet.acell('C5').value
-
+        stockpiles_list[worksheet_name] = dict()
+        stockpiles_list[worksheet_name]['localisation'] = raw_data[1][1]
+        stockpiles_list[worksheet_name]['code'] = raw_data[2][1]
+        stockpiles_list[worksheet_name]['type'] = raw_data[3][1]
     return stockpiles_list
