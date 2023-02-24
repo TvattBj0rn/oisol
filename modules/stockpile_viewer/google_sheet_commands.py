@@ -6,10 +6,11 @@ STOCKPILE_SHEET = gspread.service_account(filename='modules/stockpile_viewer/gsp
 
 def create_stockpile(location: list, code: int, name: str, stockpile_type: str):
     worksheet = STOCKPILE_SHEET.duplicate_sheet(source_sheet_id=392006361, new_sheet_name=name)
-    worksheet.update('C2', name)
-    worksheet.update('C3', f'{location[0]} - {location[1]}')
-    worksheet.update('C4', code)
-    worksheet.update('C5', stockpile_type)
+    cell_list = worksheet.range('C2:C5')
+    cell_values = [name, f'{location[0]} - {location[1]}', code, stockpile_type]
+    for i, val in enumerate(cell_values):
+        cell_list[i].value = val
+    worksheet.update_cells(cell_list=cell_list)
 
 def get_stockpile_status(name: str) -> tuple:
     worksheet = STOCKPILE_SHEET.worksheet(name)
