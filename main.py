@@ -17,6 +17,7 @@ bot = commands.Bot(command_prefix='$',
 @bot.event
 async def on_ready():
     await bot.load_extension('modules.vehicles_stats.fstats')
+    await bot.load_extension('modules.stockpile_viewer.stockpile_viewer')
     try:
         synced = await bot.tree.sync()
         print(f'Synced {len(synced)} command(s)')
