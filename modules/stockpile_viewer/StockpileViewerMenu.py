@@ -94,7 +94,7 @@ class StockpileViewerMenu(discord.ui.View):
         if not self.stockpile_values['Heavy Arms']:
             embeds_list.append(discord.Embed(title='<:heavyweaponsicon:1078407453890330634> | Heavy Arms').add_field(name='Empty', value=''))
         else:
-            for item in self.stockpile_values['Small Arms']:
+            for item in self.stockpile_values['Heavy Arms']:
                 all_items_list.append(item)
             embed = discord.Embed(title='<:heavyweaponsicon:1078407453890330634> | Heavy Arms')
             for item_index in range(len(all_items_list)):
