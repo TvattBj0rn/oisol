@@ -1,6 +1,7 @@
 {
   "Silverhand - Mk. IV": [
     "svh",
+    "sv",
     "silverhand",
     "https://foxhole.fandom.com/wiki/Silverhand_-_Mk._IV"
   ],
@@ -11,6 +12,7 @@
   ],
   "85K-b “Falchion”": [
     "falchion",
+    "mpt",
     "https://foxhole.fandom.com/wiki/85K-b_%E2%80%9CFalchion%E2%80%9D"
   ],
   "85K-a “Spatha”": [
@@ -63,6 +65,7 @@
   ],
   "Gallagher Highwayman Mk. III": [
     "highwayman",
+    "hwm",
     "https://foxhole.fandom.com/wiki/Gallagher_Highwayman_Mk._III"
   ],
   "Gallagher Thornfall Mk. VI": [
@@ -105,8 +108,10 @@
     "https://foxhole.fandom.com/wiki/Devitt_Ironhide_Mk._IV"
   ],
   "Devitt-Caine Mk. IV MMR": [
-    "devitt-mortier",
+    "devitt mortier",
     "caine",
+    "mt",
+    "mlt",
     "https://foxhole.fandom.com/wiki/Devitt-Caine_Mk._IV_MMR"
   ],
   "H-19 “Vulcan”": [
@@ -162,6 +167,7 @@
     "koronides",
     "fg",
     "field gun",
+    "fa",
     "https://foxhole.fandom.com/wiki/Field_Artillery"
   ],
   "Balfour Wolfhound 40mm": [
@@ -205,6 +211,7 @@
   "Balfour Rampart 68mm": [
     "balfour rampart",
     "rampart",
+    "hvfat",
     "https://foxhole.fandom.com/wiki/Heavy_Field_Cannon"
   ],
   "40-45 “Smelter” Heavy Field Gun": [
@@ -214,10 +221,11 @@
   "O'Brien V.101 Freeman": [
     "freeman",
     "v101",
+    "hac",
     "https://foxhole.fandom.com/wiki/O%27Brien_V.101_Freeman"
   ],
   "T5 “Percutio”": [
-    "t5",
+    "atac",
     "percutio",
     "https://foxhole.fandom.com/wiki/T5_%E2%80%9CPercutio%E2%80%9D"
   ],
@@ -266,6 +274,7 @@
   ],
   "Niska Mk. II Blinder": [
     "blinder",
+    "atht",
     "https://foxhole.fandom.com/wiki/Niska_Mk._II_Blinder"
   ],
   "HH-b “Hoplite”": [
@@ -274,6 +283,8 @@
   ],
   "HH-d “Peltast”": [
     "peltast",
+    "mht",
+    "mtht",
     "https://foxhole.fandom.com/wiki/HH-d_%E2%80%9CPeltast%E2%80%9D"
   ],
   "Niska-Rycker Mk. IX Skycaller": [
