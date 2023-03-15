@@ -65,7 +65,7 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
     soup = BeautifulSoup(page.content, 'html.parser')
 
     # Get the wiki box where all the pertinent information is stored
-    vehicle_box = soup.find('aside', attrs={'class': re.compile('portable-infobox pi-background pi-border-color pi-theme-(Col|War|Both) pi-layout-default type-vehicle')})
+    vehicle_box = soup.find('aside', attrs={'class': re.compile('portable-infobox pi-background pi-border-color pi-theme-(Col|War|Warden|Both) pi-layout-default type-vehicle')}) # War and Warden because of the outdated thornfall wiki page
 
     # Get the icon for the thumbnail
     vehicle_stats['icon'] = vehicle_box.find('img')['src']
