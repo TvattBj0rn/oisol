@@ -52,7 +52,7 @@ async def fstats(ctx, *, vehicle_name: str=''):
             embeds_list.append(embed)
 
             await ctx.send(embeds=embeds_list, ephemeral=True)
-
+            # await ctx.send("OK")
 
 async def setup(bot):
     bot.add_command(fstats)

@@ -65,8 +65,7 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
     soup = BeautifulSoup(page.content, 'html.parser')
 
     # Get the wiki box where all the pertinent information is stored
-    vehicle_box = soup.find('aside', attrs={'class': re.compile('portable-infobox pi-background pi-border-color pi-theme-(Col|War|Warden|Both) pi-layout-default type-vehicle')}) # War and Warden because of the outdated thornfall wiki page
-
+    vehicle_box = soup.find('aside', attrs={'class': re.compile('portable-infobox noexcerpt pi-background pi-theme-(War|Col|Both) pi-layout-default pi-type-vehicle')}) # War and Warden because of the outdated thornfall wiki page
     # Get the icon for the thumbnail
     vehicle_stats['icon'] = vehicle_box.find('img')['src']
 
@@ -81,16 +80,28 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
     for stat in vehicle_box.find_all('h3'):
         if stat.text in general_stats:
             vehicle_stats['general'][stat.text] = stat.findNext('div', attrs={'class': 'pi-data-value pi-font'}).text
-    armament_section = vehicle_box.find('section', attrs={'class': 'pi-item pi-panel pi-border-color wds-tabber'})
+    armament_section = vehicle_box.find('section', attrs={'class': 'pi-item pi-panel pi-border-color'})
 
     if vehicle_stats['general']['Vehicle Type'] in MILITARY_VEHICLE:
         # Get armament stats from the wiki page
-        for div in armament_section.find_all('div', attrs={'class': 'wds-tabs__tab-label'}):
-            vehicle_stats['armament'][div.text.strip()] = dict()
-        armament_subsections = armament_section.findAll('div', attrs={'class': re.compile('^wds-tab__content')})
-        for index in range(len(list(vehicle_stats['armament'].keys()))):
-            vehicle_stats['armament'][list(vehicle_stats['armament'].keys())[index]] = scrap_wiki_page_armament_section(armament_subsections[index])
-            if list(vehicle_stats['armament'].keys())[index] == 'Commander':
-                del vehicle_stats['armament']['Commander']
+        for div in armament_section.find_all('div', attrs={'class': 'pi-section-content'}): # this retrieve the armament divs
+            all_armament_category = div.find_all('h3', attrs={'class': 'pi-data-label pi-secondary-font'})
+            all_armament_type = div.find_all('div', attrs={'class': 'pi-data-value pi-font'})
+            if all_armament_type[0].text == 'Commander':
+                break
+            vehicle_stats['armament'][all_armament_type[0].text] = dict()
+            for i in range(len(all_armament_type)):
+                if all_armament_category[i].text != 'Name':
+                    print(all_armament_category[i].text, all_armament_type[i].text)
+                    vehicle_stats['armament'][all_armament_type[0].text][all_armament_category[i].text] = all_armament_type[i].get_text(separator=' | ')
 
+
+        #     vehicle_stats['armament'][div.text.strip()] = dict()
+        # armament_subsections = armament_section.findAll('div', attrs={'class': re.compile('^wds-tab__content')})
+        # for index in range(len(list(vehicle_stats['armament'].keys()))):
+        #     vehicle_stats['armament'][list(vehicle_stats['armament'].keys())[index]] = scrap_wiki_page_armament_section(armament_subsections[index])
+        #     if list(vehicle_stats['armament'].keys())[index] == 'Commander':
+        #         del vehicle_stats['armament']['Commander']
+
+    print(vehicle_stats)
     return vehicle_stats
