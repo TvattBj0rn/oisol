@@ -11,9 +11,23 @@ async def view_stockpiles(ctx):
     try:
         stockpile_list = google_sheet_commands.get_all_stockpiles()
 
-        embed = discord.Embed(title='Stockpiles', description='Current accessible stockpiles')
-        for stockpile in stockpile_list:
-            embed.add_field(name=f"{stockpile_list[stockpile]['localisation']} | {('<:storagedepot:1077298889490694204>' if stockpile_list[stockpile]['type'] == 'Storage Depot' else '<:seaport:1077298856196313158>')} | {stockpile}", value=stockpile_list[stockpile]['code'], inline=False)
+        sorted_stockpile_list = dict()
+        for stockpile_name, stockpile_values in stockpile_list.items():
+            if stockpile_values['localisation'] not in sorted_stockpile_list.keys():
+                sorted_stockpile_list[stockpile_values['localisation']] = list()
+            sorted_stockpile_list[stockpile_values['localisation']].append({stockpile_name: stockpile_values})
+
+        embed = discord.Embed(title='Stockpiles', description='Current accessible stockpiles', color=0x245682)
+
+        for localisation, stockpile_list in sorted_stockpile_list.items():
+            stockpiles_here = str()
+            for stockpile in stockpile_list:
+                stockpiles_here += f"{list(stockpile.keys())[0]} | {stockpile[list(stockpile.keys())[0]]['code']}\n"
+            embed.add_field(
+                name=localisation,
+                value=stockpiles_here,
+                inline=False
+            )
 
         await ctx.send(embed=embed)
     except discord.ext.commands.HybridCommandError as e:
@@ -28,7 +42,7 @@ async def view_stockpile(ctx, stockpile_name: str):
 
 
 @commands.hybrid_command()
-async def create_stockpile(ctx, code: int=0, *, name:str=''):
+async def create_stockpile(ctx, code: str='0', *, name:str=''):
     if not name or not code:
         await ctx.send('> Command is missing a parameter: `$create_stockpile code name` or `/create_stockpile code name`', ephemeral=True)
         return

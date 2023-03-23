@@ -1,11 +1,11 @@
 import discord
 from discord.ui import Select
-from modules.stockpile_viewer.locations import REGIONS
+from modules.stockpile_viewer.locations import REGIONS_STOCKPILES
 from modules.stockpile_viewer import google_sheet_commands
 
 
 class StockpileCreatorMenu(discord.ui.View):
-    def __init__(self, code: int, name: str):
+    def __init__(self, code: str, name: str):
         super().__init__()
         self.stockpile_location = []
         self.stockpile_name = name
@@ -48,15 +48,15 @@ class StockpileCreatorMenu(discord.ui.View):
         self.select_first_letter.placeholder = self.select_first_letter.values[0]
         self.select_region.disabled = False
         if self.select_first_letter.values[0] == 'A-M':
-            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS.items())[:18])]
+            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[:18])]
         else:
-            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS.items())[18:])]
+            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[18:])]
         await interaction.response.edit_message(view=self)
 
     async def callback_region(self, interaction):
         self.select_region.placeholder = self.select_region.values[0]
         self.select_subregion.disabled = False
-        self.select_subregion.options = [discord.SelectOption(label=subregion) for subregion in REGIONS[self.select_region.values[0]]]
+        self.select_subregion.options = [discord.SelectOption(label=subregion) for subregion in REGIONS_STOCKPILES[self.select_region.values[0]]]
         await interaction.response.edit_message(view=self)
 
     async def callback_subregion(self, interaction):
