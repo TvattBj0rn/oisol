@@ -1,11 +1,12 @@
 import gspread
+import uuid
 
 
 STOCKPILE_SHEET = gspread.service_account(filename='modules/stockpile_viewer/gspread/service_account.json').open('stockpiles_slr')
 
 
-def create_stockpile(location: list, code: int, name: str, stockpile_type: str):
-    worksheet = STOCKPILE_SHEET.duplicate_sheet(source_sheet_id=392006361, new_sheet_name=name)
+def create_stockpile(location: list, code: str, name: str, stockpile_type: str):
+    worksheet = STOCKPILE_SHEET.duplicate_sheet(source_sheet_id=392006361, new_sheet_name=str(uuid.uuid4()))
     cell_list = worksheet.range('C2:C5')
     cell_values = [name, f'{location[0]} - {location[1]}', code, stockpile_type]
     for i, val in enumerate(cell_values):
