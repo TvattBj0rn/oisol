@@ -22,7 +22,7 @@ def check_name_validity(vehicle_name: str) -> tuple or None:
 ## This function is used to retrieve the health of a vehicle on the wiki health page
 def scrap_health_page(vehicle_name: str) -> dict:
     vehicle_health_stats = dict()
-    page = requests.get('https://foxhole.fandom.com/wiki/Vehicle_Health')
+    page = requests.get('https://foxhole.wiki.gg/wiki/Vehicle_Health')
     soup = BeautifulSoup(page.content, 'html.parser')
     tbody_list = soup.find_all('tbody')
 
@@ -33,13 +33,32 @@ def scrap_health_page(vehicle_name: str) -> dict:
                 continue
             if td_list[1].text.strip() == vehicle_name[0]:
                 vehicle_health_stats['HP'] = td_list[3].text.strip()
-                vehicle_health_stats['Explosive Type'] = dict()
-                vehicle_health_stats['Piercing Type'] = dict()
-                vehicle_health_stats['Explosive Type']['<:30mm:1077033326407335956>'] = f"{td_list[16].get_text(' **|** ')}"
-                vehicle_health_stats['Explosive Type']['<:40mm:1077032968310239292>'] = f"{td_list[18].get_text(' **|** ')}"
-                vehicle_health_stats['Explosive Type']['<:75mm:1077033155749482546>'] = f"{td_list[19].get_text(' **|** ')}"
-                vehicle_health_stats['Piercing Type']['<:68mm:1077033006881063003>'] = f"{td_list[29].get_text(' **|** ')}"
-                vehicle_health_stats['Piercing Type']['<:94mm:1077033020856483880>'] = f"{td_list[30].get_text(' **|** ')}"
+                vehicle_health_stats['Kinetic'] = dict()
+                vehicle_health_stats['Explosive'] = dict()
+                vehicle_health_stats['Armour Piercing'] = dict()
+                vehicle_health_stats['AT Explosive'] = dict()
+
+                vehicle_health_stats['Kinetic']['<:9mm:1088823410412503141>'] = f"{td_list[4].get_text(' **|** ')}"
+                vehicle_health_stats['Kinetic']['<:792mm:1088823653027815424>'] = f"{td_list[5].get_text(' **|** ')}"
+                vehicle_health_stats['Kinetic']['<:762mm:1088823887510388959>'] = f"{td_list[6].get_text(' **|** ')}"
+                vehicle_health_stats['Kinetic']['<:127mm:1088826018883719281>'] = f"{td_list[8].get_text(' **|** ')}"
+                vehicle_health_stats['Kinetic']['<:20mm:1088826350850281492>'] = f"{td_list[13].get_text(' **|** ')}"
+
+                vehicle_health_stats['Explosive']['<:mamon:1088827447128109146>'] = f"{td_list[14].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:tremola:1088827774787125349>'] = f"{td_list[15].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:30mm:1077033326407335956>'] = f"{td_list[16].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:rpg:1088828056073945179>'] = f"{td_list[17].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:40mm:1077032968310239292>'] = f"{td_list[18].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:75mm:1077033155749482546>'] = f"{td_list[19].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:flask:1088831037766893669>'] = f"{td_list[31].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:sticky:1088831015964909749>'] = f"{td_list[32].get_text(' **|** ')}"
+                vehicle_health_stats['Explosive']['<:landmine:1088831369762848850>'] = f"{td_list[33].get_text(' **|** ')}"
+
+                vehicle_health_stats['Armour Piercing']['<:ignifist:1088829111859949619>'] = f"{td_list[26].get_text(' **|** ')}"
+                vehicle_health_stats['Armour Piercing']['<:aprpg:1088829901341212693>'] = f"{td_list[27].get_text(' **|** ')}"
+                vehicle_health_stats['Armour Piercing']['<:68mm:1077033006881063003>'] = f"{td_list[28].get_text(' **|** ')}"
+                vehicle_health_stats['Armour Piercing']['<:arcrpg:1088830211799392316>'] = f"{td_list[29].get_text(' **|** ')}"
+                vehicle_health_stats['Armour Piercing']['<:94mm:1077033020856483880>'] = f"{td_list[30].get_text(' **|** ')}"
 
     return vehicle_health_stats
 
@@ -66,8 +85,9 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
 
     # Get the wiki box where all the pertinent information is stored
     vehicle_box = soup.find('aside', attrs={'class': re.compile('portable-infobox noexcerpt pi-background pi-theme-(War|Col|Both) pi-layout-default pi-type-vehicle')}) # War and Warden because of the outdated thornfall wiki page
+
     # Get the icon for the thumbnail
-    vehicle_stats['icon'] = vehicle_box.find('img')['src']
+    vehicle_stats['icon'] = f"https://foxhole.wiki.gg{vehicle_box.find('img')['src']}"
 
     # Get the vehicle's description
     description_box = soup.find('table', attrs={'style': 'background:transparent'})
@@ -80,7 +100,8 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
     for stat in vehicle_box.find_all('h3'):
         if stat.text in general_stats:
             vehicle_stats['general'][stat.text] = stat.findNext('div', attrs={'class': 'pi-data-value pi-font'}).text
-    armament_section = vehicle_box.find('section', attrs={'class': 'pi-item pi-panel pi-border-color'})
+    all_sections = vehicle_box.find_all('section', attrs={'class': 'pi-item pi-panel pi-border-color'})
+    armament_section = all_sections[0]
 
     if vehicle_stats['general']['Vehicle Type'] in MILITARY_VEHICLE:
         # Get armament stats from the wiki page
@@ -92,16 +113,6 @@ def scrap_wiki_page(vehicle_tup: tuple) -> dict:
             vehicle_stats['armament'][all_armament_type[0].text] = dict()
             for i in range(len(all_armament_type)):
                 if all_armament_category[i].text != 'Name':
-                    print(all_armament_category[i].text, all_armament_type[i].text)
                     vehicle_stats['armament'][all_armament_type[0].text][all_armament_category[i].text] = all_armament_type[i].get_text(separator=' | ')
 
-
-        #     vehicle_stats['armament'][div.text.strip()] = dict()
-        # armament_subsections = armament_section.findAll('div', attrs={'class': re.compile('^wds-tab__content')})
-        # for index in range(len(list(vehicle_stats['armament'].keys()))):
-        #     vehicle_stats['armament'][list(vehicle_stats['armament'].keys())[index]] = scrap_wiki_page_armament_section(armament_subsections[index])
-        #     if list(vehicle_stats['armament'].keys())[index] == 'Commander':
-        #         del vehicle_stats['armament']['Commander']
-
-    print(vehicle_stats)
     return vehicle_stats
