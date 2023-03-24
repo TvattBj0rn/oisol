@@ -1,5 +1,3 @@
-import asyncio
-
 import discord
 from discord.ext import commands
 from modules.stockpile_viewer import StockpileViewerMenu, StockpileCreatorMenu, google_sheet_commands
@@ -16,13 +14,12 @@ async def view_stockpiles(ctx):
             if stockpile_values['localisation'] not in sorted_stockpile_list.keys():
                 sorted_stockpile_list[stockpile_values['localisation']] = list()
             sorted_stockpile_list[stockpile_values['localisation']].append({stockpile_name: stockpile_values})
-
         embed = discord.Embed(title='Stockpiles', description='Current accessible stockpiles', color=0x245682)
 
         for localisation, stockpile_list in sorted_stockpile_list.items():
             stockpiles_here = str()
             for stockpile in stockpile_list:
-                stockpiles_here += f"{list(stockpile.keys())[0]} | {stockpile[list(stockpile.keys())[0]]['code']}\n"
+                stockpiles_here += f"{stockpile[list(stockpile.keys())[0]]['name']} | {stockpile[list(stockpile.keys())[0]]['code']}\n"
             embed.add_field(
                 name=localisation,
                 value=stockpiles_here,
