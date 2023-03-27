@@ -8,8 +8,8 @@ async def fstats(ctx, *, vehicle_name: str=''):
     if not vehicle_name:
         await ctx.send('> Command is missing a parameter: `$fstats vehicle_name` or `/fstats vehicle_name`', ephemeral=True)
     else:
-        general_stats_list = ['Faction', 'Vehicle Type', 'Disabled Under', 'Repair Cost', 'Crew', 'Inventory Slots']
-        armament_stats_list = ['Ammo', 'Maximum Range', 'Reload Time']
+        general_stats_list = ['Faction', 'Vehicle Type', 'Disabled Under', 'Repair Cost', 'Crew', 'Inventory Slots', 'Cost']
+        armament_stats_list = ['Ammo', 'Maximum Range', 'Reload Time', 'Range']
         faction_color = {'Warden': 0x245682, 'Colonial': 0x516C4B, 'Both': 0xffffff}
 
         vehicle_name = vehicle_name.lower()
@@ -42,17 +42,16 @@ async def fstats(ctx, *, vehicle_name: str=''):
             embeds_list.append(embed)
 
             vehicle_health_stats.pop('HP')
-            embed = discord.Embed(title='**Shell Resistance**', color=faction_color[vehicle_general_stats['general']['Faction']])
+            embed = discord.Embed(title='**Damage Type Resistance**', color=faction_color[vehicle_general_stats['general']['Faction']])
             for key, value in vehicle_health_stats.items():
                 embed.add_field(name=key, value='', inline=False)
                 for subkey, sub_value in value.items():
                     embed.add_field(name=subkey, value=sub_value, inline=True)
                 embed.add_field(name=u'\u200B', value='', inline=False)
-            embed.add_field(name='', value=f"[Wiki Page]({'https://foxhole.fandom.com/wiki/Vehicle_Health'})", inline=False)
+            embed.add_field(name='', value=f"[Wiki Page]({'https://foxhole.wiki.gg/wiki/Vehicle_Health'})", inline=False)
             embeds_list.append(embed)
 
             await ctx.send(embeds=embeds_list, ephemeral=True)
-
 
 async def setup(bot):
     bot.add_command(fstats)
