@@ -8,16 +8,17 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = commands.Bot(command_prefix='$',
-                   intents=intents,
-                   help_command=commands.DefaultHelpCommand(no_category='Commands')
-                   )
+bot = commands.Bot(
+    command_prefix='$',
+    intents=intents,
+    help_command=commands.DefaultHelpCommand(no_category='Commands')
+)
 
 
 @bot.event
 async def on_ready():
-    await bot.load_extension('modules.vehicles_stats.fstats')
-    await bot.load_extension('modules.stockpile_viewer.stockpile_viewer')
+    await bot.load_extension('modules.vehicles_stats.discord_wiki')
+    await bot.load_extension('modules.stockpile_viewer.discord_stockpile_viewer')
     try:
         synced = await bot.tree.sync()
         print(f'Synced {len(synced)} command(s)')
