@@ -24,7 +24,7 @@ async def wiki(interaction: discord.Interaction, *, vehicle_name: str=''):
         embed = discord.Embed(
             title=vehicle_search_keys[0],
             description=vehicle_general_stats['description'],
-            color=factions_settings.FACTION_COLORS[vehicle_general_stats['general']['Faction']],
+            color=foxhole_types.FACTION_COLORS[vehicle_general_stats['general']['Faction']],
 
         )
         embed.set_thumbnail(url=vehicle_general_stats['icon'])
@@ -77,7 +77,7 @@ async def wiki(interaction: discord.Interaction, *, vehicle_name: str=''):
         vehicle_health_stats.pop('HP')
         embed = discord.Embed(
             title='**Damage Type Resistance**',
-            color=factions_settings.FACTION_COLORS[vehicle_general_stats['general']['Faction']]
+            color=foxhole_types.FACTION_COLORS[vehicle_general_stats['general']['Faction']]
         )
         for key, value in vehicle_health_stats.items():
             embed.add_field(

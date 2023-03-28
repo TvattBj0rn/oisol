@@ -18,7 +18,7 @@ async def view_stockpiles(interaction: discord.Interaction):
         embed = discord.Embed(
             title='Stockpiles',
             description='Current accessible stockpiles',
-            color=factions_settings.FACTION_COLORS['Warden']
+            color=foxhole_types.FACTION_COLORS['Warden']
         )
 
         for localisation, stockpile_list in sorted_stockpile_list.items():
