@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from modules.stockpile_viewer import StockpileViewerMenu, StockpileCreatorMenu, google_sheet_commands
+from modules.stockpile_viewer import ViewSpecificStockpileInterface, CreateStockpileInterface, google_sheet_commands
 from modules.utils import foxhole_types, locations
 from main import bot as oisol
 
@@ -48,7 +48,7 @@ async def view_stockpile(interaction: discord.Interaction, stockpile_code: str):
         return
     await interaction.response.defer(ephemeral=True)
     try:
-        menu = StockpileViewerMenu.StockpileViewerMenu(stockpile_code)
+        menu = ViewSpecificStockpileInterface.ViewSpecificStockpileInterface(stockpile_code)
         embed = menu.set_home_page()
         await interaction.followup.send(embed=embed, view=menu, ephemeral=True)
     except Exception:
@@ -60,7 +60,7 @@ async def create_stockpile(interaction: discord.Interaction, code: str='0', *, n
         await interaction.response.send_message('> Command is missing a parameter: `/create_stockpile code name`', ephemeral=True)
         return
 
-    view = StockpileCreatorMenu.StockpileCreatorMenu(code, name)
+    view = CreateStockpileInterface.CreateStockpileInterface(code, name)
     await interaction.response.send_message(view=view, ephemeral=True)
 
 

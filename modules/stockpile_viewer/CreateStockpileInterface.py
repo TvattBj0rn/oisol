@@ -4,7 +4,7 @@ from modules.utils.locations import REGIONS_STOCKPILES
 from modules.stockpile_viewer import google_sheet_commands
 
 
-class StockpileCreatorMenu(discord.ui.View):
+class CreateStockpileInterface(discord.ui.View):
     def __init__(self, code: str, name: str):
         super().__init__()
         self.stockpile_location = []
