@@ -66,7 +66,7 @@ class StockpileCreatorMenu(discord.ui.View):
     async def send_button(self, interaction: discord.Interaction, button: discord.Button):
         self.stop()
         google_sheet_commands.create_stockpile(self.stockpile_location, self.stockpile_code, self.stockpile_name, self.stockpile_type)
-        await interaction.response.send_message(f'> {self.stockpile_type} {self.stockpile_name} (code: {self.stockpile_code}) at {self.stockpile_location[0]} | {self.stockpile_location[1]} was created', ephemeral=True)
+        await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) at {self.stockpile_location[0]} | {self.stockpile_location[1]} was created', ephemeral=True)
 
     def reset_subregion(self):
         self.select_subregion.placeholder = 'Choose a sub-region'

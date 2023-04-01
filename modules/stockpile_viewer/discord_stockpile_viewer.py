@@ -1,17 +1,22 @@
 import discord
 from discord.ext import commands
 from modules.stockpile_viewer import StockpileViewerMenu, StockpileCreatorMenu, google_sheet_commands
-from modules.utils import foxhole_types
+from modules.utils import foxhole_types, locations
 from main import bot as oisol
 
 @oisol.tree.command(name='view_stockpiles')
 async def view_stockpiles(interaction: discord.Interaction):
-    await interaction.response.defer(ephemeral=True)
+    await interaction.response.defer()
     try:
         stockpile_list = google_sheet_commands.get_all_stockpiles()
         sorted_stockpile_list = dict()
 
         for stockpile_name, stockpile_values in stockpile_list.items():
+            region, subregion = stockpile_values['localisation'].split(' - ')
+
+            for stockpile_type in locations.REGIONS_STOCKPILES[region]:
+                if subregion in stockpile_type:
+                    stockpile_values['localisation'] = f'{stockpile_type[1]} | {region} - {subregion}'
             if stockpile_values['localisation'] not in sorted_stockpile_list.keys():
                 sorted_stockpile_list[stockpile_values['localisation']] = list()
             sorted_stockpile_list[stockpile_values['localisation']].append({stockpile_name: stockpile_values})
