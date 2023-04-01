@@ -1,42 +1,14 @@
 import discord
 from discord.ext import commands
-from modules.stockpile_viewer import ViewSpecificStockpileInterface, CreateStockpileInterface, google_sheet_commands
-from modules.utils import foxhole_types, locations
+from modules.stockpile_viewer import ViewSpecificStockpileInterface, CreateStockpileInterface, ViewAllStockpilesInterface
 from main import bot as oisol
 
 @oisol.tree.command(name='view_stockpiles')
 async def view_stockpiles(interaction: discord.Interaction):
     await interaction.response.defer()
     try:
-        stockpile_list = google_sheet_commands.get_all_stockpiles()
-        sorted_stockpile_list = dict()
-
-        for stockpile_name, stockpile_values in stockpile_list.items():
-            region, subregion = stockpile_values['localisation'].split(' - ')
-
-            for stockpile_type in locations.REGIONS_STOCKPILES[region]:
-                if subregion in stockpile_type:
-                    stockpile_values['localisation'] = f'{stockpile_type[1]} | {region} - {subregion}'
-            if stockpile_values['localisation'] not in sorted_stockpile_list.keys():
-                sorted_stockpile_list[stockpile_values['localisation']] = list()
-            sorted_stockpile_list[stockpile_values['localisation']].append({stockpile_name: stockpile_values})
-        embed = discord.Embed(
-            title='Stockpiles',
-            description='Current accessible stockpiles',
-            color=foxhole_types.FACTION_COLORS['Warden']
-        )
-
-        for localisation, stockpile_list in sorted_stockpile_list.items():
-            stockpiles_here = str()
-            for stockpile in stockpile_list:
-                stockpiles_here += f"{stockpile[list(stockpile.keys())[0]]['name']} | {stockpile[list(stockpile.keys())[0]]['code']}\n"
-            embed.add_field(
-                name=localisation,
-                value=stockpiles_here,
-                inline=False
-            )
-
-        await interaction.followup.send(embed=embed)
+        view_all_stockpiles = ViewAllStockpilesInterface.ViewAllStockpilesInterface()
+        await interaction.followup.send(embed=view_all_stockpiles.embed)
     except discord.ext.commands.HybridCommandError as e:
         await interaction.followup.send(e)
 
