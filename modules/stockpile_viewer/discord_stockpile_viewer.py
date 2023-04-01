@@ -37,14 +37,17 @@ async def view_stockpiles(interaction: discord.Interaction):
 
 
 @oisol.tree.command(name='view_stockpile')
-async def view_stockpile(interaction: discord.Interaction, stockpile_name: str):
-    if not stockpile_name:
-        await interaction.response.send_message('> Command is missing a parameter: `/view_stockpile stockpile_name`', ephemeral=True)
+async def view_stockpile(interaction: discord.Interaction, stockpile_code: str):
+    if not stockpile_code:
+        await interaction.response.send_message('> Command is missing a parameter: `/view_stockpile stockpile_code`', ephemeral=True)
         return
-    menu = StockpileViewerMenu.StockpileViewerMenu(stockpile_name)
-    embed = menu.set_home_page()
-    await interaction.response.send_message(embed=embed, view=menu, ephemeral=True)
-
+    await interaction.response.defer(ephemeral=True)
+    try:
+        menu = StockpileViewerMenu.StockpileViewerMenu(stockpile_code)
+        embed = menu.set_home_page()
+        await interaction.followup.send(embed=embed, view=menu, ephemeral=True)
+    except Exception:
+        await interaction.followup.send('Code is incorrect')
 
 @oisol.tree.command(name='create_stockpile')
 async def create_stockpile(interaction: discord.Interaction, code: str='0', *, name:str=''):
