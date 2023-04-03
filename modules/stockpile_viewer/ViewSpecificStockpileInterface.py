@@ -2,10 +2,12 @@ import discord
 from modules.stockpile_viewer import google_sheet_commands
 
 
-class StockpileViewerMenu(discord.ui.View):
-    def __init__(self, name: str):
+class ViewSpecificStockpileInterface(discord.ui.View):
+    def __init__(self, code: str):
         super().__init__()
-        self.stockpile_values, self.stockpile_config = google_sheet_commands.get_stockpile_status(name=name)
+        self.stockpile_values, self.stockpile_config = google_sheet_commands.get_stockpile_status(code=code)
+        if not self.stockpile_values:
+            raise Exception('Code does not exists')
         self.button_home = discord.ui.Button(style=discord.ButtonStyle.blurple, emoji='🏠')
         self.button_home.callback = self.home_page_callback
         self.add_item(self.button_home)

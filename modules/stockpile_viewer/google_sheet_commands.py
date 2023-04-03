@@ -13,17 +13,20 @@ def create_stockpile(location: list, code: str, name: str, stockpile_type: str):
         cell_list[i].value = val
     worksheet.update_cells(cell_list=cell_list)
 
-def get_stockpile_status(name: str) -> tuple:
-    worksheet = STOCKPILE_SHEET.worksheet(name)
-    all_values = worksheet.batch_get(['StockpileStatus', 'SmallArms', 'HeavyArms', 'HeavyAmmunition', 'Utility', 'Medical', 'Resource', 'Uniforms', 'VehiclesCrates', 'Vehicles', 'EmplacementsCrates', 'Emplacements'])
-    stockpile_status = {item[0]: item[1] for item in worksheet.get('StockpileStatus')}
-    del all_values[0]
+def get_stockpile_status(code: str) -> tuple:
+    worksheet_list = STOCKPILE_SHEET.worksheets()
+    for worksheet in worksheet_list:
+        if worksheet.title[:8] == 'template':
+            continue
+        stockpile_status = {item[0]: item[1] for item in worksheet.get('StockpileStatus')}
+        all_values = worksheet.batch_get(['SmallArms', 'HeavyArms', 'HeavyAmmunition', 'Utility', 'Medical', 'Resource', 'Uniforms', 'VehiclesCrates', 'Vehicles', 'EmplacementsCrates', 'Emplacements'])
+        if stockpile_status['Code'] == code:
 
-    sorted_stockpile = dict()
-    for category in all_values:
-        sorted_stockpile[category[0][0]] = [{category[index][0]: category[index][1]} for index in range(1, len(category)) if category[index][1] != '0']
-
-    return sorted_stockpile, stockpile_status
+            sorted_stockpile = dict()
+            for category in all_values:
+                sorted_stockpile[category[0][0]] = [{category[index][0]: category[index][1]} for index in range(1, len(category)) if category[index][1] != '0']
+            return sorted_stockpile, stockpile_status
+    return 0, 0
 
 
 
