@@ -54,6 +54,9 @@ class CreateStockpileInterface(discord.ui.View):
         await interaction.response.edit_message(view=self)
 
     async def callback_subregion(self, interaction):
+        for stockpile in REGIONS_STOCKPILES[self.select_region.values[0]]:
+            if stockpile[0] == self.select_subregion.values[0]:
+                self.stockpile_type = 'Seaport' if stockpile[1] == '<:seaport:1077298856196313158>' else 'Storage Depot'
         self.stockpile_location.append(self.select_region.values[0])
         self.stockpile_location.append(self.select_subregion.values[0])
         self.select_subregion.placeholder = self.select_subregion.values[0]
