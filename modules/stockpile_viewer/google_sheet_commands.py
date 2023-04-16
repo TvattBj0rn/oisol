@@ -13,6 +13,15 @@ def create_stockpile(location: list, code: str, name: str, stockpile_type: str):
         cell_list[i].value = val
     worksheet.update_cells(cell_list=cell_list)
 
+
+def delete_stockpile(code: str):
+    for worksheet in STOCKPILE_SHEET:
+        stockpile_status = worksheet.get('StockpileStatus')
+        if stockpile_status[0][1] != 'template':
+            if stockpile_status[2][1] == code:
+                STOCKPILE_SHEET.del_worksheet(worksheet)
+                return
+
 def get_stockpile_status(code: str) -> tuple:
     worksheet_list = STOCKPILE_SHEET.worksheets()
     for worksheet in worksheet_list:
