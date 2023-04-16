@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from modules.stockpile_viewer import ViewSpecificStockpileInterface, CreateStockpileInterface, ViewAllStockpilesInterface
 from main import bot as oisol
+import modules.stockpile_viewer.google_sheet_commands as gs
 
 @oisol.tree.command(name='view_stockpiles')
 async def view_stockpiles(interaction: discord.Interaction):
@@ -36,7 +37,20 @@ async def create_stockpile(interaction: discord.Interaction, code: str='0', *, n
     await interaction.response.send_message(view=view, ephemeral=True)
 
 
+@oisol.tree.command(name='delete_stockpile')
+async def delete_stockpile(interaction: discord.Interaction, stockpile_code: str):
+    if not stockpile_code:
+        await interaction.response.send_message('> Command is missing a parameter: `/delete_stockpile stockpile_code`', ephemeral=True)
+        return
+    await interaction.response.defer(ephemeral=True)
+    try:
+        gs.delete_stockpile(stockpile_code)
+        await interaction.followup.send(f'Stockpile with code {stockpile_code} was deleted', ephemeral=True)
+    except Exception:
+        await interaction.followup.send('Code is incorrect')
+
 async def setup(bot):
+    bot.tree.add_command(delete_stockpile)
     bot.tree.add_command(view_stockpiles)
     bot.tree.add_command(view_stockpile)
     bot.tree.add_command(create_stockpile)
