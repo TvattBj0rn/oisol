@@ -6,7 +6,7 @@ STOCKPILE_SHEET = gspread.service_account(filename='modules/stockpile_viewer/gsp
 
 
 def create_stockpile(location: list, code: str, name: str, stockpile_type: str):
-    worksheet = STOCKPILE_SHEET.duplicate_sheet(source_sheet_id=392006361, new_sheet_name=str(uuid.uuid4()))
+    worksheet = STOCKPILE_SHEET.duplicate_sheet(source_sheet_id=483700453, new_sheet_name=str(uuid.uuid4()))
     cell_list = worksheet.range('C2:C5')
     cell_values = [name, f'{location[0]} - {location[1]}', code, stockpile_type]
     for i, val in enumerate(cell_values):
