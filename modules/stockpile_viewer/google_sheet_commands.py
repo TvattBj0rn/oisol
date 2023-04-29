@@ -7,7 +7,7 @@ STOCKPILE_SHEET = gspread.service_account(filename='modules/stockpile_viewer/gsp
 
 def create_stockpile(location: list, code: str, name: str, stockpile_type: str):
     worksheet = STOCKPILE_SHEET.duplicate_sheet(source_sheet_id=483700453, new_sheet_name=str(uuid.uuid4()))
-    cell_list = worksheet.range('C2:C5')
+    cell_list = worksheet.range('D2:D5')
     cell_values = [name, f'{location[0]} - {location[1]}', code, stockpile_type]
     for i, val in enumerate(cell_values):
         cell_list[i].value = val
@@ -48,6 +48,7 @@ def get_all_stockpiles() -> dict:
         worksheet_name = raw_data[0][1]
         if worksheet_name[:8] == 'template':
             continue
+        print(raw_data)
         stockpiles_list[worksheet.title] = dict()
         stockpiles_list[worksheet.title]['name'] = worksheet_name
         stockpiles_list[worksheet.title]['localisation'] = raw_data[1][1]

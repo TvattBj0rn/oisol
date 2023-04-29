@@ -30,5 +30,4 @@ async def on_ready():
 
 if __name__ == '__main__':
     load_dotenv()
-    print(os.environ)
     bot.run(os.getenv('DISCORD_TOKEN'), reconnect=True)
