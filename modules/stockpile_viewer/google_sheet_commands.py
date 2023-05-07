@@ -22,6 +22,7 @@ def delete_stockpile(code: str):
                 STOCKPILE_SHEET.del_worksheet(worksheet)
                 return
 
+
 def get_stockpile_status(code: str) -> tuple:
     worksheet_list = STOCKPILE_SHEET.worksheets()
     for worksheet in worksheet_list:
@@ -48,7 +49,6 @@ def get_all_stockpiles() -> dict:
         worksheet_name = raw_data[0][1]
         if worksheet_name[:8] == 'template':
             continue
-        print(raw_data)
         stockpiles_list[worksheet.title] = dict()
         stockpiles_list[worksheet.title]['name'] = worksheet_name
         stockpiles_list[worksheet.title]['localisation'] = raw_data[1][1]
