@@ -9,7 +9,7 @@ async def view_stockpiles(interaction: discord.Interaction):
     await interaction.response.defer()
     try:
         view_all_stockpiles = ViewAllStockpilesInterface.ViewAllStockpilesInterface()
-        await interaction.followup.send(embed=view_all_stockpiles.embed)
+        await interaction.followup.send(embed=view_all_stockpiles.embed, view=view_all_stockpiles)
     except discord.ext.commands.HybridCommandError as e:
         await interaction.followup.send(e)
 

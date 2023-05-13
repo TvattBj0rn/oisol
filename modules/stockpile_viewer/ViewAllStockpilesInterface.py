@@ -5,11 +5,15 @@ from modules.utils import foxhole_types, locations
 class ViewAllStockpilesInterface(discord.ui.View):
     def __init__(self):
         super().__init__()
+        self.timeout = None
         self.embed = None
         self.generateEmbed()
-        # self.addButton = discord.ui.Button(emoji='➕', style=discord.ButtonStyle.green)
-        self.removeButton = discord.ui.Button(emoji='➖', style=discord.ButtonStyle.red)
 
+    @discord.ui.button(emoji='🔄', style=discord.ButtonStyle.blurple)
+    async def refresh_stockpile_list(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.generateEmbed()
+        await interaction.response.defer()
+        await interaction.edit_original_response(embed=self.embed, view=self)
 
     def generateEmbed(self):
         stockpile_list = google_sheet_commands.get_all_stockpiles()
@@ -24,6 +28,7 @@ class ViewAllStockpilesInterface(discord.ui.View):
             if stockpile_values['localisation'] not in sorted_stockpile_list.keys():
                 sorted_stockpile_list[stockpile_values['localisation']] = list()
             sorted_stockpile_list[stockpile_values['localisation']].append({stockpile_name: stockpile_values})
+
         embed = discord.Embed(
             title='Stockpiles',
             description='Current accessible stockpiles',
