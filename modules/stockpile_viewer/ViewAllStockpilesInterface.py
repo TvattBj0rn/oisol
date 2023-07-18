@@ -19,7 +19,6 @@ class ViewAllStockpilesInterface(discord.ui.View):
 
     def generateEmbed(self, file_path: str):
         stockpile_list = csv_handler.csv_get_all_data(file_path)
-        print(stockpile_list)
 
         sorted_stockpile_list = dict()
 
@@ -36,8 +35,8 @@ class ViewAllStockpilesInterface(discord.ui.View):
         sorted_region_list.sort()
 
         embed = discord.Embed(
-            title='Stockpiles',
-            description='Current accessible stockpiles',
+            title='Stockpiles FCF',
+            description='Liste des stockpiles FCF actuels',
             color=foxhole_types.FACTION_COLORS['Warden']
         )
         for region in sorted_region_list:

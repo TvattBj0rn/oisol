@@ -13,19 +13,19 @@ class CreateStockpileInterface(discord.ui.View):
         self.stockpile_code = code
         self.stockpile_type = ''
         self.select_first_letter = Select(
-            placeholder="Choose the region's starting letter",
+            placeholder="Par quelle lettre commence la région ?",
             options=[
                 discord.SelectOption(label='A-M'),
                 discord.SelectOption(label='M-W')
             ]
         )
         self.select_region = Select(
-            placeholder='Choose a region',
+            placeholder='Choisis une région',
             options=[discord.SelectOption(label='')],
             disabled=True
         )
         self.select_subregion = Select(
-            placeholder='Choose a sub-region',
+            placeholder='Choisis une sous région',
             options=[discord.SelectOption(label='')],
             disabled=True
         )
@@ -40,7 +40,7 @@ class CreateStockpileInterface(discord.ui.View):
         self.reset_subregion()
         self.select_first_letter.placeholder = self.select_first_letter.values[0]
         self.select_region.disabled = False
-        self.select_region.placeholder = 'Choose a region'
+        self.select_region.placeholder = 'Choisis une région'
         if self.select_first_letter.values[0] == 'A-M':
             self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[:18])]
         else:
@@ -82,7 +82,7 @@ class CreateStockpileInterface(discord.ui.View):
         await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) at {self.stockpile_region} | {self.stockpile_subregion} was created', ephemeral=True)
 
     def reset_subregion(self):
-        self.select_subregion.placeholder = 'Choose a sub-region'
+        self.select_subregion.placeholder = 'Choisis une sous région'
         self.select_subregion.disabled = True
         self.send_button.style = discord.ButtonStyle.grey
         self.send_button.disabled = True

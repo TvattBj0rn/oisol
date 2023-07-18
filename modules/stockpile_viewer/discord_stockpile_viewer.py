@@ -16,10 +16,10 @@ async def stockpile_view(interaction: discord.Interaction):
 @oisol.tree.command(name='stockpile_create')
 async def stockpile_create(interaction: discord.Interaction, code: str='0', *, name: str=''):
     if not name or not code:
-        await interaction.response.send_message('> Command is missing a parameter: `/create_stockpile code name`', ephemeral=True)
+        await interaction.response.send_message('> Il manque un paramètre à la commande: `/create_stockpile code name`', ephemeral=True)
         return
     if len(code) != 6:
-        await interaction.response.send_message('> Code has incorrect size', ephemeral=True)
+        await interaction.response.send_message('> La taille du code est incorrecte', ephemeral=True)
         return
 
     view = CreateStockpileInterface.CreateStockpileInterface(code, name)
@@ -29,11 +29,11 @@ async def stockpile_create(interaction: discord.Interaction, code: str='0', *, n
 @oisol.tree.command(name='stockpile_delete')
 async def stockpile_delete(interaction: discord.Interaction, stockpile_code: str):
     if not stockpile_code:
-        await interaction.response.send_message('> Command is missing a parameter: `/delete_stockpile stockpile_code`', ephemeral=True)
+        await interaction.response.send_message('> Il manque un paramètre à la commande: `/delete_stockpile stockpile_code`', ephemeral=True)
         return
     await interaction.response.defer(ephemeral=True)
     csv_handler.csv_delete_data(f'data/{interaction.guild.id}/stockpiles.csv', stockpile_code)
-    await interaction.followup.send(f'Stockpile with code {stockpile_code} was deleted', ephemeral=True)
+    await interaction.followup.send(f'> Le stockpile (code: {stockpile_code}) a bien été supprimé', ephemeral=True)
 
 async def setup(bot):
     bot.tree.add_command(stockpile_create)
