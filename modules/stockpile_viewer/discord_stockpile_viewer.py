@@ -1,7 +1,21 @@
+import os
 import discord
 from discord.ext import commands
 from modules.stockpile_viewer import CreateStockpileInterface, ViewAllStockpilesInterface, csv_handler
 from main import bot as oisol
+
+
+@oisol.tree.command(name='stockpile_init')
+async def stockpile_init(interaction: discord.Interaction):
+    os.makedirs(f'data/{interaction.guild.id}', exist_ok=True)
+    try:
+        csv_handler.csv_try_create_file(f'data/{interaction.guild.id}/stockpiles.csv', ['region', 'subregion', 'code', 'name', 'type'])
+        with open(f'data/{interaction.guild.id}/message_id.txt', 'x') as file:
+            pass
+    except FileExistsError:
+        pass
+    await interaction.response.send_message(f'> Tout a bien pu être initialisé !', ephemeral=True)
+
 
 @oisol.tree.command(name='stockpile_view')
 async def stockpile_view(interaction: discord.Interaction):
@@ -41,6 +55,7 @@ async def stockpile_delete(interaction: discord.Interaction, stockpile_code: str
     # await view.update_stockpile_list()
 
 async def setup(bot):
+    bot.tree.add_command(stockpile_init)
     bot.tree.add_command(stockpile_create)
     bot.tree.add_command(stockpile_delete)
     bot.tree.add_command(stockpile_view)

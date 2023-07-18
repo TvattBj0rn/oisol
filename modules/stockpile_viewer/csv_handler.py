@@ -40,7 +40,7 @@ def csv_append_data(file_path: str, data_to_be_appended: dict):
 
 def csv_get_all_data(file_path: str) -> [dict]:
     dict_list = []
-    with open(file_path) as csv_file:
+    with open(file_path, 'r') as csv_file:
         reader = csv.reader(csv_file, delimiter=';')
         next(reader, None) ## Skip header row
         for row in reader:

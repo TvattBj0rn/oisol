@@ -1,7 +1,6 @@
 import discord
 from modules.stockpile_viewer import csv_handler
 from modules.utils import foxhole_types, locations
-from main import bot
 
 class ViewAllStockpilesInterface(discord.ui.View):
     def __init__(self, interaction: discord.Interaction):
@@ -18,18 +17,6 @@ class ViewAllStockpilesInterface(discord.ui.View):
         self.generateEmbed(self.file_path)
         await interaction.response.defer()
         await interaction.edit_original_response(embed=self.embed, view=self)
-
-    # async def update_stockpile_list(self):
-    #     self.generateEmbed(self.file_path)
-    #     self.generateEmbed(self.file_path)
-    #     with open(self.file_path_msg, 'r') as msg_file:
-    #         data = msg_file.read().split()
-    #     msg_id, channel_id = int(data[0]), int(data[1])
-    #     print(msg_id, channel_id)
-    #     channel = bot.get_channel(channel_id)
-    #     print(channel)
-    #     msg = await channel.fetch_message(msg_id)
-    #     await msg.edit(embed=self.embed)
 
     def generateEmbed(self, file_path: str):
         stockpile_list = csv_handler.csv_get_all_data(file_path)
