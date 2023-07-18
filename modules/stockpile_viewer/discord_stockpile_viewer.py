@@ -11,6 +11,9 @@ async def stockpile_view(interaction: discord.Interaction):
         await interaction.followup.send(embed=view_all_stockpiles.embed, view=view_all_stockpiles)
     except discord.ext.commands.HybridCommandError as e:
         await interaction.followup.send(e)
+    # message = await interaction.original_response()
+    # with open(f'data/{interaction.guild.id}/message_id.txt', 'w') as msg_file:
+    #     msg_file.write(f'{message.id} {message.channel.id}')
 
 
 @oisol.tree.command(name='stockpile_create')
@@ -34,6 +37,8 @@ async def stockpile_delete(interaction: discord.Interaction, stockpile_code: str
     await interaction.response.defer(ephemeral=True)
     csv_handler.csv_delete_data(f'data/{interaction.guild.id}/stockpiles.csv', stockpile_code)
     await interaction.followup.send(f'> Le stockpile (code: {stockpile_code}) a bien été supprimé', ephemeral=True)
+    # view = ViewAllStockpilesInterface.ViewAllStockpilesInterface(interaction)
+    # await view.update_stockpile_list()
 
 async def setup(bot):
     bot.tree.add_command(stockpile_create)

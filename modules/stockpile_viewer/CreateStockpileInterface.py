@@ -2,6 +2,7 @@ import discord
 from discord.ui import Select
 from modules.utils.locations import REGIONS_STOCKPILES
 from modules.stockpile_viewer import csv_handler
+from modules.stockpile_viewer.ViewAllStockpilesInterface import ViewAllStockpilesInterface
 
 
 class CreateStockpileInterface(discord.ui.View):
@@ -80,6 +81,8 @@ class CreateStockpileInterface(discord.ui.View):
         csv_handler.csv_try_create_file(file_path, ['region', 'subregion', 'code', 'name', 'type'])
         csv_handler.csv_append_data(file_path, stockpile)
         await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) at {self.stockpile_region} | {self.stockpile_subregion} was created', ephemeral=True)
+        # view = ViewAllStockpilesInterface(interaction)
+        # await view.update_stockpile_list()
 
     def reset_subregion(self):
         self.select_subregion.placeholder = 'Choisis une sous région'
