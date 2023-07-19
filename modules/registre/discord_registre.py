@@ -45,22 +45,27 @@ async def register_prolong(interaction: discord.Interaction, member: discord.Mem
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
     csv_reader = csv.reader(register_file, delimiter=';')
+    recruit_id, recruit_timer = '', ''
     for row in csv_reader:
         if int(row[0]) != int(member.id):
             updated_recruit_list.append(row)
         else:
             updated_recruit_list.append([row[0], int(time.time()) + 1209600])
+            recruit_id = row[0]
+            recruit_timer = int(time.time()) + 1209600
     register_file.close()
     with open(generate_path(interaction.guild.id, 'register.csv'), 'w') as register_file:
         csv_writer = csv.writer(register_file, delimiter=';')
         for row in updated_recruit_list:
             csv_writer.writerow(row)
+    await interaction.response.send_message(f"> Periode d'essai de <@{recruit_id}> prolongée, passage potentiel en soldat dans <t:{recruit_timer}:R>")
+
 
 
 
 @oisol.tree.command(name='register_add')
 async def register_add(interaction: discord.Interaction, member: discord.Member, timer: str = '0'):
-    recruit_id, recruit_timer = member.id, int(time.time()) + 1209600 if timer == '0' else int(timer[3:-1]) + 1209600
+    recruit_id, recruit_timer = member.id, int(time.time()) + 1209600 if timer == '0' else int(timer) + 1209600
     try:
         register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'a')
     except FileNotFoundError:
@@ -68,7 +73,7 @@ async def register_add(interaction: discord.Interaction, member: discord.Member,
     register_writer = csv.writer(register_file, delimiter=';')
     register_writer.writerow([recruit_id, recruit_timer])
     register_file.close()
-    await interaction.response.send_message(f"> <@{recruit_id}> a vu sa période d'essai prolongée, passage potentiel en soldat dans <t:{recruit_timer}:R>")
+    await interaction.response.send_message(f'> <@{recruit_id}> a été ajouté au registre, passage potentiel en soldat dans <t:{recruit_timer}:R>')
 
 
 @oisol.tree.command(name='register_promote')
