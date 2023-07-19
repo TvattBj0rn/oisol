@@ -5,6 +5,7 @@ from modules.stockpile_viewer import CreateStockpileInterface, ViewAllStockpiles
 from main import bot as oisol
 from modules.utils.path import generate_path
 
+
 @oisol.tree.command(name='stockpile_init')
 async def stockpile_init(interaction: discord.Interaction):
     os.makedirs(generate_path(interaction.guild.id, ''), exist_ok=True)

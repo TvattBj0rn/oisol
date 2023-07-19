@@ -6,6 +6,7 @@ from main import bot as oisol
 from modules.stockpile_viewer import csv_handler
 from modules.utils.path import generate_path
 
+
 @oisol.tree.command(name='register_display')
 async def register_display(interaction: discord.Interaction):
     await interaction.response.defer()

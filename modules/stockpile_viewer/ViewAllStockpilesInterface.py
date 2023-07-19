@@ -3,6 +3,7 @@ from modules.stockpile_viewer import csv_handler
 from modules.utils import foxhole_types, locations
 from modules.utils.path import generate_path
 
+
 class ViewAllStockpilesInterface(discord.ui.View):
     def __init__(self, interaction: discord.Interaction):
         super().__init__()
