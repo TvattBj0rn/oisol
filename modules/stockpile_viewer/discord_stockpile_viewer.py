@@ -10,7 +10,7 @@ async def stockpile_init(interaction: discord.Interaction):
     os.makedirs(f'{PATH}/data/{interaction.guild.id}', exist_ok=True)
     try:
         csv_handler.csv_try_create_file(f'{PATH}/data/{interaction.guild.id}/stockpiles.csv', ['region', 'subregion', 'code', 'name', 'type'])
-        with open(f'data/{interaction.guild.id}/message_id.txt', 'x') as file:
+        with open(f'{PATH}/data/{interaction.guild.id}/message_id.txt', 'x') as file:
             pass
     except FileExistsError:
         pass
