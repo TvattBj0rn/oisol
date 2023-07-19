@@ -1,13 +1,13 @@
 import discord
 from modules.stockpile_viewer import csv_handler
 from modules.utils import foxhole_types, locations
-from modules.utils.path import PATH
+from modules.utils.path import generate_path
 
 class ViewAllStockpilesInterface(discord.ui.View):
     def __init__(self, interaction: discord.Interaction):
         super().__init__()
-        self.file_path = f'{PATH}/data/{interaction.guild.id}/stockpiles.csv'
-        self.file_path_msg = f'{PATH}/data/{interaction.guild.id}/message_id.txt'
+        self.file_path = generate_path(interaction.guild.id, 'stockpiles.csv')
+        self.file_path_msg = generate_path(interaction.guild.id, 'message_id.txt')
         self.timeout = None
         self.embed = None
         self.generateEmbed(self.file_path)

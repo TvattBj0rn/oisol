@@ -1,8 +1,10 @@
 import discord
 import csv
+import os
 import time
 from main import bot as oisol
-from modules.utils.path import PATH
+from modules.stockpile_viewer import csv_handler
+from modules.utils.path import generate_path
 
 @oisol.tree.command(name='register_display')
 async def register_display(interaction: discord.Interaction):
@@ -13,7 +15,7 @@ async def register_display(interaction: discord.Interaction):
         color=0x477DA9
     )
     try:
-        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'r')
+        register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'r')
     except FileNotFoundError:
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
@@ -24,13 +26,24 @@ async def register_display(interaction: discord.Interaction):
     await interaction.followup.send(embed=register_embed)
 
 
+@oisol.tree.command(name='register_init')
+async def register_init(interaction: discord.Interaction):
+    os.makedirs(generate_path(interaction.guild.id, ''), exist_ok=True)
+    try:
+        csv_handler.csv_try_create_file(generate_path(interaction.guild.id, 'register.csv'), ['region', 'subregion', 'code', 'name', 'type'])
+    except FileExistsError:
+        pass
+    await interaction.response.send_message(f'> Tout a bien pu être initialisé !', ephemeral=True)
+
+
+
 @oisol.tree.command(name='register_add')
 async def register_add(interaction: discord.Interaction, member: discord.Member, timer: str = '0'):
     recruit_id, recruit_timer = member.id, int(time.time()) + 604800 if timer == '0' else int(timer[3:-1]) + 604800
     try:
-        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'a')
+        register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'a')
     except FileNotFoundError:
-        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'w')
+        register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'w')
     register_writer = csv.writer(register_file, delimiter=';')
     register_writer.writerow([recruit_id, recruit_timer])
     register_file.close()
@@ -41,7 +54,7 @@ async def register_add(interaction: discord.Interaction, member: discord.Member,
 async def register_promote(interaction: discord.Interaction, member: discord.Member):
     updated_recruit_list = []
     try:
-        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'r')
+        register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'r')
     except FileNotFoundError:
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
@@ -50,7 +63,7 @@ async def register_promote(interaction: discord.Interaction, member: discord.Mem
         if int(row[0]) != int(member.id):
             updated_recruit_list.append(row)
     register_file.close()
-    with open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'w') as register_file:
+    with open(generate_path(interaction.guild.id, 'register.csv'), 'w') as register_file:
         csv_writer = csv.writer(register_file, delimiter=';')
         for row in updated_recruit_list:
             csv_writer.writerow(row)

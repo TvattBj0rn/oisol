@@ -3,14 +3,14 @@ import discord
 from discord.ext import commands
 from modules.stockpile_viewer import CreateStockpileInterface, ViewAllStockpilesInterface, csv_handler
 from main import bot as oisol
-from modules.utils.path import PATH
+from modules.utils.path import generate_path
 
 @oisol.tree.command(name='stockpile_init')
 async def stockpile_init(interaction: discord.Interaction):
-    os.makedirs(f'{PATH}/data/{interaction.guild.id}', exist_ok=True)
+    os.makedirs(generate_path(interaction.guild.id, ''), exist_ok=True)
     try:
-        csv_handler.csv_try_create_file(f'{PATH}/data/{interaction.guild.id}/stockpiles.csv', ['region', 'subregion', 'code', 'name', 'type'])
-        with open(f'{PATH}/data/{interaction.guild.id}/message_id.txt', 'x') as file:
+        csv_handler.csv_try_create_file(generate_path(interaction.guild.id, 'stockpiles.csv'), ['region', 'subregion', 'code', 'name', 'type'])
+        with open(generate_path(interaction.guild.id, 'message_id.txt'), 'x') as file:
             pass
     except FileExistsError:
         pass
@@ -46,7 +46,7 @@ async def stockpile_delete(interaction: discord.Interaction, stockpile_code: str
         await interaction.response.send_message('> Il manque un paramètre à la commande: `/delete_stockpile stockpile_code`', ephemeral=True)
         return
     await interaction.response.defer(ephemeral=True)
-    csv_handler.csv_delete_data(f'data/{interaction.guild.id}/stockpiles.csv', stockpile_code)
+    csv_handler.csv_delete_data(generate_path(interaction.guild.id, 'stockpiles.csv'), stockpile_code)
     await interaction.followup.send(f'> Le stockpile (code: {stockpile_code}) a bien été supprimé', ephemeral=True)
 
 async def setup(bot):
