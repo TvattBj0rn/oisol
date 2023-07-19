@@ -36,11 +36,31 @@ async def register_init(interaction: discord.Interaction):
         pass
     await interaction.response.send_message(f'> Tout a bien pu être initialisé !', ephemeral=True)
 
+@oisol.tree.command(name='register_prolong')
+async def register_prolong(interaction: discord.Interaction, member: discord.Member):
+    updated_recruit_list = []
+    try:
+        register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'r')
+    except FileNotFoundError:
+        await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
+        return
+    csv_reader = csv.reader(register_file, delimiter=';')
+    for row in csv_reader:
+        if int(row[0]) != int(member.id):
+            updated_recruit_list.append(row)
+        else:
+            updated_recruit_list.append([row[0], int(time.time()) + 1209600])
+    register_file.close()
+    with open(generate_path(interaction.guild.id, 'register.csv'), 'w') as register_file:
+        csv_writer = csv.writer(register_file, delimiter=';')
+        for row in updated_recruit_list:
+            csv_writer.writerow(row)
+
 
 
 @oisol.tree.command(name='register_add')
 async def register_add(interaction: discord.Interaction, member: discord.Member, timer: str = '0'):
-    recruit_id, recruit_timer = member.id, int(time.time()) + 604800 if timer == '0' else int(timer[3:-1]) + 604800
+    recruit_id, recruit_timer = member.id, int(time.time()) + 1209600 if timer == '0' else int(timer[3:-1]) + 1209600
     try:
         register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'a')
     except FileNotFoundError:
@@ -48,11 +68,11 @@ async def register_add(interaction: discord.Interaction, member: discord.Member,
     register_writer = csv.writer(register_file, delimiter=';')
     register_writer.writerow([recruit_id, recruit_timer])
     register_file.close()
-    await interaction.response.send_message(f'> <@{recruit_id}> a été ajouté au registre, passage potentiel en soldat dans <t:{recruit_timer}:R>')
+    await interaction.response.send_message(f"> <@{recruit_id}> a vu sa période d'essai prolongée, passage potentiel en soldat dans <t:{recruit_timer}:R>")
 
 
 @oisol.tree.command(name='register_promote')
-async def register_promote(interaction: discord.Interaction, member: discord.Member):
+async def register_promote(interaction: discord.Interaction, member: discord.Member, is_promoted: bool):
     updated_recruit_list = []
     try:
         register_file = open(generate_path(interaction.guild.id, 'register.csv'), 'r')
@@ -68,9 +88,14 @@ async def register_promote(interaction: discord.Interaction, member: discord.Mem
         csv_writer = csv.writer(register_file, delimiter=';')
         for row in updated_recruit_list:
             csv_writer.writerow(row)
-    await interaction.response.send_message(f'> <@{member.id}> a été promu !')
+    if is_promoted:
+        await interaction.response.send_message(f'> <@{member.id}> a été promu !')
+    else:
+        await interaction.response.send_message(f'> <@{member.id}> a été retiré du registre')
 
 async def setup(bot):
     bot.tree.add_command(register_display)
+    bot.tree.add_command(register_init)
     bot.tree.add_command(register_add)
     bot.tree.add_command(register_promote)
+    bot.tree.add_command(register_prolong)
