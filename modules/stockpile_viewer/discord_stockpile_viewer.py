@@ -3,13 +3,13 @@ import discord
 from discord.ext import commands
 from modules.stockpile_viewer import CreateStockpileInterface, ViewAllStockpilesInterface, csv_handler
 from main import bot as oisol
-
+from modules.utils.path import PATH
 
 @oisol.tree.command(name='stockpile_init')
 async def stockpile_init(interaction: discord.Interaction):
-    os.makedirs(f'data/{interaction.guild.id}', exist_ok=True)
+    os.makedirs(f'{PATH}/data/{interaction.guild.id}', exist_ok=True)
     try:
-        csv_handler.csv_try_create_file(f'data/{interaction.guild.id}/stockpiles.csv', ['region', 'subregion', 'code', 'name', 'type'])
+        csv_handler.csv_try_create_file(f'{PATH}/data/{interaction.guild.id}/stockpiles.csv', ['region', 'subregion', 'code', 'name', 'type'])
         with open(f'data/{interaction.guild.id}/message_id.txt', 'x') as file:
             pass
     except FileExistsError:

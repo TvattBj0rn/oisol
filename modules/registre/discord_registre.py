@@ -2,6 +2,7 @@ import discord
 import csv
 import time
 from main import bot as oisol
+from modules.utils.path import PATH
 
 @oisol.tree.command(name='register_display')
 async def register_display(interaction: discord.Interaction):
@@ -12,7 +13,7 @@ async def register_display(interaction: discord.Interaction):
         color=0x477DA9
     )
     try:
-        register_file = open(f'data/{interaction.guild.id}/register.csv', 'r')
+        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'r')
     except FileNotFoundError:
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
@@ -27,9 +28,9 @@ async def register_display(interaction: discord.Interaction):
 async def register_add(interaction: discord.Interaction, member: discord.Member, timer: str = '0'):
     recruit_id, recruit_timer = member.id, int(time.time()) + 604800 if timer == '0' else int(timer[3:-1]) + 604800
     try:
-        register_file = open(f'data/{interaction.guild.id}/register.csv', 'a')
+        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'a')
     except FileNotFoundError:
-        register_file = open(f'data/{interaction.guild.id}/register.csv', 'w')
+        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'w')
     register_writer = csv.writer(register_file, delimiter=';')
     register_writer.writerow([recruit_id, recruit_timer])
     register_file.close()
@@ -40,7 +41,7 @@ async def register_add(interaction: discord.Interaction, member: discord.Member,
 async def register_promote(interaction: discord.Interaction, member: discord.Member):
     updated_recruit_list = []
     try:
-        register_file = open(f'data/{interaction.guild.id}/register.csv', 'r')
+        register_file = open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'r')
     except FileNotFoundError:
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
@@ -49,7 +50,7 @@ async def register_promote(interaction: discord.Interaction, member: discord.Mem
         if int(row[0]) != int(member.id):
             updated_recruit_list.append(row)
     register_file.close()
-    with open('register.csv', 'w') as register_file:
+    with open(f'{PATH}/data/{interaction.guild.id}/register.csv', 'w') as register_file:
         csv_writer = csv.writer(register_file, delimiter=';')
         for row in updated_recruit_list:
             csv_writer.writerow(row)

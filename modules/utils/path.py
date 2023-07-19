@@ -1,0 +1,1 @@
+PATH = '/var/lib/docker/volumes/oisol_data/_data'

@@ -2,6 +2,7 @@ import discord
 from discord.ui import Select
 from modules.utils.locations import REGIONS_STOCKPILES
 from modules.stockpile_viewer import csv_handler
+from modules.utils.path import PATH
 
 
 class CreateStockpileInterface(discord.ui.View):
@@ -76,7 +77,7 @@ class CreateStockpileInterface(discord.ui.View):
             'name': self.stockpile_name,
             'type': self.stockpile_type
         }
-        file_path = f'data/{interaction.guild.id}/stockpiles.csv'
+        file_path = f'{PATH}/data/{interaction.guild.id}/stockpiles.csv'
         csv_handler.csv_try_create_file(file_path, ['region', 'subregion', 'code', 'name', 'type'])
         csv_handler.csv_append_data(file_path, stockpile)
         await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) at {self.stockpile_region} | {self.stockpile_subregion} was created', ephemeral=True)
