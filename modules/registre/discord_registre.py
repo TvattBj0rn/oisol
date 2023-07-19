@@ -21,6 +21,7 @@ async def register_display(interaction: discord.Interaction):
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
     csv_reader = csv.reader(register_file, delimiter=';')
+    next(csv_reader, None)
     for row in csv_reader:
         register_embed.add_field(name='', value=f'<@{row[0]}> **|** <t:{row[1]}:R>', inline=False)
     register_file.close()
@@ -31,7 +32,7 @@ async def register_display(interaction: discord.Interaction):
 async def register_init(interaction: discord.Interaction):
     os.makedirs(generate_path(interaction.guild.id, ''), exist_ok=True)
     try:
-        csv_handler.csv_try_create_file(generate_path(interaction.guild.id, 'register.csv'), ['region', 'subregion', 'code', 'name', 'type'])
+        csv_handler.csv_try_create_file(generate_path(interaction.guild.id, 'register.csv'), ['member', 'timer'])
     except FileExistsError:
         pass
     await interaction.response.send_message(f'> Tout a bien pu être initialisé !', ephemeral=True)
@@ -45,6 +46,7 @@ async def register_prolong(interaction: discord.Interaction, member: discord.Mem
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
     csv_reader = csv.reader(register_file, delimiter=';')
+    next(csv_reader, None)
     recruit_id, recruit_timer = '', ''
     for row in csv_reader:
         if int(row[0]) != int(member.id):
@@ -85,6 +87,7 @@ async def register_promote(interaction: discord.Interaction, member: discord.Mem
         await interaction.followup.send('> Aucune recrue dans le registre actuellement !')
         return
     csv_reader = csv.reader(register_file, delimiter=';')
+    next(csv_reader, None)
     for row in csv_reader:
         if int(row[0]) != int(member.id):
             updated_recruit_list.append(row)
