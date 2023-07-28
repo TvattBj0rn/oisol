@@ -29,13 +29,14 @@ def csv_delete_data(file_path: str, key_to_del):
                 row_list.append(row)
     with open(file_path, 'w') as csv_file:
         writer = csv.writer(csv_file, delimiter=';')
-        default_keys = ['region', 'subregion', 'code', 'name', 'type']
-        for key in default_keys:
-            writer.writerow(key)
         for row in row_list:
             writer.writerow(row)
 
 def csv_append_data(file_path: str, data_to_be_appended: dict):
+    if os.stat(file_path).st_size == 0:
+        with open(file_path, 'w') as csv_file:
+            writer = csv.writer(csv_file, delimiter=';')
+            writer.writerow(['region', 'subregion', 'code', 'name', 'type'])
     with open(file_path, 'a') as csv_file:
         writer = csv.writer(csv_file, delimiter=';')
         writer.writerow([data_to_be_appended['region'], data_to_be_appended['subregion'], data_to_be_appended['code'], data_to_be_appended['name'], data_to_be_appended['type']])
