@@ -30,7 +30,7 @@ def csv_delete_data(file_path: str, key_to_del):
     with open(file_path, 'w') as csv_file:
         writer = csv.writer(csv_file, delimiter=';')
         default_keys = ['region', 'subregion', 'code', 'name', 'type']
-        for key in row_list:
+        for key in default_keys:
             writer.writerow(key)
         for row in row_list:
             writer.writerow(row)

@@ -46,7 +46,7 @@ class ViewAllStockpilesInterface(discord.ui.View):
             sorted_subregion_list = list(sorted_stockpile_list[region].keys())
             sorted_subregion_list.sort()
             embed.add_field(
-                name=f'{region}',
+                name=f'{foxhole_types.StockpileTypes.REGION.value} **|** {region.upper()}',
                 value='',
                 inline=False
             )
