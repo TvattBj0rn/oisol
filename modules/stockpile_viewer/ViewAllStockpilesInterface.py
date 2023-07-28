@@ -38,7 +38,7 @@ class ViewAllStockpilesInterface(discord.ui.View):
         sorted_region_list.sort()
 
         embed = discord.Embed(
-            title='Stockpiles FCF',
+            title=f'Stockpiles FCF | {foxhole_types.StockpileTypes.REGION.value}',
             description='Liste des stockpiles FCF actuels',
             color=foxhole_types.FACTION_COLORS['Warden']
         )
@@ -46,7 +46,7 @@ class ViewAllStockpilesInterface(discord.ui.View):
             sorted_subregion_list = list(sorted_stockpile_list[region].keys())
             sorted_subregion_list.sort()
             embed.add_field(
-                name=f'{foxhole_types.StockpileTypes.REGION.value} **|** # {region}',
+                name=f'{region.upper()}',
                 value='',
                 inline=False
             )
