@@ -27,6 +27,7 @@ def csv_delete_data(file_path: str, key_to_del):
         for row in reader:
             if not row[2] == key_to_del:
                 row_list.append(row)
+    print(row_list)
     with open(file_path, 'w') as csv_file:
         writer = csv.writer(csv_file, delimiter=';')
         for row in row_list:
