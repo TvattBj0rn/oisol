@@ -5,14 +5,12 @@ import discord
 import discord.utils
 import requests
 from discord.ext import commands, tasks
-from modules.utils.path import get_root_path
-from modules.utils.locations import REGIONS_NAMES_API
 
 
 class APILector(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # self.get_war_status.start()
+        self.get_war_status.start()
         self.get_war_stats_report.start()
 
 
@@ -88,7 +86,7 @@ class APILector(commands.Cog):
 async def send_data_to_discord(embed: discord.Embed, bot: commands.Bot, message_id: str, images: [discord.File]):
     for server in bot.guilds:
         for channel in server.channels:
-            if channel.name == 'war-api-viewer':
+            if channel.name == '⚔－war-api-viewer':
                 async for message in channel.history():
                     if not message.embeds:
                         continue
