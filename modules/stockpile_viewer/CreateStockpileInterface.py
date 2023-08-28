@@ -80,7 +80,7 @@ class CreateStockpileInterface(discord.ui.View):
             'type': self.stockpile_type
         }
         file_path = generate_path(interaction.guild.id, 'stockpiles.csv')
-        csv_handler.csv_try_create_file(file_path, ['region', 'subregion', 'code', 'name', 'type'])
+        csv_handler.csv_try_create_file(file_path)
         csv_handler.csv_append_data(file_path, stockpile)
         await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) à {self.stockpile_region_name} | {self.stockpile_subregion_name} a été crée sans problèmes', ephemeral=True)
 

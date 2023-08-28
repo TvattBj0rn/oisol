@@ -10,7 +10,7 @@ from modules.utils.path import generate_path
 async def stockpile_init(interaction: discord.Interaction):
     os.makedirs(generate_path(interaction.guild.id, ''), exist_ok=True)
     try:
-        csv_handler.csv_try_create_file(generate_path(interaction.guild.id, 'stockpiles.csv'), ['region', 'subregion', 'code', 'name', 'type'])
+        csv_handler.csv_try_create_file(generate_path(interaction.guild.id, 'stockpiles.csv'))
         with open(generate_path(interaction.guild.id, 'message_id.txt'), 'x') as file:
             pass
     except FileExistsError:
