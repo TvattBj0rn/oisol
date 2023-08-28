@@ -1,5 +1,5 @@
 
-# WardB0t
+# OISOL
 
 Companion bot for the FCF foxhole regiment ! 
 
