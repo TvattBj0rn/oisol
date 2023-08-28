@@ -8,26 +8,28 @@ from modules.utils.path import generate_path
 class CreateStockpileInterface(discord.ui.View):
     def __init__(self, code: str, name: str):
         super().__init__()
-        self.stockpile_region = ''
-        self.stockpile_subregion = ''
+        self.stockpile_region_name = ''
+        self.stockpile_subregion_name = ''
         self.stockpile_name = name
         self.stockpile_code = code
         self.stockpile_type = ''
+
+        # Default state of the menu
         self.select_first_letter = Select(
-            placeholder="Par quelle lettre commence la région ?",
+            placeholder="Première lettre de la région",
             options=[
                 discord.SelectOption(label='A-M'),
                 discord.SelectOption(label='M-W')
             ]
         )
         self.select_region = Select(
-            placeholder='Choisis une région',
-            options=[discord.SelectOption(label='')],
+            placeholder='Nom de la région',
+            options=[discord.SelectOption(label='placeholder')],
             disabled=True
         )
         self.select_subregion = Select(
-            placeholder='Choisis une sous région',
-            options=[discord.SelectOption(label='')],
+            placeholder='Nom de la sous-région',
+            options=[discord.SelectOption(label='placeholder')],
             disabled=True
         )
         self.select_first_letter.callback = self.callback_letter
@@ -41,7 +43,7 @@ class CreateStockpileInterface(discord.ui.View):
         self.reset_subregion()
         self.select_first_letter.placeholder = self.select_first_letter.values[0]
         self.select_region.disabled = False
-        self.select_region.placeholder = 'Choisis une région'
+        self.select_region.placeholder = 'Nom de la région'
         if self.select_first_letter.values[0] == 'A-M':
             self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[:18])]
         else:
@@ -59,20 +61,20 @@ class CreateStockpileInterface(discord.ui.View):
         for stockpile in REGIONS_STOCKPILES[self.select_region.values[0]]:
             if stockpile[0] == self.select_subregion.values[0]:
                 self.stockpile_type = 'Seaport' if stockpile[1] == '<:seaport:1077298856196313158>' else 'Storage Depot'
-        self.stockpile_region = self.select_region.values[0]
-        self.stockpile_subregion = self.select_subregion.values[0]
+        self.stockpile_region_name = self.select_region.values[0]
+        self.stockpile_subregion_name = self.select_subregion.values[0]
         self.select_subregion.placeholder = self.select_subregion.values[0]
         self.send_button.style = discord.ButtonStyle.green
         self.send_button.disabled = False
         await interaction.response.edit_message(view=self)
 
 
-    @discord.ui.button(label='Create Stockpile', style=discord.ButtonStyle.grey, disabled=True, row=4)
+    @discord.ui.button(label='Créer le stock', style=discord.ButtonStyle.grey, disabled=True, row=4)
     async def send_button(self, interaction: discord.Interaction, button: discord.Button):
         self.stop()
         stockpile = {
-            'region': self.stockpile_region,
-            'subregion': self.stockpile_subregion,
+            'region': self.stockpile_region_name,
+            'subregion': self.stockpile_subregion_name,
             'code': self.stockpile_code,
             'name': self.stockpile_name,
             'type': self.stockpile_type
@@ -80,10 +82,10 @@ class CreateStockpileInterface(discord.ui.View):
         file_path = generate_path(interaction.guild.id, 'stockpiles.csv')
         csv_handler.csv_try_create_file(file_path, ['region', 'subregion', 'code', 'name', 'type'])
         csv_handler.csv_append_data(file_path, stockpile)
-        await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) at {self.stockpile_region} | {self.stockpile_subregion} was created', ephemeral=True)
+        await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) à {self.stockpile_region_name} | {self.stockpile_subregion_name} a été crée sans problèmes', ephemeral=True)
 
     def reset_subregion(self):
-        self.select_subregion.placeholder = 'Choisis une sous région'
+        self.select_subregion.placeholder = 'Nom de la sous-région'
         self.select_subregion.disabled = True
         self.send_button.style = discord.ButtonStyle.grey
         self.send_button.disabled = True
