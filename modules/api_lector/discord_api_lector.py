@@ -16,7 +16,7 @@ class APILector(commands.Cog):
         self.get_war_stats_report.start()
 
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(hours=1)
     async def get_war_stats_report(self):
         response = requests.get('https://war-service-live.foxholeservices.com/api/worldconquest/maps')
         enlistments_total = 0
@@ -49,7 +49,7 @@ class APILector(commands.Cog):
         await send_data_to_discord(embed=war_stats_embed, bot=self.bot, message_id=message_id, images=[])
 
 
-    @tasks.loop(minutes=30)
+    @tasks.loop(minutes=5)
     async def get_war_status(self):
         response = requests.get('https://war-service-live.foxholeservices.com/api/worldconquest/war')
         if response.status_code != 200:
