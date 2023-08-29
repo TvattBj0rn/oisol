@@ -1,6 +1,4 @@
-import os
 import sys
-
 import discord
 import discord.utils
 import requests
@@ -30,7 +28,7 @@ class APILector(commands.Cog):
         war_stats_embed = discord.Embed(title='Statistiques')
         war_stats_embed.set_footer(text=message_id)
         war_stats_embed.add_field(
-            name=f'<:soldiersupplies:1077742140211343371> **|** Enrôlements (Wardens/Colonials): {enlistments_total}',
+            name=f"<:soldiersupplies:1077742140211343371> **|** Enrôlements d'aujourd'hui (Wardens/Colonials): {enlistments_total}",
             value='',
             inline=False
         )
