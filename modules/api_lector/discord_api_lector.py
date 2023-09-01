@@ -25,21 +25,17 @@ class APILector(commands.Cog):
             enlistments_total += response.json()['totalEnlistments']
             warden_casualties += response.json()['wardenCasualties']
             colonial_casualties += response.json()['colonialCasualties']
+        day_of_war = response.json()['dayOfWar']
         war_stats_embed = discord.Embed(title='Statistiques')
         war_stats_embed.set_footer(text=message_id)
         war_stats_embed.add_field(
-            name=f"<:soldiersupplies:1077742140211343371> **|** Enrôlements d'aujourd'hui (Wardens/Colonials): {enlistments_total}",
-            value='',
+            name=f'Jour {day_of_war}',
+            value=f"<:soldiersupplies:1077742140211343371> **|** Enrôlements: {enlistments_total:,}".replace(',', ' '),
             inline=False
         )
         war_stats_embed.add_field(
-            name=f'<:warden_emblem:1145860117032603719> **|** Pertes Warden: {warden_casualties}',
-            value='',
-            inline=False
-        )
-        war_stats_embed.add_field(
-            name=f'<:colonial_emblem:1145860105515040859> **|** Pertes Coloniales: {colonial_casualties}',
-            value='',
+            name='Pertes Totales',
+            value=f'<:warden_emblem:1145860117032603719> **|** Wardens: {warden_casualties:,}\n<:colonial_emblem:1145860105515040859> **|** Colonials: {colonial_casualties:,}'.replace(',', ' '),
             inline=False
         )
         await send_data_to_discord(embed=war_stats_embed, bot=self.bot, message_id=message_id, images=[])
@@ -64,7 +60,7 @@ class APILector(commands.Cog):
         if war_data['winner'] == 'NONE':
             war_status_embed.add_field(
                 name='Début de Guerre',
-                value=f"<t:{int(war_data['conquestStartTime'] / 1000)}:d> **|** <t:{int(war_data['conquestStartTime'] / 1000)}:R>"
+                value=f"<t:{int(war_data['conquestStartTime'] / 1000)}:F> **|** <t:{int(war_data['conquestStartTime'] / 1000)}:R>"
             )
         else:
             war_status_embed.add_field(
