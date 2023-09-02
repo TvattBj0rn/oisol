@@ -11,6 +11,9 @@ class APILector(commands.Cog):
         self.get_war_status.start()
         self.get_war_stats_report.start()
 
+    def cog_unload(self) -> None:
+        self.get_war_stats_report.cancel()
+        self.get_war_status.cancel()
 
     @tasks.loop(hours=1)
     async def get_war_stats_report(self):
@@ -89,4 +92,3 @@ async def send_data_to_discord(embed: discord.Embed, bot: commands.Bot, message_
                         await message.edit(embed=embed, attachments=images)
                         return
                 await channel.send(embed=embed, files=images)
-
