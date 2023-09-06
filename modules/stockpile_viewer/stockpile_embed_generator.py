@@ -1,11 +1,12 @@
 import discord
 from modules.stockpile_viewer import csv_handler
-from modules.utils.path import generate_path
-from modules.utils import foxhole_types, locations
+from modules.utils.path import generate_path, DataFilesPath
+from modules.utils import foxhole_types, locations, embeds_ids
 
 
+## Split in several function instead of one big function of ~40 lines
 def generate_view_stockpile_embed(interaction: discord.Interaction) -> discord.Embed:
-    data_file_path = generate_path(interaction.guild.id, 'stockpiles.csv')
+    data_file_path = generate_path(interaction.guild.id, DataFilesPath.STOCKPILES.value)
     stockpile_list = csv_handler.csv_get_all_data(data_file_path)
     sorted_stockpile_list = dict()
 
@@ -26,7 +27,7 @@ def generate_view_stockpile_embed(interaction: discord.Interaction) -> discord.E
         description='Liste de nos stockpiles actuels',
         color=foxhole_types.FACTION_COLORS['Warden']
     )
-    embed.set_footer(text='Stockpiles Viewer')
+    embed.set_footer(text=embeds_ids.EmbedIds.STOCKPILES_VIEW.value)
     for region in sorted_region_list:
         sorted_subregion_list = list(sorted_stockpile_list[region].keys())
         sorted_subregion_list.sort()

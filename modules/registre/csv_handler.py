@@ -1,7 +1,7 @@
 import csv
 import os
 
-CSV_FILE_KEYS = ['region', 'subregion', 'code', 'name', 'type']
+CSV_FILE_KEYS = ['member', 'timer']
 
 def csv_try_create_file(file_path: str):
     splited_path = os.path.split(file_path)
@@ -41,7 +41,7 @@ def csv_append_data(file_path: str, data_to_be_appended: dict):
             writer.writerow(CSV_FILE_KEYS)
     with open(file_path, 'a') as csv_file:
         writer = csv.writer(csv_file, delimiter=';')
-        writer.writerow([data_to_be_appended['region'], data_to_be_appended['subregion'], data_to_be_appended['code'], data_to_be_appended['name'], data_to_be_appended['type']])
+        writer.writerow([data_to_be_appended['member'], data_to_be_appended['timer']])
 
 
 def csv_get_all_data(file_path: str) -> [dict]:
@@ -52,11 +52,8 @@ def csv_get_all_data(file_path: str) -> [dict]:
         for row in reader:
             dict_list.append(
                 {
-                    'region': row[0],
-                    'subregion': row[1],
-                    'code': row[2],
-                    'name': row[3],
-                    'type': row[4]
+                    'member': row[0],
+                    'timer': row[1],
                 }
             )
 

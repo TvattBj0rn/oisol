@@ -2,7 +2,6 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from modules.api_lector import discord_api_lector
 
 
 # Bot settings
@@ -28,7 +27,6 @@ async def on_ready():
         print(e)
 
     print(f'Logged in as {bot.user} (ID:{bot.user.id})')
-    discord_api_lector.APILector(bot)
 
 
 if __name__ == '__main__':
