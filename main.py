@@ -18,8 +18,8 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-    await bot.load_extension('modules.registre.discord_registre')
-    await bot.load_extension('modules.stockpile_viewer.discord_stockpile_viewer')
+    await bot.load_extension('modules.registre.entrypoint_registre')
+    await bot.load_extension('modules.stockpile_viewer.entrypoint_stockpile_viewer')
     try:
         synced = await bot.tree.sync()
         print(f'Synced {len(synced)} command(s)')
