@@ -1,7 +1,11 @@
-import os
 import discord
+import os
 from discord.ext import commands
 from dotenv import load_dotenv
+from modules.registre.entrypoint_registre import ModuleRegister
+from modules.config.entrypoint_config import ModuleConfig
+from modules.stockpile_viewer.entrypoint_stockpile_viewer import ModuleStockpiles
+
 
 
 # Bot settings
@@ -18,8 +22,9 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-    await bot.load_extension('modules.registre.entrypoint_registre')
-    await bot.load_extension('modules.stockpile_viewer.entrypoint_stockpile_viewer')
+    await bot.add_cog(ModuleStockpiles(bot))
+    await bot.add_cog(ModuleRegister(bot))
+    await bot.add_cog(ModuleConfig(bot))
     try:
         synced = await bot.tree.sync()
         print(f'Synced {len(synced)} command(s)')
