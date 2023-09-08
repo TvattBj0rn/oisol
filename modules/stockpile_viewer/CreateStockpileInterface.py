@@ -1,19 +1,20 @@
 import discord
 from discord.ui import Select
 from modules.utils.locations import REGIONS_STOCKPILES
-from modules.stockpile_viewer import csv_handler, stockpile_embed_generator, discord_data_transmission
+from modules.stockpile_viewer import CsvHandlerStockpiles, stockpile_embed_generator, discord_data_transmission
 from modules.utils.path import generate_path, DataFilesPath
 from modules.utils.embeds_ids import EmbedIds
 
 
 class CreateStockpileInterface(discord.ui.View):
-    def __init__(self, code: str, name: str):
+    def __init__(self, code: str, name: str, csv_keys: list):
         super().__init__()
         self.stockpile_region_name = ''
         self.stockpile_subregion_name = ''
         self.stockpile_name = name
         self.stockpile_code = code
         self.stockpile_type = ''
+        self.csv_keys = csv_keys
 
         # Default state of the menu
         self.select_first_letter = Select(
@@ -69,7 +70,6 @@ class CreateStockpileInterface(discord.ui.View):
         self.send_button.disabled = False
         await interaction.response.edit_message(view=self)
 
-
     @discord.ui.button(label='Créer le stock', style=discord.ButtonStyle.grey, disabled=True, row=4)
     async def send_button(self, interaction: discord.Interaction, button: discord.Button):
         self.stop()
@@ -81,8 +81,9 @@ class CreateStockpileInterface(discord.ui.View):
             'type': self.stockpile_type
         }
         file_path = generate_path(interaction.guild.id, DataFilesPath.STOCKPILES.value)
-        csv_handler.csv_try_create_file(file_path)
-        csv_handler.csv_append_data(file_path, stockpile)
+        CsvHandler = CsvHandlerStockpiles.CsvHandlerStockpiles(self.csv_keys)
+        CsvHandler.csv_try_create_file(file_path)
+        CsvHandler.csv_append_data(file_path, stockpile)
         stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction)
         await discord_data_transmission.send_data_to_discord(stockpiles_embed, interaction, EmbedIds.STOCKPILES_VIEW.value, [])
         await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) à {self.stockpile_region_name} | {self.stockpile_subregion_name} a été crée sans problèmes', ephemeral=True)
