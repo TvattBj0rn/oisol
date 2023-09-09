@@ -15,6 +15,7 @@ class TodolistInterface(discord.ui.View):
         self.embed_uuid = embed_uuid
         self.message = message
 
+        self.timeout = None
         self.data_dict = CsvHandlerTodolist(self.csv_keys).csv_get_all_data(generate_path(message.guild.id, f'todolists/{embed_uuid}.csv'))
         self.data_list = CsvHandlerTodolist(csv_keys).csv_get_all_data_unsorted(generate_path(message.guild.id, f'todolists/{embed_uuid}.csv'))
         self.buttons_list = [
