@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from modules.registre.entrypoint_registre import ModuleRegister
 from modules.config.entrypoint_config import ModuleConfig
 from modules.stockpile_viewer.entrypoint_stockpile_viewer import ModuleStockpiles
+from modules.todolist.entrypoint_todolist import ModuleTodolist
 
 
 
@@ -22,9 +23,11 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
+    await bot.add_cog(ModuleConfig(bot))
     await bot.add_cog(ModuleStockpiles(bot))
     await bot.add_cog(ModuleRegister(bot))
-    await bot.add_cog(ModuleConfig(bot))
+    await bot.add_cog(ModuleTodolist(bot))
+
     try:
         synced = await bot.tree.sync()
         print(f'Synced {len(synced)} command(s)')

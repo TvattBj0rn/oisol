@@ -17,5 +17,4 @@ def get_root_path() -> str:
 class DataFilesPath(Enum):
     REGISTER = 'register.csv'
     STOCKPILES = 'stockpiles.csv'
-    TODOLIST = 'todolist.csv'
     CONFIG = 'config.ini'
