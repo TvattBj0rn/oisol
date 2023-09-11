@@ -3,7 +3,7 @@ from discord.ui import Select
 from modules.utils.locations import REGIONS_STOCKPILES
 from modules.stockpile_viewer import CsvHandlerStockpiles, stockpile_embed_generator, discord_data_transmission
 from modules.utils.path import generate_path, DataFilesPath
-from modules.utils.embeds_ids import EmbedIds
+from modules.utils.EmbedFooterEnums import EmbedIds
 
 
 class CreateStockpileInterface(discord.ui.View):

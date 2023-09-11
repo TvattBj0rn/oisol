@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from modules.stockpile_viewer import CreateStockpileInterface, CsvHandlerStockpiles, discord_data_transmission, stockpile_embed_generator
-from modules.utils.embeds_ids import EmbedIds
+from modules.utils.EmbedFooterEnums import EmbedIds
 from modules.utils.path import DataFilesPath, generate_path
 
 
