@@ -17,7 +17,10 @@ class TodolistInterface(discord.ui.View):
 
         self.timeout = None
         self.data_dict = CsvHandlerTodolist(self.csv_keys).csv_get_all_data(generate_path(message.guild.id, f'todolists/{embed_uuid}.csv'))
-        self.data_list = CsvHandlerTodolist(csv_keys).csv_get_all_data_unsorted(generate_path(message.guild.id, f'todolists/{embed_uuid}.csv'))
+        self.data_list = []
+        for key in self.data_dict.keys():
+            for elem in self.data_dict[key]:
+                self.data_list.append([elem, key])
         self.buttons_list = [
             TodolistButtonA(self, self.embed_uuid, self.message_embed, self.data_list),
             TodolistButtonB(self, self.embed_uuid, self.message_embed, self.data_list),
@@ -52,7 +55,10 @@ class TodolistInterface(discord.ui.View):
     def resetInterface(self):
         self.clear_items()
         self.data_dict = CsvHandlerTodolist(self.csv_keys).csv_get_all_data(generate_path(self.message.guild.id, f'todolists/{self.embed_uuid}.csv'))
-        self.data_list = CsvHandlerTodolist(self.csv_keys).csv_get_all_data_unsorted(generate_path(self.message.guild.id, f'todolists/{self.embed_uuid}.csv'))
+        self.data_list = []
+        for key in self.data_dict.keys():
+            for elem in self.data_dict[key]:
+                self.data_list.append([elem, key])
         self.interface_embed = self.generateInterfaceEmbed()
         for index in range(len(self.data_list)):
             if index == 24:

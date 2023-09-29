@@ -29,16 +29,6 @@ class CsvHandlerTodolist(CsvHandler):
         return data_dict
 
 
-    def csv_get_all_data_unsorted(self, file_path: str) -> list:
-        csv_data_list = []
-        with open(file_path, 'r') as csv_file:
-            reader = csv.reader(csv_file, delimiter=';')
-            next(reader, None)
-            for row in reader:
-                csv_data_list.append(row)
-        return csv_data_list
-
-
     def csv_rewrite_file(self, file_path: str, data: list):
         with open(file_path, 'w') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
