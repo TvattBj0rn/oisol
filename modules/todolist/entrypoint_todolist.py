@@ -31,12 +31,14 @@ class ModuleTodolist(commands.Cog):
     @app_commands.command(name='todolist_add')
     async def todolist_add(self, interaction: discord.Interaction, embed_uuid: str, content: str, priority: PriorityType):
         await interaction.response.defer(ephemeral=True)
-        task_dict = {
-            'content': content,
-            'priority': priority.value
-        }
+        for task in content.split(sep=','):
+            task_dict = {
+                'content': task,
+                'priority': priority.value
+            }
+            CsvHandlerTodolist(self.csv_keys).csv_append_data(generate_path(interaction.guild.id, f'todolists/{embed_uuid}.csv'), task_dict)
 
-        CsvHandlerTodolist(self.csv_keys).csv_append_data(generate_path(interaction.guild.id, f'todolists/{embed_uuid}.csv'), task_dict)
+        # Find todolist message
         async for message in interaction.channel.history():
             if message.embeds:
                 message_embed = discord.Embed.to_dict(message.embeds[0])
