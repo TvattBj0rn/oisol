@@ -30,6 +30,7 @@ class ModuleTodolist(commands.Cog):
     
     @app_commands.command(name='todolist_add')
     async def todolist_add(self, interaction: discord.Interaction, embed_uuid: str, content: str, priority: PriorityType):
+        await interaction.response.defer(ephemeral=True)
         task_dict = {
             'content': content,
             'priority': priority.value
@@ -42,6 +43,6 @@ class ModuleTodolist(commands.Cog):
                 if 'footer' in message_embed.keys() and message_embed['footer']['text'] == embed_uuid:
                     todolist_view = TodolistInterface(message, message_embed, self.csv_keys, embed_uuid)
                     await message.edit(view=todolist_view, embed=todolist_view.generateInterfaceEmbed())
-                    await interaction.response.send_message('> La todolist a été mise à jour', ephemeral=True)
+                    await interaction.followup.send('> La todolist a été mise à jour')
                     return
-        await interaction.response.send_message('> Ce channel ne contient pas la todolist demandée', ephemeral=True)
+        await interaction.followup.send('> Ce channel ne contient pas la todolist demandée')
