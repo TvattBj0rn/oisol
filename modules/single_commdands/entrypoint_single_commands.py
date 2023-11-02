@@ -2,8 +2,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-def get_updated_nickname(member: discord.Member, member_roles: [discord.Role]) -> str:
-
 
 class ModuleSingleCommands(commands.Cog):
     def __init__(self, bot):
