@@ -14,7 +14,7 @@ class CsvHandlerRegister(CsvHandler):
                 writer.writerow(self.csv_file_keys)
         with open(file_path, 'a') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
-            writer.writerow([data_to_be_appended['member'], data_to_be_appended['timer']])
+            writer.writerow([data_to_be_appended[self.csv_file_keys[0]], data_to_be_appended[self.csv_file_keys[1]]])
 
     def csv_get_all_data(self, file_path: str) -> [dict]:
         dict_list = []
@@ -24,9 +24,15 @@ class CsvHandlerRegister(CsvHandler):
             for row in reader:
                 dict_list.append(
                     {
-                        'member': row[0],
-                        'timer': row[1],
+                        self.csv_file_keys[0]: row[0],
+                        self.csv_file_keys[1]: row[1],
                     }
                 )
-
         return dict_list
+
+    def csv_rewrite_file(self, file_path: str, data: list):
+        with open(file_path, 'w') as register_file:
+            csv_writer = csv.writer(register_file, delimiter=';')
+            csv_writer.writerow(self.csv_file_keys)
+            for row in data:
+                csv_writer.writerow(row)
