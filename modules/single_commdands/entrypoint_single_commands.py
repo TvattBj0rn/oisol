@@ -12,22 +12,25 @@ class ModuleSingleCommands(commands.Cog):
         await interaction.response.defer()
         guild_members = list(interaction.guild.members)
         for guild_member in guild_members:
+            print(guild_member.display_name, guild_member.display_name[:8])
+            if len(guild_member.display_name) > 24:
+                continue
             if guild_member.get_role(1125790881111359494) and guild_member.display_name[:8] != '[FCF] ⁂ ':
                 await guild_member.edit(nick=f'[FCF] ⁂ {guild_member.display_name}')
                 continue
-            elif guild_member.get_role(1125790881111359493) and guild_member.display_name[:8] != '[FCF] ⁑ ':
+            if guild_member.get_role(1125790881111359493) and guild_member.display_name[:8] != '[FCF] ⁑ ':
                 await guild_member.edit(nick=f'[FCF] ⁑ {guild_member.display_name}')
                 continue
-            elif guild_member.get_role(1125790881094570053) and guild_member.display_name[:8] != '[FCF] ∗ ':
+            if guild_member.get_role(1125790881094570053) and guild_member.display_name[:8] != '[FCF] ∗ ':
                 await guild_member.edit(nick=f'[FCF] ∗ {guild_member.display_name}')
                 continue
-            elif guild_member.get_role(1147568458532409474) and guild_member.display_name[:8] != '[FCF] ✪ ':
+            if guild_member.get_role(1147568458532409474) and guild_member.display_name[:8] != '[FCF] ✪ ':
                 await guild_member.edit(nick=f'[FCF] ✪ {guild_member.display_name}')
                 continue
-            elif guild_member.get_role(1125790881094570046) and guild_member.display_name[:8] != '[FCF] ⦿ ':
+            if guild_member.get_role(1125790881094570046) and guild_member.display_name[:8] != '[FCF] ⦿ ':
                 await guild_member.edit(nick=f'[FCF] ⦿ {guild_member.display_name}')
                 continue
-            elif guild_member.get_role(1125790881094570045) and guild_member.display_name[:2] != '⦾ ':
+            if guild_member.get_role(1125790881094570045) and guild_member.display_name[:2] != '⦾ ':
                 await guild_member.edit(nick=f'⦾ {guild_member.display_name}')
                 continue
         await interaction.followup.send('> Les pseudos des membres ont bien été mis à jour', ephemeral=True)
