@@ -44,6 +44,7 @@ class ModuleTodolist(commands.Cog):
                 message_embed = discord.Embed.to_dict(message.embeds[0])
                 if 'footer' in message_embed.keys() and message_embed['footer']['text'] == embed_uuid:
                     todolist_view = TodolistInterface(message, message_embed, self.csv_keys, embed_uuid)
+                    self.oisol.add_view(todolist_view)
                     await message.edit(view=todolist_view, embed=todolist_view.generateInterfaceEmbed())
                     await interaction.followup.send('> La todolist a été mise à jour')
                     return
