@@ -35,4 +35,4 @@ class CsvHandlerRegister(CsvHandler):
             csv_writer = csv.writer(register_file, delimiter=';')
             csv_writer.writerow(self.csv_file_keys)
             for row in data:
-                csv_writer.writerow(row)
+                csv_writer.writerow([row[self.csv_file_keys[0]], row[self.csv_file_keys[1]]])
