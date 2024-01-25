@@ -10,14 +10,14 @@ class CsvHandler:
         separated_path = os.path.split(file_path)
         os.makedirs(separated_path[0], exist_ok=True)
         try:
-            with open(file_path, 'x') as csv_file:
+            with open(file_path, 'x', newline='') as csv_file:
                 writer = csv.writer(csv_file, delimiter=';')
                 writer.writerow(self.csv_file_keys)
         except FileExistsError:
             pass
 
     def csv_clear_data(self, file_path: str):
-        with open(file_path, 'w') as csv_file:
+        with open(file_path, 'w', newline='') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.csv_file_keys)
 
@@ -29,7 +29,7 @@ class CsvHandler:
             for row in reader:
                 if not row[2] == key_to_del:
                     new_row_list.append(row)
-        with open(file_path, 'w') as csv_file:
+        with open(file_path, 'w', newline='') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.csv_file_keys)
             for row in new_row_list:

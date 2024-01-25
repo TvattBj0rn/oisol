@@ -32,6 +32,7 @@ class RegisterViewMenu(discord.ui.View):
             description='Recrues actuelles',
             color=self.color
         )
+        embed.set_footer(text='Register')
         for member_index in range(len(self.register_members)):
             if not member_index % 20 and member_index > 0:
                 self.embeds.append(embed)
@@ -40,6 +41,7 @@ class RegisterViewMenu(discord.ui.View):
                     description='Recrues actuelles',
                     color=self.color
                 )
+                embed.set_footer(text='Register')
             embed.add_field(
                 name='',
                 value=f'<@{self.register_members[member_index][self.csv_keys[0]]}> **|** <t:{self.register_members[member_index][self.csv_keys[1]]}:R>',
@@ -49,6 +51,14 @@ class RegisterViewMenu(discord.ui.View):
                 self.embeds.append(embed)
 
     def get_current_embed(self):
+        if not self.embeds:
+            embed = discord.Embed(
+                title='Registre | Page 0',
+                description='Recrues actuelles',
+                color=self.color
+            )
+            embed.set_footer(text='Register')
+            return embed
         return self.embeds[self.current_page_index]
 
     def refresh_button_status(self):
