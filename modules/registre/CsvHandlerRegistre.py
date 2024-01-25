@@ -9,10 +9,10 @@ class CsvHandlerRegister(CsvHandler):
 
     def csv_append_data(self, file_path: str, data_to_be_appended: dict):
         if os.stat(file_path).st_size == 0:
-            with open(file_path, 'w') as csv_file:
+            with open(file_path, 'w', newline='') as csv_file:
                 writer = csv.writer(csv_file, delimiter=';')
                 writer.writerow(self.csv_file_keys)
-        with open(file_path, 'a') as csv_file:
+        with open(file_path, 'a', newline='') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow([data_to_be_appended[self.csv_file_keys[0]], data_to_be_appended[self.csv_file_keys[1]]])
 
@@ -31,7 +31,7 @@ class CsvHandlerRegister(CsvHandler):
         return dict_list
 
     def csv_rewrite_file(self, file_path: str, data: list):
-        with open(file_path, 'w') as register_file:
+        with open(file_path, 'w', newline='') as register_file:
             csv_writer = csv.writer(register_file, delimiter=';')
             csv_writer.writerow(self.csv_file_keys)
             for row in data:
