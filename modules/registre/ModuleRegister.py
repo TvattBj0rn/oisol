@@ -7,6 +7,7 @@ from discord.ext import commands
 from modules.utils.DataFiles import DataFilesPath
 from modules.utils.functions import safeguarded_nickname
 from modules.registre.CsvHandlerRegistre import CsvHandlerRegister
+from modules.registre.RegisterViewMenu import RegisterViewMenu
 
 
 class ModuleRegister(commands.Cog):
@@ -16,22 +17,14 @@ class ModuleRegister(commands.Cog):
 
     @app_commands.command(name='register_view')
     async def register_view(self, interaction: discord.Interaction):
+        # TODO: en 2e etape rendre cette méthode statique et créer une méthode dynamique qui prend sa place
         await interaction.response.defer()
-        register_embed = discord.Embed(
-            title='Registre',
-            description='Recrues actuelles',
-            color=0x477DA9
-        )
         register_members = CsvHandlerRegister(self.csv_keys).csv_get_all_data(
             os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
         )
-        for member in register_members:
-            register_embed.add_field(
-                name='',
-                value=f'<@{member[self.csv_keys[0]]}> **|** <t:{member[self.csv_keys[1]]}:R>',
-                inline=False
-            )
-        await interaction.followup.send(embed=register_embed)
+        register_view = RegisterViewMenu(self.csv_keys, register_members)
+
+        await interaction.followup.send(view=register_view, embed=register_view.get_current_embed())
 
     @app_commands.command(name='register_add')
     async def register_add(self, interaction: discord.Interaction, member: discord.Member):
