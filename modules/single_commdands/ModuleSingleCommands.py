@@ -39,3 +39,7 @@ class ModuleSingleCommands(commands.Cog):
                     await guild_member.edit(nick=f'⦾ {guild_member.display_name}')
                 continue
         await interaction.followup.send('> Les pseudos des membres ont bien été mis à jour', ephemeral=True)
+
+    @app_commands.command(name='oisol_ping', description='check if the bot is running as expected')
+    async def oisol_ping(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Oisol Pong!")
