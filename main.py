@@ -6,7 +6,7 @@ from modules.registre.entrypoint_registre import ModuleRegister
 from modules.config.entrypoint_config import ModuleConfig
 from modules.stockpile_viewer.entrypoint_stockpile_viewer import ModuleStockpiles
 from modules.todolist.entrypoint_todolist import ModuleTodolist
-from modules.single_commdands.entrypoint_single_commands import ModuleSingleCommands
+from modules.single_commdands.ModuleSingleCommands import ModuleSingleCommands
 
 
 # Bot settings
