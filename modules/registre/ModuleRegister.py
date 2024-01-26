@@ -34,7 +34,7 @@ class ModuleRegister(commands.Cog):
     async def register_view(self, interaction: discord.Interaction):
         await interaction.response.defer()
         register_members = CsvHandlerRegister(self.csv_keys).csv_get_all_data(
-            os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
         )
         register_view = RegisterViewMenu(self.csv_keys, register_members)
 
@@ -48,14 +48,14 @@ class ModuleRegister(commands.Cog):
 
         recruit_id, recruit_timer = member.id, int(time.time())
         CsvHandlerRegister(self.csv_keys).csv_append_data(
-            os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             {
                 self.csv_keys[0]: recruit_id,
                 self.csv_keys[1]: recruit_timer
             }
         )
         register_members = CsvHandlerRegister(self.csv_keys).csv_get_all_data(
-            os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
         )
         await member.edit(nick=safeguarded_nickname(f'⦾ {member.display_name}'))
         await send_data_to_discord(
@@ -69,7 +69,7 @@ class ModuleRegister(commands.Cog):
     async def register_clean(self, interaction: discord.Interaction):
         updated_recruit_list = []
         register_members = CsvHandlerRegister(self.csv_keys).csv_get_all_data(
-            os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
         )
         for register_member in register_members:
             # if member still on the server and has role_id 1125790881094570045 in its roles
@@ -77,7 +77,7 @@ class ModuleRegister(commands.Cog):
                     int(register_member[self.csv_keys[0]])).get_role(1125790881094570045):
                 updated_recruit_list.append(register_member)
         CsvHandlerRegister(self.csv_keys).csv_rewrite_file(
-            os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             updated_recruit_list
         )
         await send_data_to_discord(
@@ -92,7 +92,7 @@ class ModuleRegister(commands.Cog):
         updated_recruit_list = []
         is_member_in_register = False
         register_members = CsvHandlerRegister(self.csv_keys).csv_get_all_data(
-            os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
         )
 
         for register_member in register_members:
@@ -104,7 +104,7 @@ class ModuleRegister(commands.Cog):
             await interaction.response.send_message(f"> {member.mention} n'est pas dans le registre.")
             return
         CsvHandlerRegister(self.csv_keys).csv_rewrite_file(
-            os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             updated_recruit_list
         )
         await send_data_to_discord(

@@ -23,7 +23,7 @@ class ModuleConfig(commands.Cog):
         Generate the files & directories used by the various OISOL commands.
         """
 
-        oisol_server_home_path = os.path.join(pathlib.Path(pathlib.Path.home()), 'oisol', str(interaction.guild.id))
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
 
         os.makedirs(os.path.join(oisol_server_home_path), exist_ok=True)
         os.makedirs(os.path.join(oisol_server_home_path, 'todolists'), exist_ok=True)
