@@ -3,7 +3,7 @@ import discord
 
 class RegisterViewMenu(discord.ui.View):
     def __init__(self, csv_keys: list, register_members: list):
-        super().__init__()
+        super().__init__(timeout=None)
         self.color = 0x477DA9
         self.embeds = []
         self.current_page_index = 0
