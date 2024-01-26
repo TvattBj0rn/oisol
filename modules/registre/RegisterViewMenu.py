@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 
 
 class RegisterViewMenu(discord.ui.View):
@@ -12,13 +13,15 @@ class RegisterViewMenu(discord.ui.View):
         self.left_button = discord.ui.Button(
             label='<',
             style=discord.ButtonStyle.blurple,
-            disabled=True
+            disabled=True,
+            custom_id='RegisterViewMenu:left'
         )
         self.left_button.callback = self.left_button_callback
         self.right_button = discord.ui.Button(
             label='>',
             style=discord.ButtonStyle.blurple,
-            disabled=True
+            disabled=True,
+            custom_id='RegisterViewMenu:right'
         )
         self.right_button.callback = self.right_button_callback
         self.add_item(self.left_button)

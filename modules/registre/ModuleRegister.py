@@ -114,7 +114,6 @@ class ModuleRegister(commands.Cog):
         )
 
         new_member_name = member.display_name
-        await member.edit(nick=safeguarded_nickname(new_member_name))
         if new_member_name.startswith('⦾ '):
             new_member_name = new_member_name[2:]
         if is_promoted:
@@ -122,3 +121,4 @@ class ModuleRegister(commands.Cog):
             await interaction.response.send_message(f'> {member.mention} a été promu !')
         else:
             await interaction.response.send_message(f'> {member.mention} a été retiré du registre.')
+        await member.edit(nick=safeguarded_nickname(new_member_name))
