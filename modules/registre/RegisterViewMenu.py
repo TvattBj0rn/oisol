@@ -1,32 +1,34 @@
 import discord
+import os
+import pathlib
+from typing_extensions import Self
+from modules.registre.CsvHandlerRegistre import CsvHandlerRegister
+from modules.registre.config import REGISTER_CSV_KEYS
+from modules.utils.DataFiles import DataFilesPath
 
 
 class RegisterViewMenu(discord.ui.View):
-    def __init__(self, csv_keys: list, register_members: list):
+    def __init__(self):
         super().__init__(timeout=None)
         self.color = 0x477DA9
+        self.csv_keys = REGISTER_CSV_KEYS
         self.embeds = []
+        self.register_members = []
         self.current_page_index = 0
-        self.csv_keys = csv_keys
-        self.register_members = register_members
-        self.left_button = discord.ui.Button(
-            label='<',
-            style=discord.ButtonStyle.blurple,
-            disabled=True
-        )
-        self.left_button.callback = self.left_button_callback
-        self.right_button = discord.ui.Button(
-            label='>',
-            style=discord.ButtonStyle.blurple,
-            disabled=True
-        )
-        self.right_button.callback = self.right_button_callback
-        self.add_item(self.left_button)
-        self.add_item(self.right_button)
+
+    def refresh_register(self, guild_id: str, updated_recruit_list: list = None) -> Self:
+        if updated_recruit_list:
+            self.register_members = updated_recruit_list
+        else:
+            self.register_members = CsvHandlerRegister(REGISTER_CSV_KEYS).csv_get_all_data(
+                os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value)
+            )
         self.generate_embeds()
-        self.refresh_button_status()
+
+        return self
 
     def generate_embeds(self):
+        self.embeds = []
         embed = discord.Embed(
             title='Registre | Page 0',
             description='Recrues actuelles',
@@ -61,24 +63,24 @@ class RegisterViewMenu(discord.ui.View):
             return embed
         return self.embeds[self.current_page_index]
 
-    def refresh_button_status(self):
-        self.left_button.disabled = True
-        self.right_button.disabled = True
+    @discord.ui.button(label='<', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:left')
+    async def left_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.current_page_index - 1 == -1:
+            self.current_page_index = len(self.embeds) - 1
+        else:
+            self.current_page_index -= 1
+        self.refresh_register(str(interaction.guild.id))
 
-        if self.current_page_index - 1 > -1:
-            self.left_button.disabled = False
-
-        if self.current_page_index + 1 < len(self.embeds):
-            self.right_button.disabled = False
-
-    async def left_button_callback(self, interaction: discord.Interaction):
-        self.current_page_index -= 1
-        self.refresh_button_status()
         await interaction.message.edit(view=self, embed=self.get_current_embed())
         await interaction.response.defer()
 
-    async def right_button_callback(self, interaction: discord.Interaction):
-        self.current_page_index += 1
-        self.refresh_button_status()
+    @discord.ui.button(label='>', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:right')
+    async def right_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.current_page_index + 1 == len(self.embeds):
+            self.current_page_index = 0
+        else:
+            self.current_page_index += 1
+        self.refresh_register(str(interaction.guild.id))
+
         await interaction.message.edit(view=self, embed=self.get_current_embed())
         await interaction.response.defer()
