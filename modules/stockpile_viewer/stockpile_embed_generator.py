@@ -1,44 +1,51 @@
 import discord
-from modules.stockpile_viewer import csv_handler
-from modules.utils.path import generate_path, DataFilesPath
+import os
+import pathlib
+from modules.stockpile_viewer.CsvHandlerStockpiles import CsvHandlerStockpiles
 from modules.utils import foxhole_types, locations, EmbedFooterEnums
+from modules.utils.DataFiles import DataFilesPath
 
 
-## Split in several function instead of one big function of ~40 lines
-def generate_view_stockpile_embed(interaction: discord.Interaction) -> discord.Embed:
-    data_file_path = generate_path(interaction.guild.id, DataFilesPath.STOCKPILES.value)
-    stockpile_list = csv_handler.csv_get_all_data(data_file_path)
-    sorted_stockpile_list = dict()
+def get_sorted_stockpiles(guild_id: str, csv_keys: list) -> (list, dict):
+    data_file_path = os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.STOCKPILES.value)
+    stockpiles_list = CsvHandlerStockpiles(csv_keys).csv_get_all_data(data_file_path)
+    sorted_stockpiles = dict()
 
-    for stockpile in stockpile_list:
-        if not stockpile['region'] in sorted_stockpile_list.keys():
-            sorted_stockpile_list[stockpile['region']] = {stockpile['subregion']: [stockpile]}
+    for stockpile in stockpiles_list:
+        if not stockpile['region'] in sorted_stockpiles.keys():
+            sorted_stockpiles[stockpile['region']] = {stockpile['subregion']: [stockpile]}
         else:
-            if not stockpile['subregion'] in sorted_stockpile_list[stockpile['region']].keys():
-                sorted_stockpile_list[stockpile['region']][stockpile['subregion']] = [stockpile]
+            if not stockpile['subregion'] in sorted_stockpiles[stockpile['region']].keys():
+                sorted_stockpiles[stockpile['region']][stockpile['subregion']] = [stockpile]
             else:
-                sorted_stockpile_list[stockpile['region']][stockpile['subregion']].append(stockpile)
+                sorted_stockpiles[stockpile['region']][stockpile['subregion']].append(stockpile)
 
-    sorted_region_list = list(sorted_stockpile_list.keys())
-    sorted_region_list.sort()
+    sorted_regions_list = list(sorted_stockpiles.keys())
+    sorted_regions_list.sort()
+
+    return sorted_regions_list, sorted_stockpiles
+
+
+# Split in several function instead of one big function of ~40 lines
+def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: list) -> discord.Embed:
+    sorted_regions_list, sorted_stockpiles = get_sorted_stockpiles(str(interaction.guild.id), csv_keys)
 
     embed = discord.Embed(
         title=f'Stockpiles | {foxhole_types.StockpileTypes.REGION.value}',
-        description='Liste de nos stockpiles actuels',
         color=foxhole_types.FACTION_COLORS['Warden']
     )
     embed.set_footer(text=EmbedFooterEnums.EmbedIds.STOCKPILES_VIEW.value)
-    for region in sorted_region_list:
-        sorted_subregion_list = list(sorted_stockpile_list[region].keys())
+    for region in sorted_regions_list:
+        sorted_subregion_list = list(sorted_stockpiles[region].keys())
         sorted_subregion_list.sort()
         embed.add_field(
-            name=f'{region.upper()}',
+            name=f'⠀\n{region.upper()}',
             value='',
             inline=False
         )
         subregion_stockpiles_values = ''
         for subregion in sorted_subregion_list:
-            for stockpile in sorted_stockpile_list[region][subregion]:
+            for stockpile in sorted_stockpiles[region][subregion]:
                 subregion_stockpiles_values = f"{stockpile['name']} **|** {stockpile['code']}" if not subregion_stockpiles_values else subregion_stockpiles_values + f"\n{stockpile['name']} **|** {stockpile['code']}"
             subregion_icon = ''
             for subregion_tuple in locations.REGIONS_STOCKPILES[region]:

@@ -3,7 +3,7 @@ import discord
 
 async def send_data_to_discord(embed: discord.Embed, interaction: discord.Interaction, message_id: str, images: [discord.File]):
     for channel in interaction.guild.channels:
-        if channel.name == '📦－stockages': ## Add possibility to change channel via config file (into the init command)
+        if channel.name == '📦－stockages':  # Add possibility to change channel via config file (into the init command)
             async for message in channel.history():
                 if not message.embeds:
                     continue
