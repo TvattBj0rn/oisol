@@ -4,7 +4,7 @@ import pathlib
 import uuid
 from discord import app_commands
 from discord.ext import commands
-from modules.todolist.config import TODOLIST_CSV_KEYS
+from modules.todolist.utils import TODOLIST_CSV_KEYS
 from modules.todolist.TodolistEnums import PriorityType
 from modules.todolist.TodolistInterface import TodolistInterface
 from modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
@@ -48,9 +48,8 @@ class ModuleTodolist(commands.Cog):
             if message.embeds:
                 message_embed = discord.Embed.to_dict(message.embeds[0])
                 if 'footer' in message_embed.keys() and message_embed['footer']['text'] == embed_uuid:
-                    todolist_view = TodolistInterface(message, message_embed, self.csv_keys, embed_uuid, str(interaction.guild.id))
-                    self.oisol.add_view(todolist_view)
-                    await message.edit(view=todolist_view, embed=todolist_view.generateInterfaceEmbed())
+                    todolist_view = TodolistInterface().refresh_interface(message_embed, embed_uuid, str(interaction.guild.id))
+                    await message.edit(view=todolist_view, embed=todolist_view.generate_interface_embed())
                     await interaction.followup.send('> La todolist a été mise à jour')
                     return
         await interaction.followup.send('> Ce salon ne contient pas la todolist demandée')
