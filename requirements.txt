@@ -1,3 +1,4 @@
 discord
 python-dotenv
 deprecated
+typing-extensions
