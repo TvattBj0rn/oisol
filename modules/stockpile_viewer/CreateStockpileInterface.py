@@ -1,8 +1,10 @@
 import discord
+import os
+import pathlib
 from discord.ui import Select
 from modules.utils.locations import REGIONS_STOCKPILES
 from modules.stockpile_viewer import CsvHandlerStockpiles, stockpile_embed_generator, discord_data_transmission
-from modules.utils.path import generate_path, DataFilesPath
+from modules.utils.DataFiles import DataFilesPath
 from modules.utils.EmbedFooterEnums import EmbedIds
 
 
@@ -80,11 +82,13 @@ class CreateStockpileInterface(discord.ui.View):
             'name': self.stockpile_name,
             'type': self.stockpile_type
         }
-        file_path = generate_path(interaction.guild.id, DataFilesPath.STOCKPILES.value)
+        file_path = os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
         CsvHandler = CsvHandlerStockpiles.CsvHandlerStockpiles(self.csv_keys)
         CsvHandler.csv_try_create_file(file_path)
         CsvHandler.csv_append_data(file_path, stockpile)
-        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction)
+
+        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+
         await discord_data_transmission.send_data_to_discord(stockpiles_embed, interaction, EmbedIds.STOCKPILES_VIEW.value, [])
         await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) à {self.stockpile_region_name} | {self.stockpile_subregion_name} a été crée sans problèmes', ephemeral=True)
 
