@@ -7,7 +7,7 @@ from modules.registre.ModuleRegister import ModuleRegister
 from modules.registre.RegisterViewMenu import RegisterViewMenu
 from modules.single_commdands.ModuleSingleCommands import ModuleSingleCommands
 from modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
-from modules.todolist.entrypoint_todolist import ModuleTodolist
+from modules.todolist.ModuleTodolist import ModuleTodolist
 
 
 class Oisol(commands.Bot):
