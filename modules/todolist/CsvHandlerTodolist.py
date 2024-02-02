@@ -1,6 +1,6 @@
 import csv
-from modules.todolist.TodolistEnums import PriorityType
-from modules.utils.CsvHandler import CsvHandler
+from modules.utils import PriorityType
+from modules.CsvHandler import CsvHandler
 
 
 class CsvHandlerTodolist(CsvHandler):

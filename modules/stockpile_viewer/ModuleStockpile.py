@@ -5,8 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 from modules.stockpile_viewer import CreateStockpileInterface, discord_data_transmission, stockpile_embed_generator
 from modules.stockpile_viewer.CsvHandlerStockpiles import CsvHandlerStockpiles
-from modules.utils.EmbedFooterEnums import EmbedIds
-from modules.utils.DataFiles import DataFilesPath
+from modules.utils import EmbedIds
+from modules.utils import DataFilesPath
 
 
 class ModuleStockpiles(commands.Cog):

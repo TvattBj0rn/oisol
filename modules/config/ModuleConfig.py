@@ -1,21 +1,16 @@
 import configparser
 import discord
 import os
-import pathlib
 from discord import app_commands
 from discord.ext import commands
-from modules.config import ConfigEnums
 from modules.stockpile_viewer import CsvHandlerStockpiles
-from modules.utils.DataFiles import DataFilesPath
+from modules.utils import DataFilesPath, Language, Faction, MODULES_CSV_KEYS
 
 
 class ModuleConfig(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
-        self.csv_keys = {
-            'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
-            'register': ['member', 'timer']
-        }
+        self.csv_keys = MODULES_CSV_KEYS
 
     @app_commands.command(name='oisol_init', description='Command to do when the bot first arrives on the server')
     async def oisol_init(self, interaction: discord.Interaction):
@@ -37,8 +32,8 @@ class ModuleConfig(commands.Cog):
         if not os.path.isfile(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value)):
             config = configparser.ConfigParser()
             config['default'] = {}
-            config['default']['language'] = ConfigEnums.Languages.FR.value
-            config['default']['faction'] = ConfigEnums.Faction.NEUTRAL.value
+            config['default']['language'] = Language.FR.value
+            config['default']['faction'] = Faction.NEUTRAL.name.lower()
             with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w') as configfile:
                 config.write(configfile)
 

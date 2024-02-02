@@ -2,10 +2,8 @@ import discord
 import os
 import pathlib
 from discord.ui import Select
-from modules.utils.locations import REGIONS_STOCKPILES
+from modules.utils import REGIONS_STOCKPILES, DataFilesPath, EmbedIds
 from modules.stockpile_viewer import CsvHandlerStockpiles, stockpile_embed_generator, discord_data_transmission
-from modules.utils.DataFiles import DataFilesPath
-from modules.utils.EmbedFooterEnums import EmbedIds
 
 
 class CreateStockpileInterface(discord.ui.View):

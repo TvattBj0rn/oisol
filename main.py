@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from modules.config.ModuleConfig import ModuleConfig
 from modules.registre.ModuleRegister import ModuleRegister
 from modules.registre.RegisterViewMenu import RegisterViewMenu
-from modules.single_commdands.ModuleSingleCommands import ModuleSingleCommands
+from modules.single_commands.ModuleSingleCommands import ModuleSingleCommands
 from modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
 from modules.todolist.ModuleTodolist import ModuleTodolist
 

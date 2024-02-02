@@ -4,11 +4,12 @@ import pathlib
 import time
 from discord import app_commands
 from discord.ext import commands
-from modules.utils.DataFiles import DataFilesPath
-from modules.utils.functions import safeguarded_nickname
-from modules.registre.config import REGISTER_CSV_KEYS
+from modules.utils import DataFilesPath, safeguarded_nickname, MODULES_CSV_KEYS
 from modules.registre.CsvHandlerRegistre import CsvHandlerRegister
 from modules.registre.RegisterViewMenu import RegisterViewMenu
+
+
+REGISTER_CSV_KEYS = MODULES_CSV_KEYS['register']
 
 
 async def send_data_to_discord(interaction: discord.Interaction, view: RegisterViewMenu, message_id: str):
