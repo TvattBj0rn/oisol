@@ -34,7 +34,7 @@ class ModuleConfig(commands.Cog):
             config['default'] = {}
             config['default']['language'] = Language.FR.value
             config['default']['faction'] = Faction.NEUTRAL.name.lower()
-            with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w') as configfile:
+            with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
                 config.write(configfile)
 
         await interaction.response.send_message('> Les fichiers de serveur ont bien été installés', ephemeral=True)
