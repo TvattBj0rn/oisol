@@ -4,7 +4,7 @@ import os
 from discord import app_commands
 from discord.ext import commands
 from modules.stockpile_viewer import CsvHandlerStockpiles
-from modules.config.ConfigInterfaces import ModalConfig, SelectLanguageView
+from modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView
 from modules.utils import DataFilesPath, Language, Faction, MODULES_CSV_KEYS
 
 
@@ -47,3 +47,7 @@ class ModuleConfig(commands.Cog):
     @app_commands.command(name='config_language')
     async def config_language(self, interaction: discord.Interaction):
         await interaction.response.send_message(view=SelectLanguageView(), ephemeral=True)
+
+    @app_commands.command(name='config_register')
+    async def config_register(self, interaction: discord.Interaction, promoted_get_tag: bool):
+        await interaction.response.send_modal(ModalRegister(promoted_get_tag))

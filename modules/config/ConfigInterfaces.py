@@ -61,3 +61,36 @@ class ModalConfig(discord.ui.Modal, title='Configuration'):
         traceback.print_exception(type(error), error, error.__traceback__)
 
 
+class ModalRegister(discord.ui.Modal, title='Register Icon'):
+    def __init__(self, promoted_get_tag: bool):
+        super().__init__()
+        self.promoted_get_tag = promoted_get_tag
+
+    arriving = discord.ui.TextInput(
+        label='New recruits icon',
+        placeholder='icon that will be given to new recruits in front of their name (not required)',
+        required=False
+    )
+    promoted = discord.ui.TextInput(
+        label='Promoted recruits icon',
+        placeholder='icon that will be given to promoted recruits (not required)',
+        required=False
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        if not config.has_section('register'):
+            config['register'] = {}
+        config['register']['input'] = str(self.arriving) if bool(str(self.arriving)) else 'None'
+        config['register']['output'] = str(self.promoted) if bool(str(self.promoted)) else 'None'
+        config['register']['promoted_get_tag'] = str(self.promoted_get_tag)
+
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+        await interaction.response.send_message('Register config saved !', ephemeral=True)
+
+    async def on_error(self, interaction: discord.Interaction, error: Exception):
+        await interaction.response.send_message("Oops! Something went wrong ^^'", ephemeral=True)
+        traceback.print_exception(type(error), error, error.__traceback__)

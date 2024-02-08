@@ -4,6 +4,7 @@ import os
 from modules.utils import DataFilesPath
 
 
+# Merge this with its register equivalent
 async def send_data_to_discord(embed: discord.Embed, interaction: discord.Interaction, message_id: str):
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))

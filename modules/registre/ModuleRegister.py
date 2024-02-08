@@ -13,6 +13,7 @@ from modules.registre.RegisterViewMenu import RegisterViewMenu
 REGISTER_CSV_KEYS = MODULES_CSV_KEYS['register']
 
 
+# Merge this with its stockpile equivalent
 async def send_data_to_discord(interaction: discord.Interaction, view: RegisterViewMenu, message_id: str):
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
@@ -52,7 +53,7 @@ class ModuleRegister(commands.Cog):
     @app_commands.command(name='register_add')
     async def register_add(self, interaction: discord.Interaction, member: discord.Member):
         if interaction.guild.owner_id == member.id:
-            await interaction.response.send_message(f'Le propriétaire du serveur ne peut pas être ajouté au registre')
+            await interaction.response.send_message('Le propriétaire du serveur ne peut pas être ajouté au registre')
             return
 
         recruit_id, recruit_timer = member.id, int(time.time())
@@ -64,8 +65,11 @@ class ModuleRegister(commands.Cog):
             }
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
+        if config['register']['input'] != 'None':
+            await member.edit(nick=safeguarded_nickname(f"{config['register']['input']} {member.display_name}"))
 
-        await member.edit(nick=safeguarded_nickname(f'⦾ {member.display_name}'))
         await send_data_to_discord(
             interaction,
             register_view,
@@ -122,18 +126,27 @@ class ModuleRegister(commands.Cog):
             updated_recruit_list
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id), updated_recruit_list)
-
-        new_member_name = member.display_name
-        if new_member_name.startswith('⦾ '):
-            new_member_name = new_member_name[2:]
-
         await send_data_to_discord(
             interaction,
             register_view,
             'Register'
         )
+
+        config = configparser.ConfigParser()
+        config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
+
+        if config['register']['input'] != 'None':
+            new_member_name = member.display_name
+            if new_member_name.startswith(f"{config['register']['input']} "):
+                new_member_name = new_member_name[2:]
+        else:
+            new_member_name = member.display_name
+
         if is_promoted:
-            new_member_name = f'[FCF] ⦿ {new_member_name}'
+            if config['register']['output']:
+                new_member_name = f"{config['register']['output']} {new_member_name}"
+            if bool(config['register']['promoted_get_tag']):
+                new_member_name = f"[{config['regiment']['tag']}] {new_member_name}"
             await interaction.response.send_message(f'> {member.mention} a été promu !')
         else:
             await interaction.response.send_message(f'> {member.mention} a été retiré du registre.')
