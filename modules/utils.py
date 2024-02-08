@@ -11,7 +11,7 @@ class Language(Enum):
 class Faction(Enum):
     WARDEN = 0x245682
     COLONIAL = 0x516C4B
-    # NEUTRAL = 0xffffff
+    NEUTRAL = 0xffffff
 
 
 class DataFilesPath(Enum):
