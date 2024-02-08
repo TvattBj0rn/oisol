@@ -87,7 +87,7 @@ class CreateStockpileInterface(discord.ui.View):
 
         stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
 
-        await discord_data_transmission.send_data_to_discord(stockpiles_embed, interaction, EmbedIds.STOCKPILES_VIEW.value, [])
+        await discord_data_transmission.send_data_to_discord(stockpiles_embed, interaction, EmbedIds.STOCKPILES_VIEW.value)
         await interaction.response.send_message(f'> {self.stockpile_name} (code: {self.stockpile_code}) à {self.stockpile_region_name} | {self.stockpile_subregion_name} a été crée sans problèmes', ephemeral=True)
 
     def reset_subregion(self):

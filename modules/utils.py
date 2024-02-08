@@ -1,17 +1,17 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class Language(Enum):
-    FR = 'french'
-    EN = 'english'
-    DE = 'german'
-    ES = 'spanish'
+    FR = auto()
+    EN = auto()
+    DE = auto()
+    ES = auto()
 
 
 class Faction(Enum):
     WARDEN = 0x245682
     COLONIAL = 0x516C4B
-    NEUTRAL = 0xffffff
+    # NEUTRAL = 0xffffff
 
 
 class DataFilesPath(Enum):
@@ -174,46 +174,3 @@ REGIONS_STOCKPILES = {
     'Westgate': [('Kingstone', FoxholeBuildings.STORAGE_DEPOT.value), ('The Gallow', FoxholeBuildings.STORAGE_DEPOT.value), ('Longstone', FoxholeBuildings.SEAPORT.value)]
 }
 
-REGIONS_NAMES_API = [
-    'HomeRegionC',
-    'HomeRegionW',
-    'AcrithiaHex',
-    'AllodsBightHex',
-    'AshFieldsHex',
-    'BasinSionnachHex',
-    'CallahansPassageHex',
-    'CallumsCapeHex',
-    'ClansheadValleyHex',
-    'DeadlandsHex',
-    'DrownedValeHex',
-    'EndlessShoreHex',
-    'FarranacCoastHex',
-    'FishermansRowHex',
-    'GodcroftsHex',
-    'GreatMarchHex',
-    'HeartlandsHex',
-    'HowlCountyHex',
-    'KalokaiHex',
-    'KingsCageHex',
-    'LinnMercyHex',
-    'LochMorHex',
-    'MarbanHollow',
-    'MooringCountyHex',
-    'MorgensCrossingHex',
-    'NevishLineHex',
-    'OarbreakerHex',
-    'OriginHex',
-    'ReachingTrailHex',
-    'RedRiverHex',
-    'SableportHex',
-    'ShackledChasmHex',
-    'SpeakingWoodsHex',
-    'StonecradleHex',
-    'TempestIslandHex',
-    'TerminusHex',
-    'TheFingersHex',
-    'UmbralWildwoodHex',
-    'ViperPitHex',
-    'WeatheredExpanseHex',
-    'WestgateHex'
-]

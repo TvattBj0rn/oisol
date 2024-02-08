@@ -1,3 +1,4 @@
+import configparser
 import discord
 import os
 import pathlib
@@ -13,18 +14,20 @@ REGISTER_CSV_KEYS = MODULES_CSV_KEYS['register']
 
 
 async def send_data_to_discord(interaction: discord.Interaction, view: RegisterViewMenu, message_id: str):
-    for channel in interaction.guild.channels:
-        if channel.name == '📋－registre':  # Add possibility to change channel via config file (into the init command)
-            async for message in channel.history():
-                if not message.embeds:
-                    continue
-                message_embed = discord.Embed.to_dict(message.embeds[0])
-                if message_embed['footer']['text'] == message_id:
-                    await message.edit(view=view, embed=view.get_current_embed())
-                    return
-                else:
-                    print(message_embed['footer']['text'], message_id)
-            await channel.send(view=view)
+    config = configparser.ConfigParser()
+    config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
+    channel = interaction.guild.get_channel(int(config['register']['channel']))
+
+    async for message in channel.history():
+        if not message.embeds:
+            continue
+        message_embed = discord.Embed.to_dict(message.embeds[0])
+        if message_embed['footer']['text'] == message_id:
+            await message.edit(view=view, embed=view.get_current_embed())
+            return
+        else:
+            print(message_embed['footer']['text'], message_id)
+    await channel.send(view=view)
 
 
 class ModuleRegister(commands.Cog):
@@ -34,6 +37,15 @@ class ModuleRegister(commands.Cog):
     @app_commands.command(name='register_view')
     async def register_view(self, interaction: discord.Interaction):
         await interaction.response.defer()
+
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        config['register'] = {}
+        config['register']['channel'] = str(interaction.channel_id)
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+
         register_view_instance = RegisterViewMenu().refresh_register(str(interaction.guild.id))
         await interaction.followup.send(view=register_view_instance, embed=register_view_instance.get_current_embed())
 

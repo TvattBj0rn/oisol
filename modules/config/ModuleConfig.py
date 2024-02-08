@@ -4,6 +4,7 @@ import os
 from discord import app_commands
 from discord.ext import commands
 from modules.stockpile_viewer import CsvHandlerStockpiles
+from modules.config.ConfigInterfaces import ModalConfig, SelectLanguageView
 from modules.utils import DataFilesPath, Language, Faction, MODULES_CSV_KEYS
 
 
@@ -32,9 +33,17 @@ class ModuleConfig(commands.Cog):
         if not os.path.isfile(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value)):
             config = configparser.ConfigParser()
             config['default'] = {}
-            config['default']['language'] = Language.FR.value
-            config['default']['faction'] = Faction.NEUTRAL.name.lower()
+            config['regiment'] = {}
+            config['default']['language'] = Language.EN.name
+            config['regiment']['faction'] = Faction.NEUTRAL.name
             with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
                 config.write(configfile)
+        await interaction.response.send_message('> Les fichiers ont bien été générés', ephemeral=True)
 
-        await interaction.response.send_message('> Les fichiers de serveur ont bien été installés', ephemeral=True)
+    @app_commands.command(name='config_regiment')
+    async def config_regiment(self, interaction: discord.Interaction, faction: Faction):
+        await interaction.response.send_modal(ModalConfig(faction.name))
+
+    @app_commands.command(name='config_language')
+    async def config_language(self, interaction: discord.Interaction):
+        await interaction.response.send_message(view=SelectLanguageView(), ephemeral=True)
