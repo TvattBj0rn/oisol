@@ -1,3 +1,4 @@
+import configparser
 import discord
 import os
 import pathlib
@@ -5,8 +6,8 @@ from discord import app_commands
 from discord.ext import commands
 from modules.stockpile_viewer import CreateStockpileInterface, discord_data_transmission, stockpile_embed_generator
 from modules.stockpile_viewer.CsvHandlerStockpiles import CsvHandlerStockpiles
-from modules.utils.EmbedFooterEnums import EmbedIds
-from modules.utils.DataFiles import DataFilesPath
+from modules.utils import EmbedIds
+from modules.utils import DataFilesPath
 
 
 class ModuleStockpiles(commands.Cog):
@@ -17,11 +18,15 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile_view')
     async def stockpile_view(self, interaction: discord.Interaction):
         await interaction.response.defer()
-        try:
-            stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
-            await interaction.followup.send(embed=stockpiles_embed)
-        except discord.ext.commands.HybridCommandError as e:
-            await interaction.followup.send(e)
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        config['stockpile'] = {}
+        config['stockpile']['channel'] = str(interaction.channel_id)
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+        await interaction.followup.send(embed=stockpiles_embed)
 
     @app_commands.command(name='stockpile_create')
     async def stockpile_create(self, interaction: discord.Interaction, code: str, *, name: str):
@@ -47,7 +52,6 @@ class ModuleStockpiles(commands.Cog):
             stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys),
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            []
         )
         await interaction.followup.send(
             f'> Le stockpile (code: {stockpile_code}) a bien été supprimé',
@@ -65,7 +69,6 @@ class ModuleStockpiles(commands.Cog):
             stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys),
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            []
         )
 
         await interaction.followup.send(

@@ -1,6 +1,6 @@
 import csv
 import os
-from modules.utils.CsvHandler import CsvHandler
+from modules.CsvHandler import CsvHandler
 
 
 class CsvHandlerStockpiles(CsvHandler):

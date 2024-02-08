@@ -3,8 +3,10 @@ import os
 import pathlib
 from typing_extensions import Self
 from modules.registre.CsvHandlerRegistre import CsvHandlerRegister
-from modules.registre.config import REGISTER_CSV_KEYS
-from modules.utils.DataFiles import DataFilesPath
+from modules.utils import DataFilesPath, MODULES_CSV_KEYS
+
+
+REGISTER_CSV_KEYS = MODULES_CSV_KEYS['register']
 
 
 class RegisterViewMenu(discord.ui.View):

@@ -2,9 +2,11 @@ import discord
 import os
 import pathlib
 from modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
-from modules.todolist.TodolistEnums import PriorityType
-from modules.todolist.utils import TODOLIST_CSV_KEYS, EMOTES_CUSTOM_ID
+from modules.utils import EMOTES_CUSTOM_ID, PriorityType, MODULES_CSV_KEYS
 from typing_extensions import Self
+
+
+TODOLIST_CSV_KEYS = MODULES_CSV_KEYS['todolist']
 
 
 def list_to_priority_dict(data_list: list) -> dict:

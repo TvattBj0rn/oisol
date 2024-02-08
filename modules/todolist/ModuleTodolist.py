@@ -4,10 +4,12 @@ import pathlib
 import uuid
 from discord import app_commands
 from discord.ext import commands
-from modules.todolist.utils import TODOLIST_CSV_KEYS
-from modules.todolist.TodolistEnums import PriorityType
+from modules.utils import MODULES_CSV_KEYS, PriorityType
 from modules.todolist.TodolistInterface import TodolistInterface
 from modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
+
+
+TODOLIST_CSV_KEYS = MODULES_CSV_KEYS['todolist']
 
 
 class ModuleTodolist(commands.Cog):
