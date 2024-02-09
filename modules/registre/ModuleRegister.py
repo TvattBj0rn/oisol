@@ -85,8 +85,7 @@ class ModuleRegister(commands.Cog):
         )
         for register_member in register_members:
             # if member still on the server and has role_id 1125790881094570045 in its roles
-            if interaction.guild.get_member(int(register_member[REGISTER_CSV_KEYS[0]])) and interaction.guild.get_member(
-                    int(register_member[REGISTER_CSV_KEYS[0]])).get_role(1125790881094570045):
+            if interaction.guild.get_member(int(register_member[REGISTER_CSV_KEYS[0]])): # and interaction.guild.get_member(int(register_member[REGISTER_CSV_KEYS[0]])).get_role(1125790881094570045):
                 updated_recruit_list.append(register_member)
         CsvHandlerRegister(REGISTER_CSV_KEYS).csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
