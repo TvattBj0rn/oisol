@@ -1,12 +1,12 @@
 
 # OISOL
 
-Companion bot for the FCF foxhole regiment ! 
+Foxhole organisation tool
 
 ## Modules
 
-- **Registre**: This module allows us to keep track of the enlisted players in the regiment, allowing us to see for how long a player has been in the regiment.
 - **Stockpile**: This module a stockpile viewer tool. It allows people to add and view stockpiles on an embedded list.
+- **Register**: This module allows us to keep track of the enlisted players in the regiment, allowing us to see for how long a player has been in the regiment.
 - **Todolist**: This module allows the creation of a todolist and to update it, on different priorities.
 
 ## Tech
@@ -20,7 +20,5 @@ Companion bot for the FCF foxhole regiment !
 The features below are not ordered by priority. These are just ideas that I might add later on the future, even though some are more likely than other.
 
 - An implementation of the Foxhole War API to discord, allowing to target specifics regions and get more infos. (Currently working on it, on another repository)
-
-- A logi order system. This would work for example on frontline bases, as well as backlines factories. Using the command `!logi_order` would start an interaction with the bot, to define what is needed, the amount needed and the place to deliver.
-
-- An operation planner. This would allow to set a specific target, a time and to pick what members are joining the OP using the discord reactions system.
+- Better logi integration with google sheet & picture recognition
+- A return of the foxhole wiki integration, this time with all pages containing info boxes
