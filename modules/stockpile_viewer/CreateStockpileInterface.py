@@ -20,7 +20,7 @@ class CreateStockpileInterface(discord.ui.View):
         self.select_first_letter = Select(
             placeholder="Première lettre de la région",
             options=[
-                discord.SelectOption(label='A-M'),
+                discord.SelectOption(label='A-L'),
                 discord.SelectOption(label='M-W')
             ]
         )
@@ -46,10 +46,10 @@ class CreateStockpileInterface(discord.ui.View):
         self.select_first_letter.placeholder = self.select_first_letter.values[0]
         self.select_region.disabled = False
         self.select_region.placeholder = 'Nom de la région'
-        if self.select_first_letter.values[0] == 'A-M':
-            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[:18])]
+        if self.select_first_letter.values[0] == 'A-L':
+            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[:21])]
         else:
-            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[18:])]
+            self.select_region.options = [discord.SelectOption(label=region) for region in dict(list(REGIONS_STOCKPILES.items())[21:])]
         await interaction.response.edit_message(view=self)
 
     async def callback_region(self, interaction):
