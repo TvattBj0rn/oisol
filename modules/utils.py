@@ -174,3 +174,133 @@ REGIONS_STOCKPILES = {
     'Westgate': [('Kingstone', FoxholeBuildings.STORAGE_DEPOT.value), ('The Gallow', FoxholeBuildings.STORAGE_DEPOT.value), ('Longstone', FoxholeBuildings.SEAPORT.value)]
 }
 
+ALL_WIKI_ENTRIES = [
+    ## RIFLES
+    ('Argenti r.II Rifle', 'https://foxhole.wiki.gg/wiki/Argenti_r.II_Rifle'),
+    ('Blakerow 871', 'https://foxhole.wiki.gg/wiki/Blakerow_871', 'blakerow'),
+    ('Catena rt.IV Auto-Rifle', 'https://foxhole.wiki.gg/wiki/Catena_rt.IV_Auto-Rifle'),
+    ('Fuscina pi.I', 'https://foxhole.wiki.gg/wiki/Fuscina_pi.I'),
+    ('No.2 Loughcaster', 'https://foxhole.wiki.gg/wiki/No.2_Loughcaster'),
+    ('No.2B Hawthorne', 'https://foxhole.wiki.gg/wiki/No.2B_Hawthorne'),
+    ('Sampo Auto-Rifle 77', 'https://foxhole.wiki.gg/wiki/Sampo_Auto-Rifle_77'),
+    ## HEAVY RIFLES
+    ('The Hangman 757', 'https://foxhole.wiki.gg/wiki/The_Hangman_757'),
+    ('Volta r.I Repeater', 'https://foxhole.wiki.gg/wiki/Volta_r.I_Repeater'),
+    ## LONG RIFLES
+    ('Clancy Cinder M3', 'https://foxhole.wiki.gg/wiki/Clancy_Cinder_M3'),
+    ('KRR2-790 Omen', 'https://foxhole.wiki.gg/wiki/KRR2-790_Omen'),
+    ## SNIPER RIFLES
+    ('Clancy-Raca M4', 'https://foxhole.wiki.gg/wiki/Clancy-Raca_M4'),
+    ('KRR3-792 Auger', 'https://foxhole.wiki.gg/wiki/KRR3-792_Auger'),
+    ## SUBMACHINE GUNS
+    ('“Lionclaw” mc.VIII', 'https://foxhole.wiki.gg/wiki/%E2%80%9CLionclaw%E2%80%9D_mc.VIII'),
+    ('“The Pitch Gun” mc.V', 'https://foxhole.wiki.gg/wiki/%E2%80%9CThe_Pitch_Gun%E2%80%9D_mc.V'),
+    ('Fiddler Submachine Gun Model 868', 'https://foxhole.wiki.gg/wiki/Fiddler_Submachine_Gun_Model_868'),
+    ('No.1 “The Liar” Submachine Gun', 'https://foxhole.wiki.gg/wiki/No.1_%E2%80%9CThe_Liar%E2%80%9D_Submachine_Gun'),
+    ## ASSAULT RIFLES
+    ('“Dusk” ce.III', 'https://foxhole.wiki.gg/wiki/%E2%80%9CDusk%E2%80%9D_ce.III'),
+    ('Aalto Storm Rifle 24', 'https://foxhole.wiki.gg/wiki/Aalto_Storm_Rifle_24'),
+    ('Booker Storm Rifle Model 838', 'https://foxhole.wiki.gg/wiki/Booker_Storm_Rifle_Model_838'),
+    ## SHOTGUN
+    ('Brasa Shotgun', 'https://foxhole.wiki.gg/wiki/Shotgun'),
+    ## PISTOLS
+    ('Ahti Model 2', 'https://foxhole.wiki.gg/wiki/Ahti_Model_2'),
+    ('Cascadier 873', 'https://foxhole.wiki.gg/wiki/Cascadier_873'),
+    ('Ferro 879', 'https://foxhole.wiki.gg/wiki/Ferro_879'),
+    ## REVOLVER
+    ('Cometa T2-9', 'https://foxhole.wiki.gg/wiki/Revolver'),
+    ## LIGHT MACHINE GUN
+    ('Catara mo.II', 'https://foxhole.wiki.gg/wiki/Light_Machine_Gun'),
+    ## MACHINE GUN
+    ('KRN886-127 Gast Machine Gun', 'https://foxhole.wiki.gg/wiki/KRN886-127_Gast_Machine_Gun'),
+    ('Malone MK.2', 'https://foxhole.wiki.gg/wiki/Malone_MK.2'),
+    ## ATR
+    ('20 Neville Anti-Tank Rifle', 'https://foxhole.wiki.gg/wiki/Anti-Tank_Rifle'),
+    ## MOUNTED ATR
+    ('“Typhon” ra.XII', 'https://foxhole.wiki.gg/wiki/Mounted_Anti-Tank_Rifle'),
+    ## MOUNTED MACHINE GUN
+    ('Lamentum mm.IV', 'https://foxhole.wiki.gg/wiki/Lamentum_mm.IV'),
+    ('Malone Ratcatcher MK.1', 'https://foxhole.wiki.gg/wiki/Malone_Ratcatcher_MK.1'),
+    ## ISG
+    ('Daucus isg.III', 'https://foxhole.wiki.gg/wiki/Mounted_Infantry_Support_Gun'),
+    ## LANCE-FLAMMES
+    ('“Molten Wind” v.II Flame Torch', 'https://foxhole.wiki.gg/wiki/%E2%80%9CMolten_Wind%E2%80%9D_v.II_Flame_Torch'),
+    ("Willow's Bane Model 845", 'https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Model_845'),
+    ## GRENADES
+    ('A3 Harpa Fragmentation Grenade', 'https://foxhole.wiki.gg/wiki/A3_Harpa_Fragmentation_Grenade'),
+    ('Bomastone Grenade', 'https://foxhole.wiki.gg/wiki/Bomastone_Grenade'),
+    ## HE GRENADES
+    ('Mammon 91-b', 'https://foxhole.wiki.gg/wiki/Mammon_91-b'),
+    ('Tremola Grenade GPb-1', 'https://foxhole.wiki.gg/wiki/Tremola_Grenade_GPb-1'),
+    ## GAS GRENADE
+    ('Green Ash Grenade', 'https://foxhole.wiki.gg/wiki/Gas_Grenade'),
+    ## AT STICKY BOMB
+    ('Anti-Tank Sticky Bomb', 'https://foxhole.wiki.gg/wiki/Anti-Tank_Sticky_Bomb'),
+    ## AT GRENADES
+    ('BF5 White Ash Flask Grenade', 'https://foxhole.wiki.gg/wiki/Anti-Tank_Grenade'),
+    ## SMOKE GRENADES
+    ('PT-815 Smoke Grenade', 'https://foxhole.wiki.gg/wiki/Smoke_Grenade'),
+    ## EXPLOSIVE CHARGES
+    ('Alligator Charge', 'https://foxhole.wiki.gg/wiki/Alligator_Charge'),
+    ("Hydra's Whisper", 'https://foxhole.wiki.gg/wiki/Hydra%27s_Whisper'),
+    ('Abisme AT-99', 'https://foxhole.wiki.gg/wiki/Abisme_AT-99'),
+    ('Havoc Charge', 'https://foxhole.wiki.gg/wiki/Havoc_Charge'),
+    ('E680-S Rudder Lock', 'https://foxhole.wiki.gg/wiki/Sea_Mine'),
+    ## GRENADES LAUNCHERS
+    ('KLG901-2 Lunaire F', 'https://foxhole.wiki.gg/wiki/KLG901-2_Lunaire_F'),
+    ('The Ospreay', 'https://foxhole.wiki.gg/wiki/The_Ospreay'),
+    ## RPG LAUNCHER
+    ('Cutler Launcher 4', 'https://foxhole.wiki.gg/wiki/RPG_Launcher'),
+    ## AT RPG
+    ('Bane 45', 'https://foxhole.wiki.gg/wiki/Bane_45'),
+    ('Bonesaw MK.3', 'https://foxhole.wiki.gg/wiki/Bonesaw_MK.3'),
+    ('Ignifist 30', 'https://foxhole.wiki.gg/wiki/Ignifist_30'),
+    ('Venom c.II 35', 'https://foxhole.wiki.gg/wiki/Venom_c.II_35'),
+    ## MORTAR
+    ('Cremari Mortar', 'https://foxhole.wiki.gg/wiki/Mortar'),
+    ## MOUNTED RPG LAUNCHER
+    ('Cutler Foebreaker', 'https://foxhole.wiki.gg/wiki/Mounted_RPG_Launcher'),
+    # MOUNTED AT RPG
+    ('Mounted Bonesaw MK.3', 'https://foxhole.wiki.gg/wiki/Mounted_Anti-Tank_RPG'),
+    ## MOUNTED GRENADE LAUNCHER
+    ('Mounted Fissura gd.I', 'https://foxhole.wiki.gg/wiki/Mounted_Grenade_Launcher'),
+    ## MELEE
+    ('Buckhorn CCQ-18 Bayonet', 'https://foxhole.wiki.gg/wiki/Bayonet'),
+    ('Fists', 'https://foxhole.wiki.gg/wiki/Fists'),
+    ## MAGAZINES
+    ('9mm', 'https://foxhole.wiki.gg/wiki/9mm'),
+    ('8mm', 'https://foxhole.wiki.gg/wiki/8mm'),
+    ('7.92mm', 'https://foxhole.wiki.gg/wiki/7.92mm'),
+    ('7.62mm', 'https://foxhole.wiki.gg/wiki/7.62mm'),
+    ('.44', 'https://foxhole.wiki.gg/wiki/.44'),
+    ('Buckshot', 'https://foxhole.wiki.gg/wiki/Buckshot'),
+    ('Flame Ammo', 'https://foxhole.wiki.gg/wiki/Flame_Ammo'),
+    ('12.7mm', 'https://foxhole.wiki.gg/wiki/12.7mm'),
+    ('20mm', 'https://foxhole.wiki.gg/wiki/20mm'),
+    ## SHELLS
+    ('30mm', 'https://foxhole.wiki.gg/wiki/30mm'),
+    ('40mm', 'https://foxhole.wiki.gg/wiki/40mm'),
+    ('68mm', 'https://foxhole.wiki.gg/wiki/68mm'),
+    ('75mm', 'https://foxhole.wiki.gg/wiki/75mm'),
+    ('94.5mm', 'https://foxhole.wiki.gg/wiki/94.5mm'),
+    ## ARTY AMMO
+    ('Flare Mortar Shell', 'https://foxhole.wiki.gg/wiki/Flare_Mortar_Shell'),
+    ('Shrapnel Mortar Shell', 'https://foxhole.wiki.gg/wiki/Shrapnel_Mortar_Shell'),
+    ('Mortar Shell', 'https://foxhole.wiki.gg/wiki/Mortar_Shell'),
+    ('4C-Fire Rocket', 'https://foxhole.wiki.gg/wiki/4C-Fire_Rocket'),
+    ('3C-High Explosive Rocket', 'https://foxhole.wiki.gg/wiki/3C-High_Explosive_Rocket'),
+    ('120mm', 'https://foxhole.wiki.gg/wiki/120mm'),
+    ('150mm', 'https://foxhole.wiki.gg/wiki/150mm'),
+    ('300mm', 'https://foxhole.wiki.gg/wiki/300mm'),
+    ## PROPELLED EXPLOSIVES
+    ('RPG', 'https://foxhole.wiki.gg/wiki/RPG'),
+    ('AP⧸RPG', 'https://foxhole.wiki.gg/wiki/AP%E2%A7%B8RPG'),
+    ('ARC⧸RPG', 'https://foxhole.wiki.gg/wiki/ARC%E2%A7%B8RPG'),
+    ('250mm', 'https://foxhole.wiki.gg/wiki/250mm'),
+    ## FLAMETHROWER AMMO
+    ('“Molten Wind” v.II Ammo', 'https://foxhole.wiki.gg/wiki/%E2%80%9CMolten_Wind%E2%80%9D_v.II_Ammo'),
+    ("Willow's Bane Ammo", 'https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Ammo'),
+    ## TORPEDO / DEPTH CHARGES
+    ('Moray Torpedo', 'https://foxhole.wiki.gg/wiki/Torpedo'),
+    ('Model-7 “Evie”', 'https://foxhole.wiki.gg/wiki/Depth_Charge')
+]

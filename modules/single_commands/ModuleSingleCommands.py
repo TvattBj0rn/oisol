@@ -1,6 +1,10 @@
+import random
+
 import discord
 from discord import app_commands
 from discord.ext import commands
+from typing import List
+from modules.utils import ALL_WIKI_ENTRIES
 
 
 class ModuleSingleCommands(commands.Cog):
@@ -43,3 +47,23 @@ class ModuleSingleCommands(commands.Cog):
     @app_commands.command(name='oisol_ping', description='check if the bot is running as expected')
     async def oisol_ping(self, interaction: discord.Interaction):
         await interaction.response.send_message("Oisol Pong!")
+
+    async def wiki_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str,
+    ) -> List[app_commands.Choice[str]]:
+        if len(current) == 0:
+            return [
+                app_commands.Choice(name=wiki_entry[0], value=wiki_entry[1])
+                for wiki_entry in random.choices(ALL_WIKI_ENTRIES, k=5)
+            ]
+        return [
+            app_commands.Choice(name=wiki_entry[0], value=wiki_entry[1])
+            for wiki_entry in ALL_WIKI_ENTRIES if current.lower() in wiki_entry[0].lower()
+        ]
+
+    @app_commands.command(name='wiki', description='Official wiki request')
+    @app_commands.autocomplete(wiki_request=wiki_autocomplete)
+    async def wiki(self, interaction: discord.Interaction, wiki_request: str):
+        await interaction.response.send_message(f'You chose: {wiki_request}')
