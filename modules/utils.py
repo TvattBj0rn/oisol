@@ -302,5 +302,56 @@ ALL_WIKI_ENTRIES = [
     ("Willow's Bane Ammo", 'https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Ammo'),
     ## TORPEDO / DEPTH CHARGES
     ('Moray Torpedo', 'https://foxhole.wiki.gg/wiki/Torpedo'),
-    ('Model-7 “Evie”', 'https://foxhole.wiki.gg/wiki/Depth_Charge')
+    ('Model-7 “Evie”', 'https://foxhole.wiki.gg/wiki/Depth_Charge'),
+    ## ARMORED CARS
+    ('T3 “Xiphos”', 'https://foxhole.wiki.gg/wiki/T3_%E2%80%9CXiphos%E2%80%9D'),
+    ('T5 “Percutio”', 'https://foxhole.wiki.gg/wiki/T5_%E2%80%9CPercutio%E2%80%9D'),
+    ('T8 “Gemini”', 'https://foxhole.wiki.gg/wiki/T8_%E2%80%9CGemini%E2%80%9D'),
+    ("O'Brien V.110", 'https://foxhole.wiki.gg/wiki/O%27Brien_V.110'),
+    ("O'Brien V.113 Gravekeeper", 'https://foxhole.wiki.gg/wiki/O%27Brien_V.113_Gravekeeper'),
+    ("O'Brien V.121 Highlander", 'https://foxhole.wiki.gg/wiki/O%27Brien_V.121_Highlander'),
+    ("O'Brien V.130 Wild Jack", 'https://foxhole.wiki.gg/wiki/O%27Brien_V.130_Wild_Jack'),
+    ("O'Brien V.190 Knave", 'https://foxhole.wiki.gg/wiki/O%27Brien_V.190_Knave'),
+    ("O'Brien V.101 Freeman", 'https://foxhole.wiki.gg/wiki/O%27Brien_V.101_Freeman'),
+    ## TANKETTE
+    ('T12 “Actaeon” Tankette', 'https://foxhole.wiki.gg/wiki/T12_%E2%80%9CActaeon%E2%80%9D_Tankette'),
+    ('T13 “Deioneus” Rocket Battery', 'https://foxhole.wiki.gg/wiki/T13_%E2%80%9CDeioneus%E2%80%9D_Rocket_Battery'),
+    ('T14 “Vesta” Tankette', 'https://foxhole.wiki.gg/wiki/T14_%E2%80%9CVesta%E2%80%9D_Tankette'),
+    ('T20 “Ixion” Tankette', 'https://foxhole.wiki.gg/wiki/T20_%E2%80%9CIxion%E2%80%9D_Tankette'),
+    ## APCs
+    ('AB-8 “Acheron”', 'https://foxhole.wiki.gg/wiki/AB-8_%E2%80%9CAcheron%E2%80%9D'),
+    ('AB-11 “Doru”', 'https://foxhole.wiki.gg/wiki/AB-11_%E2%80%9CDoru%E2%80%9D'),
+    ('Mulloy LPC', 'https://foxhole.wiki.gg/wiki/Mulloy_LPC'),
+    ## HALF-TRACKS
+    ('HH-a “Javelin”', 'https://foxhole.wiki.gg/wiki/HH-a_%E2%80%9CJavelin%E2%80%9D'),
+    ('HH-b “Hoplite”', 'https://foxhole.wiki.gg/wiki/HH-b_%E2%80%9CHoplite%E2%80%9D'),
+    ('HH-d “Peltast”', 'https://foxhole.wiki.gg/wiki/HH-d_%E2%80%9CPeltast%E2%80%9D'),
+    ('Niska Mk. I Gun Motor Carriage', 'https://foxhole.wiki.gg/wiki/Niska_Mk._I_Gun_Motor_Carriage'),
+    ('Niska Mk. II Blinder', 'https://foxhole.wiki.gg/wiki/Niska_Mk._II_Blinder'),
+    ('Niska Mk. III Scar Twin', 'https://foxhole.wiki.gg/wiki/Niska_Mk._III_Scar_Twin'),
+    ('Niska-Rycker Mk. IX Skycaller', 'https://foxhole.wiki.gg/wiki/Niska-Rycker_Mk._IX_Skycaller'),
+    ## FMG
+    ('Swallowtail 988/127-2', 'https://foxhole.wiki.gg/wiki/Swallowtail_988/127-2'),
+    ('G40 “Sagittarii”', 'https://foxhole.wiki.gg/wiki/G40_%E2%80%9CSagittarii%E2%80%9D'),
+    ## FIELD ATR
+    ("Duncan's Coin 20mm", 'https://foxhole.wiki.gg/wiki/Duncan%27s_Coin_20mm'),
+    ('GA6 “Cestus”', 'https://foxhole.wiki.gg/wiki/GA6_%E2%80%9CCestus%E2%80%9D'),
+    ## FIELD ARTILLERY
+    ('120-68 “Koronides” Field Gun', 'https://foxhole.wiki.gg/wiki/Field_Artillery'),
+    ## FIELD CANNON
+    ('Balfour Wolfhound 40mm', 'https://foxhole.wiki.gg/wiki/Field_Cannon'),
+    ## FIELD LAUNCHER
+    ('Rycker 4/3-F Wasp Nest', 'https://foxhole.wiki.gg/wiki/Field_Launcher'),
+    ## FIELD AT GUN
+    ('Collins Cannon 68mm', 'https://foxhole.wiki.gg/wiki/Collins_Cannon_68mm'),
+    ('AA-2 Battering Ram', 'https://foxhole.wiki.gg/wiki/AA-2_Battering_Ram'),
+    ## FIELD MORTAR
+    ('Balfour Falconer 250mm', 'https://foxhole.wiki.gg/wiki/Field_Mortar'),
+    ## HEAVY FIELD CANON
+    ('Balfour Rampart 68mm', 'https://foxhole.wiki.gg/wiki/Heavy_Field_Cannon'),
+    ## HEAVY FIELD GUN
+    ('40-45 “Smelter” Heavy Field Gun', 'https://foxhole.wiki.gg/wiki/Heavy_Field_Gun'),
+    ## LARGE FIELD GUN
+    ('Balfour Stockade 75mm', 'https://foxhole.wiki.gg/wiki/Balfour_Stockade_75mm'),
+    ('945g “Stygian Bolt”', 'https://foxhole.wiki.gg/wiki/945g_%E2%80%9CStygian_Bolt%E2%80%9D')
 ]
