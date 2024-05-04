@@ -353,5 +353,146 @@ ALL_WIKI_ENTRIES = [
     ('40-45 “Smelter” Heavy Field Gun', 'https://foxhole.wiki.gg/wiki/Heavy_Field_Gun'),
     ## LARGE FIELD GUN
     ('Balfour Stockade 75mm', 'https://foxhole.wiki.gg/wiki/Balfour_Stockade_75mm'),
-    ('945g “Stygian Bolt”', 'https://foxhole.wiki.gg/wiki/945g_%E2%80%9CStygian_Bolt%E2%80%9D')
+    ('945g “Stygian Bolt”', 'https://foxhole.wiki.gg/wiki/945g_%E2%80%9CStygian_Bolt%E2%80%9D'),
+    ## SCOUT TANK
+    ('King Spire Mk. I', 'https://foxhole.wiki.gg/wiki/King_Spire_Mk._I'),
+    ('King Gallant Mk. II', 'https://foxhole.wiki.gg/wiki/King_Gallant_Mk._II'),
+    ('King Jester - Mk. I-1', 'https://foxhole.wiki.gg/wiki/King_Jester_-_Mk._I-1'),
+    ## LIGHT TANK
+    ('H-5 “Hatchet”', 'https://foxhole.wiki.gg/wiki/H-5_%E2%80%9CHatchet%E2%80%9D'),
+    ('H-10 “Pelekys”', 'https://foxhole.wiki.gg/wiki/H-10_%E2%80%9CPelekys%E2%80%9D'),
+    ('H-19 “Vulcan”', 'https://foxhole.wiki.gg/wiki/H-19_%E2%80%9CVulcan%E2%80%9D'),
+    ('H-8 “Kranesca”', 'https://foxhole.wiki.gg/wiki/H-8_%E2%80%9CKranesca%E2%80%9D'),
+    ('Devitt Mk. III', 'https://foxhole.wiki.gg/wiki/Devitt_Mk._III'),
+    ('Devitt Ironhide Mk. IV', 'https://foxhole.wiki.gg/wiki/Devitt_Ironhide_Mk._IV'),
+    ('Devitt-Caine Mk. IV MMR', 'https://foxhole.wiki.gg/wiki/Devitt-Caine_Mk._IV_MMR'),
+    ## ASSAULT TANK
+    ('85K-b “Falchion”', 'https://foxhole.wiki.gg/wiki/85K-b_%E2%80%9CFalchion%E2%80%9D'),
+    ('85K-a “Spatha”', 'https://foxhole.wiki.gg/wiki/85K-a_%E2%80%9CSpatha%E2%80%9D'),
+    ('85V-g “Talos”', 'https://foxhole.wiki.gg/wiki/85V-g_%E2%80%9CTalos%E2%80%9D'),
+    ('86K-a “Bardiche”', 'https://foxhole.wiki.gg/wiki/86K-a_%E2%80%9CBardiche%E2%80%9D'),
+    ('86K-c “Ranseur”', 'https://foxhole.wiki.gg/wiki/86K-c_%E2%80%9CRanseur%E2%80%9D'),
+    ('Silverhand - Mk. IV', 'https://foxhole.wiki.gg/wiki/Silverhand_-_Mk._IV'),
+    ('Silverhand Chieftain - Mk. VI', 'https://foxhole.wiki.gg/wiki/Silverhand_Chieftain_-_Mk._VI'),
+    ('Silverhand Lordscar - Mk. X', 'https://foxhole.wiki.gg/wiki/Silverhand_Lordscar_-_Mk._X'),
+    ('Gallagher Outlaw Mk. II', 'https://foxhole.wiki.gg/wiki/Gallagher_Outlaw_Mk._II'),
+    ('Gallagher Highwayman Mk. III', 'https://foxhole.wiki.gg/wiki/Gallagher_Highwayman_Mk._III'),
+    ('Gallagher Thornfall Mk. VI', 'https://foxhole.wiki.gg/wiki/Gallagher_Thornfall_Mk._VI'),
+    ## LIGHT INFANTRY TANK
+    ('HC-2 “Scorpion”', 'https://foxhole.wiki.gg/wiki/Light_Infantry_Tank'),
+    ## SIEGE TANK
+    ('HC-7 “Ballista”', 'https://foxhole.wiki.gg/wiki/Siege_Tank'),
+    ## DESTROYER TANK
+    ('Noble Widow MK. XIV', 'https://foxhole.wiki.gg/wiki/Noble_Widow_MK._XIV'),
+    ('Noble Firebrand Mk. XVII', 'https://foxhole.wiki.gg/wiki/Noble_Firebrand_Mk._XVII'),
+    ## BATTLE TANK
+    ('Flood Juggernaut Mk. VII', 'https://foxhole.wiki.gg/wiki/Flood_Juggernaut_Mk._VII'),
+    ('Flood Mk. I', 'https://foxhole.wiki.gg/wiki/Flood_Mk._I'),
+    ('Flood Mk. IX Stain', 'https://foxhole.wiki.gg/wiki/Flood_Mk._IX_Stain'),
+    ('Lance-25 “Hasta”', 'https://foxhole.wiki.gg/wiki/Lance-25_%E2%80%9CHasta%E2%80%9D'),
+    ('Lance-36', 'https://foxhole.wiki.gg/wiki/Lance-36'),
+    ('Lance-46 “Sarissa”', 'https://foxhole.wiki.gg/wiki/Lance-46_%E2%80%9CSarissa%E2%80%9D'),
+    ## SUPER TANK
+    ('Cullen Predator Mk. III', 'https://foxhole.wiki.gg/wiki/Cullen_Predator_Mk._III'),
+    ('O-75b “Ares”', 'https://foxhole.wiki.gg/wiki/O-75b_%E2%80%9CAres%E2%80%9D'),
+    ## FUEL TANKER
+    ('Dunne Fuelrunner 2d', 'https://foxhole.wiki.gg/wiki/Dunne_Fuelrunner_2d'),
+    ('RR-3 “Stolon” Tanker', 'https://foxhole.wiki.gg/wiki/RR-3_%E2%80%9CStolon%E2%80%9D_Tanker'),
+    ## TRUCK
+    ('R-1 Hauler', 'https://foxhole.wiki.gg/wiki/R-1_Hauler'),
+    ('R-17 “Retiarius” Skirmisher', 'https://foxhole.wiki.gg/wiki/R-17_%E2%80%9CRetiarius%E2%80%9D_Skirmisher'),
+    ('R-5b “Sisyphus” Hauler', 'https://foxhole.wiki.gg/wiki/R-5b_%E2%80%9CSisyphus%E2%80%9D_Hauler'),
+    ('R-9 “Speartip” Escort', 'https://foxhole.wiki.gg/wiki/R-9_%E2%80%9CSpeartip%E2%80%9D_Escort'),
+    ('R-5 “Atlas” Hauler', 'https://foxhole.wiki.gg/wiki/R-5_%E2%80%9CAtlas%E2%80%9D_Hauler'),
+    ('Dunne Loadlugger 3c', 'https://foxhole.wiki.gg/wiki/Dunne_Loadlugger_3c'),
+    ('Dunne Transport', 'https://foxhole.wiki.gg/wiki/Dunne_Transport'),
+    ('Dunne Landrunner 12c', 'https://foxhole.wiki.gg/wiki/Dunne_Landrunner_12c'),
+    ('Dunne Leatherback 2a', 'https://foxhole.wiki.gg/wiki/Dunne_Leatherback_2a'),
+    ## UTILITY VEHICLE
+    ('BMS - Class 2 Mobile Auto-Crane', 'https://foxhole.wiki.gg/wiki/Crane'),
+    ('BMS - Universal Assembly Rig', 'https://foxhole.wiki.gg/wiki/Construction_Vehicle'),
+    ('BMS - Fabricator', 'https://foxhole.wiki.gg/wiki/Advanced_Construction_Vehicle'),
+    ('BMS - Packmule Flatbed', 'https://foxhole.wiki.gg/wiki/Flatbed_Truck'),
+    ('BMS - Scrap Hauler', 'https://foxhole.wiki.gg/wiki/Harvester'),
+    ## TRAILER
+    ('Rooster - Junkwagon', 'https://foxhole.wiki.gg/wiki/Rooster_-_Junkwagon'),
+    ('Rooster - Lamploader', 'https://foxhole.wiki.gg/wiki/Rooster_-_Lamploader'),
+    ('Rooster - Tumblebox', 'https://foxhole.wiki.gg/wiki/Rooster_-_Tumblebox'),
+    ## FIRE ENGINE
+    ('Dunne Dousing Engine 3r', 'https://foxhole.wiki.gg/wiki/Dunne_Dousing_Engine_3r'),
+    ('R-12b - “Salva” Flame Truck', 'https://foxhole.wiki.gg/wiki/R-12b_-_%E2%80%9CSalva%E2%80%9D_Flame_Truck'),
+    ## BUS
+    ('Dunne Caravaner 2f', 'https://foxhole.wiki.gg/wiki/Dunne_Caravaner_2f'),
+    ('R-15 - “Chariot”', 'https://foxhole.wiki.gg/wiki/R-15_-_%E2%80%9CChariot%E2%80%9D'),
+    ## AMBULANCE
+    ('Dunne Responder 3e', 'https://foxhole.wiki.gg/wiki/Dunne_Responder_3e'),
+    ('R-12 - “Salus” Ambulance', 'https://foxhole.wiki.gg/wiki/R-12_-_%E2%80%9CSalus%E2%80%9D_Ambulance'),
+    ## HEAVY-DUTY TRUCK
+    ('Cnute Cliffwrest', 'https://foxhole.wiki.gg/wiki/Cnute_Cliffwrest'),
+    ('AU-A150 Taurine Rigger', 'https://foxhole.wiki.gg/wiki/AU-A150_Taurine_Rigger'),
+    ## BYCYCLE
+    ('Blumfield LK205', 'https://foxhole.wiki.gg/wiki/Bicycle'),
+    ## MOTORCYCLE
+    ('03MM “Caster”', 'https://foxhole.wiki.gg/wiki/03MM_%E2%80%9CCaster%E2%80%9D'),
+    ('00MS “Stinger”', 'https://foxhole.wiki.gg/wiki/00MS_%E2%80%9CStinger%E2%80%9D'),
+    ('Kivela Power Wheel 80-1', 'https://foxhole.wiki.gg/wiki/Kivela_Power_Wheel_80-1'),
+    ## LIGHT UTILITY VEHICLE
+    ('UV-05a “Argonaut”', 'https://foxhole.wiki.gg/wiki/UV-05a_%E2%80%9CArgonaut%E2%80%9D'),
+    ('UV-24 “Icarus”', 'https://foxhole.wiki.gg/wiki/UV-24_%E2%80%9CIcarus%E2%80%9D'),
+    ('UV-5c “Odyssey”', 'https://foxhole.wiki.gg/wiki/UV-5c_%E2%80%9COdyssey%E2%80%9D'),
+    ('Drummond 100a', 'https://foxhole.wiki.gg/wiki/Drummond_100a'),
+    ('Drummond Loscann 55c', 'https://foxhole.wiki.gg/wiki/Drummond_Loscann_55c'),
+    ('Drummond Spitfire 100d', 'https://foxhole.wiki.gg/wiki/Drummond_Spitfire_100d'),
+    ## LANDING SHIP
+    ('MacConmara Shorerunner', 'https://foxhole.wiki.gg/wiki/MacConmara_Shorerunner'),
+    ('Interceptor PA-12', 'https://foxhole.wiki.gg/wiki/Interceptor_PA-12'),
+    ## BARGE
+    ('BMS - Aquatipper', 'https://foxhole.wiki.gg/wiki/Barge'),
+    ## FREIGHTER
+    ('BMS - Ironship', 'https://foxhole.wiki.gg/wiki/Freighter'),
+    ## GUNBOAT
+    ('74b-1 Ronan Gunship', 'https://foxhole.wiki.gg/wiki/74b-1_Ronan_Gunship'),
+    ('Type C - “Charon”', 'https://foxhole.wiki.gg/wiki/Type_C_-_%E2%80%9CCharon%E2%80%9D'),
+    ## SUBMARINE
+    ('Nakki', 'https://foxhole.wiki.gg/wiki/Nakki'),
+    ('AC-b “Trident”', 'https://foxhole.wiki.gg/wiki/AC-b_%E2%80%9CTrident%E2%80%9D'),
+    ## LIGHT FRIGATE
+    ('Blacksteele', 'https://foxhole.wiki.gg/wiki/Blacksteele'),
+    ## DESTROYER
+    ('Conqueror', 'https://foxhole.wiki.gg/wiki/Conqueror'),
+    ## BASE SHIP
+    ('BMS - Longhook', 'https://foxhole.wiki.gg/wiki/Base_Ship'),
+    ## STORAGE SHIP
+    ('BMS - Bluefin', 'https://foxhole.wiki.gg/wiki/Storage_Ship'),
+    ## BATTLESHIP
+    ('Callahan (Battleship)', 'https://foxhole.wiki.gg/wiki/Callahan_(Battleship)'),
+    ('Titan', 'https://foxhole.wiki.gg/wiki/Titan'),
+    ## MOTORBOAT
+    ('BMS - Grouper', 'https://foxhole.wiki.gg/wiki/Motorboat'),
+    ## SMALL TRAIN
+    ('BMS Railtruck', 'https://foxhole.wiki.gg/wiki/Small_Container_Car'),
+    ('BMS Linerunner', 'https://foxhole.wiki.gg/wiki/Small_Flatbed_Car'),
+    ('BMS Tinderbox', 'https://foxhole.wiki.gg/wiki/Small_Liquid_Container_Car'),
+    ('BMS Mineseeker', 'https://foxhole.wiki.gg/wiki/Small_Train_Locomotive'),
+    ## LARGE TRAIN
+    ('BMS Rockhold', 'https://foxhole.wiki.gg/wiki/Container_Car'),
+    ('BMS Roadhouse', 'https://foxhole.wiki.gg/wiki/Caboose'),
+    ('BMS Longrider', 'https://foxhole.wiki.gg/wiki/Flatbed_Car'),
+    ('BMS Holdout', 'https://foxhole.wiki.gg/wiki/Infantry_Car'),
+    ('BMS Black Bolt', 'https://foxhole.wiki.gg/wiki/Locomotive'),
+    ("O'Brien Warsmith v.215", 'https://foxhole.wiki.gg/wiki/O%27Brien_Warsmith_v.215'),
+    ('Aegis Steelbreaker K5a', 'https://foxhole.wiki.gg/wiki/Aegis_Steelbreaker_K5a'),
+    ('Tempest Cannon RA-2', 'https://foxhole.wiki.gg/wiki/Long-Range_Artillery_Car'),
+    ## LARGE CRANE
+    ('BMS - Overseer Sky-Hauler', 'https://foxhole.wiki.gg/wiki/Large_Crane'),
+    ## RELIC VEHICLE
+    ('Heavy Infantry Carrier', 'https://foxhole.wiki.gg/wiki/Heavy_Infantry_Carrier'),
+    ('Armoured Fighting Tractor', 'https://foxhole.wiki.gg/wiki/Armoured_Fighting_Tractor'),
+    ('PL-1 “Phalanx”', 'https://foxhole.wiki.gg/wiki/Relic_Assault_Tank'),
+    ('Storm Tank', 'https://foxhole.wiki.gg/wiki/Storm_Tank'),
+    ('Staff Car', 'https://foxhole.wiki.gg/wiki/Staff_Car'),
+    ('Repurposed Truck', 'https://foxhole.wiki.gg/wiki/Repurposed_Truck'),
+    ## MECH VEHICLE
+    ('Herne QMW 1a Scourge Hunter', 'https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter'),
+    ('Centurion MV-2', 'https://foxhole.wiki.gg/wiki/Centurion_MV-2')
 ]
