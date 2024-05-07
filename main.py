@@ -8,6 +8,7 @@ from modules.registre.RegisterViewMenu import RegisterViewMenu
 from modules.single_commands.ModuleSingleCommands import ModuleSingleCommands
 from modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
 from modules.todolist.ModuleTodolist import ModuleTodolist
+from modules.wiki.ModuleWiki import ModuleWiki
 
 
 class Oisol(commands.Bot):
@@ -27,6 +28,7 @@ class Oisol(commands.Bot):
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
         await self.add_cog(ModuleSingleCommands(self))
+        await self.add_cog(ModuleWiki(self))
 
         try:
             synced = await self.tree.sync()
