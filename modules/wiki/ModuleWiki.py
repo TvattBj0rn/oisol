@@ -16,14 +16,15 @@ class ModuleWiki(commands.Cog):
             current: str,
     ) -> List[app_commands.Choice[str]]:
 
+        # Default search values, before any input in the search bar
         if len(current) == 0:
             return [
-                app_commands.Choice(name=wiki_entry[0], value=wiki_entry[1])
+                app_commands.Choice(name=wiki_entry['name'], value=wiki_entry['url'])
                 for wiki_entry in random.choices(ALL_WIKI_ENTRIES, k=5)
             ]
         return [
-            app_commands.Choice(name=wiki_entry[0], value=wiki_entry[1])
-            for wiki_entry in ALL_WIKI_ENTRIES if current.lower() in wiki_entry[0].lower()
+            app_commands.Choice(name=wiki_entry['name'], value=wiki_entry['url'])
+            for wiki_entry in ALL_WIKI_ENTRIES if current.lower() in wiki_entry['name'].lower()
         ]
 
     @app_commands.command(name='wiki', description='Official wiki request')
