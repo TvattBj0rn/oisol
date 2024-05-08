@@ -1351,846 +1351,846 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Border Base",
         'url': "https://foxhole.wiki.gg/wiki/Border_Base",
-        'keywords': ''
+        'keywords': 'border base'
     },
     {
         'name': "Relic Base",
         'url': "https://foxhole.wiki.gg/wiki/Relic_Base",
-        'keywords': ''
+        'keywords': 'relic base'
     },
     {
         'name': "Town Base (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Town_Base#Tier_1-0",
-        'keywords': ''
+        'keywords': 'townbase'
     },
     {
         'name': "Town Base (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Town_Base#Tier_2-0",
-        'keywords': ''
+        'keywords': 'townbase'
     },
     {
         'name': "Town Base (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Town_Base#Tier_3-0",
-        'keywords': ''
+        'keywords': 'townbase'
     },
     {
         'name': "Bunker Base (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_1-0",
-        'keywords': ''
+        'keywords': 'bunker base'
     },
     {
         'name': "Bunker Base (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_2-0",
-        'keywords': ''
+        'keywords': 'bunker base'
     },
     {
         'name': "Bunker Base (Tier 3)",
         'url': " https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_3-0",
-        'keywords': ''
+        'keywords': 'bunker base'
     },
     {
         'name': "Encampment",
         'url': "https://foxhole.wiki.gg/wiki/Encampment",
-        'keywords': ''
+        'keywords': 'encampment'
     },
     {
         'name': "Keep",
         'url': "https://foxhole.wiki.gg/wiki/Keep",
-        'keywords': ''
+        'keywords': 'keep'
     },
     {
         'name': "Safe House (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Safe_House#Tier_1-0",
-        'keywords': ''
+        'keywords': 'safe House'
     },
     {
         'name': "Safe House (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Safe_House#Tier_2-0",
-        'keywords': ''
+        'keywords': 'safe House'
     },
     {
         'name': "Safe House (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Safe_House#Tier_3-0",
-        'keywords': ''
+        'keywords': 'safe House'
     },
     {
         'name': "Seaport",
         'url': "https://foxhole.wiki.gg/wiki/Seaport",
-        'keywords': ''
+        'keywords': 'seaport'
     },
     {
         'name': "Storage Depot",
         'url': "https://foxhole.wiki.gg/wiki/Storage_Depot",
-        'keywords': ''
+        'keywords': 'storage depot'
     },
     {
         'name': "Liquid Container",
         'url': "https://foxhole.wiki.gg/wiki/Liquid_Container",
-        'keywords': ''
+        'keywords': 'liquid container'
     },
     {
         'name': "Liquid Transfer Station",
         'url': "https://foxhole.wiki.gg/wiki/Liquid_Transfer_Station",
-        'keywords': ''
+        'keywords': 'liquid transfer station'
     },
     {
         'name': "Material Pallet",
         'url': "https://foxhole.wiki.gg/wiki/Material_Pallet",
-        'keywords': ''
+        'keywords': 'material pallet'
     },
     {
         'name': "Material Transfer Station",
         'url': "https://foxhole.wiki.gg/wiki/Material_Transfer_Station",
-        'keywords': ''
+        'keywords': 'material transfer station'
     },
     {
         'name': "Resource Container",
         'url': "https://foxhole.wiki.gg/wiki/Resource_Container",
-        'keywords': ''
+        'keywords': 'resource container'
     },
     {
         'name': "Resource Transfer Station",
         'url': "https://foxhole.wiki.gg/wiki/Resource_Transfer_Station",
-        'keywords': ''
+        'keywords': 'resource transfer station'
     },
     {
         'name': "Shippable Crate",
         'url': "https://foxhole.wiki.gg/wiki/Shippable_Crate",
-        'keywords': ''
+        'keywords': 'shippable crate'
     },
     {
         'name': "Shipping Container",
         'url': "https://foxhole.wiki.gg/wiki/Shipping_Container",
-        'keywords': ''
+        'keywords': 'shipping container'
     },
     {
         'name': "Storage Box",
         'url': "https://foxhole.wiki.gg/wiki/Storage_Box",
-        'keywords': ''
+        'keywords': 'storage boxe'
     },
     {
         'name': "Storage Room (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Storage_Room#Tier_2-0",
-        'keywords': ''
+        'keywords': 'storage room bunker'
     },
     {
         'name': "Storage Room (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Storage_Room#Tier_3-0",
-        'keywords': ''
+        'keywords': 'storage roombunker'
     },
     {
         'name': "Coastal Gun",
         'url': "https://foxhole.wiki.gg/wiki/Coastal_Gun",
-        'keywords': ''
+        'keywords': 'coastal gun'
     },
     {
         'name': "Garrisoned House",
         'url': "https://foxhole.wiki.gg/wiki/Garrisoned_House",
-        'keywords': ''
+        'keywords': 'garrisoned ghouse'
     },
     {
         'name': "Observation Tower",
         'url': "https://foxhole.wiki.gg/wiki/Observation_Tower",
-        'keywords': ''
+        'keywords': 'observation tower'
     },
     {
         'name': "Anti-Tank Pillbox",
         'url': "https://foxhole.wiki.gg/wiki/Anti-Tank_Pillbox",
-        'keywords': ''
+        'keywords': 'anti tank at pillboxe'
     },
     {
         'name': "AT Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_2-0",
-        'keywords': ''
+        'keywords': 'at gun garrison bunker'
     },
     {
         'name': "AT Gun Garrison (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_3-0",
-        'keywords': ''
+        'keywords': 'at gun garrison bunker'
     },
     {
         'name': "Howitzer Garrison",
         'url': "https://foxhole.wiki.gg/wiki/Howitzer_Garrison",
-        'keywords': ''
+        'keywords': 'howitzer garrison bunker'
     },
     {
         'name': "Machine Gun Garrison (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_1-0",
-        'keywords': ''
+        'keywords': 'machine gun mg garrison bunker'
     },
     {
         'name': "Machine Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_2-0",
-        'keywords': ''
+        'keywords': 'machine gun mg garrison bunker'
     },
     {
         'name': "Machine Gun Garrison (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_3-0",
-        'keywords': ''
+        'keywords': 'machine gun mg garrison bunker'
     },
     {
         'name': "Machine Gun Pillbox",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Pillbox",
-        'keywords': ''
+        'keywords': 'machine gun mg pillbox'
     },
     {
         'name': "Observation Bunker (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_2-0",
-        'keywords': ''
+        'keywords': 'observation bunker'
     },
     {
         'name': "Observation Bunker (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_3-0",
-        'keywords': ''
+        'keywords': 'observation bunker'
     },
     {
         'name': "Rifle Garrison (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_1-0",
-        'keywords': ''
+        'keywords': 'rifle garrison bunker'
     },
     {
         'name': "Rifle Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_2-0",
-        'keywords': ''
+        'keywords': 'rifle garrison bunker'
     },
     {
         'name': "Rifle Garrison (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_3-0",
-        'keywords': ''
+        'keywords': 'rifle garrison bunker'
     },
     {
         'name': "Rifle Pillbox",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Pillbox",
-        'keywords': ''
+        'keywords': 'rifle pillbox'
     },
     {
         'name': "Watch Tower",
         'url': "https://foxhole.wiki.gg/wiki/Watch_Tower",
-        'keywords': ''
+        'keywords': 'watch tower wt'
     },
     {
         'name': "Emplacement House",
         'url': "https://foxhole.wiki.gg/wiki/Emplacement_House",
-        'keywords': ''
+        'keywords': 'emplacement mortar mhouse'
     },
     {
         'name': "50-500 “Thunderbolt” Cannon",
         'url': "https://foxhole.wiki.gg/wiki/50-500_%E2%80%9CThunderbolt%E2%80%9D_Cannon",
-        'keywords': ''
+        'keywords': '50500 thunderbolt cannon artillery arty 150mm colonial'
     },
     {
         'name': "DAE 1b-2 “Serra”",
         'url': "https://foxhole.wiki.gg/wiki/DAE_1b-2_%E2%80%9CSerra%E2%80%9D",
-        'keywords': ''
+        'keywords': 'dae 1b2 serra emplaced machine gun emg colonial'
     },
     {
         'name': "DAE 1o-3 “Polybolos”",
         'url': "https://foxhole.wiki.gg/wiki/DAE_1o-3_%E2%80%9CPolybolos%E2%80%9D",
-        'keywords': ''
+        'keywords': 'dae 1o3 polybolos emplaced at gun beat colonial'
     },
     {
         'name': "DAE 2a-1 “Ruptura”",
         'url': "https://foxhole.wiki.gg/wiki/DAE_2a-1_%E2%80%9CRuptura%E2%80%9D",
-        'keywords': ''
+        'keywords': 'dae 2a1 ruptura colonial'
     },
     {
         'name': "DAE 3b-2 “Hades' Net”",
         'url': "https://foxhole.wiki.gg/wiki/DAE_3b-2_%E2%80%9CHades%27_Net%E2%80%9D",
-        'keywords': ''
+        'keywords': 'dae 3b2 hades net emplaced rocket artillery colonial'
     },
     {
         'name': "Huber Exalt 150mm",
         'url': "https://foxhole.wiki.gg/wiki/Huber_Exalt_150mm",
-        'keywords': ''
+        'keywords': 'hubert exalt artillery arty 150mm warden'
     },
     {
         'name': "Huber Lariat 120mm",
         'url': "https://foxhole.wiki.gg/wiki/Light_Artillery",
-        'keywords': ''
+        'keywords': 'huber lariat artillery arty warden'
     },
     {
         'name': "Huber Starbreaker 94.5mm",
         'url': "https://foxhole.wiki.gg/wiki/Huber_Starbreaker_94.5mm",
-        'keywords': ''
+        'keywords': 'huber starbreaker 945mm warden'
     },
     {
         'name': "Intelligence Center",
         'url': "https://foxhole.wiki.gg/wiki/Intelligence_Center",
-        'keywords': ''
+        'keywords': 'intelligence center ic'
     },
     {
         'name': "Leary Shellbore 68mm",
         'url': "https://foxhole.wiki.gg/wiki/Leary_Shellbore_68mm",
-        'keywords': ''
+        'keywords': 'leary shellbore 68mm emplaced at gun eat warden'
     },
     {
         'name': "Leary Snare Trap 127",
         'url': "https://foxhole.wiki.gg/wiki/Leary_Snare_Trap_127",
-        'keywords': ''
+        'keywords': 'leary snare trap 127 emplaced machine gun emg warden'
     },
     {
         'name': "Storm Cannon",
         'url': "https://foxhole.wiki.gg/wiki/Storm_Cannon",
-        'keywords': ''
+        'keywords': 'storm cannon sc'
     },
     {
         'name': "Barbed Wire",
         'url': "https://foxhole.wiki.gg/wiki/Barbed_Wire_(Structure)",
-        'keywords': ''
+        'keywords': 'barbed wire'
     },
     {
         'name': "Barbed Wire Fence",
         'url': "https://foxhole.wiki.gg/wiki/Barbed_Wire_Fence",
-        'keywords': ''
+        'keywords': 'barbed wire fence'
     },
     {
         'name': "Bunker (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker#Tier_1-0",
-        'keywords': ''
+        'keywords': 'bunker'
     },
     {
         'name': "Bunker (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker#Tier_2-0",
-        'keywords': ''
+        'keywords': 'bunker'
     },
     {
         'name': "Bunker (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker#Tier_3-0",
-        'keywords': ''
+        'keywords': 'bunker'
     },
     {
         'name': "Bunker Corner (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Corner#Tier_1-0",
-        'keywords': ''
+        'keywords': 'bunker corner'
     },
     {
         'name': "Bunker Corner (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Corner#Tier_2-0",
-        'keywords': ''
+        'keywords': 'bunker corner'
     },
     {
         'name': "Bunker Corner (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Corner#Tier_3-0",
-        'keywords': ''
+        'keywords': 'bunker corner'
     },
     {
         'name': "Bunker Ramp (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Ramp#Tier_1-0",
-        'keywords': ''
+        'keywords': 'bunker ramp'
     },
     {
         'name': "Bunker Ramp (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Ramp#Tier_2-0",
-        'keywords': ''
+        'keywords': 'bunker ramp'
     },
     {
         'name': "Bunker Ramp (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Ramp#Tier_3-0",
-        'keywords': ''
+        'keywords': 'bunker ramp'
     },
     {
         'name': "Dragon's Teeth",
         'url': "https://foxhole.wiki.gg/wiki/Dragon%27s_Teeth",
-        'keywords': ''
+        'keywords': 'dragons teeth'
     },
     {
         'name': "Foxhole",
         'url': "https://foxhole.wiki.gg/wiki/Dug_Foxhole",
-        'keywords': ''
+        'keywords': 'dug foxhole'
     },
     {
         'name': "Gate (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Gate#Tier_1-0",
-        'keywords': ''
+        'keywords': 'gate'
     },
     {
         'name': "Gate (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Gate#Tier_2-0",
-        'keywords': ''
+        'keywords': 'gate'
     },
     {
         'name': "Gate (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Gate#Tier_3-0",
-        'keywords': ''
+        'keywords': 'gate'
     },
     {
         'name': "Sandbag Cover",
         'url': "https://foxhole.wiki.gg/wiki/Sandbag_Cover#Sandbag_Cover_(Tier_1)-0",
-        'keywords': ''
+        'keywords': 'sandbags cover'
     },
     {
         'name': "Sandbag Wall",
         'url': "https://foxhole.wiki.gg/wiki/Sandbag_Cover#Sandbag_Wall_(Tier_2)-0",
-        'keywords': ''
+        'keywords': 'sandbags wall'
     },
     {
         'name': "Tank Trap",
         'url': "https://foxhole.wiki.gg/wiki/Tank_Trap",
-        'keywords': ''
+        'keywords': 'tank trap'
     },
     {
         'name': "Trench (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Trench#Tier_1-0",
-        'keywords': ''
+        'keywords': 'trench'
     },
     {
         'name': "Trench (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Trench#Tier_2-0",
-        'keywords': ''
+        'keywords': 'trench'
     },
     {
         'name': "Trench (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Trench#Tier_3-0",
-        'keywords': ''
+        'keywords': 'trench'
     },
     {
         'name': "Trench Connector (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Connector#Tier_1-0",
-        'keywords': ''
+        'keywords': 'trench connector'
     },
     {
         'name': "Trench Connector (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Connector#Tier_2-0",
-        'keywords': ''
+        'keywords': 'trench connector'
     },
     {
         'name': "Trench Connector (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Connector#Tier_3-0",
-        'keywords': ''
+        'keywords': 'trench connector'
     },
     {
         'name': "Trench Emplacement (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Emplacement#Tier_1-0",
-        'keywords': ''
+        'keywords': 'trench emplacement pit'
     },
     {
         'name': "Trench Emplacement (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Emplacement#Tier_2-0",
-        'keywords': ''
+        'keywords': 'trench emplacement pit'
     },
     {
         'name': "Trench Emplacement (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Emplacement#Tier_3-0",
-        'keywords': ''
+        'keywords': 'trench emplacement pit'
     },
     {
         'name': "Wall (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_1-0",
-        'keywords': ''
+        'keywords': 'wall'
     },
     {
         'name': "Wall (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_2-0",
-        'keywords': ''
+        'keywords': 'wall'
     },
     {
         'name': "Wall (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_3-0",
-        'keywords': ''
+        'keywords': 'wall'
     },
     {
         'name': "Construction Yard",
         'url': "https://foxhole.wiki.gg/wiki/Construction_Yard",
-        'keywords': ''
+        'keywords': 'construction yard'
     },
     {
         'name': "Engineering Center",
         'url': "https://foxhole.wiki.gg/wiki/Engineering_Center",
-        'keywords': ''
+        'keywords': 'engineering center'
     },
     {
         'name': "Factory",
         'url': "https://foxhole.wiki.gg/wiki/Factory",
-        'keywords': ''
+        'keywords': 'factory'
     },
     {
         'name': "Garage",
         'url': "https://foxhole.wiki.gg/wiki/Garage",
-        'keywords': ''
+        'keywords': 'garage'
     },
     {
         'name': "Hospital",
         'url': "https://foxhole.wiki.gg/wiki/Hospital",
-        'keywords': ''
+        'keywords': 'hospital'
     },
     {
         'name': "Mass Production Factory",
         'url': "https://foxhole.wiki.gg/wiki/Mass_Production_Factory",
-        'keywords': ''
+        'keywords': 'mass production factory'
     },
     {
         'name': "Refinery",
         'url': "https://foxhole.wiki.gg/wiki/Refinery",
-        'keywords': ''
+        'keywords': 'refinery'
     },
     {
         'name': "Shipyard",
         'url': "https://foxhole.wiki.gg/wiki/Shipyard",
-        'keywords': ''
+        'keywords': 'shipyard'
     },
     {
         'name': "A0E-9 Rocket Platform",
         'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform",
-        'keywords': ''
+        'keywords': 'a0e9 rocket nuke platform'
     },
     {
         'name': "Ammunition Factory",
         'url': "https://foxhole.wiki.gg/wiki/Ammunition_Factory",
-        'keywords': ''
+        'keywords': 'ammunition factory'
     },
     {
         'name': "Coal Refinery",
         'url': "https://foxhole.wiki.gg/wiki/Coal_Refinery",
-        'keywords': ''
+        'keywords': 'coal refinery'
     },
     {
         'name': "Concrete Mixer",
         'url': "https://foxhole.wiki.gg/wiki/Concrete_Mixer",
-        'keywords': ''
+        'keywords': 'concrete mixer'
     },
     {
         'name': "Diesel Power Plant",
         'url': "https://foxhole.wiki.gg/wiki/Diesel_Power_Plant",
-        'keywords': ''
+        'keywords': 'diesel power plant'
     },
     {
         'name': "Dry Dock",
         'url': "https://foxhole.wiki.gg/wiki/Dry_Dock",
-        'keywords': ''
+        'keywords': 'dry dock'
     },
     {
         'name': "Field Hospital",
         'url': "https://foxhole.wiki.gg/wiki/Field_Hospital",
-        'keywords': ''
+        'keywords': 'field hospital'
     },
     {
         'name': "Field Modification Center",
         'url': "https://foxhole.wiki.gg/wiki/Field_Modification_Center",
-        'keywords': ''
+        'keywords': 'field modification center'
     },
     {
         'name': "Large Assembly Station",
         'url': "https://foxhole.wiki.gg/wiki/Large_Assembly_Station",
-        'keywords': ''
+        'keywords': 'large assembly station upgrade pad'
     },
     {
         'name': "Materials Factory",
         'url': "https://foxhole.wiki.gg/wiki/Materials_Factory",
-        'keywords': ''
+        'keywords': 'materials factory'
     },
     {
         'name': "Metalworks Factory",
         'url': "https://foxhole.wiki.gg/wiki/Metalworks_Factory",
-        'keywords': ''
+        'keywords': 'metalworks factory'
     },
     {
         'name': "Oil Refinery",
         'url': "https://foxhole.wiki.gg/wiki/Oil_Refinery",
-        'keywords': ''
+        'keywords': 'oil refinery'
     },
     {
         'name': "Power Station",
         'url': "https://foxhole.wiki.gg/wiki/Power_Station",
-        'keywords': ''
+        'keywords': 'power station'
     },
     {
         'name': "Small Assembly Station",
         'url': "https://foxhole.wiki.gg/wiki/Small_Assembly_Station",
-        'keywords': ''
+        'keywords': 'small assembly station upgrade pad'
     },
     {
         'name': "Oil Field",
         'url': "https://foxhole.wiki.gg/wiki/Oil_Field",
-        'keywords': ''
+        'keywords': 'oil field'
     },
     {
         'name': "Coal Field",
         'url': "https://foxhole.wiki.gg/wiki/Coal_Field",
-        'keywords': ''
+        'keywords': 'coal field'
     },
     {
         'name': "Salvage Field",
         'url': "https://foxhole.wiki.gg/wiki/Salvage_Field",
-        'keywords': ''
+        'keywords': 'salvage scrap field'
     },
     {
         'name': "Sulfur Field",
         'url': "https://foxhole.wiki.gg/wiki/Sulfur_Field",
-        'keywords': ''
+        'keywords': 'sulfur field'
     },
     {
         'name': "Component Field",
         'url': "https://foxhole.wiki.gg/wiki/Component_Field",
-        'keywords': ''
+        'keywords': 'component field'
     },
     {
         'name': "Salvage Mine",
         'url': "https://foxhole.wiki.gg/wiki/Salvage_Mine",
-        'keywords': ''
+        'keywords': 'salvage scrap mine'
     },
     {
         'name': "Sulfur Mine",
         'url': "https://foxhole.wiki.gg/wiki/Sulfur_Mine",
-        'keywords': ''
+        'keywords': 'sulfur mine'
     },
     {
         'name': "Component Mine",
         'url': "https://foxhole.wiki.gg/wiki/Component_Mine",
-        'keywords': ''
+        'keywords': 'component mine'
     },
     {
         'name': "Offshore Platform",
         'url': "https://foxhole.wiki.gg/wiki/Offshore_Platform",
-        'keywords': ''
+        'keywords': 'offshore platform'
     },
     {
         'name': "Oil Well",
         'url': "https://foxhole.wiki.gg/wiki/Oil_Well",
-        'keywords': ''
+        'keywords': 'oil well'
     },
     {
         'name': "Stationary Harvester (Coal)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Coal)",
-        'keywords': ''
+        'keywords': 'stationary harvester'
     },
     {
         'name': "Stationary Harvester (Components)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Components)",
-        'keywords': ''
+        'keywords': 'stationary harvester'
     },
     {
         'name': "Stationary Harvester (Scrap)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Scrap)",
-        'keywords': ''
+        'keywords': 'stationary harvester'
     },
     {
         'name': "Stationary Harvester (Sulfur)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Sulfur)",
-        'keywords': ''
+        'keywords': 'stationary harvester'
     },
     {
         'name': "Water Pump",
         'url': "https://foxhole.wiki.gg/wiki/Water_Pump",
-        'keywords': ''
+        'keywords': 'water pump'
     },
     {
         'name': "Wooden Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Bridge#Wooden_Bridge-0",
-        'keywords': ''
+        'keywords': 'wooden bridge'
     },
     {
         'name': "Stone Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Bridge#Stone_Bridge-0",
-        'keywords': ''
+        'keywords': 'stone bridge'
     },
     {
         'name': "Two Tier Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Bridge#Two_Tier_Bridge-1",
-        'keywords': ''
+        'keywords': 'two tier bridge'
     },
     {
         'name': "Double Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Bridge#Double_Bridge-1",
-        'keywords': ''
+        'keywords': 'double bridge'
     },
     {
         'name': "Long Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Bridge#Long_Bridge-1",
-        'keywords': ''
+        'keywords': 'long bridge'
     },
     {
         'name': "Train Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Bridge#Train_Bridge-1",
-        'keywords': ''
+        'keywords': 'train bridge'
     },
     {
         'name': "Field Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Field_Bridge",
-        'keywords': ''
+        'keywords': 'field bridge'
     },
     {
         'name': "Dock",
         'url': "https://foxhole.wiki.gg/wiki/Dock",
-        'keywords': ''
+        'keywords': 'docks'
     },
     {
         'name': "Stationary Crane",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Crane",
-        'keywords': ''
+        'keywords': 'stationnary crane'
     },
     {
         'name': "A0E-9 Rocket",
         'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket",
-        'keywords': ''
+        'keywords': 'a0e9 rocket nuke'
     },
     {
         'name': "BMS Foreman Stacker",
         'url': "https://foxhole.wiki.gg/wiki/Facility_Crane",
-        'keywords': ''
+        'keywords': 'bms foreman stacker facilty crane'
     },
     {
         'name': "Catwalk Bridge",
         'url': "https://foxhole.wiki.gg/wiki/Catwalk_Bridge",
-        'keywords': ''
+        'keywords': 'catwalk bridge'
     },
     {
         'name': "Catwalk Platform",
         'url': "https://foxhole.wiki.gg/wiki/Catwalk_Platform",
-        'keywords': ''
+        'keywords': 'catwalk platform'
     },
     {
         'name': "Catwalk Stairs",
         'url': "https://foxhole.wiki.gg/wiki/Catwalk_Stairs",
-        'keywords': ''
+        'keywords': 'catwalk stairs'
     },
     {
         'name': "Crane Railway Track",
         'url': "https://foxhole.wiki.gg/wiki/Crane_Railway_Track",
-        'keywords': ''
+        'keywords': 'crane railway track'
     },
     {
         'name': "Deployed Listening Kit",
         'url': "https://foxhole.wiki.gg/wiki/Listening_Kit",
-        'keywords': ''
+        'keywords': 'deployed listening kit lk'
     },
     {
         'name': "Deployed Tripod",
         'url': "https://foxhole.wiki.gg/wiki/Tripod",
-        'keywords': ''
+        'keywords': 'deployed tripod'
     },
     {
         'name': "Engine Room (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Engine_Room#Tier_2-0",
-        'keywords': ''
+        'keywords': 'engine room bunker'
     },
     {
         'name': "Engine Room (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Engine_Room#Tier_3-0",
-        'keywords': ''
+        'keywords': 'engine room bunker'
     },
     {
         'name': "Fire Pit",
         'url': "https://foxhole.wiki.gg/wiki/Fire_Pit",
-        'keywords': ''
+        'keywords': 'fire pit campfire'
     },
     {
         'name': "Foundation (1x1)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#1x1-0",
-        'keywords': ''
+        'keywords': 'foundation'
     },
     {
         'name': "Concrete Foundation (1x1)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#1x1_Concrete-0",
-        'keywords': ''
+        'keywords': 'concrete foundation'
     },
     {
         'name': "Foundation Corner (1x1)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#Corner_1x1-0",
-        'keywords': ''
+        'keywords': 'foundation'
     },
     {
         'name': "Concrete Foundation Corner (1x1)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#Corner_1x1_Concrete-0",
-        'keywords': ''
+        'keywords': 'concrete foundation'
     },
     {
         'name': "Foundation (1x2)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#1x2-0",
-        'keywords': ''
+        'keywords': 'foundation'
     },
     {
         'name': "Concrete Foundation (1x2)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#1x2_Concrete-0",
-        'keywords': ''
+        'keywords': 'concrete foundation'
     },
     {
         'name': "Foundation (2x2)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#2x2-0",
-        'keywords': ''
+        'keywords': 'foundation'
     },
     {
         'name': "Concrete Foundation (2x2)",
         'url': "https://foxhole.wiki.gg/wiki/Foundation#2x2_Concrete-0",
-        'keywords': ''
+        'keywords': 'concrete foundation'
     },
     {
         'name': "Fuel Silo",
         'url': "https://foxhole.wiki.gg/wiki/Fuel_Silo",
-        'keywords': ''
+        'keywords': 'fuel silo'
     },
     {
         'name': "Maintenance Tunnel",
         'url': "https://foxhole.wiki.gg/wiki/Maintenance_Tunnel",
-        'keywords': ''
+        'keywords': 'maintenance tunnel'
     },
     {
         'name': "Navy Pier",
         'url': "https://foxhole.wiki.gg/wiki/Navy_Pier",
-        'keywords': ''
+        'keywords': 'navy pier'
     },
     {
         'name': "Pipeline",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline",
-        'keywords': ''
+        'keywords': 'pipeline'
     },
     {
         'name': "Pipeline (Overhead)",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_(Overhead)",
-        'keywords': ''
+        'keywords': 'pipeline'
     },
     {
         'name': "Pipeline (Underground)",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_(Underground)",
-        'keywords': ''
+        'keywords': 'pipeline'
     },
     {
         'name': "Pipeline Valve",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_Valve",
-        'keywords': ''
+        'keywords': 'pipeline'
     },
     {
         'name': "Power Pole",
         'url': "https://foxhole.wiki.gg/wiki/Power_Pole",
-        'keywords': ''
+        'keywords': 'power pole'
     },
     {
         'name': "Power Switch",
         'url': "https://foxhole.wiki.gg/wiki/Power_Switch",
-        'keywords': ''
+        'keywords': 'power switch'
     },
     {
         'name': "Provisional Road",
         'url': "https://foxhole.wiki.gg/wiki/Provisional_Road",
-        'keywords': ''
+        'keywords': 'provisional road'
     },
     {
         'name': "Railway Track",
         'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Standard-0",
-        'keywords': ''
+        'keywords': 'large railway track'
     },
     {
         'name': "Railway Track (Biarc)",
         'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Biarc-0",
-        'keywords': ''
+        'keywords': 'large railway track'
     },
     {
         'name': "Railway Track (Foundation)",
         'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Foundation-0",
-        'keywords': ''
+        'keywords': 'large railway track'
     },
     {
         'name': "Small Gauge Railway Track",
         'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Standard-0",
-        'keywords': ''
+        'keywords': 'small gauge railway track'
     },
     {
         'name': "Small Gauge Railway Track (Biarc)",
         'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Biarc-0",
-        'keywords': ''
+        'keywords': 'small gauge railway track'
     },
     {
         'name': "Small Gauge Railway Track (Foundation)",
         'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Foundation-0",
-        'keywords': ''
+        'keywords': 'small gauge railway track'
     },
 ]
