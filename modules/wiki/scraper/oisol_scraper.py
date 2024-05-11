@@ -27,7 +27,7 @@ def oisol_infobox_data(dom) -> str|dict:
         data_list["chassis_link"] = "https://foxhole.wiki.gg" + out[0].xpath("./a/@href")[0]
         items = out[0].xpath("./span")
         for item in items:
-            data_list[item.xpath("./a/@title")[0]] = item.xpath("./text()")[0]
+            data_list[item.xpath("./a/@title")[0]] = re.sub(r" ", "", item.xpath("./text()")[0])
         return data_list
 
     # fuel capacity
