@@ -1,3 +1,5 @@
 discord
 python-dotenv
 typing-extensions
+requests
+lxml
