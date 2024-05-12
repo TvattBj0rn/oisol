@@ -51,6 +51,40 @@ MODULES_CSV_KEYS = {
     'todolist': ['content', 'priority'],
 }
 
+
+EMOJIS_FROM_DICT = {
+    'Light Kinetic': '<:light_kinetic:1239343508725174355>',
+    'Heavy Kinetic': '<:heavy_kinetic:1239343499787112490>',
+    'Anti-Tank Kinetic': '<:AT_kinetic:1239343491138588722>',
+    'Anti-Tank Explosive': '<:AT_explosive:1239343415854891071>',
+    'Explosive': '<:explosive:1239343451447758878>',
+    'High Explosive': '<:high_explosive:1239343441025175583>',
+    'Armour Piercing': '<:AP:1239343423807553547>',
+    'Demolition': '<:demolition:1239343432367870035>',
+    'Shrapnel': '<:shrapnel:1239343483286716417>',
+    'Incendiary High Explosive': '<:incendiary:1239343406854049824>',
+    'Tracks': '<:tracked:1239349968767291454>',
+    'Fuel Tank': '<:fuel_leak:1239349986471313499>',
+    'Turret': '<:turret:1239349978170921060>',
+    'Steel Construction Materials': '<:scmat:1239353153694994533>',
+    'Assembly Materials I': '<:asmat1:1239353117120659557>',
+    'Assembly Materials II': '<:asmat2:1239353144484302953>',
+    'Assembly Materials III': '<:asmat3:1239353124653760584>',
+    'Assembly Materials IV': '<:asmat4:1239353135772995584>',
+    'Assembly Materials V': '<:asmat5:1239353106404474951>',
+    'Refined Materials': '<:rmat:1239353730172715048>',
+    'Basic Materials': '<:bmat:1239353181474127943>',
+    'Processed Construction Materials': '<:pcmat:1239353173488042005>',
+    'LegendLargeShips': '<:large_ship:1239361716777914479>',
+    'LegendFacilities': '<:facility:1239361717922828371>',
+    'LegendMedical': '<:medical:1239361720288284693>',
+    'LegendStructure': '<:intel:1239361723429949461>',
+    'LegendArtillery': '<:arty:1239361721324539986>',
+    'LegendDefense': '<:defense:1239361722700271727>',
+    'LegendOutpost': '<:outpost:1239361719084515329>'
+}
+
+
 EMOTES_CUSTOM_ID = {
     '🇦': 'TodoButtonA',
     '🇧': 'TodoButtonB',
