@@ -66,6 +66,9 @@ EMOJIS_FROM_DICT = {
     'Tracks': '<:tracked:1239349968767291454>',
     'Fuel Tank': '<:fuel_leak:1239349986471313499>',
     'Turret': '<:turret:1239349978170921060>',
+    'Second Turret/Cannon': '<:secondary_turret_cannon:1239616804184264818>',
+    'Naval Hull Segments': '<:naval_hull_segments:1239559749482188910>',
+    'Naval Shell Plating': '<:naval_shell_plating:1239559747921772649>',
     'Steel Construction Materials': '<:scmat:1239353153694994533>',
     'Assembly Materials I': '<:asmat1:1239353117120659557>',
     'Assembly Materials II': '<:asmat2:1239353144484302953>',
@@ -74,6 +77,7 @@ EMOJIS_FROM_DICT = {
     'Assembly Materials V': '<:asmat5:1239353106404474951>',
     'Refined Materials': '<:rmat:1239353730172715048>',
     'Basic Materials': '<:bmat:1239353181474127943>',
+    'Construction Materials': '<:cmat:1239353162616279122>',
     'Processed Construction Materials': '<:pcmat:1239353173488042005>',
     'LegendLargeShips': '<:large_ship:1239361716777914479>',
     'LegendFacilities': '<:facility:1239361717922828371>',
@@ -81,7 +85,55 @@ EMOJIS_FROM_DICT = {
     'LegendStructure': '<:intel:1239361723429949461>',
     'LegendArtillery': '<:arty:1239361721324539986>',
     'LegendDefense': '<:defense:1239361722700271727>',
-    'LegendOutpost': '<:outpost:1239361719084515329>'
+    'LegendOutpost': '<:outpost:1239361719084515329>',
+    'Shovel': '<:shovel:1239530825591164930>',
+    'Hammer': '<:hammer_tool:1239541780035403849>',
+    'Construction Vehicle': '<:cv:1239542192587018240>',
+    'Concrete Materials': '<:concrete:1239542632963768400>',
+    'Diesel': '<:diesel:1239545026107674714>',
+    'Petrol': '<:petrol:1239545022433722469>',
+    'Heavy Oil': '<:hoil:1239545024920948756>',
+    'Enriched Oil': '<:eoil:1239545023696207952>',
+    '7.62mm': '<:7_62mm:1088823887510388959>',
+    '7.92mm': '<:7_92mm:1088823653027815424>',
+    '9mm': '<:9mm:1088823410412503141>',
+    '12.7mm': '<:12_7mm:1088826018883719281>',
+    '20mm': '<:20mm:1088826350850281492>',
+    '30mm': '<:30mm:1077033326407335956>',
+    '40mm': '<:40mm:1077032968310239292>',
+    '68mm': '<:68mm:1077033006881063003>',
+    '75mm': '<:75mm:1077033155749482546>',
+    '94.5mm': '<:94_5mm:1077033020856483880>',
+    '120mm': '<:120mm:1239625566655877201>',
+    '150mm': '<:150mm:1239625565695119360>',
+    '300mm': '<:300mm:1239625564428697640>',
+    'Torpedo': '<:torpedo:1239625563057160345>',
+    'Depth Charge': '<:depth_charge:1239625562373361737>',
+    'RPG': '<:rpg:1088828056073945179>',
+    'ARC⧸RPG': '<:arcrpg:1088830211799392316>',
+    '250mm': '<:250mm:1239630880289329262>',
+    '3C-High Explosive Rocket': '<:3c_rocket:1239630879026970655>',
+    '4C-Fire Rocket': '<:4c_rocket:1239630881421791313>',
+    'MapIconTownBase1': '<:townbase_t1:1239654764896321647>',
+    'MapIconTownBase2': '<:townbase_t2:1239654763709075591>',
+    'MapIconTownBase3': '<:townbase_t3:1239654762576875551>',
+    'MapIconBunkerBaseT1': '<:bunkerbase_t1:1239654849490980944>',
+    'MapIconBunkerBaseT2': '<:bunkerbase_t2:1239654847918116946>',
+    'MapIconBunkerBaseT3': '<:bunkerbase_t3:1239654847175721050>',
+    'MapIconBorderBase': '<:borderbase:1239655115913302048>',
+    'MapIcon Encampment': '<:encampment:1239655114122203176>',
+    'Map Icon Keep': '<:keep:1239655117549211800>',
+    'MapIconLiquidTransferStation': '<:lts:1239655346037854239>',
+    'MapIconMaterialTransferStation': '<:mts:1239655344666316840>',
+    'MapIconResourceTransferStation': '<:rts:1239655343618003065>',
+    'MapIconShipyard': '<:shipyard:1239655207353323640>',
+    'MapIconConstructionYard': '<:construction_yard:1239655212705251410>',
+    'Tech Center Map Icon': '<:tech_center:1239655211161616427>',
+    'MapIconMassProductionFactory': '<:mpf:1239655209903456267>',
+    'MapIconFactory': '<:factory_building:1239655208485781575>',
+    'MapIconManufacturing': '<:refinery:1239656064761200640>',
+    'MapIconSeaport': '<:seaport:1239655214059880529>',
+    'MapIconStorageFacility': '<:storage_depot:1239655214936752159>'
 }
 
 
@@ -1010,12 +1062,12 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Cullen Predator Mk. III",
         'url': "https://foxhole.wiki.gg/wiki/Cullen_Predator_Mk._III",
-        'keywords': 'cullen predator mkiii super tank warden'
+        'keywords': 'cullen predator mkiii super tank warden sht'
     },
     {
         'name': "O-75b “Ares”",
         'url': "https://foxhole.wiki.gg/wiki/O-75b_%E2%80%9CAres%E2%80%9D",
-        'keywords': '075b ares super tank colonial'
+        'keywords': '075b ares super tank colonial sht'
     },
     {
         'name': "Dunne Fuelrunner 2d",
@@ -1250,12 +1302,12 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Conqueror",
         'url': "https://foxhole.wiki.gg/wiki/Conqueror",
-        'keywords': 'conqueror destroyer colonial'
+        'keywords': 'conqueror destroyer colonial dd'
     },
     {
         'name': "BMS - Longhook",
         'url': "https://foxhole.wiki.gg/wiki/Base_Ship",
-        'keywords': 'bms longhook base ship colonial warden'
+        'keywords': 'bms longhook base ship colonial warden lh'
     },
     {
         'name': "BMS - Bluefin",
@@ -1265,12 +1317,12 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Callahan (Battleship)",
         'url': "https://foxhole.wiki.gg/wiki/Callahan_(Battleship)",
-        'keywords': 'callahan battleship warden'
+        'keywords': 'callahan battleship warden bs'
     },
     {
         'name': "Titan",
         'url': "https://foxhole.wiki.gg/wiki/Titan",
-        'keywords': 'titan battleship colonial'
+        'keywords': 'titan battleship colonial bs'
     },
     {
         'name': "BMS - Grouper",
@@ -1419,7 +1471,7 @@ ALL_WIKI_ENTRIES = [
     },
     {
         'name': "Bunker Base (Tier 3)",
-        'url': " https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_3-0",
+        'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_3-0",
         'keywords': 'bunker base'
     },
     {
@@ -1535,32 +1587,32 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "AT Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_2-0",
-        'keywords': 'at gun garrison bunker'
+        'keywords': 'at gun garrison bunker atg wood'
     },
     {
         'name': "AT Gun Garrison (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_3-0",
-        'keywords': 'at gun garrison bunker'
+        'keywords': 'at gun garrison bunker atg concrete'
     },
     {
         'name': "Howitzer Garrison",
         'url': "https://foxhole.wiki.gg/wiki/Howitzer_Garrison",
-        'keywords': 'howitzer garrison bunker'
+        'keywords': 'howitzer garrison bunker howies howy concrete'
     },
     {
         'name': "Machine Gun Garrison (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_1-0",
-        'keywords': 'machine gun mg garrison bunker'
+        'keywords': 'machine gun mg garrison bunker mgg'
     },
     {
         'name': "Machine Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_2-0",
-        'keywords': 'machine gun mg garrison bunker'
+        'keywords': 'machine gun mg garrison bunker mgg wood'
     },
     {
         'name': "Machine Gun Garrison (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_3-0",
-        'keywords': 'machine gun mg garrison bunker'
+        'keywords': 'machine gun mg garrison bunker mgg concrete'
     },
     {
         'name': "Machine Gun Pillbox",
@@ -1570,27 +1622,27 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Observation Bunker (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_2-0",
-        'keywords': 'observation bunker'
+        'keywords': 'observation bunker obs wood'
     },
     {
         'name': "Observation Bunker (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_3-0",
-        'keywords': 'observation bunker'
+        'keywords': 'observation bunker obs concrete'
     },
     {
         'name': "Rifle Garrison (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_1-0",
-        'keywords': 'rifle garrison bunker'
+        'keywords': 'rifle garrison bunker rg'
     },
     {
         'name': "Rifle Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_2-0",
-        'keywords': 'rifle garrison bunker'
+        'keywords': 'rifle garrison bunker rg wood'
     },
     {
         'name': "Rifle Garrison (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_3-0",
-        'keywords': 'rifle garrison bunker'
+        'keywords': 'rifle garrison bunker rg concrete'
     },
     {
         'name': "Rifle Pillbox",
@@ -1790,7 +1842,7 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Trench Connector (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Connector#Tier_3-0",
-        'keywords': 'trench connector'
+        'keywords': 'trench connector concrete'
     },
     {
         'name': "Trench Emplacement (Tier 1)",
@@ -1805,7 +1857,7 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Trench Emplacement (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Trench_Emplacement#Tier_3-0",
-        'keywords': 'trench emplacement pit'
+        'keywords': 'trench emplacement pit concrete'
     },
     {
         'name': "Wall (Tier 1)",
@@ -1815,12 +1867,12 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Wall (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_2-0",
-        'keywords': 'wall'
+        'keywords': 'wall wood'
     },
     {
         'name': "Wall (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_3-0",
-        'keywords': 'wall'
+        'keywords': 'wall concrete'
     },
     {
         'name': "Construction Yard",
@@ -1830,7 +1882,7 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Engineering Center",
         'url': "https://foxhole.wiki.gg/wiki/Engineering_Center",
-        'keywords': 'engineering center'
+        'keywords': 'engineering tech center'
     },
     {
         'name': "Factory",
@@ -1850,12 +1902,12 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Mass Production Factory",
         'url': "https://foxhole.wiki.gg/wiki/Mass_Production_Factory",
-        'keywords': 'mass production factory'
+        'keywords': 'mass production factory mpf'
     },
     {
         'name': "Refinery",
         'url': "https://foxhole.wiki.gg/wiki/Refinery",
-        'keywords': 'refinery'
+        'keywords': 'refinery raf'
     },
     {
         'name': "Shipyard",
@@ -1870,7 +1922,7 @@ ALL_WIKI_ENTRIES = [
     {
         'name': "Ammunition Factory",
         'url': "https://foxhole.wiki.gg/wiki/Ammunition_Factory",
-        'keywords': 'ammunition factory'
+        'keywords': 'ammunition factory ammo'
     },
     {
         'name': "Coal Refinery",

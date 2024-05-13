@@ -17,29 +17,33 @@ class ModuleWiki(commands.Cog):
         print(wiki_data)
         embed = discord.Embed(
             title=wiki_data['title'],
-            description=f"*{wiki_data['description']}*",
+            description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
             url=wiki_data['url']
         )
         embed.set_image(url=wiki_data['img_url'])
         for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in ['description', 'url', 'title', 'img_url']:
+            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity']:
                 continue
             if isinstance(attribute_value, str):
                 embed.add_field(name=attribute_key, value=attribute_value)
             else:
                 attribute_string = ''
                 for k, v in attribute_value.items():
-                    if k in EMOJIS_FROM_DICT.keys():
-                        attribute_string += f'{EMOJIS_FROM_DICT[k]} {v} **|** '
-                attribute_string = attribute_string.removesuffix('**|** ')
+                    attribute_string += f'\n{EMOJIS_FROM_DICT[k]} {v}' if k in EMOJIS_FROM_DICT.keys() else f'{v} **:** '
+                attribute_string = attribute_string.removesuffix(' **:** ')
                 embed.add_field(name=attribute_key, value=attribute_string)
+        if 'Fuel Capacity' in wiki_data.keys():
+            embed.add_field(
+                name='Fuel Capacity',
+                value=f"{wiki_data['Fuel Capacity']['']} {' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys())}"
+            )
         return embed
 
     async def wiki_autocomplete(
             self,
             interaction: discord.Interaction,
             current: str,
-    ) -> List[app_commands.Choice[str]]:
+    ):
         # Default search values, before any input in the search bar
         if len(current) == 0:
             return [
@@ -73,7 +77,13 @@ class ModuleWiki(commands.Cog):
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
             return
-        entry_data = scrap_wiki(wiki_request)
+        wiki_entry_complete_name = ''
+        for entry in ALL_WIKI_ENTRIES:
+            if entry['url'] == wiki_request:
+                wiki_entry_complete_name = entry['name']
+                break
+
+        entry_data = scrap_wiki(wiki_request, wiki_entry_complete_name)
         entry_data['url'] = wiki_request
         entry_embed = self.generate_wiki_embed(entry_data)
 
