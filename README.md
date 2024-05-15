@@ -8,6 +8,7 @@ Foxhole organisation tool
 - **Stockpile**: This module a stockpile viewer tool. It allows people to add and view stockpiles on an embedded list.
 - **Register**: This module allows us to keep track of the enlisted players in the regiment, allowing us to see for how long a player has been in the regiment.
 - **Todolist**: This module allows the creation of a todolist and to update it, on different priorities.
+- **Wiki**: This module give out infobox for most avaiable wiki entries, [data from the official wiki](https://foxhole.wiki.gg/wiki/Foxhole_Wiki).
 
 ## Tech
 
