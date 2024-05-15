@@ -1,10 +1,6 @@
-import unicodedata
-
 import requests
 from bs4 import BeautifulSoup, Tag
-
-
-# TODO: specific cases to handle, all bridges, except field bridge, lk & mounted (we want deployed not item form)
+from modules.utils import Faction
 
 
 def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> dict | str:
@@ -69,6 +65,13 @@ def generate_infobox_data(infobox_soup: Tag, name: str) -> dict:
         'title': infobox_soup.find('h2', {'class': 'pi-item pi-item-spacing pi-title'}).get_text(),
         'img_url': f"https://foxhole.wiki.gg{infobox_soup.select('figure > a > img')[0]['src']}",
     }
+    merged_class = set(infobox_soup['class'])
+    if 'pi-theme-Col' in merged_class:
+        data_dict['color'] = Faction.COLONIAL.value
+    elif 'pi-theme-War' in merged_class:
+        data_dict['color'] = Faction.WARDEN.value
+    else:
+        data_dict['color'] = Faction.NEUTRAL.value
 
     for infobox_attribute in infobox_soup.select('section > div'):
         attribute_title = infobox_attribute.select('h3')[0].get_text().strip()
@@ -89,8 +92,8 @@ def scrap_wiki(url: str, name: str) -> dict:
     soup = BeautifulSoup(response.content, features="lxml")
 
     # Description soup and retrieving (we make sure the description exists)
-    desc_soup = soup.select('table > tbody > tr > td > i')
-    entry_desc = desc_soup[0].get_text() if desc_soup else ''
+    desc_soup = soup.select_one('table > tbody > tr > td > i')
+    entry_desc = desc_soup.get_text() if desc_soup else ''
 
     # Infobox handling within a function to allow for loop later on
     infoboxs_soup = soup.select('aside[class^="portable-infobox noexcerpt pi-background"]')
