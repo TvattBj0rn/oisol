@@ -5,7 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 from typing import List
 from modules.utils import ALL_WIKI_ENTRIES, EMOJIS_FROM_DICT
-from modules.wiki.scraper_bs4.scrap_wiki import scrap_wiki
+from modules.wiki.scraper.scrap_wiki import scrap_wiki
 
 
 class ModuleWiki(commands.Cog):
@@ -18,11 +18,12 @@ class ModuleWiki(commands.Cog):
         embed = discord.Embed(
             title=wiki_data['title'],
             description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
-            url=wiki_data['url']
+            url=wiki_data['url'],
+            color=wiki_data['color']
         )
         embed.set_image(url=wiki_data['img_url'])
         for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity']:
+            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
                 continue
             if isinstance(attribute_value, str):
                 embed.add_field(name=attribute_key, value=attribute_value)

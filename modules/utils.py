@@ -133,7 +133,19 @@ EMOJIS_FROM_DICT = {
     'MapIconFactory': '<:factory_building:1239655208485781575>',
     'MapIconManufacturing': '<:refinery:1239656064761200640>',
     'MapIconSeaport': '<:seaport:1239655214059880529>',
-    'MapIconStorageFacility': '<:storage_depot:1239655214936752159>'
+    'MapIconStorageFacility': '<:storage_depot:1239655214936752159>',
+    'MapIconComponentMine': '<:component_mine:1240332913296281631>',
+    'MapIconComponents': '<:component_field:1240332911933391030>',
+    'MapIconSulfur': '<:sulfur_field:1240332908846125077>',
+    'MapIconSulfurMine': '<:sulfur_mine:1240332910268121108>',
+    'MapIconScrap': '<:salvage_field:1240332914571350056>',
+    'MapIconScrapMine': '<:salvage_mine:1240332915653742613>',
+    'MapIconFuel': '<:oil_field:1240332907181244446>',
+    'MapIconCoal': '<:coal_field:1240332917369212940>',
+    'A3 Harpa Fragmentation Grenade': '<:harpa:1088824018653679626>',
+    'Tremola Grenade GPb-1': '<:tremola:1088827774787125349>',
+    'PT-815 Smoke Grenade': '<:smoke:1239713145375948840>',
+    'Green Ash Grenade': '<:gas:1239713326720880740>',
 }
 
 
@@ -261,9 +273,7 @@ REGIONS_STOCKPILES = {
 }
 
 
-# TODO: end goal: if I search for 'rifle warden', it should returns an ordered list by search validity
-
-ALL_WIKI_ENTRIES = [
+ITEMS_WIKI_ENTRIES = [
     {
         'name': "Argenti r.II Rifle",
         'url': "https://foxhole.wiki.gg/wiki/Argenti_r.II_Rifle",
@@ -719,6 +729,9 @@ ALL_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Depth_Charge",
         'keywords': 'model 7 evie depth charge'
     },
+]
+
+VEHICLES_WIKI_ENTRIES = [
     {
         'name': "T3 “Xiphos”",
         'url': "https://foxhole.wiki.gg/wiki/T3_%E2%80%9CXiphos%E2%80%9D",
@@ -1434,6 +1447,9 @@ ALL_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
         'keywords': 'centurion mv2 mecha'
     },
+]
+
+STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Border Base",
         'url': "https://foxhole.wiki.gg/wiki/Border_Base",
@@ -2280,3 +2296,5 @@ ALL_WIKI_ENTRIES = [
         'keywords': 'small gauge railway track'
     },
 ]
+
+ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES
