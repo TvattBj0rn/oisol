@@ -5,7 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 from typing import List
 from modules.utils import ALL_WIKI_ENTRIES, EMOJIS_FROM_DICT
-from modules.wiki.scraper_bs4.scrap_wiki import scrap_wiki
+from modules.wiki.scraper.scrap_wiki import scrap_wiki
 
 
 class ModuleWiki(commands.Cog):
