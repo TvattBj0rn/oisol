@@ -81,8 +81,6 @@ def generate_infobox_data(infobox_soup: Tag, name: str) -> dict:
 
 
 def scrap_wiki(url: str, name: str) -> dict:
-    wiki_response_dict = {}
-
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:

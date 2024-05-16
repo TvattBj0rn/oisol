@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup, Tag
-from modules.utils import Faction
 from typing import Optional
 
 
@@ -23,7 +22,6 @@ def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]
             continue
         name_index = get_index_from_name(headers_indexes)
         if tr.select('td')[name_index].get_text(strip=True) == name:
-            print(f'found name: {name}')
             return tr
 
 
@@ -62,4 +60,18 @@ def scrap_health(url: str, name: str) -> dict:
     for i, td in enumerate(row.select('td')):
         wiki_response_dict[header_indexes[i]] = extract_td_data(td)
 
+    for k in ['7.62mm', '7.92mm', '9mm', 'A3 Harpa Fragmentation Grenade', 'Flamethrower Ammo', 'Flame Ammo', 'Shrapnel Mortar Shell', 'Bomastone Grenade']:
+        wiki_response_dict.pop(k, None)
     print(wiki_response_dict)
+    return wiki_response_dict
+
+
+def scrap_main_picture(url: str) -> Optional[str]:
+    # Request to the given url, check if response is valid
+    response = requests.get(url)
+    if not response:
+        return None
+
+    # Whole page soup data
+    soup = BeautifulSoup(response.content, features="lxml")
+    return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}"

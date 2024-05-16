@@ -1,3 +1,5 @@
+from typing import Optional
+
 import discord
 import random
 import re
@@ -5,7 +7,7 @@ from discord import app_commands
 from discord.ext import commands
 from modules.utils import ALL_WIKI_ENTRIES, STRUCTURES_WIKI_ENTRIES, VEHICLES_WIKI_ENTRIES, EMOJIS_FROM_DICT
 from modules.wiki.scrapers.scrap_wiki import scrap_wiki
-from modules.wiki.scrapers.scrap_health import scrap_health
+from modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 
 
 class ModuleWiki(commands.Cog):
@@ -37,6 +39,28 @@ class ModuleWiki(commands.Cog):
             embed.add_field(
                 name='Fuel Capacity',
                 value=f"{wiki_data['Fuel Capacity']['']} {' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys())}"
+            )
+        return embed
+
+    @staticmethod
+    def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str]) -> discord.Embed:
+        embed = discord.Embed(
+            title=wiki_data['Name'],
+            url=url_health,
+            description=f"{wiki_data['HP']} HP"
+        )
+        if picture_url:
+            embed.set_thumbnail(url=picture_url)
+        if 'Class' in wiki_data.keys():
+            embed.description += f"\n*Class: {wiki_data['Class']}*"
+
+        for i, (k, v) in enumerate(wiki_data.items()):
+            if k in ['Class', 'Name', '', 'Icon', 'HP']:
+                continue
+
+            embed.add_field(
+                name='',
+                value=f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: {wiki_data[k]['disabled'] + ' **|** ' + wiki_data[k]['kill'] if isinstance(wiki_data[k], dict) else wiki_data[k]}",
             )
         return embed
 
@@ -109,6 +133,6 @@ class ModuleWiki(commands.Cog):
             if entry['url'] == wiki_request:
                 wiki_entry_complete_name = entry['name']
                 break
-
-        scrap_health(entry_url, wiki_entry_complete_name)
-        await interaction.response.send_message('ok', ephemeral=not visible)
+        entry_picture = scrap_main_picture(wiki_request)
+        entry_embed = self.generate_hmtk_embed(scrap_health(entry_url, wiki_entry_complete_name), entry_url, entry_picture)
+        await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
