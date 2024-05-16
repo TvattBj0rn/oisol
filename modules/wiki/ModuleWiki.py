@@ -3,7 +3,6 @@ import random
 import re
 from discord import app_commands
 from discord.ext import commands
-from typing import List
 from modules.utils import ALL_WIKI_ENTRIES, EMOJIS_FROM_DICT
 from modules.wiki.scraper.scrap_wiki import scrap_wiki
 
@@ -40,21 +39,18 @@ class ModuleWiki(commands.Cog):
             )
         return embed
 
-    async def wiki_autocomplete(
-            self,
-            interaction: discord.Interaction,
-            current: str,
-    ):
+    @staticmethod
+    def generic_autocomplete(entries: list, current: str) -> list:
         # Default search values, before any input in the search bar
         if len(current) == 0:
             return [
                 app_commands.Choice(name=wiki_entry['name'], value=wiki_entry['url'])
-                for wiki_entry in random.choices(ALL_WIKI_ENTRIES, k=5)
+                for wiki_entry in random.choices(entries, k=5)
             ]
         pattern = re.compile('[\\W_]+')
         current = pattern.sub(' ', current).lower().split()
         search_results = []
-        for wiki_entry in ALL_WIKI_ENTRIES:
+        for wiki_entry in entries:
             search_value = 0
             for kw in current:
                 if kw in wiki_entry['keywords']:
@@ -71,6 +67,13 @@ class ModuleWiki(commands.Cog):
             app_commands.Choice(name=entry_result[0], value=entry_result[1])
             for entry_result in search_results
         ]
+
+    async def wiki_autocomplete(
+            self,
+            interaction: discord.Interaction,
+            current: str,
+    ) -> list:
+        return self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
 
     @app_commands.command(name='wiki', description='Official wiki request')
     @app_commands.autocomplete(wiki_request=wiki_autocomplete)
