@@ -110,6 +110,7 @@ EMOJIS_FROM_DICT = {
     'Torpedo': '<:torpedo:1239625563057160345>',
     'Depth Charge': '<:depth_charge:1239625562373361737>',
     'RPG': '<:rpg:1088828056073945179>',
+    'R.P.G. Shell': '<:rpg:1088828056073945179>',
     'ARC⧸RPG': '<:arcrpg:1088830211799392316>',
     '250mm': '<:250mm:1239630880289329262>',
     '3C-High Explosive Rocket': '<:3c_rocket:1239630879026970655>',

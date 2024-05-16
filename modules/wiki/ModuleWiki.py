@@ -3,8 +3,9 @@ import random
 import re
 from discord import app_commands
 from discord.ext import commands
-from modules.utils import ALL_WIKI_ENTRIES, EMOJIS_FROM_DICT
-from modules.wiki.scraper.scrap_wiki import scrap_wiki
+from modules.utils import ALL_WIKI_ENTRIES, STRUCTURES_WIKI_ENTRIES, VEHICLES_WIKI_ENTRIES, EMOJIS_FROM_DICT
+from modules.wiki.scrapers.scrap_wiki import scrap_wiki
+from modules.wiki.scrapers.scrap_health import scrap_health
 
 
 class ModuleWiki(commands.Cog):
@@ -68,14 +69,13 @@ class ModuleWiki(commands.Cog):
             for entry_result in search_results
         ]
 
-    async def wiki_autocomplete(
-            self,
-            interaction: discord.Interaction,
-            current: str,
-    ) -> list:
+    async def wiki_autocomplete(self, interaction: discord.Interaction, current: str) -> list:
         return self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
 
-    @app_commands.command(name='wiki', description='Official wiki request')
+    async def health_autocomplete(self, interaction: discord.Interaction, current: str) -> list:
+        return self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
+
+    @app_commands.command(name='wiki', description='Info wiki')
     @app_commands.autocomplete(wiki_request=wiki_autocomplete)
     async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: bool = False):
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
@@ -92,3 +92,23 @@ class ModuleWiki(commands.Cog):
         entry_embed = self.generate_wiki_embed(entry_data)
 
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
+
+    @app_commands.command(name='health', description='Structures / Vehicles health')
+    @app_commands.autocomplete(wiki_request=health_autocomplete)
+    async def entities_health(self, interaction: discord.Interaction, wiki_request: str, visible: bool = False):
+        if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
+            await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
+            return
+        entry_url = 'https://foxhole.wiki.gg/wiki/Vehicle_Health'
+        for entry in STRUCTURES_WIKI_ENTRIES:
+            if entry['url'] == wiki_request:
+                entry_url = 'https://foxhole.wiki.gg/wiki/Structure_Health'
+                break
+        wiki_entry_complete_name = ''
+        for entry in ALL_WIKI_ENTRIES:
+            if entry['url'] == wiki_request:
+                wiki_entry_complete_name = entry['name']
+                break
+
+        scrap_health(entry_url, wiki_entry_complete_name)
+        await interaction.response.send_message('ok', ephemeral=not visible)
