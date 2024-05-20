@@ -13,7 +13,7 @@ TODOLIST_CSV_KEYS = MODULES_CSV_KEYS['todolist']
 def has_permissions(interaction: discord.Interaction, permissions: dict) -> bool:
     if not permissions['members'] and not permissions['roles']:
         return True
-    if interaction.message.author.id in permissions['members']:
+    if interaction.user.id in permissions['members']:
         return True
     for role_perm in permissions['roles']:
         if role_perm in [role.id for role in interaction.user.roles]:
