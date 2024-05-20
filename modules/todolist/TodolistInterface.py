@@ -1,3 +1,4 @@
+import json
 import discord
 import os
 import pathlib
@@ -7,6 +8,17 @@ from typing_extensions import Self
 
 
 TODOLIST_CSV_KEYS = MODULES_CSV_KEYS['todolist']
+
+
+def has_permissions(interaction: discord.Interaction, permissions: dict) -> bool:
+    if not permissions['members'] and not permissions['roles']:
+        return True
+    if interaction.message.author.id in permissions['members']:
+        return True
+    for role_perm in permissions['roles']:
+        if role_perm in [role.id for role in interaction.user.roles]:
+            return True
+    return False
 
 
 def list_to_priority_dict(data_list: list) -> dict:
@@ -111,6 +123,18 @@ class TodolistButtonCheckmark(discord.ui.Button):
         self.custom_id = custom_id
 
     async def callback(self, interaction: discord.Interaction):
+        try:
+            with open(
+                    os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'),
+                    'r'
+            ) as file:
+                permissions: dict = json.load(file)
+        except OSError:
+            print(f'Error opening todolist file on {interaction.guild.name} for {self.embed_uuid}')
+        if 'roles' in permissions.keys() and 'members' in permissions.keys() and not has_permissions(interaction, permissions):
+            await interaction.response.send_message('Forbidden', ephemeral=True)
+            return
+
         self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(str(self.emoji)))
         data_dict = list_to_priority_dict(self.data_list)
         CsvHandlerTodolist(self.todolist_interface.csv_keys).csv_rewrite_file(
