@@ -43,11 +43,13 @@ class ModuleWiki(commands.Cog):
         return embed
 
     @staticmethod
-    def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str]) -> discord.Embed:
+    def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str], color: Optional[int]) -> discord.Embed:
+        print(wiki_data.keys())
         embed = discord.Embed(
             title=wiki_data['Name'],
             url=url_health,
-            description=f"{wiki_data['HP']} HP"
+            description=f"{wiki_data['HP']} HP",
+            color=color
         )
         if picture_url:
             embed.set_thumbnail(url=picture_url)
@@ -133,6 +135,10 @@ class ModuleWiki(commands.Cog):
             if entry['url'] == wiki_request:
                 wiki_entry_complete_name = entry['name']
                 break
-        entry_picture = scrap_main_picture(wiki_request)
-        entry_embed = self.generate_hmtk_embed(scrap_health(entry_url, wiki_entry_complete_name), entry_url, entry_picture)
+        infobox_tuple = scrap_main_picture(wiki_request)
+        entry_picture_url, color = None, None
+        if infobox_tuple:
+            entry_picture_url, color = infobox_tuple
+        entry_picture, color = scrap_main_picture(wiki_request)
+        entry_embed = self.generate_hmtk_embed(scrap_health(entry_url, wiki_entry_complete_name), entry_url, entry_picture_url, color)
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)

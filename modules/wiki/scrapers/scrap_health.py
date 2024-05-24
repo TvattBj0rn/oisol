@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
-from typing import Optional
+from typing import Optional, Tuple
+from modules.utils import Faction
 
 
 def get_indexes(tbody: Tag) -> dict:
@@ -66,7 +67,7 @@ def scrap_health(url: str, name: str) -> dict:
     return wiki_response_dict
 
 
-def scrap_main_picture(url: str) -> Optional[str]:
+def scrap_main_picture(url: str) -> Optional[Tuple[str, int]]:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
@@ -74,4 +75,14 @@ def scrap_main_picture(url: str) -> Optional[str]:
 
     # Whole page soup data
     soup = BeautifulSoup(response.content, features="lxml")
-    return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}"
+    return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}", scrap_faction_color(soup)
+
+
+def scrap_faction_color(soup: Tag) -> hex:
+    infobox_soup = soup.select_one('aside')
+    merged_class = set(infobox_soup['class'])
+    if 'pi-theme-Col' in merged_class:
+        return Faction.COLONIAL.value
+    elif 'pi-theme-War' in merged_class:
+        return Faction.WARDEN.value
+    return Faction.NEUTRAL.value
