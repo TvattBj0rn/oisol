@@ -157,6 +157,7 @@ EMOJIS_FROM_DICT = {
     'Tremola Grenade GPb-1': '<:tremola:1088827774787125349>',
     'PT-815 Smoke Grenade': '<:smoke:1239713145375948840>',
     'Green Ash Grenade': '<:gas:1239713326720880740>',
+    'Sea Mine': '<:sea_mine:1244048778063773716>',
 }
 
 
@@ -1066,7 +1067,7 @@ VEHICLES_WIKI_ENTRIES = [
     {
         'name': "Flood Mk. IX Stain",
         'url': "https://foxhole.wiki.gg/wiki/Flood_Mk._IX_Stain",
-        'keywords': 'flood mkix stain battle tank spg warden'
+        'keywords': 'flood mkix stain battle tank bt spg warden'
     },
     {
         'name': "Lance-25 “Hasta”",
@@ -1464,7 +1465,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Border Base",
         'url': "https://foxhole.wiki.gg/wiki/Border_Base",
-        'keywords': 'border base'
+        'keywords': 'border base bob bb'
     },
     {
         'name': "Relic Base",
@@ -1489,17 +1490,17 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Bunker Base (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_1-0",
-        'keywords': 'bunker base'
+        'keywords': 'bunker base bb bob'
     },
     {
         'name': "Bunker Base (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_2-0",
-        'keywords': 'bunker base'
+        'keywords': 'bunker base bb bob core'
     },
     {
         'name': "Bunker Base (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_3-0",
-        'keywords': 'bunker base'
+        'keywords': 'bunker base bb bob core concrete'
     },
     {
         'name': "Encampment",
@@ -1614,7 +1615,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "AT Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_2-0",
-        'keywords': 'at gun garrison bunker atg wood'
+        'keywords': 'at gun garrison bunker atg'
     },
     {
         'name': "AT Gun Garrison (Tier 3)",
@@ -1634,7 +1635,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Machine Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_2-0",
-        'keywords': 'machine gun mg garrison bunker mgg wood'
+        'keywords': 'machine gun mg garrison bunker mgg'
     },
     {
         'name': "Machine Gun Garrison (Tier 3)",
@@ -1649,7 +1650,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Observation Bunker (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_2-0",
-        'keywords': 'observation bunker obs wood'
+        'keywords': 'observation bunker obs'
     },
     {
         'name': "Observation Bunker (Tier 3)",
@@ -1664,7 +1665,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Rifle Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_2-0",
-        'keywords': 'rifle garrison bunker rg wood'
+        'keywords': 'rifle garrison bunker rg'
     },
     {
         'name': "Rifle Garrison (Tier 3)",
@@ -1889,17 +1890,17 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Wall (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_1-0",
-        'keywords': 'wall'
+        'keywords': 'wall t1'
     },
     {
         'name': "Wall (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_2-0",
-        'keywords': 'wall wood'
+        'keywords': 'wall t2'
     },
     {
         'name': "Wall (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_3-0",
-        'keywords': 'wall concrete'
+        'keywords': 'wall concrete t3'
     },
     {
         'name': "Construction Yard",
@@ -1949,7 +1950,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Ammunition Factory",
         'url': "https://foxhole.wiki.gg/wiki/Ammunition_Factory",
-        'keywords': 'ammunition factory ammo'
+        'keywords': 'ammunition ammo factory ammo'
     },
     {
         'name': "Coal Refinery",
