@@ -293,7 +293,7 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "Blakerow 871",
-        'url': "https://foxhole.wiki.gg/wiki/Blakerow_871keywords",
+        'url': "https://foxhole.wiki.gg/wiki/Blakerow_871",
         'keywords': 'blakerow 871 rifle warden'
     },
     {
