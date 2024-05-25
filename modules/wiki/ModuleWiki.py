@@ -5,7 +5,13 @@ import random
 import re
 from discord import app_commands
 from discord.ext import commands
-from modules.utils import ALL_WIKI_ENTRIES, STRUCTURES_WIKI_ENTRIES, VEHICLES_WIKI_ENTRIES, EMOJIS_FROM_DICT
+from modules.utils import (
+    ALL_WIKI_ENTRIES,
+    STRUCTURES_WIKI_ENTRIES,
+    VEHICLES_WIKI_ENTRIES,
+    EMOJIS_FROM_DICT,
+    NAMES_TO_ACRONYMS
+)
 from modules.wiki.scrapers.scrap_wiki import scrap_wiki
 from modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 
@@ -15,7 +21,15 @@ class ModuleWiki(commands.Cog):
         self.oisol = bot
 
     @staticmethod
-    def generate_wiki_embed(wiki_data: dict) -> discord.Embed:
+    def retrieve_facility_mats(resource_type: str, amount: str) -> str:
+        if resource_type not in EMOJIS_FROM_DICT.keys():
+            return f'{amount} **:** '
+
+        if resource_type in NAMES_TO_ACRONYMS.keys():
+            return f'\n{EMOJIS_FROM_DICT[resource_type]} **|** {NAMES_TO_ACRONYMS[resource_type]} **-** {amount}'
+        return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
+
+    def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
         print(wiki_data)
         embed = discord.Embed(
             title=wiki_data['title'],
@@ -32,7 +46,7 @@ class ModuleWiki(commands.Cog):
             else:
                 attribute_string = ''
                 for k, v in attribute_value.items():
-                    attribute_string += f'\n{EMOJIS_FROM_DICT[k]} {v}' if k in EMOJIS_FROM_DICT.keys() else f'{v} **:** '
+                    attribute_string += self.retrieve_facility_mats(k, v)
                 attribute_string = attribute_string.removesuffix(' **:** ')
                 embed.add_field(name=attribute_key, value=attribute_string)
         if 'Fuel Capacity' in wiki_data.keys():

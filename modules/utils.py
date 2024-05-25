@@ -52,6 +52,20 @@ MODULES_CSV_KEYS = {
 }
 
 
+NAMES_TO_ACRONYMS = {
+    'Assembly Materials I': 'Asmats I',
+    'Assembly Materials II': 'Asmats II',
+    'Assembly Materials III': 'Asmats III',
+    'Assembly Materials IV': 'Asmats IV',
+    'Assembly Materials V': 'Asmats V',
+    'Construction Materials': 'Cmats',
+    'Processed Construction Materials': 'PCmats',
+    'Steel Construction Materials': 'SCmats',
+    'Unstable Substances': 'Unstable Subs.',
+    'Rare Alloys': 'Rare Alloys'
+}
+
+
 EMOJIS_FROM_DICT = {
     'Light Kinetic': '<:light_kinetic:1239343508725174355>',
     'Heavy Kinetic': '<:heavy_kinetic:1239343499787112490>',
@@ -69,7 +83,6 @@ EMOJIS_FROM_DICT = {
     'Second Turret/Cannon': '<:secondary_turret_cannon:1239616804184264818>',
     'Naval Hull Segments': '<:naval_hull_segments:1239559749482188910>',
     'Naval Shell Plating': '<:naval_shell_plating:1239559747921772649>',
-    'Steel Construction Materials': '<:scmat:1239353153694994533>',
     'Assembly Materials I': '<:asmat1:1239353117120659557>',
     'Assembly Materials II': '<:asmat2:1239353144484302953>',
     'Assembly Materials III': '<:asmat3:1239353124653760584>',
@@ -79,6 +92,9 @@ EMOJIS_FROM_DICT = {
     'Basic Materials': '<:bmat:1239353181474127943>',
     'Construction Materials': '<:cmat:1239353162616279122>',
     'Processed Construction Materials': '<:pcmat:1239353173488042005>',
+    'Steel Construction Materials': '<:scmat:1239353153694994533>',
+    'Rare Alloys': '<:rare_alloy:1244071935168741386>',
+    'Unstable Substances': '<:unstable_substances:1244071933989879818>',
     'LegendLargeShips': '<:large_ship:1239361716777914479>',
     'LegendFacilities': '<:facility:1239361717922828371>',
     'LegendMedical': '<:medical:1239361720288284693>',
@@ -153,11 +169,15 @@ EMOJIS_FROM_DICT = {
     'MapIconScrapMine': '<:salvage_mine:1240332915653742613>',
     'MapIconFuel': '<:oil_field:1240332907181244446>',
     'MapIconCoal': '<:coal_field:1240332917369212940>',
+    'MapIconRocketSite': '<:rocket_site:1244068454688886844>',
     'A3 Harpa Fragmentation Grenade': '<:harpa:1088824018653679626>',
     'Tremola Grenade GPb-1': '<:tremola:1088827774787125349>',
     'PT-815 Smoke Grenade': '<:smoke:1239713145375948840>',
     'Green Ash Grenade': '<:gas:1239713326720880740>',
     'Sea Mine': '<:sea_mine:1244048778063773716>',
+    'A0E-9 Rocket Warhead': '<:rocket_warhead:1244069007347286046>',
+    'A0E-9 Rocket Body': '<:rocket_body:1244069016541069464>',
+    'A0E-9 Rocket Booster': '<:rocket_booster:1244069024996786238>',
 }
 
 
@@ -2306,6 +2326,21 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Small Gauge Railway Track (Foundation)",
         'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Foundation-0",
         'keywords': 'small gauge railway track'
+    },
+    {
+        'name': "A0E-9 Rocket Booster",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
+        'keywords': 'nuke rocket booster'
+    },
+    {
+        'name': "A0E-9 Rocket Body",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body",
+        'keywords': 'nuke rocket body'
+    },
+    {
+        'name': "A0E-9 Rocket Warhead",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead",
+        'keywords': 'nuke rocket warhead'
     },
 ]
 
