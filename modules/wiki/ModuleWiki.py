@@ -149,6 +149,8 @@ class ModuleWiki(commands.Cog):
             if entry['url'] == wiki_request:
                 wiki_entry_complete_name = entry['name']
                 break
+        if wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base')) and wiki_entry_complete_name.endswith('(Tier 1)'):
+            wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
         infobox_tuple = scrap_main_picture(wiki_request)
         entry_picture_url, color = None, None
         if infobox_tuple:
