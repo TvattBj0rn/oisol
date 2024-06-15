@@ -31,9 +31,12 @@ def extract_td_data(td: Tag) -> dict | str:
 
     if td.findChild('img'):
         return f"https://foxhole.wiki.gg{td.findChild('img')['src']}"
-    if td.findChildren('hr'):
+    if len(td.findChildren('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'disabled': hmtk[0], 'kill': hmtk[1]}
+    if len(td.findChildren('hr')) == 2:
+        hmtk = td.get_text(strip=True, separator=' ').split()
+        return {'S': hmtk[0], 'M': hmtk[1], 'L': hmtk[2]}
     return td.get_text(strip=True)
 
 

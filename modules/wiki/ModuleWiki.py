@@ -58,11 +58,16 @@ class ModuleWiki(commands.Cog):
 
     @staticmethod
     def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str], color: Optional[int]) -> discord.Embed:
-        print(wiki_data.keys())
+        embed_desc = ''
+        if isinstance(wiki_data['HP'], dict):
+            for k, v in wiki_data['HP'].items():
+                embed_desc += f'{k}: {v} HP\n'
+        else:
+            embed_desc = f"{wiki_data['HP']} HP"
         embed = discord.Embed(
             title=wiki_data['Name'],
             url=url_health,
-            description=f"{wiki_data['HP']} HP",
+            description=embed_desc,
             color=color
         )
         if picture_url:
@@ -73,10 +78,16 @@ class ModuleWiki(commands.Cog):
         for i, (k, v) in enumerate(wiki_data.items()):
             if k in ['Class', 'Name', '', 'Icon', 'HP']:
                 continue
-
+            value_string = f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: "
+            if isinstance(wiki_data[k], dict) and 'disabled' in wiki_data[k].keys():
+                value_string += wiki_data[k]['disabled'] + ' **|** ' + wiki_data[k]['kill']
+            elif isinstance(wiki_data[k], dict) and len(wiki_data[k].keys()) == 3:
+                value_string += wiki_data[k]['S'] + ' **|** ' + wiki_data[k]['M'] + ' **|** ' + wiki_data[k]['L']
+            elif isinstance(wiki_data[k], str):
+                value_string += wiki_data[k]
             embed.add_field(
                 name='',
-                value=f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: {wiki_data[k]['disabled'] + ' **|** ' + wiki_data[k]['kill'] if isinstance(wiki_data[k], dict) else wiki_data[k]}",
+                value=value_string
             )
         return embed
 
