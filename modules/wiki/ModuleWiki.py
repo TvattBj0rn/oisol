@@ -30,34 +30,6 @@ class ModuleWiki(commands.Cog):
             return f'\n{EMOJIS_FROM_DICT[resource_type]} **|** {NAMES_TO_ACRONYMS[resource_type]} **-** {amount}'
         return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
 
-    def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
-        print(wiki_data)
-        embed = discord.Embed(
-            title=wiki_data['title'],
-            description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
-            url=wiki_data['url'],
-            color=wiki_data['color']
-        )
-        embed.set_image(url=wiki_data['img_url'])
-        for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
-                continue
-            if isinstance(attribute_value, str):
-                embed.add_field(name=attribute_key, value=attribute_value)
-            else:
-                attribute_string = ''
-                ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
-                for k, v in ordered_attribute_value.items():
-                    attribute_string += self.retrieve_facility_mats(k, v)
-                attribute_string = attribute_string.removesuffix(' **:** ')
-                embed.add_field(name=attribute_key, value=attribute_string)
-        if 'Fuel Capacity' in wiki_data.keys():
-            embed.add_field(
-                name='Fuel Capacity',
-                value=f"{wiki_data['Fuel Capacity']['']} {' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys())}"
-            )
-        return embed
-
     @staticmethod
     def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str], color: Optional[int]) -> discord.Embed:
         embed_desc = ''
@@ -121,6 +93,34 @@ class ModuleWiki(commands.Cog):
             app_commands.Choice(name=entry_result[0], value=entry_result[1])
             for entry_result in search_results
         ]
+
+    def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
+        print(wiki_data)
+        embed = discord.Embed(
+            title=wiki_data['title'],
+            description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
+            url=wiki_data['url'],
+            color=wiki_data['color']
+        )
+        embed.set_image(url=wiki_data['img_url'])
+        for attribute_key, attribute_value in wiki_data.items():
+            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
+                continue
+            if isinstance(attribute_value, str):
+                embed.add_field(name=attribute_key, value=attribute_value)
+            else:
+                attribute_string = ''
+                ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
+                for k, v in ordered_attribute_value.items():
+                    attribute_string += self.retrieve_facility_mats(k, v)
+                attribute_string = attribute_string.removesuffix(' **:** ')
+                embed.add_field(name=attribute_key, value=attribute_string)
+        if 'Fuel Capacity' in wiki_data.keys():
+            embed.add_field(
+                name='Fuel Capacity',
+                value=f"{wiki_data['Fuel Capacity']['']} {' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys())}"
+            )
+        return embed
 
     async def wiki_autocomplete(self, interaction: discord.Interaction, current: str) -> list:
         return self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
