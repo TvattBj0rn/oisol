@@ -1,3 +1,4 @@
+import collections
 from typing import Optional
 
 import discord
@@ -45,7 +46,8 @@ class ModuleWiki(commands.Cog):
                 embed.add_field(name=attribute_key, value=attribute_value)
             else:
                 attribute_string = ''
-                for k, v in attribute_value.items():
+                ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
+                for k, v in ordered_attribute_value.items():
                     attribute_string += self.retrieve_facility_mats(k, v)
                 attribute_string = attribute_string.removesuffix(' **:** ')
                 embed.add_field(name=attribute_key, value=attribute_string)

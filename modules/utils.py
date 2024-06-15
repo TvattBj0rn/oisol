@@ -62,7 +62,8 @@ NAMES_TO_ACRONYMS = {
     'Processed Construction Materials': 'PCmats',
     'Steel Construction Materials': 'SCmats',
     'Unstable Substances': 'Unstable Subs.',
-    'Rare Alloys': 'Rare Alloys'
+    'Rare Alloys': 'Rare Alloys',
+    'Thermal Shielding': 'Thermal Shield.'
 }
 
 
@@ -95,6 +96,7 @@ EMOJIS_FROM_DICT = {
     'Steel Construction Materials': '<:scmat:1239353153694994533>',
     'Rare Alloys': '<:rare_alloy:1244071935168741386>',
     'Unstable Substances': '<:unstable_substances:1244071933989879818>',
+    'Thermal Shielding': '<:thermal_shielding:1251473216111640586>',
     'LegendLargeShips': '<:large_ship:1239361716777914479>',
     'LegendFacilities': '<:facility:1239361717922828371>',
     'LegendMedical': '<:medical:1239361720288284693>',
