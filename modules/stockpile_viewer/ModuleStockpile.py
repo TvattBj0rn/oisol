@@ -2,18 +2,41 @@ import configparser
 import discord
 import os
 import pathlib
+import random
 from discord import app_commands
 from discord.ext import commands
-from modules.stockpile_viewer import CreateStockpileInterface, discord_data_transmission, stockpile_embed_generator
+from modules.stockpile_viewer import discord_data_transmission, stockpile_embed_generator
 from modules.stockpile_viewer.CsvHandlerStockpiles import CsvHandlerStockpiles
-from modules.utils import EmbedIds
-from modules.utils import DataFilesPath
+from modules.utils import EmbedIds, DataFilesPath, REGIONS, REGIONS_STOCKPILES
 
 
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
         self.csv_keys = ['region', 'subregion', 'code', 'name', 'type']
+
+    async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+        regions_cities = []
+        for k, v in REGIONS.items():
+            for vv in v:
+                regions_cities.append(f'{k} | {vv}')
+
+        if not current:
+            return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
+
+        search_results = dict()
+
+        for city in regions_cities:
+            search_results[city] = 0
+            for cut_current in current.lower().split():
+                if cut_current in city.lower():
+                    search_results[city] += 1
+            if search_results[city] == 0:
+                search_results.pop(city)
+
+        search_results = sorted(search_results, reverse=True)[:25]
+
+        return [app_commands.Choice(name=city, value=city) for city in search_results]
 
     @app_commands.command(name='stockpile_view')
     async def stockpile_view(self, interaction: discord.Interaction):
@@ -29,16 +52,43 @@ class ModuleStockpiles(commands.Cog):
         await interaction.followup.send(embed=stockpiles_embed)
 
     @app_commands.command(name='stockpile_create')
-    async def stockpile_create(self, interaction: discord.Interaction, code: str, *, name: str):
+    @app_commands.autocomplete(region=region_autocomplete)
+    async def stockpile_create(self, interaction: discord.Interaction, code: str, region: str, *, name: str):
         if len(code) != 6:
             await interaction.response.send_message(
-                '> Le code doit comporter 6 digits',
+                '> Le code doit comporter 6 chiffres',
                 ephemeral=True
             )
             return
 
-        view = CreateStockpileInterface.CreateStockpileInterface(code, name, self.csv_keys)
-        await interaction.response.send_message(view=view, ephemeral=True)
+        # view = CreateStockpileInterface.CreateStockpileInterface(code, name, self.csv_keys)
+
+        r, s = region.split(' | ')  # Only one '|' -> 2 splits
+        stockpile = {
+            'region': r,
+            'subregion': s,
+            'code': code,
+            'name': name,
+        }
+
+        for subregion in REGIONS_STOCKPILES[r]:
+            if subregion[0] == s:
+                stockpile['type'] = 'Seaport' if subregion[1][2:9] == 'seaport' else 'Storage Depot'
+
+        file_path = os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
+        csv_handler = CsvHandlerStockpiles(self.csv_keys)
+        csv_handler.csv_try_create_file(file_path)
+        csv_handler.csv_append_data(file_path, stockpile)
+
+        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+
+        await discord_data_transmission.send_data_to_discord(
+            stockpiles_embed,
+            interaction,
+            EmbedIds.STOCKPILES_VIEW.value
+        )
+
+        await interaction.response.send_message('> Le stockpile a bien été généré', ephemeral=True)
 
     @app_commands.command(name='stockpile_delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):

@@ -52,6 +52,21 @@ MODULES_CSV_KEYS = {
 }
 
 
+NAMES_TO_ACRONYMS = {
+    'Assembly Materials I': 'Asmats I',
+    'Assembly Materials II': 'Asmats II',
+    'Assembly Materials III': 'Asmats III',
+    'Assembly Materials IV': 'Asmats IV',
+    'Assembly Materials V': 'Asmats V',
+    'Construction Materials': 'Cmats',
+    'Processed Construction Materials': 'PCmats',
+    'Steel Construction Materials': 'SCmats',
+    'Unstable Substances': 'Unstable Subs.',
+    'Rare Alloys': 'Rare Alloys',
+    'Thermal Shielding': 'Thermal Shield.'
+}
+
+
 EMOJIS_FROM_DICT = {
     'Light Kinetic': '<:light_kinetic:1239343508725174355>',
     'Heavy Kinetic': '<:heavy_kinetic:1239343499787112490>',
@@ -69,7 +84,6 @@ EMOJIS_FROM_DICT = {
     'Second Turret/Cannon': '<:secondary_turret_cannon:1239616804184264818>',
     'Naval Hull Segments': '<:naval_hull_segments:1239559749482188910>',
     'Naval Shell Plating': '<:naval_shell_plating:1239559747921772649>',
-    'Steel Construction Materials': '<:scmat:1239353153694994533>',
     'Assembly Materials I': '<:asmat1:1239353117120659557>',
     'Assembly Materials II': '<:asmat2:1239353144484302953>',
     'Assembly Materials III': '<:asmat3:1239353124653760584>',
@@ -79,6 +93,10 @@ EMOJIS_FROM_DICT = {
     'Basic Materials': '<:bmat:1239353181474127943>',
     'Construction Materials': '<:cmat:1239353162616279122>',
     'Processed Construction Materials': '<:pcmat:1239353173488042005>',
+    'Steel Construction Materials': '<:scmat:1239353153694994533>',
+    'Rare Alloys': '<:rare_alloy:1244071935168741386>',
+    'Unstable Substances': '<:unstable_substances:1244071933989879818>',
+    'Thermal Shielding': '<:thermal_shielding:1251473216111640586>',
     'LegendLargeShips': '<:large_ship:1239361716777914479>',
     'LegendFacilities': '<:facility:1239361717922828371>',
     'LegendMedical': '<:medical:1239361720288284693>',
@@ -153,10 +171,15 @@ EMOJIS_FROM_DICT = {
     'MapIconScrapMine': '<:salvage_mine:1240332915653742613>',
     'MapIconFuel': '<:oil_field:1240332907181244446>',
     'MapIconCoal': '<:coal_field:1240332917369212940>',
+    'MapIconRocketSite': '<:rocket_site:1244068454688886844>',
     'A3 Harpa Fragmentation Grenade': '<:harpa:1088824018653679626>',
     'Tremola Grenade GPb-1': '<:tremola:1088827774787125349>',
     'PT-815 Smoke Grenade': '<:smoke:1239713145375948840>',
     'Green Ash Grenade': '<:gas:1239713326720880740>',
+    'Sea Mine': '<:sea_mine:1244048778063773716>',
+    'A0E-9 Rocket Warhead': '<:rocket_warhead:1244069007347286046>',
+    'A0E-9 Rocket Body': '<:rocket_body:1244069016541069464>',
+    'A0E-9 Rocket Booster': '<:rocket_booster:1244069024996786238>',
 }
 
 
@@ -215,7 +238,7 @@ REGIONS = {
     'Marban Hollow': ['Checkpoint Bua', 'Lockheed', "Maiden's Veil", 'Mox', 'Oster Wall', 'Sanctum', 'The Spitrocks'],
     'Morgens Crossing': ['Allsight', "Bastard's Block", "Callum's Descent", 'Eversus', 'Lividus', 'Quietus'],
     'Nevish Line': ['Blackcoat Way', 'Blinding Stones', 'Grief Mother', 'Mistle Shrine', 'Princefal', 'The Scrying Belt', 'Tomb Father', 'Unruly'],
-    'Oarbreaker': ['Fort Fogwood', 'Gold', 'Grisly Refuge', 'Integrum', 'Partisan Island', 'Posterus', 'Silver', 'The Conclave', 'The Dirk'],
+    'Oarbreaker Isles': ['Fort Fogwood', 'Gold', 'Grisly Refuge', 'Integrum', 'Partisan Island', 'Posterus', 'Silver', 'The Conclave', 'The Dirk'],
     'Origin': ['Arise', 'Dormio', 'Finis', 'Initium', 'Teichotima', 'The Steel Road', 'World Star'],
     'Reaching Trail': ['Brodytown', 'Dwyerstown', 'Elksford', 'Fort Mac Conaill', 'Harpy', 'Ice Ranch', 'Limestone Holdfast', 'Mousetrap', 'Nightchurch', 'Reprieve', 'The Ark'],
     'Reavers Pass': ['Breakwater', 'Clay Coffer', 'Fort Rictus', 'Keelhaul', 'Scuttletown', 'The Bilge', 'Thimble Base'],
@@ -226,7 +249,7 @@ REGIONS = {
     'Stema Landing': ['Acies Overlook', 'Alchimio Estate', 'Base Ferveret', 'Base Sagitta', 'The Flair', 'The Spearhead', 'The Wane', 'Ustio', 'Verge Wing'],
     'Stlican Shelf': ['Briar', 'Cavilltown', 'Fort Hoarfrost', 'Port of Rime', 'The Old Mourn', 'The South Wind', 'Thornhold', 'Vulpine Watch'],
     'Stonecradle': ['Buckler Sound', 'Fading Lights', 'The Cord', 'The Dais', "The Heir's Knife", 'The Long Fast', 'The Reach', 'Trammel Pool', "World's End"],
-    'Tempest Island': ['Blackwatch', 'Isle of Psyche', "Liar's Haven", 'Plana Fada', 'Reef', 'Surge Gate', 'The Gale', 'The Iris', 'The Rush'],
+    'Tempest Island': ['Blackwatch', 'Isle of Psyche', "Liar's Heaven", 'Plana Fada', 'Reef', 'Surge Gate', 'The Gale', 'The Iris', 'The Rush'],
     'Terminus': ['Bloody Palm Fort', 'Cerberus Wake', 'Therizó', 'Thunderbolt', "Warlord's Stead", 'Winding Bolas'],
     'The Fingers': ["Captain's Dread", 'Fort Barley', "Headsman's Villa", 'Plankhouse', 'Second Man', 'Tethys Base', 'The Old Captain', 'The Tusk', 'Titancall'],
     'The Moors': ['Borderlane', "Gravekeeper's Holdfast", 'Headstone', "Luch's Workshop", 'MacConmara Barrows', "Morrighan's Grave", 'Ogmaran', 'Reaching River', 'The Cut', 'The Spade', 'The Wind Hills', 'Wiccwalk'],
@@ -240,8 +263,8 @@ REGIONS = {
 REGIONS_STOCKPILES = {
     'Acrithia': [('Legion Ranch', FoxholeBuildings.STORAGE_DEPOT.value), ('Thetus Ring', FoxholeBuildings.STORAGE_DEPOT.value), ('Patridia', FoxholeBuildings.SEAPORT.value)],
     'Allods Bight': [('Scurvyshire', FoxholeBuildings.STORAGE_DEPOT.value), ("Mercy's Wail", FoxholeBuildings.SEAPORT.value)],
-    'Ash Fields': [('Electi', FoxholeBuildings.STORAGE_DEPOT.value), ('Ash Town', FoxholeBuildings.SEAPORT.value)],
-    'Basin Sionnach': [('Sess', FoxholeBuildings.STORAGE_DEPOT.value), ('The Den', FoxholeBuildings.STORAGE_DEPOT.value), ('Cutail Station', FoxholeBuildings.SEAPORT.value)],
+    'Ash Fields': [('Electi', FoxholeBuildings.STORAGE_DEPOT.value), ('Ashtown', FoxholeBuildings.SEAPORT.value)],
+    'Basin Sionnach': [('Sess', FoxholeBuildings.STORAGE_DEPOT.value), ('The Den', FoxholeBuildings.STORAGE_DEPOT.value), ('Cuttail Station', FoxholeBuildings.SEAPORT.value)],
     'Callahans Passage': [('Solas Gorge', FoxholeBuildings.STORAGE_DEPOT.value), ('Lochan Berth', FoxholeBuildings.SEAPORT.value)],
     'Callums Cape': [('Holdout', FoxholeBuildings.STORAGE_DEPOT.value), ("Callum's Keep", FoxholeBuildings.SEAPORT.value)],
     'Clahstra': [('East Narthex', FoxholeBuildings.STORAGE_DEPOT.value), ('Third Chapter', FoxholeBuildings.STORAGE_DEPOT.value), ('The Treasury', FoxholeBuildings.STORAGE_DEPOT.value)],
@@ -249,7 +272,7 @@ REGIONS_STOCKPILES = {
     'Deadlands': [('Abandoned Ward', FoxholeBuildings.STORAGE_DEPOT.value), ('Brine Glen', FoxholeBuildings.STORAGE_DEPOT.value), ("Callahan's Gate", FoxholeBuildings.STORAGE_DEPOT.value), ('The Salt Farms', FoxholeBuildings.STORAGE_DEPOT.value), ('The Spine', FoxholeBuildings.STORAGE_DEPOT.value)],
     'Drowned Vale': [('Loggerhead', FoxholeBuildings.STORAGE_DEPOT.value), ('The Baths', FoxholeBuildings.SEAPORT.value)],
     'Endless Shore': [('Brackish Point', FoxholeBuildings.STORAGE_DEPOT.value), ('Iron Junction', FoxholeBuildings.STORAGE_DEPOT.value), ('Tuatha Watchpost', FoxholeBuildings.STORAGE_DEPOT.value), ('Saltbrook Channel', FoxholeBuildings.SEAPORT.value)],
-    'Farranac Coast': [('Mara', FoxholeBuildings.STORAGE_DEPOT.value), ('The Bone Haft', FoxholeBuildings.STORAGE_DEPOT.value), ('Victa', FoxholeBuildings.STORAGE_DEPOT.value), ('Jade Cove', FoxholeBuildings.SEAPORT.value)],
+    'Farranac Coast': [('Mara', FoxholeBuildings.STORAGE_DEPOT.value), ('The Bone Haft', FoxholeBuildings.STORAGE_DEPOT.value), ('Pleading Wharf', FoxholeBuildings.STORAGE_DEPOT.value), ('Victa', FoxholeBuildings.STORAGE_DEPOT.value), ('The Jade Cove', FoxholeBuildings.SEAPORT.value)],
     'Fishermans Row': [('Arcadia', FoxholeBuildings.STORAGE_DEPOT.value), ('Black Well', FoxholeBuildings.STORAGE_DEPOT.value), ('Eidolo', FoxholeBuildings.SEAPORT.value)],
     'Godcrofts': [('Isawa', FoxholeBuildings.SEAPORT.value), ('The Axehead', FoxholeBuildings.SEAPORT.value)],
     'Great March': [('Sitaria', FoxholeBuildings.STORAGE_DEPOT.value), ('Violethome', FoxholeBuildings.STORAGE_DEPOT.value)],
@@ -257,7 +280,7 @@ REGIONS_STOCKPILES = {
     'Howl County': [('Hungry Wolf', FoxholeBuildings.STORAGE_DEPOT.value), ('Little Lamb', FoxholeBuildings.STORAGE_DEPOT.value), ('Great Warden Dam', FoxholeBuildings.SEAPORT.value)],
     'Kalokai': [('Hallow', FoxholeBuildings.STORAGE_DEPOT.value), ('Sweethearth', FoxholeBuildings.STORAGE_DEPOT.value), ('Baccae Ridge', FoxholeBuildings.SEAPORT.value)],
     'Kings Cage': [('Gibbet Fields', FoxholeBuildings.STORAGE_DEPOT.value), ('The Manacle', FoxholeBuildings.SEAPORT.value)],
-    'Linn Mercy': [('The Prarie Bazaar', FoxholeBuildings.STORAGE_DEPOT.value), ('Ulster Falls', FoxholeBuildings.SEAPORT.value)],
+    'Linn Mercy': [('The Prairie Bazaar', FoxholeBuildings.STORAGE_DEPOT.value), ('Ulster Falls', FoxholeBuildings.SEAPORT.value)],
     'Loch Mor': [("Mercy's Wish", FoxholeBuildings.STORAGE_DEPOT.value), ('Feirmor', FoxholeBuildings.SEAPORT.value)],
     'Marban Hollow': [('Lockheed', FoxholeBuildings.STORAGE_DEPOT.value), ("Maiden's Veil", FoxholeBuildings.SEAPORT.value)],
     'Morgens Crossing': [('Allsight', FoxholeBuildings.STORAGE_DEPOT.value), ('Lividus', FoxholeBuildings.STORAGE_DEPOT.value), ('Quietus', FoxholeBuildings.SEAPORT.value)],
@@ -275,12 +298,12 @@ REGIONS_STOCKPILES = {
     'Stonecradle': [('Fading Lights', FoxholeBuildings.STORAGE_DEPOT.value), ('Buckler Sound', FoxholeBuildings.SEAPORT.value)],
     'Tempest Island': [("Liar's Heaven", FoxholeBuildings.STORAGE_DEPOT.value), ('The Rush', FoxholeBuildings.STORAGE_DEPOT.value), ('The Iris', FoxholeBuildings.SEAPORT.value)],
     'Terminus': [("Warlord's Stead", FoxholeBuildings.STORAGE_DEPOT.value), ('Therizó', FoxholeBuildings.SEAPORT.value)],
-    'The Fingers': [("Headman's Villa", FoxholeBuildings.SEAPORT.value), ('The Old Captain', FoxholeBuildings.SEAPORT.value)],
+    'The Fingers': [("Headsman's Villa", FoxholeBuildings.SEAPORT.value), ('The Old Captain', FoxholeBuildings.SEAPORT.value)],
     'The Moors': [("Morrighan's Grave", FoxholeBuildings.STORAGE_DEPOT.value), ('Ogmaran', FoxholeBuildings.SEAPORT.value)],
     'Umbral Wildwood': [("Hermit's Rest", FoxholeBuildings.STORAGE_DEPOT.value), ('Thunderfoot', FoxholeBuildings.SEAPORT.value)],
     'Viper Pit': [('Earl Crowley', FoxholeBuildings.STORAGE_DEPOT.value), ('Kirknell', FoxholeBuildings.SEAPORT.value)],
     'Weathered Expanse': [("Crow's Nest", FoxholeBuildings.STORAGE_DEPOT.value), ('Foxcatcher', FoxholeBuildings.STORAGE_DEPOT.value), ('The Weathering Halls', FoxholeBuildings.SEAPORT.value)],
-    'Westgate': [('Kingstone', FoxholeBuildings.STORAGE_DEPOT.value), ('The Gallow', FoxholeBuildings.STORAGE_DEPOT.value), ('Longstone', FoxholeBuildings.SEAPORT.value)]
+    'Westgate': [('Kingstone', FoxholeBuildings.STORAGE_DEPOT.value), ('The Gallows', FoxholeBuildings.STORAGE_DEPOT.value), ('Longstone', FoxholeBuildings.SEAPORT.value)]
 }
 
 
@@ -292,7 +315,7 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "Blakerow 871",
-        'url': "https://foxhole.wiki.gg/wiki/Blakerow_871keywords",
+        'url': "https://foxhole.wiki.gg/wiki/Blakerow_871",
         'keywords': 'blakerow 871 rifle warden'
     },
     {
@@ -1066,7 +1089,7 @@ VEHICLES_WIKI_ENTRIES = [
     {
         'name': "Flood Mk. IX Stain",
         'url': "https://foxhole.wiki.gg/wiki/Flood_Mk._IX_Stain",
-        'keywords': 'flood mkix stain battle tank spg warden'
+        'keywords': 'flood mkix stain battle tank bt spg warden'
     },
     {
         'name': "Lance-25 “Hasta”",
@@ -1464,7 +1487,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Border Base",
         'url': "https://foxhole.wiki.gg/wiki/Border_Base",
-        'keywords': 'border base'
+        'keywords': 'border base bob bb'
     },
     {
         'name': "Relic Base",
@@ -1489,17 +1512,17 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Bunker Base (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_1-0",
-        'keywords': 'bunker base'
+        'keywords': 'bunker base bb bob'
     },
     {
         'name': "Bunker Base (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_2-0",
-        'keywords': 'bunker base'
+        'keywords': 'bunker base bb bob core'
     },
     {
         'name': "Bunker Base (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_3-0",
-        'keywords': 'bunker base'
+        'keywords': 'bunker base bb bob core concrete'
     },
     {
         'name': "Encampment",
@@ -1614,7 +1637,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "AT Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_2-0",
-        'keywords': 'at gun garrison bunker atg wood'
+        'keywords': 'at gun garrison bunker atg'
     },
     {
         'name': "AT Gun Garrison (Tier 3)",
@@ -1634,7 +1657,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Machine Gun Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_2-0",
-        'keywords': 'machine gun mg garrison bunker mgg wood'
+        'keywords': 'machine gun mg garrison bunker mgg'
     },
     {
         'name': "Machine Gun Garrison (Tier 3)",
@@ -1649,7 +1672,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Observation Bunker (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_2-0",
-        'keywords': 'observation bunker obs wood'
+        'keywords': 'observation bunker obs'
     },
     {
         'name': "Observation Bunker (Tier 3)",
@@ -1664,7 +1687,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Rifle Garrison (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_2-0",
-        'keywords': 'rifle garrison bunker rg wood'
+        'keywords': 'rifle garrison bunker rg'
     },
     {
         'name': "Rifle Garrison (Tier 3)",
@@ -1889,17 +1912,17 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Wall (Tier 1)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_1-0",
-        'keywords': 'wall'
+        'keywords': 'wall t1'
     },
     {
         'name': "Wall (Tier 2)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_2-0",
-        'keywords': 'wall wood'
+        'keywords': 'wall t2'
     },
     {
         'name': "Wall (Tier 3)",
         'url': "https://foxhole.wiki.gg/wiki/Wall#Tier_3-0",
-        'keywords': 'wall concrete'
+        'keywords': 'wall concrete t3'
     },
     {
         'name': "Construction Yard",
@@ -1949,7 +1972,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Ammunition Factory",
         'url': "https://foxhole.wiki.gg/wiki/Ammunition_Factory",
-        'keywords': 'ammunition factory ammo'
+        'keywords': 'ammunition ammo factory ammo'
     },
     {
         'name': "Coal Refinery",
@@ -2305,6 +2328,21 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Small Gauge Railway Track (Foundation)",
         'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Foundation-0",
         'keywords': 'small gauge railway track'
+    },
+    {
+        'name': "A0E-9 Rocket Booster",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
+        'keywords': 'nuke rocket booster'
+    },
+    {
+        'name': "A0E-9 Rocket Body",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body",
+        'keywords': 'nuke rocket body'
+    },
+    {
+        'name': "A0E-9 Rocket Warhead",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead",
+        'keywords': 'nuke rocket warhead'
     },
 ]
 

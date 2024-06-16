@@ -1,11 +1,17 @@
+import collections
 from typing import Optional
-
 import discord
 import random
 import re
 from discord import app_commands
 from discord.ext import commands
-from modules.utils import ALL_WIKI_ENTRIES, STRUCTURES_WIKI_ENTRIES, VEHICLES_WIKI_ENTRIES, EMOJIS_FROM_DICT
+from modules.utils import (
+    ALL_WIKI_ENTRIES,
+    STRUCTURES_WIKI_ENTRIES,
+    VEHICLES_WIKI_ENTRIES,
+    EMOJIS_FROM_DICT,
+    NAMES_TO_ACRONYMS
+)
 from modules.wiki.scrapers.scrap_wiki import scrap_wiki
 from modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 
@@ -15,39 +21,27 @@ class ModuleWiki(commands.Cog):
         self.oisol = bot
 
     @staticmethod
-    def generate_wiki_embed(wiki_data: dict) -> discord.Embed:
-        print(wiki_data)
-        embed = discord.Embed(
-            title=wiki_data['title'],
-            description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
-            url=wiki_data['url'],
-            color=wiki_data['color']
-        )
-        embed.set_image(url=wiki_data['img_url'])
-        for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
-                continue
-            if isinstance(attribute_value, str):
-                embed.add_field(name=attribute_key, value=attribute_value)
-            else:
-                attribute_string = ''
-                for k, v in attribute_value.items():
-                    attribute_string += f'\n{EMOJIS_FROM_DICT[k]} {v}' if k in EMOJIS_FROM_DICT.keys() else f'{v} **:** '
-                attribute_string = attribute_string.removesuffix(' **:** ')
-                embed.add_field(name=attribute_key, value=attribute_string)
-        if 'Fuel Capacity' in wiki_data.keys():
-            embed.add_field(
-                name='Fuel Capacity',
-                value=f"{wiki_data['Fuel Capacity']['']} {' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys())}"
-            )
-        return embed
+    def retrieve_facility_mats(resource_type: str, amount: str) -> str:
+        if resource_type not in EMOJIS_FROM_DICT.keys():
+            return f'{amount} **:** '
+
+        if resource_type in NAMES_TO_ACRONYMS.keys():
+            return f'\n{EMOJIS_FROM_DICT[resource_type]} **|** {NAMES_TO_ACRONYMS[resource_type]} **-** {amount}'
+        return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
 
     @staticmethod
-    def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str]) -> discord.Embed:
+    def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str], color: Optional[int]) -> discord.Embed:
+        embed_desc = ''
+        if isinstance(wiki_data['HP'], dict):
+            for k, v in wiki_data['HP'].items():
+                embed_desc += f'{k}: {v} HP\n'
+        else:
+            embed_desc = f"{wiki_data['HP']} HP"
         embed = discord.Embed(
             title=wiki_data['Name'],
             url=url_health,
-            description=f"{wiki_data['HP']} HP"
+            description=embed_desc,
+            color=color
         )
         if picture_url:
             embed.set_thumbnail(url=picture_url)
@@ -57,10 +51,16 @@ class ModuleWiki(commands.Cog):
         for i, (k, v) in enumerate(wiki_data.items()):
             if k in ['Class', 'Name', '', 'Icon', 'HP']:
                 continue
-
+            value_string = f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: "
+            if isinstance(wiki_data[k], dict) and 'disabled' in wiki_data[k].keys():
+                value_string += wiki_data[k]['disabled'] + ' **|** ' + wiki_data[k]['kill']
+            elif isinstance(wiki_data[k], dict) and len(wiki_data[k].keys()) == 3:
+                value_string += wiki_data[k]['S'] + ' **|** ' + wiki_data[k]['M'] + ' **|** ' + wiki_data[k]['L']
+            elif isinstance(wiki_data[k], str):
+                value_string += wiki_data[k]
             embed.add_field(
                 name='',
-                value=f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: {wiki_data[k]['disabled'] + ' **|** ' + wiki_data[k]['kill'] if isinstance(wiki_data[k], dict) else wiki_data[k]}",
+                value=value_string
             )
         return embed
 
@@ -92,6 +92,34 @@ class ModuleWiki(commands.Cog):
             app_commands.Choice(name=entry_result[0], value=entry_result[1])
             for entry_result in search_results
         ]
+
+    def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
+        print(wiki_data)
+        embed = discord.Embed(
+            title=wiki_data['title'],
+            description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
+            url=wiki_data['url'],
+            color=wiki_data['color']
+        )
+        embed.set_image(url=wiki_data['img_url'])
+        for attribute_key, attribute_value in wiki_data.items():
+            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
+                continue
+            if isinstance(attribute_value, str):
+                embed.add_field(name=attribute_key, value=attribute_value)
+            else:
+                attribute_string = ''
+                ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
+                for k, v in ordered_attribute_value.items():
+                    attribute_string += self.retrieve_facility_mats(k, v)
+                attribute_string = attribute_string.removesuffix(' **:** ')
+                embed.add_field(name=attribute_key, value=attribute_string)
+        if 'Fuel Capacity' in wiki_data.keys():
+            embed.add_field(
+                name='Fuel Capacity',
+                value=f"{wiki_data['Fuel Capacity']['']} {' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys())}"
+            )
+        return embed
 
     async def wiki_autocomplete(self, interaction: discord.Interaction, current: str) -> list:
         return self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
@@ -133,6 +161,11 @@ class ModuleWiki(commands.Cog):
             if entry['url'] == wiki_request:
                 wiki_entry_complete_name = entry['name']
                 break
-        entry_picture = scrap_main_picture(wiki_request)
-        entry_embed = self.generate_hmtk_embed(scrap_health(entry_url, wiki_entry_complete_name), entry_url, entry_picture)
+        if wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base')) and wiki_entry_complete_name.endswith('(Tier 1)'):
+            wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
+        infobox_tuple = scrap_main_picture(wiki_request, wiki_entry_complete_name)
+        entry_picture_url, color = None, None
+        if infobox_tuple:
+            entry_picture_url, color = infobox_tuple
+        entry_embed = self.generate_hmtk_embed(scrap_health(entry_url, wiki_entry_complete_name), entry_url, entry_picture_url, color)
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
