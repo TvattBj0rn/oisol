@@ -1,6 +1,5 @@
 import collections
 from typing import Optional
-
 import discord
 import random
 import re
@@ -164,10 +163,9 @@ class ModuleWiki(commands.Cog):
                 break
         if wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base')) and wiki_entry_complete_name.endswith('(Tier 1)'):
             wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
-        infobox_tuple = scrap_main_picture(wiki_request)
+        infobox_tuple = scrap_main_picture(wiki_request, wiki_entry_complete_name)
         entry_picture_url, color = None, None
         if infobox_tuple:
             entry_picture_url, color = infobox_tuple
-        entry_picture, color = scrap_main_picture(wiki_request)
         entry_embed = self.generate_hmtk_embed(scrap_health(entry_url, wiki_entry_complete_name), entry_url, entry_picture_url, color)
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)

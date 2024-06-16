@@ -70,7 +70,7 @@ def scrap_health(url: str, name: str) -> dict:
     return wiki_response_dict
 
 
-def scrap_main_picture(url: str) -> Optional[Tuple[str, int]]:
+def scrap_main_picture(url: str, name: str) -> Optional[Tuple[str, int]]:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
@@ -78,7 +78,15 @@ def scrap_main_picture(url: str) -> Optional[Tuple[str, int]]:
 
     # Whole page soup data
     soup = BeautifulSoup(response.content, features="lxml")
-    return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}", scrap_faction_color(soup)
+    faction_color = scrap_faction_color(soup)
+
+    # Bridge case, todo: instead of applying to bridge only, apply to every case ?
+    if name.endswith('Bridge'):
+        for infobox in soup.select('aside'):
+            if infobox.select_one('h2').get_text() == name:
+                return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
+
+    return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}", faction_color
 
 
 def scrap_faction_color(soup: Tag) -> hex:
