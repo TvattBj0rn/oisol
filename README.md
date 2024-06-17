@@ -1,7 +1,7 @@
 
 # OISOL
 
-Foxhole organisation tool
+Foxhole organisation tool (Outil Intelligent de Service Opérationnel et Logistique)
 
 ## Modules
 
