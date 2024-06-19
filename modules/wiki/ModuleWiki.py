@@ -67,7 +67,7 @@ class ModuleWiki(commands.Cog):
     @staticmethod
     def generic_autocomplete(entries: list, current: str) -> list:
         # Default search values, before any input in the search bar
-        if len(current) == 0:
+        if not current:
             return [
                 app_commands.Choice(name=wiki_entry['name'], value=wiki_entry['url'])
                 for wiki_entry in random.choices(entries, k=5)
@@ -94,7 +94,6 @@ class ModuleWiki(commands.Cog):
         ]
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
-        print(wiki_data)
         embed = discord.Embed(
             title=wiki_data['title'],
             description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
@@ -130,6 +129,7 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='wiki', description='Info wiki')
     @app_commands.autocomplete(wiki_request=wiki_autocomplete)
     async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: bool = False):
+        print(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
             return
@@ -148,6 +148,7 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='health', description='Structures / Vehicles health')
     @app_commands.autocomplete(wiki_request=health_autocomplete)
     async def entities_health(self, interaction: discord.Interaction, wiki_request: str, visible: bool = False):
+        print(f'> health command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
             return

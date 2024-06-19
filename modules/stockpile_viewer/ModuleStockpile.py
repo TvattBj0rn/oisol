@@ -17,9 +17,9 @@ class ModuleStockpiles(commands.Cog):
 
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         regions_cities = []
-        for k, v in REGIONS.items():
+        for k, v in REGIONS_STOCKPILES.items():
             for vv in v:
-                regions_cities.append(f'{k} | {vv}')
+                regions_cities.append(f'{k} | {vv[0]}')
 
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
@@ -40,6 +40,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile_view')
     async def stockpile_view(self, interaction: discord.Interaction):
+        print(f'> stockpile_view command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer()
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
@@ -54,14 +55,13 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile_create')
     @app_commands.autocomplete(region=region_autocomplete)
     async def stockpile_create(self, interaction: discord.Interaction, code: str, region: str, *, name: str):
+        print(f'> stockpile_create command by {interaction.user.name} on {interaction.guild.name}')
         if len(code) != 6:
             await interaction.response.send_message(
                 '> Le code doit comporter 6 chiffres',
                 ephemeral=True
             )
             return
-
-        # view = CreateStockpileInterface.CreateStockpileInterface(code, name, self.csv_keys)
 
         r, s = region.split(' | ')  # Only one '|' -> 2 splits
         stockpile = {
@@ -92,6 +92,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile_delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
+        print(f'> stockpile_delete command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
         CsvHandlerStockpiles(self.csv_keys).csv_delete_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value),
@@ -103,13 +104,11 @@ class ModuleStockpiles(commands.Cog):
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
         )
-        await interaction.followup.send(
-            f'> Le stockpile (code: {stockpile_code}) a bien été supprimé',
-            ephemeral=True
-        )
+        await interaction.followup.send(f'> Le stockpile (code: {stockpile_code}) a bien été supprimé', ephemeral=True)
 
     @app_commands.command(name='stockpile_clear')
     async def stockpile_clear(self, interaction: discord.Interaction):
+        print(f'> stockpile_clear command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
         CsvHandlerStockpiles(self.csv_keys).csv_clear_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
@@ -120,8 +119,4 @@ class ModuleStockpiles(commands.Cog):
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
         )
-
-        await interaction.followup.send(
-            f'> La liste des stockpiles a bien été supprimée',
-            ephemeral=True
-        )
+        await interaction.followup.send(f'> La liste des stockpiles a bien été supprimée', ephemeral=True)

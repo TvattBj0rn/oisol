@@ -35,6 +35,7 @@ class ModuleTodolist(commands.Cog):
             member_5: discord.Member = None,
 
     ):
+        print(f'> todolist_generate command by {interaction.user.name} on {interaction.guild.name}')
         embed_uuid = uuid.uuid4().hex
         todolist_embed = discord.Embed(title=f'☑️️ **|** {title}', description='Classée par ordre de priorité')
         todolist_embed.add_field(name='🔴 **|** Priorité Haute', value='')
@@ -81,6 +82,7 @@ class ModuleTodolist(commands.Cog):
 
     @app_commands.command(name='todolist_add')
     async def todolist_add(self, interaction: discord.Interaction, embed_uuid: str, content: str, priority: PriorityType):
+        print(f'> todolist_add command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
         for task in content.split(sep=','):
             task_dict = {

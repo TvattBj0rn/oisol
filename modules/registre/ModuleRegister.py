@@ -37,6 +37,7 @@ class ModuleRegister(commands.Cog):
 
     @app_commands.command(name='register_view')
     async def register_view(self, interaction: discord.Interaction):
+        print(f'> register_view command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer()
 
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
@@ -52,6 +53,7 @@ class ModuleRegister(commands.Cog):
 
     @app_commands.command(name='register_add')
     async def register_add(self, interaction: discord.Interaction, member: discord.Member):
+        print(f'> register_add command by {interaction.user.name} on {interaction.guild.name}')
         if interaction.guild.owner_id == member.id:
             await interaction.response.send_message('Le propriétaire du serveur ne peut pas être ajouté au registre')
             return
@@ -79,6 +81,7 @@ class ModuleRegister(commands.Cog):
 
     @app_commands.command(name='register_clean')
     async def register_clean(self, interaction: discord.Interaction):
+        print(f'> register_clean command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
         register_members = CsvHandlerRegister(REGISTER_CSV_KEYS).csv_get_all_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
@@ -105,6 +108,7 @@ class ModuleRegister(commands.Cog):
 
     @app_commands.command(name='register_promote')
     async def register_promote(self, interaction: discord.Interaction, member: discord.Member, is_promoted: bool):
+        print(f'> register_promote command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
         is_member_in_register = False
         register_members = CsvHandlerRegister(REGISTER_CSV_KEYS).csv_get_all_data(
