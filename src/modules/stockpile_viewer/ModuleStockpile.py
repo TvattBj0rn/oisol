@@ -5,9 +5,11 @@ import pathlib
 import random
 from discord import app_commands
 from discord.ext import commands
-from modules.stockpile_viewer import discord_data_transmission, stockpile_embed_generator
-from modules.stockpile_viewer.CsvHandlerStockpiles import CsvHandlerStockpiles
-from modules.utils import EmbedIds, DataFilesPath, REGIONS, REGIONS_STOCKPILES
+from src.modules.stockpile_viewer import stockpile_embed_generator
+from src.modules.stockpile_viewer.CsvHandlerStockpiles import CsvHandlerStockpiles
+from src.utils.functions import update_discord_interface
+from src.utils.oisol_enums import EmbedIds, DataFilesPath
+from src.utils.resources import REGIONS_STOCKPILES
 
 
 class ModuleStockpiles(commands.Cog):
@@ -82,10 +84,10 @@ class ModuleStockpiles(commands.Cog):
 
         stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
 
-        await discord_data_transmission.send_data_to_discord(
-            stockpiles_embed,
+        await update_discord_interface(
             interaction,
-            EmbedIds.STOCKPILES_VIEW.value
+            EmbedIds.STOCKPILES_VIEW.value,
+            embed=stockpiles_embed
         )
 
         await interaction.response.send_message('> Le stockpile a bien été généré', ephemeral=True)
@@ -99,10 +101,10 @@ class ModuleStockpiles(commands.Cog):
             stockpile_code
         )
 
-        await discord_data_transmission.send_data_to_discord(
-            stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys),
+        await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
+            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
         await interaction.followup.send(f'> Le stockpile (code: {stockpile_code}) a bien été supprimé', ephemeral=True)
 
@@ -114,9 +116,9 @@ class ModuleStockpiles(commands.Cog):
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
         )
 
-        await discord_data_transmission.send_data_to_discord(
-            stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys),
+        await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
+            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
         await interaction.followup.send(f'> La liste des stockpiles a bien été supprimée', ephemeral=True)

@@ -2,18 +2,16 @@ import discord
 import os
 import pathlib
 from typing_extensions import Self
-from modules.registre.CsvHandlerRegistre import CsvHandlerRegister
-from modules.utils import DataFilesPath, MODULES_CSV_KEYS
-
-
-REGISTER_CSV_KEYS = MODULES_CSV_KEYS['register']
+from src.modules.registre.CsvHandlerRegistre import CsvHandlerRegister
+from src.utils.oisol_enums import DataFilesPath
+from src.utils.resources import MODULES_CSV_KEYS
 
 
 class RegisterViewMenu(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
         self.color = 0x477DA9
-        self.csv_keys = REGISTER_CSV_KEYS
+        self.csv_keys = MODULES_CSV_KEYS['register']
         self.embeds = []
         self.register_members = []
         self.current_page_index = 0
@@ -22,7 +20,7 @@ class RegisterViewMenu(discord.ui.View):
         if updated_recruit_list:
             self.register_members = updated_recruit_list
         else:
-            self.register_members = CsvHandlerRegister(REGISTER_CSV_KEYS).csv_get_all_data(
+            self.register_members = CsvHandlerRegister(self.csv_keys).csv_get_all_data(
                 os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value)
             )
         self.generate_embeds()

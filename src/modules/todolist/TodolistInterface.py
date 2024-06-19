@@ -2,12 +2,10 @@ import json
 import discord
 import os
 import pathlib
-from modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
-from modules.utils import EMOTES_CUSTOM_ID, PriorityType, MODULES_CSV_KEYS
 from typing_extensions import Self
-
-
-TODOLIST_CSV_KEYS = MODULES_CSV_KEYS['todolist']
+from src.modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
+from src.utils.oisol_enums import PriorityType
+from src.utils.resources import EMOTES_CUSTOM_ID, MODULES_CSV_KEYS
 
 
 def has_permissions(interaction: discord.Interaction, permissions: dict) -> bool:
@@ -35,7 +33,7 @@ def list_to_priority_dict(data_list: list) -> dict:
 class TodolistInterface(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-        self.csv_keys = TODOLIST_CSV_KEYS
+        self.csv_keys = MODULES_CSV_KEYS['todolist']
         self.interface_embed = None
         self.message_embed = dict()
         self.data_dict = dict()

@@ -1,12 +1,12 @@
 import configparser
 import discord
 import os
-import termcolor
 from discord import app_commands
 from discord.ext import commands
-from modules.stockpile_viewer import CsvHandlerStockpiles
-from modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView
-from modules.utils import DataFilesPath, Language, Faction, MODULES_CSV_KEYS
+from src.modules.stockpile_viewer import CsvHandlerStockpiles
+from src.modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView
+from src.utils.oisol_enums import DataFilesPath, Language, Faction
+from src.utils.resources import MODULES_CSV_KEYS
 
 
 class ModuleConfig(commands.Cog):
@@ -19,7 +19,7 @@ class ModuleConfig(commands.Cog):
         """
         Generate the files & directories used by the various OISOL commands.
         """
-        termcolor.colored(f'> oisol_init command by {interaction.user.name} on {interaction.guild.name}', 'blue')
+        print(f'> oisol_init command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
 
         os.makedirs(os.path.join(oisol_server_home_path), exist_ok=True)

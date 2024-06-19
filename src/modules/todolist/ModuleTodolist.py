@@ -5,18 +5,16 @@ import uuid
 import json
 from discord import app_commands
 from discord.ext import commands
-from modules.utils import MODULES_CSV_KEYS, PriorityType
-from modules.todolist.TodolistInterface import TodolistInterface
-from modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
-
-
-TODOLIST_CSV_KEYS = MODULES_CSV_KEYS['todolist']
+from src.modules.todolist.TodolistInterface import TodolistInterface
+from src.modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
+from src.utils.oisol_enums import PriorityType
+from src.utils.resources import MODULES_CSV_KEYS
 
 
 class ModuleTodolist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
-        self.csv_keys = TODOLIST_CSV_KEYS
+        self.csv_keys = MODULES_CSV_KEYS['todolist']
     
     @app_commands.command(name='todolist_generate')
     async def todolist_generate(

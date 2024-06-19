@@ -1,6 +1,6 @@
 import csv
-from modules.utils import PriorityType
-from modules.CsvHandler import CsvHandler
+from src.utils.oisol_enums import PriorityType
+from src.utils.CsvHandler import CsvHandler
 
 
 class CsvHandlerTodolist(CsvHandler):

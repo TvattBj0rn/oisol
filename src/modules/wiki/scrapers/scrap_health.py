@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 from typing import Optional, Tuple
-from modules.utils import Faction
+from src.utils.oisol_enums import Faction
 
 
 def get_indexes(tbody: Tag) -> dict:
@@ -66,7 +66,7 @@ def scrap_health(url: str, name: str) -> dict:
 
     for k in ['7.62mm', '7.92mm', '9mm', 'A3 Harpa Fragmentation Grenade', 'Flamethrower Ammo', 'Flame Ammo', 'Shrapnel Mortar Shell', 'Bomastone Grenade']:
         wiki_response_dict.pop(k, None)
-    print(wiki_response_dict)
+
     return wiki_response_dict
 
 

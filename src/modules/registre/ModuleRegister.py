@@ -5,30 +5,11 @@ import pathlib
 import time
 from discord import app_commands
 from discord.ext import commands
-from modules.utils import DataFilesPath, safeguarded_nickname, MODULES_CSV_KEYS
-from modules.registre.CsvHandlerRegistre import CsvHandlerRegister
-from modules.registre.RegisterViewMenu import RegisterViewMenu
-
-
-REGISTER_CSV_KEYS = MODULES_CSV_KEYS['register']
-
-
-# Merge this with its stockpile equivalent
-async def send_data_to_discord(interaction: discord.Interaction, view: RegisterViewMenu, message_id: str):
-    config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
-    channel = interaction.guild.get_channel(int(config['register']['channel']))
-
-    async for message in channel.history():
-        if not message.embeds:
-            continue
-        message_embed = discord.Embed.to_dict(message.embeds[0])
-        if message_embed['footer']['text'] == message_id:
-            await message.edit(view=view, embed=view.get_current_embed())
-            return
-        else:
-            print(message_embed['footer']['text'], message_id)
-    await channel.send(view=view)
+from src.utils.functions import update_discord_interface, safeguarded_nickname
+from src.utils.oisol_enums import DataFilesPath
+from src.utils.resources import MODULES_CSV_KEYS
+from src.modules.registre.CsvHandlerRegistre import CsvHandlerRegister
+from src.modules.registre.RegisterViewMenu import RegisterViewMenu
 
 
 class ModuleRegister(commands.Cog):
@@ -59,11 +40,11 @@ class ModuleRegister(commands.Cog):
             return
 
         recruit_id, recruit_timer = member.id, int(time.time())
-        CsvHandlerRegister(REGISTER_CSV_KEYS).csv_append_data(
+        CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_append_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             {
-                REGISTER_CSV_KEYS[0]: recruit_id,
-                REGISTER_CSV_KEYS[1]: recruit_timer
+                MODULES_CSV_KEYS['register'][0]: recruit_id,
+                MODULES_CSV_KEYS['register'][1]: recruit_timer
             }
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id))
@@ -72,10 +53,10 @@ class ModuleRegister(commands.Cog):
         if config['register']['input'] != 'None':
             await member.edit(nick=safeguarded_nickname(f"{config['register']['input']} {member.display_name}"))
 
-        await send_data_to_discord(
+        await update_discord_interface(
             interaction,
-            register_view,
-            'Register'
+            'Register',
+            view=register_view
         )
         await interaction.response.send_message(f'> {member.mention} a été ajouté au registre', ephemeral=True)
 
@@ -83,23 +64,23 @@ class ModuleRegister(commands.Cog):
     async def register_clean(self, interaction: discord.Interaction):
         print(f'> register_clean command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
-        register_members = CsvHandlerRegister(REGISTER_CSV_KEYS).csv_get_all_data(
+        register_members = CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_get_all_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
         )
         for register_member in register_members:
             # if member still on the server and has role_id 1125790881094570045 in its roles
-            if interaction.guild.get_member(int(register_member[REGISTER_CSV_KEYS[0]])): # and interaction.guild.get_member(int(register_member[REGISTER_CSV_KEYS[0]])).get_role(1125790881094570045):
+            if interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])): # and interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])).get_role(1125790881094570045):
                 updated_recruit_list.append(register_member)
-        CsvHandlerRegister(REGISTER_CSV_KEYS).csv_rewrite_file(
+        CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             updated_recruit_list
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id), updated_recruit_list)
 
-        await send_data_to_discord(
+        await update_discord_interface(
             interaction,
-            register_view,
-            'Register'
+            'Register',
+            view=register_view
         )
         await interaction.response.send_message(
             "> Le registre a été nettoyé (doublons / plus enlistés / plus sur le serveur)",
@@ -111,12 +92,12 @@ class ModuleRegister(commands.Cog):
         print(f'> register_promote command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
         is_member_in_register = False
-        register_members = CsvHandlerRegister(REGISTER_CSV_KEYS).csv_get_all_data(
+        register_members = CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_get_all_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
         )
 
         for register_member in register_members:
-            if int(register_member[REGISTER_CSV_KEYS[0]]) != int(member.id):
+            if int(register_member[MODULES_CSV_KEYS['register'][0]]) != int(member.id):
                 updated_recruit_list.append(register_member)
             else:
                 is_member_in_register = True
@@ -124,15 +105,15 @@ class ModuleRegister(commands.Cog):
             await interaction.response.send_message(f"> {member.mention} n'est pas dans le registre.")
             return
 
-        CsvHandlerRegister(REGISTER_CSV_KEYS).csv_rewrite_file(
+        CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             updated_recruit_list
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id), updated_recruit_list)
-        await send_data_to_discord(
+        await update_discord_interface(
             interaction,
-            register_view,
-            'Register'
+            'Register',
+            view=register_view
         )
 
         config = configparser.ConfigParser()
