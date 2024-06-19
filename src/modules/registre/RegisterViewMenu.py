@@ -3,14 +3,14 @@ import os
 import pathlib
 from typing_extensions import Self
 from src.modules.registre.CsvHandlerRegistre import CsvHandlerRegister
-from src.utils.oisol_enums import DataFilesPath
+from src.utils.oisol_enums import DataFilesPath, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 
 
 class RegisterViewMenu(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-        self.color = 0x477DA9
+        self.color = Faction.WARDEN.value
         self.csv_keys = MODULES_CSV_KEYS['register']
         self.embeds = []
         self.register_members = []
