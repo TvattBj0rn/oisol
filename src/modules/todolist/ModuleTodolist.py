@@ -15,6 +15,7 @@ class ModuleTodolist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
         self.csv_keys = MODULES_CSV_KEYS['todolist']
+        self.CsvHandler = CsvHandler(self.csv_keys)
     
     @app_commands.command(name='todolist_generate')
     async def todolist_generate(
@@ -66,7 +67,7 @@ class ModuleTodolist(commands.Cog):
         if member_5:
             permissions['members'].append(member_5.id)
 
-        CsvHandler(self.csv_keys).csv_try_create_file(
+        self.CsvHandler.csv_try_create_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{embed_uuid}.csv')
         )
 
@@ -87,7 +88,7 @@ class ModuleTodolist(commands.Cog):
                 'content': task,
                 'priority': priority.value
             }
-            CsvHandler(self.csv_keys).csv_append_data(
+            self.CsvHandler.csv_append_data(
                 os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{embed_uuid}.csv'),
                 task_dict,
                 Modules.TODOLIST

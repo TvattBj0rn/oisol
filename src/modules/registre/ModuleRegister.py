@@ -15,6 +15,7 @@ from src.modules.registre.RegisterViewMenu import RegisterViewMenu
 class ModuleRegister(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
+        self.CsvHandler = CsvHandler(MODULES_CSV_KEYS['register'])
 
     @app_commands.command(name='register_view')
     async def register_view(self, interaction: discord.Interaction):
@@ -40,7 +41,7 @@ class ModuleRegister(commands.Cog):
             return
 
         recruit_id, recruit_timer = member.id, int(time.time())
-        CsvHandler(MODULES_CSV_KEYS['register']).csv_append_data(
+        self.CsvHandler.csv_append_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             {
                 MODULES_CSV_KEYS['register'][0]: recruit_id,
@@ -65,7 +66,7 @@ class ModuleRegister(commands.Cog):
     async def register_clean(self, interaction: discord.Interaction):
         print(f'> register_clean command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
-        register_members = CsvHandler(MODULES_CSV_KEYS['register']).csv_get_all_data(
+        register_members = self.CsvHandler.csv_get_all_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             Modules.REGISTER
         )
@@ -73,7 +74,7 @@ class ModuleRegister(commands.Cog):
             # if member still on the server and has role_id 1125790881094570045 in its roles
             if interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])):  # and interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])).get_role(1125790881094570045):
                 updated_recruit_list.append(register_member)
-        CsvHandler(MODULES_CSV_KEYS['register']).csv_rewrite_file(
+        self.CsvHandler.csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             updated_recruit_list,
             Modules.REGISTER
@@ -95,7 +96,7 @@ class ModuleRegister(commands.Cog):
         print(f'> register_promote command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
         is_member_in_register = False
-        register_members = CsvHandler(MODULES_CSV_KEYS['register']).csv_get_all_data(
+        register_members = self.CsvHandler.csv_get_all_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             Modules.REGISTER
         )
@@ -109,7 +110,7 @@ class ModuleRegister(commands.Cog):
             await interaction.response.send_message(f"> {member.mention} n'est pas dans le registre.")
             return
 
-        CsvHandler(MODULES_CSV_KEYS['register']).csv_rewrite_file(
+        self.CsvHandler.csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             updated_recruit_list,
             Modules.REGISTER

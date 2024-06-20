@@ -1,12 +1,12 @@
 import collections
-from typing import Optional
 import discord
 import random
 import re
 from discord import app_commands
 from discord.ext import commands
-from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
+from typing import Optional
 from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
+from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
 from src.utils.resources import (
     ALL_WIKI_ENTRIES,
     STRUCTURES_WIKI_ENTRIES,

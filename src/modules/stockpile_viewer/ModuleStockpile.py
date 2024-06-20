@@ -9,13 +9,14 @@ from src.modules.stockpile_viewer import stockpile_embed_generator
 from src.utils.CsvHandler import CsvHandler
 from src.utils.functions import update_discord_interface
 from src.utils.oisol_enums import DataFilesPath, EmbedIds, Modules
-from src.utils.resources import REGIONS_STOCKPILES
+from src.utils.resources import REGIONS_STOCKPILES, MODULES_CSV_KEYS
 
 
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
-        self.csv_keys = ['region', 'subregion', 'code', 'name', 'type']
+        self.csv_keys = MODULES_CSV_KEYS['stockpiles']
+        self.CsvHandler = CsvHandler(self.csv_keys)
 
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         regions_cities = []
@@ -78,9 +79,8 @@ class ModuleStockpiles(commands.Cog):
                 stockpile['type'] = 'Seaport' if subregion[1][2:9] == 'seaport' else 'Storage Depot'
 
         file_path = os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
-        csv_handler = CsvHandler(self.csv_keys)
-        csv_handler.csv_try_create_file(file_path)
-        csv_handler.csv_append_data(file_path, stockpile, Modules.STOCKPILE)
+        self.CsvHandler.csv_try_create_file(file_path)
+        self.CsvHandler.csv_append_data(file_path, stockpile, Modules.STOCKPILE)
 
         stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
 
@@ -96,7 +96,7 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
         print(f'> stockpile_delete command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
-        CsvHandler(self.csv_keys).csv_delete_data(
+        self.CsvHandler.csv_delete_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value),
             stockpile_code
         )
@@ -112,7 +112,7 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_clear(self, interaction: discord.Interaction):
         print(f'> stockpile_clear command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
-        CsvHandler(self.csv_keys).csv_clear_data(
+        self.CsvHandler.csv_clear_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
         )
 
