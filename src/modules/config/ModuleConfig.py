@@ -3,7 +3,7 @@ import discord
 import os
 from discord import app_commands
 from discord.ext import commands
-from src.modules.stockpile_viewer import CsvHandlerStockpiles
+from src.utils.CsvHandler import CsvHandler
 from src.modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView
 from src.utils.oisol_enums import DataFilesPath, Language, Faction
 from src.utils.resources import MODULES_CSV_KEYS
@@ -27,7 +27,7 @@ class ModuleConfig(commands.Cog):
 
         for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
             if not os.path.isfile(os.path.join(oisol_server_home_path, datafile.value)):
-                CsvHandlerStockpiles.CsvHandlerStockpiles(self.csv_keys[datafile.name.lower()]).csv_try_create_file(
+                CsvHandler(self.csv_keys[datafile.name.lower()]).csv_try_create_file(
                     os.path.join(oisol_server_home_path, datafile.value)
                 )
 

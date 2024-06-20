@@ -2,8 +2,8 @@ import discord
 import os
 import pathlib
 from typing_extensions import Self
-from src.modules.registre.CsvHandlerRegistre import CsvHandlerRegister
-from src.utils.oisol_enums import DataFilesPath, Faction
+from src.utils.CsvHandler import CsvHandler
+from src.utils.oisol_enums import DataFilesPath, Faction, Modules
 from src.utils.resources import MODULES_CSV_KEYS
 
 
@@ -20,8 +20,9 @@ class RegisterViewMenu(discord.ui.View):
         if updated_recruit_list:
             self.register_members = updated_recruit_list
         else:
-            self.register_members = CsvHandlerRegister(self.csv_keys).csv_get_all_data(
-                os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value)
+            self.register_members = CsvHandler(self.csv_keys).csv_get_all_data(
+                os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value),
+                Modules.REGISTER
             )
         self.generate_embeds()
 

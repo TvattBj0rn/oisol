@@ -6,8 +6,8 @@ import json
 from discord import app_commands
 from discord.ext import commands
 from src.modules.todolist.TodolistInterface import TodolistInterface
-from src.modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
-from src.utils.oisol_enums import PriorityType
+from src.utils.CsvHandler import CsvHandler
+from src.utils.oisol_enums import PriorityType, Modules
 from src.utils.resources import MODULES_CSV_KEYS
 
 
@@ -66,7 +66,7 @@ class ModuleTodolist(commands.Cog):
         if member_5:
             permissions['members'].append(member_5.id)
 
-        CsvHandlerTodolist(self.csv_keys).csv_try_create_file(
+        CsvHandler(self.csv_keys).csv_try_create_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{embed_uuid}.csv')
         )
 
@@ -87,9 +87,10 @@ class ModuleTodolist(commands.Cog):
                 'content': task,
                 'priority': priority.value
             }
-            CsvHandlerTodolist(self.csv_keys).csv_append_data(
+            CsvHandler(self.csv_keys).csv_append_data(
                 os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{embed_uuid}.csv'),
-                task_dict
+                task_dict,
+                Modules.TODOLIST
             )
 
         # Find todolist message

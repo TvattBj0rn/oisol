@@ -6,9 +6,9 @@ import time
 from discord import app_commands
 from discord.ext import commands
 from src.utils.functions import update_discord_interface, safeguarded_nickname
-from src.utils.oisol_enums import DataFilesPath
+from src.utils.oisol_enums import DataFilesPath, Modules
 from src.utils.resources import MODULES_CSV_KEYS
-from src.modules.registre.CsvHandlerRegistre import CsvHandlerRegister
+from src.utils.CsvHandler import CsvHandler
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
 
 
@@ -40,12 +40,13 @@ class ModuleRegister(commands.Cog):
             return
 
         recruit_id, recruit_timer = member.id, int(time.time())
-        CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_append_data(
+        CsvHandler(MODULES_CSV_KEYS['register']).csv_append_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             {
                 MODULES_CSV_KEYS['register'][0]: recruit_id,
                 MODULES_CSV_KEYS['register'][1]: recruit_timer
-            }
+            },
+            Modules.REGISTER
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id))
         config = configparser.ConfigParser()
@@ -64,16 +65,18 @@ class ModuleRegister(commands.Cog):
     async def register_clean(self, interaction: discord.Interaction):
         print(f'> register_clean command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
-        register_members = CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_get_all_data(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
+        register_members = CsvHandler(MODULES_CSV_KEYS['register']).csv_get_all_data(
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
+            Modules.REGISTER
         )
         for register_member in register_members:
             # if member still on the server and has role_id 1125790881094570045 in its roles
-            if interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])): # and interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])).get_role(1125790881094570045):
+            if interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])):  # and interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])).get_role(1125790881094570045):
                 updated_recruit_list.append(register_member)
-        CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_rewrite_file(
+        CsvHandler(MODULES_CSV_KEYS['register']).csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
-            updated_recruit_list
+            updated_recruit_list,
+            Modules.REGISTER
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id), updated_recruit_list)
 
@@ -92,8 +95,9 @@ class ModuleRegister(commands.Cog):
         print(f'> register_promote command by {interaction.user.name} on {interaction.guild.name}')
         updated_recruit_list = []
         is_member_in_register = False
-        register_members = CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_get_all_data(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value)
+        register_members = CsvHandler(MODULES_CSV_KEYS['register']).csv_get_all_data(
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
+            Modules.REGISTER
         )
 
         for register_member in register_members:
@@ -105,9 +109,10 @@ class ModuleRegister(commands.Cog):
             await interaction.response.send_message(f"> {member.mention} n'est pas dans le registre.")
             return
 
-        CsvHandlerRegister(MODULES_CSV_KEYS['register']).csv_rewrite_file(
+        CsvHandler(MODULES_CSV_KEYS['register']).csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
-            updated_recruit_list
+            updated_recruit_list,
+            Modules.REGISTER
         )
         register_view = RegisterViewMenu().refresh_register(str(interaction.guild.id), updated_recruit_list)
         await update_discord_interface(

@@ -3,8 +3,8 @@ import discord
 import os
 import pathlib
 from typing_extensions import Self
-from src.modules.todolist.CsvHandlerTodolist import CsvHandlerTodolist
-from src.utils.oisol_enums import PriorityType
+from src.utils.CsvHandler import CsvHandler
+from src.utils.oisol_enums import PriorityType, Modules
 from src.utils.resources import EMOTES_CUSTOM_ID, MODULES_CSV_KEYS
 
 
@@ -50,8 +50,8 @@ class TodolistInterface(discord.ui.View):
         if updated_data:
             self.data_dict = updated_data
         else:
-            self.data_dict = CsvHandlerTodolist(self.csv_keys).csv_get_all_data(
-                os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.csv')
+            self.data_dict = CsvHandler(self.csv_keys).csv_get_all_data(
+                os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.csv'), Modules.TODOLIST
             )
         for key in self.data_dict.keys():
             for elem in self.data_dict[key]:
@@ -135,9 +135,10 @@ class TodolistButtonCheckmark(discord.ui.Button):
 
         self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(str(self.emoji)))
         data_dict = list_to_priority_dict(self.data_list)
-        CsvHandlerTodolist(self.todolist_interface.csv_keys).csv_rewrite_file(
+        CsvHandler(self.todolist_interface.csv_keys).csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.csv'),
-            self.data_list
+            self.data_list,
+            Modules.TODOLIST
         )
         self.todolist_interface.refresh_interface(self.original_embed, self.embed_uuid, self.guild_id, data_dict)
         await interaction.message.edit(view=self.todolist_interface, embed=self.todolist_interface.generate_interface_embed())
