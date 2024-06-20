@@ -65,15 +65,16 @@ class ModuleRegister(commands.Cog):
     @app_commands.command(name='register_clean')
     async def register_clean(self, interaction: discord.Interaction):
         print(f'> register_clean command by {interaction.user.name} on {interaction.guild.name}')
-        updated_recruit_list = []
-        register_members = self.CsvHandler.csv_get_all_data(
+        updated_recruit_list, updated_recruit_ids = [], []
+        registered_members = self.CsvHandler.csv_get_all_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             Modules.REGISTER
         )
-        for register_member in register_members:
+        for registered_member in registered_members:
             # if member still on the server and has role_id 1125790881094570045 in its roles
-            if interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])):  # and interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])).get_role(1125790881094570045):
-                updated_recruit_list.append(register_member)
+            if interaction.guild.get_member(registered_member['member']) and registered_member['member'] not in updated_recruit_ids:  # and interaction.guild.get_member(int(register_member[MODULES_CSV_KEYS['register'][0]])).get_role(1125790881094570045):
+                updated_recruit_list.append(registered_member)
+                updated_recruit_ids.append(registered_member['member'])
         self.CsvHandler.csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.REGISTER.value),
             updated_recruit_list,
