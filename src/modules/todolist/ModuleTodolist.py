@@ -7,7 +7,6 @@ from discord import app_commands
 from discord.ext import commands
 from src.modules.todolist.TodolistInterface import TodolistInterface
 from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import PriorityType, Modules
 from src.utils.resources import MODULES_CSV_KEYS
 
 
@@ -36,12 +35,6 @@ class ModuleTodolist(commands.Cog):
     ):
         print(f'> todolist_generate command by {interaction.user.name} on {interaction.guild.name}')
         embed_uuid = uuid.uuid4().hex
-        todolist_embed = discord.Embed(title=f'☑️️ **|** {title}', description='Classée par ordre de priorité')
-        todolist_embed.add_field(name='🔴 **|** Priorité Haute', value='')
-        todolist_embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
-        todolist_embed.add_field(name='🟢 **|** Priorité Basse', value='')
-        todolist_embed.set_footer(text=embed_uuid)
-
         permissions = {
             'roles': [],
             'members': []
@@ -77,30 +70,15 @@ class ModuleTodolist(commands.Cog):
         ) as file:
             json.dump(permissions, file)
 
-        await interaction.response.send_message(embed=todolist_embed)
+        todolist_embed = discord.Embed(title=f'☑️️ **|** {title}')
+        todolist_embed.add_field(name='🔴 **|** Priorité Haute', value='')
+        todolist_embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
+        todolist_embed.add_field(name='🟢 **|** Priorité Basse', value='')
+        todolist_embed.set_footer(text=embed_uuid)
+        todolist_view = TodolistInterface().refresh_interface(
+            discord.Embed.to_dict(todolist_embed),
+            embed_uuid,
+            str(interaction.guild_id)
+        )
 
-    @app_commands.command(name='todolist_add')
-    async def todolist_add(self, interaction: discord.Interaction, embed_uuid: str, content: str, priority: PriorityType):
-        print(f'> todolist_add command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer(ephemeral=True)
-        for task in content.split(sep=','):
-            task_dict = {
-                'content': task,
-                'priority': priority.value
-            }
-            self.CsvHandler.csv_append_data(
-                os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{embed_uuid}.csv'),
-                task_dict,
-                Modules.TODOLIST
-            )
-
-        # Find todolist message
-        async for message in interaction.channel.history():
-            if message.embeds:
-                message_embed = discord.Embed.to_dict(message.embeds[0])
-                if 'footer' in message_embed.keys() and message_embed['footer']['text'] == embed_uuid:
-                    todolist_view = TodolistInterface().refresh_interface(message_embed, embed_uuid, str(interaction.guild.id))
-                    await message.edit(view=todolist_view, embed=todolist_view.generate_interface_embed())
-                    await interaction.followup.send('> La todolist a été mise à jour')
-                    return
-        await interaction.followup.send('> Ce salon ne contient pas la todolist demandée')
+        await interaction.response.send_message(view=todolist_view, embed=todolist_view.generate_interface_embed())
