@@ -5,7 +5,7 @@ import uuid
 import json
 from discord import app_commands
 from discord.ext import commands
-from src.modules.todolist.TodolistInterface import TodolistInterface
+from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
 from src.utils.CsvHandler import CsvHandler
 from src.utils.resources import MODULES_CSV_KEYS
 
@@ -75,10 +75,10 @@ class ModuleTodolist(commands.Cog):
         todolist_embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
         todolist_embed.add_field(name='🟢 **|** Priorité Basse', value='')
         todolist_embed.set_footer(text=embed_uuid)
-        todolist_view = TodolistInterface().refresh_interface(
-            discord.Embed.to_dict(todolist_embed),
-            embed_uuid,
-            str(interaction.guild_id)
-        )
+        todolist_view = TodolistViewMenu(
+            message_embed=discord.Embed.to_dict(todolist_embed),
+            embed_uuid=embed_uuid,
+            guild_id=str(interaction.guild_id)
+        ).refresh_interface()
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.generate_interface_embed())

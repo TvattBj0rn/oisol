@@ -7,6 +7,7 @@ from src.modules.registre.ModuleRegister import ModuleRegister
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
 from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
 from src.modules.todolist.ModuleTodolist import ModuleTodolist
+# from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
 from src.modules.wiki.ModuleWiki import ModuleWiki
 
 
@@ -37,7 +38,9 @@ class Oisol(commands.Bot):
         print(f'Logged in as {self.user} (ID:{self.user.id})')
 
     async def setup_hook(self):
+        # todo: add a reset embed_uuid somewhere here
         self.add_view(RegisterViewMenu())
+        # self.add_view(TodolistViewMenu())
 
 
 if __name__ == '__main__':
