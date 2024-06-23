@@ -55,7 +55,7 @@ def refit_data(data_dict: dict) -> Tuple[dict, list]:
 class TodolistViewMenu(discord.ui.View):
     def __init__(
             self,
-            message_embed: dict = None,
+            message_embed: discord.Embed = None,
             updated_data: dict = None,
             embed_uuid: str = None,
             guild_id: str = None
@@ -70,7 +70,7 @@ class TodolistViewMenu(discord.ui.View):
         self.data_list = []
         self.buttons_list = []
 
-    def refresh_interface(self, updated_data: dict = None) -> Self:
+    def refresh_view(self, updated_data: dict = None) -> Self:
         self.data_list = []
         data_dict, _ = refit_data(
             updated_data if updated_data else CsvHandler(self.csv_keys).csv_get_all_data(
@@ -92,7 +92,7 @@ class TodolistViewMenu(discord.ui.View):
                 self.data_list.append([elem, key])
 
         self.buttons_list = [TodolistButtonCheckmark(self, emote, EMOTES_CUSTOM_ID[emote]) for emote in '🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱🇲🇳🇴🇵🇶🇷🇸🇹🇺🇻🇼🇽🇾🇿']
-        self.interface_embed = self.generate_interface_embed()
+        self.interface_embed = self.refresh_view_embed()
         for index in range(len(self.data_list)):
             try:
                 self.add_item(self.buttons_list[index])
@@ -100,26 +100,24 @@ class TodolistViewMenu(discord.ui.View):
                 break
         return self
 
-    def generate_interface_embed(self) -> discord.Embed:
-        generated_embed = discord.Embed(title=self.message_embed['title'])
+    def refresh_view_embed(self) -> discord.Embed:
+        self.message_embed.clear_fields()
         priority_tasks_dict, _ = refit_data(self.data_dict)
 
         enumerated_tasks = {'high': '', 'medium': '', 'low': ''}
         for i, task in enumerate((priority_tasks_dict['high'] + priority_tasks_dict['medium'] + priority_tasks_dict['low'])[:24]):
             enumerated_tasks[task['priority']] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task['content']}\n"
 
-        generated_embed.set_footer(text=self.message_embed['footer']['text'])
         for priority, tasks in [
             ('🔴 **|** Priorité Haute', enumerated_tasks['high']),
             ('🟡 **|** Priorité Moyenne', enumerated_tasks['medium']),
             ('🟢 **|** Priorité Basse', enumerated_tasks['low'])
         ]:
-            generated_embed.add_field(
+            self.message_embed.add_field(
                 name=priority,
                 value=tasks
             )
-
-        return generated_embed
+        return self.message_embed
 
     @discord.ui.button(style=discord.ButtonStyle.green, custom_id='Todolist:Add', emoji='➕')
     async def add_tasks(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -200,8 +198,8 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
             if message.embeds:
                 message_embed = discord.Embed.to_dict(message.embeds[0])
                 if 'footer' in message_embed.keys() and message_embed['footer']['text'] == self.embed_uuid:
-                    self.todolist_view.refresh_interface()
-                    await message.edit(view=self.todolist_view, embed=self.todolist_view.generate_interface_embed())
+                    self.todolist_view.refresh_view()
+                    await message.edit(view=self.todolist_view, embed=self.todolist_view.refresh_view_embed())
                     await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
                     return
         await interaction.followup.send('> Error car ça a fini la boucle')
@@ -239,6 +237,6 @@ class TodolistButtonCheckmark(discord.ui.Button):
             self.data_list,
             Modules.TODOLIST
         )
-        self.todolist_interface.refresh_interface(data_dict)
-        await interaction.message.edit(view=self.todolist_interface, embed=self.todolist_interface.generate_interface_embed())
+        self.todolist_interface.refresh_view(data_dict)
+        await interaction.message.edit(view=self.todolist_interface, embed=self.todolist_interface.refresh_view_embed())
         await interaction.response.defer()
