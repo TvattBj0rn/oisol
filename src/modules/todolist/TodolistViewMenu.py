@@ -206,15 +206,15 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
 
 
 class TodolistButtonCheckmark(discord.ui.Button):
-    def __init__(self, todolist_interface: TodolistViewMenu, emote: str, custom_id: str):
+    def __init__(self, todolist_view: TodolistViewMenu, emote: str, custom_id: str):
         super().__init__()
-        self.todolist_interface = todolist_interface
+        self.todolist_view = todolist_view
         self.emoji = emote
         self.style = discord.ButtonStyle.blurple
-        self.guild_id = todolist_interface.guild_id
-        self.embed_uuid = todolist_interface.embed_uuid
-        self.original_embed = todolist_interface.embed
-        self.data_list = todolist_interface.data_list
+        self.guild_id = todolist_view.guild_id
+        self.embed_uuid = todolist_view.embed_uuid
+        self.original_embed = todolist_view.embed
+        self.data_list = todolist_view.data_list
         self.custom_id = custom_id
 
     async def callback(self, interaction: discord.Interaction):
@@ -232,11 +232,11 @@ class TodolistButtonCheckmark(discord.ui.Button):
 
         self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(str(self.emoji)))
         data_dict = list_to_priority_dict(self.data_list)
-        CsvHandler(self.todolist_interface.csv_keys).csv_rewrite_file(
+        CsvHandler(self.todolist_view.csv_keys).csv_rewrite_file(
             os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.csv'),
             self.data_list,
             Modules.TODOLIST
         )
-        self.todolist_interface.refresh_view(data_dict)
-        await interaction.message.edit(view=self.todolist_interface, embed=self.todolist_interface.embed)
+        self.todolist_view.refresh_view(data_dict)
+        await interaction.message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
         await interaction.response.defer()
