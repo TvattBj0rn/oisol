@@ -61,11 +61,11 @@ class ModuleTodolist(commands.Cog):
             permissions['members'].append(member_5.id)
 
         self.CsvHandler.csv_try_create_file(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{embed_uuid}.csv')
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.csv')
         )
 
         with open(
-                os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{embed_uuid}.json'),
+                os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'),
                 'w'
         ) as file:
             json.dump(permissions, file)

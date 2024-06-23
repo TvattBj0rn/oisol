@@ -162,7 +162,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         for task in self.high_priority.value.split(','):
             if task:
                 csv_handler.csv_append_data(
-                    os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists', f'{self.embed_uuid}.csv'),
+                    os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.csv'),
                     {'content': task, 'priority': PriorityType.HAUTE.value},
                     Modules.TODOLIST
                 )
@@ -171,7 +171,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         for task in self.medium_priority.value.split(','):
             if task:
                 csv_handler.csv_append_data(
-                    os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists',
+                    os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists',
                                  f'{self.embed_uuid}.csv'),
                     {'content': task, 'priority': PriorityType.MOYENNE.value},
                     Modules.TODOLIST
@@ -181,7 +181,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         for task in self.low_priority.value.split(','):
             if task:
                 csv_handler.csv_append_data(
-                    os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), 'todolists',
+                    os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists',
                                  f'{self.embed_uuid}.csv'),
                     {'content': task, 'priority': PriorityType.BASSE.value},
                     Modules.TODOLIST
