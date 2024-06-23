@@ -2,20 +2,16 @@ import discord
 import os
 import pathlib
 import uuid
-import json
 from discord import app_commands
 from discord.ext import commands
+from src.utils.functions import update_json_file
 from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
-from src.utils.CsvHandler import CsvHandler
-from src.utils.resources import MODULES_CSV_KEYS
 
 
 class ModuleTodolist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
-        self.csv_keys = MODULES_CSV_KEYS['todolist']
-        self.CsvHandler = CsvHandler(self.csv_keys)
-    
+
     @app_commands.command(name='todolist_generate')
     async def todolist_generate(
             self,
@@ -60,24 +56,21 @@ class ModuleTodolist(commands.Cog):
         if member_5:
             permissions['members'].append(member_5.id)
 
-        self.CsvHandler.csv_try_create_file(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.csv')
+        update_json_file(
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'),
+            {'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}}
         )
-
-        with open(
-                os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'),
-                'w'
-        ) as file:
-            json.dump(permissions, file)
 
         todolist_embed = discord.Embed(title=f'☑️️ **|** {title}')
         todolist_embed.add_field(name='🔴 **|** Priorité Haute', value='')
         todolist_embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
         todolist_embed.add_field(name='🟢 **|** Priorité Basse', value='')
         todolist_embed.set_footer(text=embed_uuid)
+
         todolist_view = TodolistViewMenu(
             todolist_embed=todolist_embed,
-            guild_id=str(interaction.guild_id)
+            guild_id=str(interaction.guild_id),
+            access=permissions
         )
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)

@@ -4,7 +4,6 @@ from src.utils.oisol_enums import FoxholeBuildings
 MODULES_CSV_KEYS = {
     'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
     'register': ['member', 'timer'],
-    'todolist': ['content', 'priority'],
 }
 
 
