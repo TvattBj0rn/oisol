@@ -56,15 +56,13 @@ class TodolistViewMenu(discord.ui.View):
     def __init__(
             self,
             todolist_embed: discord.Embed = None,
-            updated_data: dict = None,
-            embed_uuid: str = None,
             guild_id: str = None
     ):
         super().__init__(timeout=None)
         self.csv_keys = MODULES_CSV_KEYS['todolist']
+        self.data_dict = {'high': [], 'medium': [], 'low': []}
         self.embed = todolist_embed if todolist_embed else {}
-        self.data_dict = updated_data if updated_data else {}
-        self.embed_uuid = embed_uuid if embed_uuid else ''
+        self.embed_uuid = todolist_embed.footer.text if todolist_embed else ''
         self.guild_id = guild_id if guild_id else ''
         self.data_list = []
         self.buttons_list = []
