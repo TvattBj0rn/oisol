@@ -78,6 +78,6 @@ class ModuleTodolist(commands.Cog):
         todolist_view = TodolistViewMenu(
             todolist_embed=todolist_embed,
             guild_id=str(interaction.guild_id)
-        ).refresh_view()
+        )
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)

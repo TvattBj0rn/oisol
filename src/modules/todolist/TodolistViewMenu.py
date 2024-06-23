@@ -60,7 +60,7 @@ class TodolistViewMenu(discord.ui.View):
     ):
         super().__init__(timeout=None)
         self.csv_keys = MODULES_CSV_KEYS['todolist']
-        self.data_dict = {'high': [], 'medium': [], 'low': []}
+        self.data_dict = {}
         self.embed = todolist_embed if todolist_embed else {}
         self.embed_uuid = todolist_embed.footer.text if todolist_embed else ''
         self.guild_id = guild_id if guild_id else ''
@@ -225,7 +225,7 @@ class TodolistButtonCheckmark(discord.ui.Button):
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {self.embed_uuid}')
         if 'roles' in permissions.keys() and 'members' in permissions.keys() and not has_permissions(interaction, permissions):
-            await interaction.response.send_message('Forbidden', ephemeral=True)
+            await interaction.response.send_message('> Forbidden', ephemeral=True)
             return
 
         self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(str(self.emoji)))
