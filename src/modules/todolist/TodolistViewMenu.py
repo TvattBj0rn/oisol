@@ -55,15 +55,14 @@ def refit_data(data_dict: dict) -> Tuple[dict, list]:
 class TodolistViewMenu(discord.ui.View):
     def __init__(
             self,
-            message_embed: discord.Embed = None,
+            todolist_embed: discord.Embed = None,
             updated_data: dict = None,
             embed_uuid: str = None,
             guild_id: str = None
     ):
         super().__init__(timeout=None)
         self.csv_keys = MODULES_CSV_KEYS['todolist']
-        self.interface_embed = None
-        self.message_embed = message_embed if message_embed else {}
+        self.embed = todolist_embed if todolist_embed else {}
         self.data_dict = updated_data if updated_data else {}
         self.embed_uuid = embed_uuid if embed_uuid else ''
         self.guild_id = guild_id if guild_id else ''
@@ -92,7 +91,8 @@ class TodolistViewMenu(discord.ui.View):
                 self.data_list.append([elem, key])
 
         self.buttons_list = [TodolistButtonCheckmark(self, emote, EMOTES_CUSTOM_ID[emote]) for emote in '🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱🇲🇳🇴🇵🇶🇷🇸🇹🇺🇻🇼🇽🇾🇿']
-        self.interface_embed = self.refresh_view_embed()
+        self._refresh_view_embed()
+
         for index in range(len(self.data_list)):
             try:
                 self.add_item(self.buttons_list[index])
@@ -100,8 +100,8 @@ class TodolistViewMenu(discord.ui.View):
                 break
         return self
 
-    def refresh_view_embed(self) -> discord.Embed:
-        self.message_embed.clear_fields()
+    def _refresh_view_embed(self) -> discord.Embed:
+        self.embed.clear_fields()
         priority_tasks_dict, _ = refit_data(self.data_dict)
 
         enumerated_tasks = {'high': '', 'medium': '', 'low': ''}
@@ -113,11 +113,11 @@ class TodolistViewMenu(discord.ui.View):
             ('🟡 **|** Priorité Moyenne', enumerated_tasks['medium']),
             ('🟢 **|** Priorité Basse', enumerated_tasks['low'])
         ]:
-            self.message_embed.add_field(
+            self.embed.add_field(
                 name=priority,
                 value=tasks
             )
-        return self.message_embed
+        return self.embed
 
     @discord.ui.button(style=discord.ButtonStyle.green, custom_id='Todolist:Add', emoji='➕')
     async def add_tasks(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -199,7 +199,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
                 message_embed = discord.Embed.to_dict(message.embeds[0])
                 if 'footer' in message_embed.keys() and message_embed['footer']['text'] == self.embed_uuid:
                     self.todolist_view.refresh_view()
-                    await message.edit(view=self.todolist_view, embed=self.todolist_view.refresh_view_embed())
+                    await message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
                     await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
                     return
         await interaction.followup.send('> Error car ça a fini la boucle')
@@ -213,7 +213,7 @@ class TodolistButtonCheckmark(discord.ui.Button):
         self.style = discord.ButtonStyle.blurple
         self.guild_id = todolist_interface.guild_id
         self.embed_uuid = todolist_interface.embed_uuid
-        self.original_embed = todolist_interface.message_embed
+        self.original_embed = todolist_interface.embed
         self.data_list = todolist_interface.data_list
         self.custom_id = custom_id
 
@@ -238,5 +238,5 @@ class TodolistButtonCheckmark(discord.ui.Button):
             Modules.TODOLIST
         )
         self.todolist_interface.refresh_view(data_dict)
-        await interaction.message.edit(view=self.todolist_interface, embed=self.todolist_interface.refresh_view_embed())
+        await interaction.message.edit(view=self.todolist_interface, embed=self.todolist_interface.embed)
         await interaction.response.defer()

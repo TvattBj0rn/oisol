@@ -76,9 +76,9 @@ class ModuleTodolist(commands.Cog):
         todolist_embed.add_field(name='🟢 **|** Priorité Basse', value='')
         todolist_embed.set_footer(text=embed_uuid)
         todolist_view = TodolistViewMenu(
-            message_embed=todolist_embed,
+            todolist_embed=todolist_embed,
             embed_uuid=embed_uuid,
             guild_id=str(interaction.guild_id)
         ).refresh_view()
 
-        await interaction.response.send_message(view=todolist_view, embed=todolist_view.refresh_view_embed())
+        await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
