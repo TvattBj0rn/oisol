@@ -1,7 +1,6 @@
 import discord
 import os
 import pathlib
-import uuid
 from more_itertools.recipes import consume
 from typing_extensions import Tuple
 from src.utils.oisol_enums import PriorityType
