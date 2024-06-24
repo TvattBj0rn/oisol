@@ -30,7 +30,7 @@ def list_to_priority_dict(data_list: list) -> dict:
     return data_dict
 
 
-def refit_data_list(data_dict: dict) -> Tuple[dict, list]:
+def refit_data(data_dict: dict) -> Tuple[dict, list]:
     data_dict_tasks = data_dict['tasks']
     removed_tasks = []
     tasks_to_remove = len(data_dict_tasks['high']) + len(data_dict_tasks['medium']) + len(data_dict_tasks['low']) - 24
@@ -67,7 +67,7 @@ class TodolistViewMenu(discord.ui.View):
 
     def refresh_view(self, updated_data: dict):
         self.data_list = []
-        self.data_dict, _ = refit_data_list(updated_data)
+        self.data_dict, _ = refit_data(updated_data)
 
         for k in self.data_dict['tasks'].keys():
             for elem in self.data_dict['tasks'][k]:
@@ -83,7 +83,7 @@ class TodolistViewMenu(discord.ui.View):
 
     def _refresh_view_embed(self) -> discord.Embed:
         self.embed.clear_fields()
-        tmp_dict, _ = refit_data_list(self.data_dict)
+        tmp_dict, _ = refit_data(self.data_dict)
         tmp_dict = tmp_dict['tasks']
         priority_tasks_dict = {'high': [], 'medium': [], 'low': []}
         for k, v in tmp_dict.items():
@@ -166,7 +166,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
                 if task:
                     data_dict[priority].append(task)
 
-        data_dict, bypassed_tasks = refit_data_list(
+        data_dict, bypassed_tasks = refit_data(
             {'access': full_dict['access'], 'tasks': data_dict}
         )
         if bypassed_tasks:
