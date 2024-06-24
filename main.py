@@ -1,3 +1,5 @@
+import pathlib
+
 import discord
 import os
 from discord.ext import commands
@@ -41,6 +43,21 @@ class Oisol(commands.Bot):
         # todo: add a reset embed_uuid somewhere here
         self.add_view(RegisterViewMenu())
         # self.add_view(TodolistViewMenu())
+
+    @staticmethod
+    async def on_message_delete(message: discord.Message):
+        if message.embeds and message.embeds[0].footer:
+            test_path = os.path.join(
+                pathlib.Path('/'),
+                'oisol',
+                str(message.guild.id),
+                'todolists',
+                f'{message.embeds[0].footer.text}.json'
+            )
+            try:
+                os.remove(test_path)
+            except FileNotFoundError:
+                return
 
 
 if __name__ == '__main__':
