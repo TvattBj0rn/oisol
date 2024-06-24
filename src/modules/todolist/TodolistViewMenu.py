@@ -159,16 +159,15 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         if len(data_dict['high']) + len(data_dict['medium']) + len(data_dict['low']) >= 24:
             await interaction.followup.send('> The todolist is already full', ephemeral=True)
             return
-        # Todo: refactor cette triple loop
-        for task in self.high_priority.value.split(','):
-            if task:
-                data_dict[PriorityType.HAUTE.value].append(task)
-        for task in self.medium_priority.value.split(','):
-            if task:
-                data_dict[PriorityType.MOYENNE.value].append(task)
-        for task in self.low_priority.value.split(','):
-            if task:
-                data_dict[PriorityType.BASSE.value].append(task)
+
+        for priority, input_field in [
+            (PriorityType.HAUTE.value, self.high_priority),
+            (PriorityType.MOYENNE.value, self.medium_priority),
+            (PriorityType.BASSE.value, self.low_priority)
+        ]:
+            for task in input_field.value.split(','):
+                if task:
+                    data_dict[priority].append(task)
 
         data_dict, bypassed_tasks = refit_data_list(
             {'access': full_dict['access'], 'tasks': data_dict}
