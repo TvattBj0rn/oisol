@@ -1,3 +1,5 @@
+import uuid
+
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -55,6 +57,7 @@ class ModuleTodolist(commands.Cog):
             todolist_title=title,
             guild_id=str(interaction.guild_id),
             access=permissions,
+            embed_uuid=uuid.uuid4().hex
         )
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
