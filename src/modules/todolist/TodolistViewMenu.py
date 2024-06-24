@@ -177,16 +177,9 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         if bypassed_tasks:
             await interaction.followup.send(f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`", ephemeral=True)
 
-        # Find todolist message
-        async for message in interaction.channel.history():
-            if message.embeds:
-                if message.embeds[0].footer.text == self.embed_uuid:
-                    self.todolist_view.refresh_view(data_dict)
-                    await message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
-                    await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
-                    return
-        await interaction.followup.send('> Unexpected Error (`TodolistModalAdd.on_submit`)', ephemeral=True)
-        print('Unexpected Error TodolistModalAdd.on_submit')
+        self.todolist_view.refresh_view(data_dict)
+        await interaction.message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
+        await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
 
 
 class TodolistButtonCheckmark(discord.ui.Button):
