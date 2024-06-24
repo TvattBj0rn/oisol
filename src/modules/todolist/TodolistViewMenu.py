@@ -65,12 +65,9 @@ class TodolistViewMenu(discord.ui.View):
         self.data_list = []
         self.buttons_list = []
 
-    def refresh_view(self, updated_data: dict = None):
+    def refresh_view(self, updated_data: dict):
         self.data_list = []
-        self.data_dict, _ = refit_data_list(
-            updated_data if updated_data else load_json_file(
-                os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'))
-        )
+        self.data_dict, _ = refit_data_list(updated_data)
 
         for k in self.data_dict['tasks'].keys():
             for elem in self.data_dict['tasks'][k]:
@@ -175,17 +172,12 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         if bypassed_tasks:
             await interaction.followup.send(f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`", ephemeral=True)
 
-        update_json_file(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'),
-            data_dict
-        )
-
         # Find todolist message
         async for message in interaction.channel.history():
             if message.embeds:
                 todolist_embed = discord.Embed.to_dict(message.embeds[0])
                 if 'footer' in todolist_embed.keys() and todolist_embed['footer']['text'] == self.embed_uuid:
-                    self.todolist_view.refresh_view()
+                    self.todolist_view.refresh_view(data_dict)
                     await message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
                     await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
                     return
