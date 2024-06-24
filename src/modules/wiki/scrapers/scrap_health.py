@@ -77,14 +77,13 @@ def scrap_main_picture(url: str, name: str) -> Optional[Tuple[str, int]]:
         return None
 
     # Whole page soup data
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
     faction_color = scrap_faction_color(soup)
 
-    # Bridge case, todo: instead of applying to bridge only, apply to every case ?
-    if name.endswith('Bridge'):
-        for infobox in soup.select('aside'):
-            if infobox.select_one('h2').get_text() == name:
-                return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
+    # In case we have more than one infobox on the same page, we want to retrieve the correct one
+    for infobox in soup.select('aside'):
+        if infobox.select_one('h2').get_text() == name:
+            return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
 
     return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}", faction_color
 
