@@ -69,6 +69,11 @@ class TodolistViewMenu(discord.ui.View):
         self.data_list = []
         self.data_dict, _ = refit_data(updated_data)
 
+        update_json_file(
+            os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'),
+            self.data_dict
+        )
+
         for k in self.data_dict['tasks'].keys():
             for elem in self.data_dict['tasks'][k]:
                 self.data_list.append([elem, k])
@@ -175,24 +180,23 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         # Find todolist message
         async for message in interaction.channel.history():
             if message.embeds:
-                todolist_embed = discord.Embed.to_dict(message.embeds[0])
-                if 'footer' in todolist_embed.keys() and todolist_embed['footer']['text'] == self.embed_uuid:
+                if message.embeds[0].footer.text == self.embed_uuid:
                     self.todolist_view.refresh_view(data_dict)
                     await message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
                     await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
                     return
-        await interaction.followup.send('> Unexpected Error (`TodolistModalAdd.on_submit`)')
+        await interaction.followup.send('> Unexpected Error (`TodolistModalAdd.on_submit`)', ephemeral=True)
+        print('Unexpected Error TodolistModalAdd.on_submit')
 
 
 class TodolistButtonCheckmark(discord.ui.Button):
     def __init__(self, todolist_view: TodolistViewMenu, emote: str, custom_id: str):
         super().__init__()
         self.todolist_view = todolist_view
+        self.embed_uuid = todolist_view.embed_uuid
+        self.data_list = todolist_view.data_list
         self.emoji = emote
         self.style = discord.ButtonStyle.blurple
-        self.embed_uuid = todolist_view.embed_uuid
-        self.original_embed = todolist_view.embed
-        self.data_list = todolist_view.data_list
         self.custom_id = custom_id
 
     async def callback(self, interaction: discord.Interaction):
@@ -208,12 +212,8 @@ class TodolistButtonCheckmark(discord.ui.Button):
             await interaction.response.send_message('> Forbidden', ephemeral=True)
             return
 
-        self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(str(self.emoji)))
-        data_dict = {'access': permissions, 'tasks': list_to_priority_dict(self.data_list)}
-        update_json_file(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'),
-            data_dict
-        )
-        self.todolist_view.refresh_view(data_dict)
+        self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(self.emoji.name))
+        self.todolist_view.refresh_view({'access': permissions, 'tasks': list_to_priority_dict(self.data_list)})
+
         await interaction.message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
         await interaction.response.defer()
