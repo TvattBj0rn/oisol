@@ -137,14 +137,16 @@ class TodolistViewMenu(discord.ui.View):
         if 'roles' in permissions.keys() and 'members' in permissions.keys() and not has_permissions(interaction, permissions):
             await interaction.response.send_message('> Forbidden', ephemeral=True)
             return
-        await interaction.response.send_modal(TodolistModalAdd(self.embed_uuid, self))
+        await interaction.response.send_modal(
+            TodolistModalAdd(self.embed_uuid, self.embed.title.removeprefix('☑️️ **|** '))
+        )
 
 
 class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
-    def __init__(self, embed_uuid: str, view: TodolistViewMenu):
+    def __init__(self, embed_uuid: str, title: str):
         super().__init__()
         self.embed_uuid = embed_uuid
-        self.todolist_view = view
+        self.todolist_title = title
 
     high_priority = discord.ui.TextInput(
         label='🔴 | Priorité Haute',
@@ -185,9 +187,17 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
             {'access': full_dict['access'], 'tasks': data_dict}
         )
         if bypassed_tasks:
-            await interaction.followup.send(f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`", ephemeral=True)
-        self.todolist_view.refresh_view(data_dict)
-        await interaction.message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
+            await interaction.followup.send(
+                f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`",
+                ephemeral=True
+            )
+        updated_todolist_view = TodolistViewMenu(
+            data_dict['access'],
+            self.todolist_title,
+            str(interaction.guild_id)
+        )
+        updated_todolist_view.refresh_view(data_dict)
+        await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
         await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
 
 
