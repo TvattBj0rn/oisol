@@ -1,10 +1,6 @@
 import discord
-import os
-import pathlib
-import uuid
 from discord import app_commands
 from discord.ext import commands
-from src.utils.functions import update_json_file
 from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
 
 
@@ -30,7 +26,6 @@ class ModuleTodolist(commands.Cog):
 
     ):
         print(f'> todolist_generate command by {interaction.user.name} on {interaction.guild.name}')
-        embed_uuid = uuid.uuid4().hex
         permissions = {
             'roles': [],
             'members': []
@@ -56,21 +51,10 @@ class ModuleTodolist(commands.Cog):
         if member_5:
             permissions['members'].append(member_5.id)
 
-        update_json_file(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'),
-            {'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}}
-        )
-
-        todolist_embed = discord.Embed(title=f'☑️️ **|** {title}')
-        todolist_embed.add_field(name='🔴 **|** Priorité Haute', value='')
-        todolist_embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
-        todolist_embed.add_field(name='🟢 **|** Priorité Basse', value='')
-        todolist_embed.set_footer(text=embed_uuid)
-
         todolist_view = TodolistViewMenu(
-            todolist_embed=todolist_embed,
+            todolist_title=title,
             guild_id=str(interaction.guild_id),
-            access=permissions
+            access=permissions,
         )
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)

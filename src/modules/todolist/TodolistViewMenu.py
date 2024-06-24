@@ -1,6 +1,7 @@
 import discord
 import os
 import pathlib
+import uuid
 from more_itertools.recipes import consume
 from typing_extensions import Tuple
 from src.utils.oisol_enums import PriorityType
@@ -53,17 +54,26 @@ def refit_data(data_dict: dict) -> Tuple[dict, list]:
 class TodolistViewMenu(discord.ui.View):
     def __init__(
             self,
-            todolist_embed: discord.Embed,
             access: dict,
+            todolist_title: str,
             guild_id: str,
     ):
         super().__init__(timeout=None)
         self.data_dict = {'access': access, 'tasks': {'high': [], 'medium': [], 'low': []}}
-        self.embed = todolist_embed
-        self.embed_uuid = todolist_embed.footer.text
-        self.guild_id = guild_id
         self.data_list = []
         self.buttons_list = []
+        self.embed_uuid = uuid.uuid4().hex
+        self.guild_id = guild_id
+        self.embed = discord.Embed(title=f'☑️️ **|** {todolist_title}')
+        self.embed.add_field(name='🔴 **|** Priorité Haute', value='')
+        self.embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
+        self.embed.add_field(name='🟢 **|** Priorité Basse', value='')
+        self.embed.set_footer(text=self.embed_uuid)
+
+        update_json_file(
+            os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{self.embed_uuid}.json'),
+            {'access': access, 'tasks': {'high': [], 'medium': [], 'low': []}}
+        )
 
     def refresh_view(self, updated_data: dict):
         self.data_list = []
@@ -176,7 +186,6 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         )
         if bypassed_tasks:
             await interaction.followup.send(f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`", ephemeral=True)
-
         self.todolist_view.refresh_view(data_dict)
         await interaction.message.edit(view=self.todolist_view, embed=self.todolist_view.embed)
         await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
