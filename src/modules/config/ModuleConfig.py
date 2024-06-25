@@ -3,9 +3,10 @@ import discord
 import os
 from discord import app_commands
 from discord.ext import commands
-from modules.stockpile_viewer import CsvHandlerStockpiles
-from modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView
-from modules.utils import DataFilesPath, Language, Faction, MODULES_CSV_KEYS
+from src.utils.CsvHandler import CsvHandler
+from src.modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView
+from src.utils.oisol_enums import DataFilesPath, Language, Faction
+from src.utils.resources import MODULES_CSV_KEYS
 
 
 class ModuleConfig(commands.Cog):
@@ -18,7 +19,7 @@ class ModuleConfig(commands.Cog):
         """
         Generate the files & directories used by the various OISOL commands.
         """
-
+        print(f'> oisol_init command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
 
         os.makedirs(os.path.join(oisol_server_home_path), exist_ok=True)
@@ -26,7 +27,7 @@ class ModuleConfig(commands.Cog):
 
         for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
             if not os.path.isfile(os.path.join(oisol_server_home_path, datafile.value)):
-                CsvHandlerStockpiles.CsvHandlerStockpiles(self.csv_keys[datafile.name.lower()]).csv_try_create_file(
+                CsvHandler(self.csv_keys[datafile.name.lower()]).csv_try_create_file(
                     os.path.join(oisol_server_home_path, datafile.value)
                 )
 
@@ -42,12 +43,15 @@ class ModuleConfig(commands.Cog):
 
     @app_commands.command(name='config_regiment')
     async def config_regiment(self, interaction: discord.Interaction, faction: Faction):
+        print(f'> config_regiment command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.send_modal(ModalConfig(faction.name))
 
     @app_commands.command(name='config_language')
     async def config_language(self, interaction: discord.Interaction):
+        print(f'> config_language command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.send_message(view=SelectLanguageView(), ephemeral=True)
 
     @app_commands.command(name='config_register')
     async def config_register(self, interaction: discord.Interaction, promoted_get_tag: bool):
+        print(f'> config_register command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.send_modal(ModalRegister(promoted_get_tag))

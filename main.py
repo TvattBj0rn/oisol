@@ -1,14 +1,14 @@
 import discord
 import os
+import pathlib
 from discord.ext import commands
 from dotenv import load_dotenv
-from modules.config.ModuleConfig import ModuleConfig
-from modules.registre.ModuleRegister import ModuleRegister
-from modules.registre.RegisterViewMenu import RegisterViewMenu
-from modules.single_commands.ModuleSingleCommands import ModuleSingleCommands
-from modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
-from modules.todolist.ModuleTodolist import ModuleTodolist
-from modules.wiki.ModuleWiki import ModuleWiki
+from src.modules.config.ModuleConfig import ModuleConfig
+from src.modules.registre.ModuleRegister import ModuleRegister
+from src.modules.registre.RegisterViewMenu import RegisterViewMenu
+from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
+from src.modules.todolist.ModuleTodolist import ModuleTodolist
+from src.modules.wiki.ModuleWiki import ModuleWiki
 
 
 class Oisol(commands.Bot):
@@ -27,7 +27,6 @@ class Oisol(commands.Bot):
         await self.add_cog(ModuleStockpiles(self))
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
-        await self.add_cog(ModuleSingleCommands(self))
         await self.add_cog(ModuleWiki(self))
 
         try:
@@ -40,6 +39,21 @@ class Oisol(commands.Bot):
 
     async def setup_hook(self):
         self.add_view(RegisterViewMenu())
+
+    @staticmethod
+    async def on_message_delete(message: discord.Message):
+        if message.embeds and message.embeds[0].footer:
+            test_path = os.path.join(
+                pathlib.Path('/'),
+                'oisol',
+                str(message.guild.id),
+                'todolists',
+                f'{message.embeds[0].footer.text}.json'
+            )
+            try:
+                os.remove(test_path)
+            except FileNotFoundError:
+                return
 
 
 if __name__ == '__main__':

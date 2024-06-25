@@ -1,13 +1,13 @@
 import requests
 from bs4 import BeautifulSoup, Tag
-from modules.utils import Faction
+from src.utils.oisol_enums import Faction
 
 
 def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> dict | str:
     attr_dict = dict()
     match attr_title:
         case 'Resistance(damage reduction)':
-            attr_dict['type'] = infobox_attribute_soup.get_text(strip=True).split('-')[0]
+            attr_dict['type'] = f"\n{infobox_attribute_soup.get_text(strip=True).split('-')[0]}"
             for damage_reduction in infobox_attribute_soup.select('code'):
                 attr_dict[damage_reduction.find('a')['title']] = damage_reduction.get_text(strip=True)
             return attr_dict

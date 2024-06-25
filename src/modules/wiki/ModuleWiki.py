@@ -1,19 +1,19 @@
 import collections
-from typing import Optional
 import discord
 import random
 import re
 from discord import app_commands
 from discord.ext import commands
-from modules.utils import (
+from typing import Optional
+from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
+from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
+from src.utils.resources import (
     ALL_WIKI_ENTRIES,
     STRUCTURES_WIKI_ENTRIES,
     VEHICLES_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS
 )
-from modules.wiki.scrapers.scrap_wiki import scrap_wiki
-from modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 
 
 class ModuleWiki(commands.Cog):
@@ -67,7 +67,7 @@ class ModuleWiki(commands.Cog):
     @staticmethod
     def generic_autocomplete(entries: list, current: str) -> list:
         # Default search values, before any input in the search bar
-        if len(current) == 0:
+        if not current:
             return [
                 app_commands.Choice(name=wiki_entry['name'], value=wiki_entry['url'])
                 for wiki_entry in random.choices(entries, k=5)
@@ -94,7 +94,6 @@ class ModuleWiki(commands.Cog):
         ]
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
-        print(wiki_data)
         embed = discord.Embed(
             title=wiki_data['title'],
             description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
@@ -130,6 +129,7 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='wiki', description='Info wiki')
     @app_commands.autocomplete(wiki_request=wiki_autocomplete)
     async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: bool = False):
+        print(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
             return
@@ -146,24 +146,25 @@ class ModuleWiki(commands.Cog):
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
-    @app_commands.autocomplete(wiki_request=health_autocomplete)
-    async def entities_health(self, interaction: discord.Interaction, wiki_request: str, visible: bool = False):
-        if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
+    @app_commands.autocomplete(health_request=health_autocomplete)
+    async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: bool = False):
+        print(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
+        if not health_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
             return
         entry_url = 'https://foxhole.wiki.gg/wiki/Vehicle_Health'
         for entry in STRUCTURES_WIKI_ENTRIES:
-            if entry['url'] == wiki_request:
+            if entry['url'] == health_request:
                 entry_url = 'https://foxhole.wiki.gg/wiki/Structure_Health'
                 break
         wiki_entry_complete_name = ''
         for entry in ALL_WIKI_ENTRIES:
-            if entry['url'] == wiki_request:
+            if entry['url'] == health_request:
                 wiki_entry_complete_name = entry['name']
                 break
         if wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base')) and wiki_entry_complete_name.endswith('(Tier 1)'):
             wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
-        infobox_tuple = scrap_main_picture(wiki_request, wiki_entry_complete_name)
+        infobox_tuple = scrap_main_picture(health_request, wiki_entry_complete_name)
         entry_picture_url, color = None, None
         if infobox_tuple:
             entry_picture_url, color = infobox_tuple

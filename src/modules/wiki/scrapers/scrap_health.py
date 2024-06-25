@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 from typing import Optional, Tuple
-from modules.utils import Faction
+from src.utils.oisol_enums import Faction
 
 
 def get_indexes(tbody: Tag) -> dict:
@@ -66,7 +66,7 @@ def scrap_health(url: str, name: str) -> dict:
 
     for k in ['7.62mm', '7.92mm', '9mm', 'A3 Harpa Fragmentation Grenade', 'Flamethrower Ammo', 'Flame Ammo', 'Shrapnel Mortar Shell', 'Bomastone Grenade']:
         wiki_response_dict.pop(k, None)
-    print(wiki_response_dict)
+
     return wiki_response_dict
 
 
@@ -77,14 +77,13 @@ def scrap_main_picture(url: str, name: str) -> Optional[Tuple[str, int]]:
         return None
 
     # Whole page soup data
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
     faction_color = scrap_faction_color(soup)
 
-    # Bridge case, todo: instead of applying to bridge only, apply to every case ?
-    if name.endswith('Bridge'):
-        for infobox in soup.select('aside'):
-            if infobox.select_one('h2').get_text() == name:
-                return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
+    # In case we have more than one infobox on the same page, we want to retrieve the correct one
+    for infobox in soup.select('aside'):
+        if infobox.select_one('h2').get_text() == name:
+            return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
 
     return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}", faction_color
 

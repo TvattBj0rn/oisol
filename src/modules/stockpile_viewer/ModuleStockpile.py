@@ -5,21 +5,24 @@ import pathlib
 import random
 from discord import app_commands
 from discord.ext import commands
-from modules.stockpile_viewer import discord_data_transmission, stockpile_embed_generator
-from modules.stockpile_viewer.CsvHandlerStockpiles import CsvHandlerStockpiles
-from modules.utils import EmbedIds, DataFilesPath, REGIONS, REGIONS_STOCKPILES
+from src.modules.stockpile_viewer import stockpile_embed_generator
+from src.utils.CsvHandler import CsvHandler
+from src.utils.functions import update_discord_interface
+from src.utils.oisol_enums import DataFilesPath, EmbedIds, Modules
+from src.utils.resources import REGIONS_STOCKPILES, MODULES_CSV_KEYS
 
 
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
-        self.csv_keys = ['region', 'subregion', 'code', 'name', 'type']
+        self.csv_keys = MODULES_CSV_KEYS['stockpiles']
+        self.CsvHandler = CsvHandler(self.csv_keys)
 
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         regions_cities = []
-        for k, v in REGIONS.items():
+        for k, v in REGIONS_STOCKPILES.items():
             for vv in v:
-                regions_cities.append(f'{k} | {vv}')
+                regions_cities.append(f'{k} | {vv[0]}')
 
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
@@ -40,6 +43,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile_view')
     async def stockpile_view(self, interaction: discord.Interaction):
+        print(f'> stockpile_view command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer()
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
@@ -54,14 +58,13 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile_create')
     @app_commands.autocomplete(region=region_autocomplete)
     async def stockpile_create(self, interaction: discord.Interaction, code: str, region: str, *, name: str):
+        print(f'> stockpile_create command by {interaction.user.name} on {interaction.guild.name}')
         if len(code) != 6:
             await interaction.response.send_message(
                 '> Le code doit comporter 6 chiffres',
                 ephemeral=True
             )
             return
-
-        # view = CreateStockpileInterface.CreateStockpileInterface(code, name, self.csv_keys)
 
         r, s = region.split(' | ')  # Only one '|' -> 2 splits
         stockpile = {
@@ -76,52 +79,46 @@ class ModuleStockpiles(commands.Cog):
                 stockpile['type'] = 'Seaport' if subregion[1][2:9] == 'seaport' else 'Storage Depot'
 
         file_path = os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
-        csv_handler = CsvHandlerStockpiles(self.csv_keys)
-        csv_handler.csv_try_create_file(file_path)
-        csv_handler.csv_append_data(file_path, stockpile)
+        self.CsvHandler.csv_try_create_file(file_path)
+        self.CsvHandler.csv_append_data(file_path, stockpile, Modules.STOCKPILE)
 
         stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
 
-        await discord_data_transmission.send_data_to_discord(
-            stockpiles_embed,
+        await update_discord_interface(
             interaction,
-            EmbedIds.STOCKPILES_VIEW.value
+            EmbedIds.STOCKPILES_VIEW.value,
+            embed=stockpiles_embed
         )
 
         await interaction.response.send_message('> Le stockpile a bien été généré', ephemeral=True)
 
     @app_commands.command(name='stockpile_delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
+        print(f'> stockpile_delete command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
-        CsvHandlerStockpiles(self.csv_keys).csv_delete_data(
+        self.CsvHandler.csv_delete_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value),
             stockpile_code
         )
 
-        await discord_data_transmission.send_data_to_discord(
-            stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys),
+        await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
+            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-        await interaction.followup.send(
-            f'> Le stockpile (code: {stockpile_code}) a bien été supprimé',
-            ephemeral=True
-        )
+        await interaction.followup.send(f'> Le stockpile (code: {stockpile_code}) a bien été supprimé', ephemeral=True)
 
     @app_commands.command(name='stockpile_clear')
     async def stockpile_clear(self, interaction: discord.Interaction):
+        print(f'> stockpile_clear command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
-        CsvHandlerStockpiles(self.csv_keys).csv_clear_data(
+        self.CsvHandler.csv_clear_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
         )
 
-        await discord_data_transmission.send_data_to_discord(
-            stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys),
+        await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
+            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-
-        await interaction.followup.send(
-            f'> La liste des stockpiles a bien été supprimée',
-            ephemeral=True
-        )
+        await interaction.followup.send(f'> La liste des stockpiles a bien été supprimée', ephemeral=True)

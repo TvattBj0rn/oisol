@@ -1,54 +1,9 @@
-from enum import Enum, auto
-
-
-class Language(Enum):
-    FR = auto()
-    EN = auto()
-    DE = auto()
-    ES = auto()
-
-
-class Faction(Enum):
-    WARDEN = 0x245682
-    COLONIAL = 0x516C4B
-    NEUTRAL = 0xffffff
-
-
-class DataFilesPath(Enum):
-    REGISTER = 'register.csv'
-    STOCKPILES = 'stockpiles.csv'
-    CONFIG = 'config.ini'
-
-
-class EmbedIds(Enum):
-    STOCKPILES_VIEW = 'Stockpiles Viewer'
-    REGISTER_VIEW = 'Register Viewer'
-
-
-class FoxholeBuildings(Enum):
-    STORAGE_DEPOT = '<:storagedepotw:1130918748648394822>'
-    SEAPORT = '<:seaportw:1130918734769442868>'
-
-
-class PriorityType(Enum):
-    HAUTE = 'high'
-    MOYENNE = 'medium'
-    BASSE = 'low'
-
-
-def safeguarded_nickname(nickname: str) -> str:
-    """
-    Function required as discord does not allow for nicknames longer than 32 characters.
-    :param nickname: wanted name
-    :return: nickname equal or shortened to 32 chars
-    """
-    return nickname[:32 - len(nickname)] if len(nickname) > 32 else nickname
+from src.utils.oisol_enums import FoxholeBuildings
 
 
 MODULES_CSV_KEYS = {
     'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
     'register': ['member', 'timer'],
-    'todolist': ['content', 'priority'],
 }
 
 
@@ -63,7 +18,12 @@ NAMES_TO_ACRONYMS = {
     'Steel Construction Materials': 'SCmats',
     'Unstable Substances': 'Unstable Subs.',
     'Rare Alloys': 'Rare Alloys',
-    'Thermal Shielding': 'Thermal Shield.'
+    'Thermal Shielding': 'Thermal Shield.',
+    'Naval Hull Segments': 'Naval Hull Seg.',
+    'Naval Shell Plating': 'Naval Shell Plat.',
+    'A0E-9 Rocket Warhead': 'Rocket Warhead',
+    'A0E-9 Rocket Body': 'Rocket Body',
+    'A0E-9 Rocket Booster': 'Rocket Booster',
 }
 
 
@@ -212,7 +172,7 @@ EMOTES_CUSTOM_ID = {
     '🇿': 'TodoButtonZ'
 }
 
-
+# All regions and their subregions
 REGIONS = {
     'Acrithia': ['Camp Omicron', 'Heir Apparent', 'Legion Ranch', 'Nereid Keep', 'Patridia', 'Swordfort', 'The Brinehold', 'Thetus Ring'],
     'Allods Bight': ['Belaying Trace', 'Homesick', "Mercy's Wail", 'Rumhold', 'Scurvyshire', 'The Stone Plank', 'The Turncoat'],
@@ -259,7 +219,7 @@ REGIONS = {
     'Westgate': ['Holdfast', 'Kingstone', 'Longstone', "Lord's Mouth", 'Lost Partition', "Rancher's Fast", 'The Gallows', 'Westgate Keep', 'Wyattwick', "Zeus' Demise"]
 }
 
-
+# All regions and their subregions with depot / seaport
 REGIONS_STOCKPILES = {
     'Acrithia': [('Legion Ranch', FoxholeBuildings.STORAGE_DEPOT.value), ('Thetus Ring', FoxholeBuildings.STORAGE_DEPOT.value), ('Patridia', FoxholeBuildings.SEAPORT.value)],
     'Allods Bight': [('Scurvyshire', FoxholeBuildings.STORAGE_DEPOT.value), ("Mercy's Wail", FoxholeBuildings.SEAPORT.value)],
@@ -711,17 +671,17 @@ ITEMS_WIKI_ENTRIES = [
     {
         'name': "120mm",
         'url': "https://foxhole.wiki.gg/wiki/120mm",
-        'keywords': '120mm shell'
+        'keywords': '120mm shell arty'
     },
     {
         'name': "150mm",
         'url': "https://foxhole.wiki.gg/wiki/150mm",
-        'keywords': '150mm shell'
+        'keywords': '150mm shell arty'
     },
     {
         'name': "300mm",
         'url': "https://foxhole.wiki.gg/wiki/300mm",
-        'keywords': '300mm shell'
+        'keywords': '300mm shell arty'
     },
     {
         'name': "RPG",
@@ -746,12 +706,12 @@ ITEMS_WIKI_ENTRIES = [
     {
         'name': "“Molten Wind” v.II Ammo",
         'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CMolten_Wind%E2%80%9D_v.II_Ammo",
-        'keywords': 'molen wind v ii flame ammo'
+        'keywords': 'molten wind v ii flame ammo'
     },
     {
         'name': "Willow's Bane Ammo",
         'url': "https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Ammo",
-        'keywords': 'willow s bane flame ammo'
+        'keywords': 'willows bane flame ammo'
     },
     {
         'name': "Moray Torpedo",

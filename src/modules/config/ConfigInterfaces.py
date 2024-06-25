@@ -2,7 +2,7 @@ import configparser
 import discord
 import os
 import traceback
-from modules.utils import Language, DataFilesPath
+from src.utils.oisol_enums import Language, DataFilesPath
 
 
 class SelectLanguage(discord.ui.Select):
