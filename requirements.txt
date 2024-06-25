@@ -4,3 +4,4 @@ requests~=2.31.0
 lxml~=5.2.1
 beautifulsoup4~=4.12.3
 typing_extensions~=4.9.0
+more-itertools~=10.3.0
