@@ -18,7 +18,12 @@ NAMES_TO_ACRONYMS = {
     'Steel Construction Materials': 'SCmats',
     'Unstable Substances': 'Unstable Subs.',
     'Rare Alloys': 'Rare Alloys',
-    'Thermal Shielding': 'Thermal Shield.'
+    'Thermal Shielding': 'Thermal Shield.',
+    'Naval Hull Segments': 'Naval Hull Seg.',
+    'Naval Shell Plating': 'Naval Shell Plat.',
+    'A0E-9 Rocket Warhead': 'Rocket Warhead',
+    'A0E-9 Rocket Body': 'Rocket Body',
+    'A0E-9 Rocket Booster': 'Rocket Booster',
 }
 
 
