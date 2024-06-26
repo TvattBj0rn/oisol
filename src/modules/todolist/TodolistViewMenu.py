@@ -222,8 +222,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         )
         self.data_list = []
         self.emoji = list(EMOTES_CUSTOM_ID.keys())[list(EMOTES_CUSTOM_ID.values()).index(f'TodoButton{custom_id[-1]}')]
-        # self.style = discord.ButtonStyle.blurple
-        # self.custom_id = custom_id
+
 
     @classmethod
     async def from_custom_id(cls, interaction: discord.Interaction, item: discord.ui.Button, match: re.Match[str]):
