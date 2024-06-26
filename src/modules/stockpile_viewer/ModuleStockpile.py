@@ -77,6 +77,7 @@ class ModuleStockpiles(commands.Cog):
         for subregion in REGIONS_STOCKPILES[r]:
             if subregion[0] == s:
                 stockpile['type'] = 'Seaport' if subregion[1][2:9] == 'seaport' else 'Storage Depot'
+                break
 
         file_path = os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
         self.CsvHandler.csv_try_create_file(file_path)
