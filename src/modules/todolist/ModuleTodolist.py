@@ -52,12 +52,7 @@ class ModuleTodolist(commands.Cog):
         if member_5:
             permissions['members'].append(member_5.id)
 
-        todolist_view = TodolistViewMenu(
-            # todolist_title=title,
-            # guild_id=str(interaction.guild_id),
-            # access=permissions,
-            # embed_uuid=uuid.uuid4().hex
-        )
+        todolist_view = TodolistViewMenu()
         todolist_view.refresh_view(
             {'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
             title,
