@@ -11,8 +11,6 @@ def get_sorted_stockpiles(guild_id: str, csv_keys: list) -> (list, dict):
     stockpiles_list = CsvHandler(csv_keys).csv_get_all_data(data_file_path, Modules.STOCKPILE)
     sorted_stockpiles = dict()
 
-    print(stockpiles_list)
-
     for stockpile in stockpiles_list:
         if not stockpile['region'] in sorted_stockpiles.keys():
             sorted_stockpiles[stockpile['region']] = {stockpile['subregion']: [stockpile]}
@@ -24,7 +22,6 @@ def get_sorted_stockpiles(guild_id: str, csv_keys: list) -> (list, dict):
 
     sorted_regions_list = list(sorted_stockpiles.keys())
     sorted_regions_list.sort()
-    print(sorted_regions_list, sorted_stockpiles)
     return sorted_regions_list, sorted_stockpiles
 
 
