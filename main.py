@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from src.modules.config.ModuleConfig import ModuleConfig
 from src.modules.registre.ModuleRegister import ModuleRegister
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
+from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
 from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
 from src.modules.todolist.ModuleTodolist import ModuleTodolist
 from src.modules.wiki.ModuleWiki import ModuleWiki
@@ -39,6 +40,7 @@ class Oisol(commands.Bot):
 
     async def setup_hook(self):
         self.add_view(RegisterViewMenu())
+        self.add_view(TodolistViewMenu())
 
     @staticmethod
     async def on_message_delete(message: discord.Message):
