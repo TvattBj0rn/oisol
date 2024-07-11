@@ -1527,7 +1527,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Liquid Transfer Station",
         'url': "https://foxhole.wiki.gg/wiki/Liquid_Transfer_Station",
-        'keywords': 'liquid transfer station'
+        'keywords': 'liquid transfer station lts'
     },
     {
         'name': "Material Pallet",
@@ -1537,7 +1537,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Material Transfer Station",
         'url': "https://foxhole.wiki.gg/wiki/Material_Transfer_Station",
-        'keywords': 'material transfer station'
+        'keywords': 'material transfer station mts'
     },
     {
         'name': "Resource Container",
@@ -1547,7 +1547,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Resource Transfer Station",
         'url': "https://foxhole.wiki.gg/wiki/Resource_Transfer_Station",
-        'keywords': 'resource transfer station'
+        'keywords': 'resource transfer station rts'
     },
     {
         'name': "Shippable Crate",
