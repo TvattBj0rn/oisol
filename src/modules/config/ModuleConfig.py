@@ -51,6 +51,7 @@ class ModuleConfig(commands.Cog):
             config['register']['input'] = ''
             config['register']['output'] = ''
             config['register']['promoted_get_tag'] = 'False'
+            config['register']['recruit_id'] = ''
 
             config['regiment'] = {}
             config['regiment']['faction'] = Faction.NEUTRAL.name
@@ -58,8 +59,7 @@ class ModuleConfig(commands.Cog):
             config['regiment']['tag'] = ''
             with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
                 config.write(configfile)
-            print(config.sections())
-        await interaction.response.send_message('> Default configuration has been set', ephemeral=True)
+        await interaction.response.send_message('> Default configuration has been set', ephemeral=True, delete_after=3)
 
     @app_commands.command(name='config')
     async def config(self, interaction: discord.Interaction):
@@ -71,9 +71,33 @@ class ModuleConfig(commands.Cog):
         except FileNotFoundError:
             await interaction.response.send_message(
                 '> The default config was never set, you can set it using </oisol_init:1253044649589997609>',
-                ephemeral=True
+                ephemeral=True,
+                delete_after=5
             )
             return
         config_view = ConfigViewMenu()
         await config_view.update_config_embed(interaction)
         await interaction.response.send_message(view=config_view, embed=config_view.embed)
+
+    @app_commands.command(name='config-recruit', description='Set the recruit role of the regiment')
+    async def config_recruit(self, interaction: discord.Interaction, recruit_role: discord.Role):
+        print(f'> config command by {interaction.user.name} on {interaction.guild.name}')
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
+        try:
+            config = configparser.ConfigParser()
+            config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        except FileNotFoundError:
+            await interaction.response.send_message(
+                '> The default config was never set, you can set it using </oisol_init:1253044649589997609>',
+                ephemeral=True,
+                delete_after=5
+            )
+            return
+        config['register']['recruit_id'] = str(recruit_role.id)
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+        await interaction.response.send_message(
+            f'> The recruit role has been updated to {recruit_role.mention}',
+            ephemeral=True,
+            delete_after=3
+        )

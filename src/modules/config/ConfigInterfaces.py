@@ -32,6 +32,11 @@ class ConfigViewMenu(discord.ui.View):
             value=f"Recruit symbol: {self.config_data['register']['input']}\nPromoted recruit symbol: {self.config_data['register']['output']}\nPromotion gives regiment tag: {self.config_data['register']['promoted_get_tag']}",
             inline=True
         )
+        self.embed.add_field(
+            name='🪖 | Recruit role',
+            value=f'{interaction.guild.get_role(int(self.config_data["register"]["recruit_id"])).mention if self.config_data["register"]["recruit_id"] else "None"}\nTo update this role, use: </config-recruit:1261648113505140787>',
+            inline=True
+        )
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:language', emoji='💬')
     async def update_language(self, interaction: discord.Interaction, button: discord.ui.Button):
