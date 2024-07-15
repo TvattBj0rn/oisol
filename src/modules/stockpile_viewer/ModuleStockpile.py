@@ -56,17 +56,17 @@ class ModuleStockpiles(commands.Cog):
         await interaction.followup.send(embed=stockpiles_embed)
 
     @app_commands.command(name='stockpile_create')
-    @app_commands.autocomplete(region=region_autocomplete)
-    async def stockpile_create(self, interaction: discord.Interaction, code: str, region: str, *, name: str):
+    @app_commands.autocomplete(localisation=region_autocomplete)
+    async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str):
         print(f'> stockpile_create command by {interaction.user.name} on {interaction.guild.name}')
         if len(code) != 6:
-            await interaction.response.send_message(
-                '> Le code doit comporter 6 chiffres',
-                ephemeral=True
-            )
+            await interaction.response.send_message('> The code must be a 6-digits code', ephemeral=True)
+            return
+        if not code.isdigit():
+            await interaction.response.send_message('> The code contains non digit characters', ephemeral=True)
             return
 
-        r, s = region.split(' | ')  # Only one '|' -> 2 splits
+        r, s = localisation.split(' | ')  # Only one '|' -> 2 splits
         stockpile = {
             'region': r,
             'subregion': s,
@@ -91,7 +91,7 @@ class ModuleStockpiles(commands.Cog):
             embed=stockpiles_embed
         )
 
-        await interaction.response.send_message('> Le stockpile a bien été généré', ephemeral=True)
+        await interaction.response.send_message('> Stockpile was properly generated', ephemeral=True)
 
     @app_commands.command(name='stockpile_delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
@@ -107,7 +107,10 @@ class ModuleStockpiles(commands.Cog):
             EmbedIds.STOCKPILES_VIEW.value,
             embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-        await interaction.followup.send(f'> Le stockpile (code: {stockpile_code}) a bien été supprimé', ephemeral=True)
+        await interaction.followup.send(
+            f'> The stockpile (code: {stockpile_code}) was properly removed',
+            ephemeral=True
+        )
 
     @app_commands.command(name='stockpile_clear')
     async def stockpile_clear(self, interaction: discord.Interaction):
@@ -122,4 +125,4 @@ class ModuleStockpiles(commands.Cog):
             EmbedIds.STOCKPILES_VIEW.value,
             embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-        await interaction.followup.send(f'> La liste des stockpiles a bien été supprimée', ephemeral=True)
+        await interaction.followup.send(f'> The stockpile interface was properly cleared', ephemeral=True)
