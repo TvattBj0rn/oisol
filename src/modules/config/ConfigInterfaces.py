@@ -49,13 +49,11 @@ class ConfigViewMenu(discord.ui.View):
     async def update_regiment(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(ModalConfig())
         await self.update_config_embed(interaction)
-        await interaction.message.edit(embed=self.embed)
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:register', emoji='📝')
     async def update_register(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(ModalRegister())
         await self.update_config_embed(interaction)
-        await interaction.edit_original_response(embed=self.embed)
 
 
 class SelectLanguage(discord.ui.Select):
@@ -157,7 +155,7 @@ class ModalRegister(discord.ui.Modal, title='Register Icon'):
             config['register'] = {}
         config['register']['input'] = str(self.arriving)
         config['register']['output'] = str(self.promoted)
-        config['register']['promoted_get_tag'] = str(self.promoted_get_tag).lower() if str(self.promoted_get_tag).lower() == 'y' else 'n'
+        config['register']['promoted_get_tag'] = str(self.promoted_get_tag).lower() if str(self.promoted_get_tag).lower()[0] == 'y' else 'n'
 
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
