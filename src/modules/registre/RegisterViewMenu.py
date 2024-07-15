@@ -16,72 +16,64 @@ class RegisterViewMenu(discord.ui.View):
         self.register_members = []
         self.current_page_index = 0
 
-    def refresh_register(self, guild_id: str, updated_recruit_list: list = None) -> Self:
-        if updated_recruit_list:
-            self.register_members = updated_recruit_list
-        else:
-            self.register_members = CsvHandler(self.csv_keys).csv_get_all_data(
-                os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value),
-                Modules.REGISTER
-            )
+    def refresh_register_embed(self, guild_id: str):
+        self.register_members = CsvHandler(self.csv_keys).csv_get_all_data(
+            os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value),
+            Modules.REGISTER
+        )
         self.generate_embeds()
-
-        return self
 
     def generate_embeds(self):
         self.embeds = []
         embed = discord.Embed(
-            title='Registre | Page 0',
-            description='Recrues actuelles',
+            title='Register | Page 1',
             color=self.color
         )
-        embed.set_footer(text='Register')
-        for member_index in range(len(self.register_members)):
-            if not member_index % 20 and member_index > 0:
+
+        for i, member_dict in enumerate(self.register_members):
+            if i % 25 == 0 and i > 0:
                 self.embeds.append(embed)
                 embed = discord.Embed(
-                    title=f'Registre | Page {member_index // 20}',
-                    description='Recrues actuelles',
+                    title=f'Register | Page {(i // 25) + 1}',  # Page 0 might seem weird to non-devs
                     color=self.color
                 )
                 embed.set_footer(text='Register')
             embed.add_field(
                 name='',
-                value=f'<@{self.register_members[member_index][self.csv_keys[0]]}> **|** <t:{self.register_members[member_index][self.csv_keys[1]]}:R>',
+                value=f'<@{member_dict[self.csv_keys[0]]}> **|** <t:{member_dict[self.csv_keys[1]]}>',
                 inline=False
             )
-            if member_index == len(self.register_members) - 1:
+            if i == len(self.register_members) - 1:
                 self.embeds.append(embed)
 
     def get_current_embed(self):
         if not self.embeds:
             embed = discord.Embed(
-                title='Registre | Page 0',
-                description='Recrues actuelles',
+                title='Registre | Page 1',
                 color=self.color
             )
             embed.set_footer(text='Register')
             return embed
         return self.embeds[self.current_page_index]
 
-    @discord.ui.button(label='<', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:left')
+    @discord.ui.button(emoji='◀️', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:left')
     async def left_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.current_page_index - 1 == -1:
             self.current_page_index = len(self.embeds) - 1
         else:
             self.current_page_index -= 1
-        self.refresh_register(str(interaction.guild.id))
+        self.refresh_register_embed(str(interaction.guild.id))
 
         await interaction.message.edit(view=self, embed=self.get_current_embed())
         await interaction.response.defer()
 
-    @discord.ui.button(label='>', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:right')
+    @discord.ui.button(emoji='▶️', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:right')
     async def right_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.current_page_index + 1 == len(self.embeds):
             self.current_page_index = 0
         else:
             self.current_page_index += 1
-        self.refresh_register(str(interaction.guild.id))
+        self.refresh_register_embed(str(interaction.guild.id))
 
         await interaction.message.edit(view=self, embed=self.get_current_embed())
         await interaction.response.defer()
