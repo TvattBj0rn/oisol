@@ -14,17 +14,6 @@ class ModuleConfig(commands.Cog):
         self.oisol = bot
         self.csv_keys = MODULES_CSV_KEYS
 
-    @staticmethod
-    def display_current_conf(conf: configparser.ConfigParser) -> str:
-        conf_msg_txt = ''
-
-        print(conf.sections())
-        for section in conf.sections():
-            conf_msg_txt += f'{section}\n'
-            conf_msg_txt += f'\t'
-
-        return conf_msg_txt
-
     @app_commands.command(name='oisol_init', description='Command to set the default config (and reset)')
     async def oisol_init(self, interaction: discord.Interaction):
         print(f'> oisol_init command by {interaction.user.name} on {interaction.guild.name}')
