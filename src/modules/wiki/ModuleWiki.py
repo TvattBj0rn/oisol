@@ -4,6 +4,7 @@ import random
 import re
 from discord import app_commands
 from discord.ext import commands
+from more_itertools.recipes import consume
 from typing import Optional
 from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
@@ -30,7 +31,12 @@ class ModuleWiki(commands.Cog):
         return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
 
     @staticmethod
-    def generate_hmtk_embed(wiki_data: dict, url_health: str, picture_url: Optional[str], color: Optional[int]) -> discord.Embed:
+    def generate_hmtk_embed(
+            wiki_data: dict,
+            url_health: str,
+            picture_url: Optional[str],
+            color: Optional[int]
+    ) -> discord.Embed:
         embed_desc = ''
         if isinstance(wiki_data['HP'], dict):
             for k, v in wiki_data['HP'].items():
@@ -48,6 +54,17 @@ class ModuleWiki(commands.Cog):
         if 'Class' in wiki_data.keys():
             embed.description += f"\n*Class: {wiki_data['Class']}*"
 
+        # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
+        # This set the relic vehicles entries to the same level as normal vehicles.
+        if 'Class' in wiki_data.keys() and wiki_data['Class'] == 'Relic Vehicles':
+            consume(wiki_data.pop(entry, None) for entry in [
+                'Alligator Charge',
+                "Hydra's Whisper",
+                'Havoc Charge',
+                'Sea Mine',
+                'Torpedo',
+                'Sea Mine'
+            ])
         for i, (k, v) in enumerate(wiki_data.items()):
             if k in ['Class', 'Name', '', 'Icon', 'HP']:
                 continue
@@ -116,7 +133,7 @@ class ModuleWiki(commands.Cog):
         if 'Fuel Capacity' in wiki_data.keys():
             embed.add_field(
                 name='Fuel Capacity',
-                value=f"{wiki_data['Fuel Capacity']['']} {' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys())}"
+                value=f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys()))}"
             )
         return embed
 
@@ -162,11 +179,19 @@ class ModuleWiki(commands.Cog):
             if entry['url'] == health_request:
                 wiki_entry_complete_name = entry['name']
                 break
-        if wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base')) and wiki_entry_complete_name.endswith('(Tier 1)'):
+        if (
+                wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base'))
+                and wiki_entry_complete_name.endswith('(Tier 1)')
+        ):
             wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
         infobox_tuple = scrap_main_picture(health_request, wiki_entry_complete_name)
         entry_picture_url, color = None, None
         if infobox_tuple:
             entry_picture_url, color = infobox_tuple
-        entry_embed = self.generate_hmtk_embed(scrap_health(entry_url, wiki_entry_complete_name), entry_url, entry_picture_url, color)
+        entry_embed = self.generate_hmtk_embed(
+            scrap_health(entry_url, wiki_entry_complete_name),
+            entry_url,
+            entry_picture_url,
+            color
+        )
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
