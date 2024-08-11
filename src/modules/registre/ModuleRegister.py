@@ -1,12 +1,9 @@
 import configparser
 import discord
 import os
-import pathlib
-import time
 from discord import app_commands
-from discord.ext import commands, tasks
-from src.utils.functions import update_discord_interface, safeguarded_nickname
-from src.utils.oisol_enums import DataFilesPath, Modules
+from discord.ext import commands
+from src.utils.oisol_enums import DataFilesPath
 from src.utils.resources import MODULES_CSV_KEYS
 from src.utils.CsvHandler import CsvHandler
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu

@@ -2,13 +2,13 @@ import discord
 import os
 import pathlib
 from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import Faction, EmbedIds, DataFilesPath, Modules
+from src.utils.oisol_enums import Faction, EmbedIds, DataFilesPath
 from src.utils.resources import REGIONS_STOCKPILES
 
 
 def get_sorted_stockpiles(guild_id: str, csv_keys: list) -> (list, dict):
     data_file_path = os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.STOCKPILES.value)
-    stockpiles_list = CsvHandler(csv_keys).csv_get_all_data(data_file_path, Modules.STOCKPILE)
+    stockpiles_list = CsvHandler(csv_keys).csv_get_all_data(data_file_path)
     sorted_stockpiles = dict()
 
     for stockpile in stockpiles_list:

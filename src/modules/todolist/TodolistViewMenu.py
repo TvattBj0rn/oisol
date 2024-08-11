@@ -134,7 +134,7 @@ class TodolistViewMenu(discord.ui.View):
             )
 
     @discord.ui.button(style=discord.ButtonStyle.green, custom_id='Todolist:Add', emoji='➕')
-    async def add_tasks(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def add_tasks(self, interaction: discord.Interaction, _button: discord.ui.Button):
         self.embed_uuid = interaction.message.embeds[0].footer.text
         try:
             permissions = load_json_file(
@@ -233,7 +233,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         self.emoji = list(EMOTES_CUSTOM_ID.keys())[list(EMOTES_CUSTOM_ID.values()).index(f'TodoButton{custom_id[-1]}')]
 
     @classmethod
-    async def from_custom_id(cls, interaction: discord.Interaction, item: discord.ui.Button, match: re.Match[str]):
+    async def from_custom_id(cls, _interaction: discord.Interaction, _item: discord.ui.Button, match: re.Match[str]):
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction):

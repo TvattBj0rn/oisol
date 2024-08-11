@@ -1,9 +1,8 @@
 import discord
 import os
 import pathlib
-from typing_extensions import Self
 from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import DataFilesPath, Faction, Modules
+from src.utils.oisol_enums import DataFilesPath, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 
 
@@ -18,8 +17,7 @@ class RegisterViewMenu(discord.ui.View):
 
     def refresh_register_embed(self, guild_id: str):
         self.register_members = CsvHandler(self.csv_keys).csv_get_all_data(
-            os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value),
-            Modules.REGISTER
+            os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value)
         )
         self.generate_embeds()
 
@@ -57,7 +55,7 @@ class RegisterViewMenu(discord.ui.View):
         return self.embeds[self.current_page_index]
 
     @discord.ui.button(emoji='◀️', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:left')
-    async def left_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def left_button_callback(self, interaction: discord.Interaction, _button: discord.ui.Button):
         if self.current_page_index - 1 == -1:
             self.current_page_index = len(self.embeds) - 1
         else:
@@ -68,7 +66,7 @@ class RegisterViewMenu(discord.ui.View):
         await interaction.response.defer()
 
     @discord.ui.button(emoji='▶️', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:right')
-    async def right_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def right_button_callback(self, interaction: discord.Interaction, _button: discord.ui.Button):
         if self.current_page_index + 1 == len(self.embeds):
             self.current_page_index = 0
         else:

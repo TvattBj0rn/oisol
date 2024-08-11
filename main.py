@@ -129,8 +129,7 @@ class Oisol(commands.Bot):
                 and config['register']['input']
         ):
             all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
-                Modules.REGISTER
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
             )
             await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
             await self.update_register(
@@ -154,8 +153,7 @@ class Oisol(commands.Bot):
                 member_name = f'{config["regiment"]["tag"]} {member_name}'
             await after.edit(nick=safeguarded_nickname(member_name))
             all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
-                Modules.REGISTER
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
             )
             for i, member in enumerate(all_members):
                 if member['member'] == str(after.id):

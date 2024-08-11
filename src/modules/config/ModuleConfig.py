@@ -4,7 +4,7 @@ import os
 from discord import app_commands
 from discord.ext import commands
 from src.utils.CsvHandler import CsvHandler
-from src.modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView, ConfigViewMenu
+from src.modules.config.ConfigInterfaces import ConfigViewMenu
 from src.utils.oisol_enums import DataFilesPath, Language, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 

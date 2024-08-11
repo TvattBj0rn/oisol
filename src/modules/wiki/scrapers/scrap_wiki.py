@@ -59,8 +59,7 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> d
             return infobox_attribute_soup.get_text(strip=True).replace(',', '\n')
 
 
-def generate_infobox_data(infobox_soup: Tag, name: str) -> dict:
-    # These two are constants, we expect them whatever the entry is
+def generate_infobox_data(infobox_soup: Tag) -> dict:
     data_dict = {
         'title': infobox_soup.find('h2', {'class': 'pi-item pi-item-spacing pi-title'}).get_text(),
         'img_url': f"https://foxhole.wiki.gg{infobox_soup.select('figure > a > img')[0]['src']}",
@@ -96,7 +95,7 @@ def scrap_wiki(url: str, name: str) -> dict:
     # Infobox handling within a function to allow for loop later on
     infoboxs_soup = soup.select('aside[class^="portable-infobox noexcerpt pi-background"]')
     for infobox in infoboxs_soup:
-        wiki_response_dict = generate_infobox_data(infobox, name)
+        wiki_response_dict = generate_infobox_data(infobox)
         if name == wiki_response_dict['title'] or name == f"{wiki_response_dict['title']} (Tier 1)":
             wiki_response_dict['description'] = entry_desc
             return wiki_response_dict

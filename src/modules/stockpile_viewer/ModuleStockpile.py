@@ -18,7 +18,7 @@ class ModuleStockpiles(commands.Cog):
         self.csv_keys = MODULES_CSV_KEYS['stockpiles']
         self.CsvHandler = CsvHandler(self.csv_keys)
 
-    async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+    async def region_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         regions_cities = []
         for k, v in REGIONS_STOCKPILES.items():
             for vv in v:

@@ -137,10 +137,10 @@ class ModuleWiki(commands.Cog):
             )
         return embed
 
-    async def wiki_autocomplete(self, interaction: discord.Interaction, current: str) -> list:
+    async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list:
         return self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
 
-    async def health_autocomplete(self, interaction: discord.Interaction, current: str) -> list:
+    async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list:
         return self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
 
     @app_commands.command(name='wiki', description='Info wiki')
