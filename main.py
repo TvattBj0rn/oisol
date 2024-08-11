@@ -108,7 +108,13 @@ class Oisol(commands.Bot):
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
         except FileNotFoundError:
             return
-        if not config['register']['recruit_id']:
+        # In some cases, there might be an update of any members roles before the init command is executed.
+        # As such this ensures there are no errors on the bot side when this case happens.
+        try:
+            if not config['register']['recruit_id']:
+                return
+        # If there are no register values, no point in doing any of the checks bellow the except.
+        except KeyError:
             return
         csv_handler = CsvHandler(['member', 'timer'])
 
