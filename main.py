@@ -75,7 +75,11 @@ class Oisol(commands.Bot):
         all_members = []
         all_members_id = []
         for member in members:
-            if int(member['member']) in [m.id for m in guild.members] and guild.get_member(int(member['member'])).get_role(recruit_id) and member['member'] not in all_members_id:
+            if (
+                    int(member['member']) in [m.id for m in guild.members]
+                    and guild.get_member(int(member['member'])).get_role(recruit_id)
+                    and member['member'] not in all_members_id
+            ):
                 all_members.append(member)
                 all_members_id.append(member['member'])
 
@@ -90,7 +94,11 @@ class Oisol(commands.Bot):
             return
         csv_handler = CsvHandler(['member', 'timer'])
         all_members = self.validate_all_members(all_members, server_id, int(config['register']['recruit_id']))
-        csv_handler.csv_rewrite_file(os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value), all_members, Modules.REGISTER)
+        csv_handler.csv_rewrite_file(
+            os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
+            all_members,
+            Modules.REGISTER
+        )
 
         guild = self.get_guild(int(server_id))
         channel = guild.get_channel(int(config['register']['channel']))
@@ -110,25 +118,33 @@ class Oisol(commands.Bot):
             return
         # In some cases, there might be an update of any members roles before the init command is executed.
         # As such this ensures there are no errors on the bot side when this case happens.
-        try:
-            if not config['register']['recruit_id']:
-                return
-        # If there are no register values, no point in doing any of the checks bellow the except.
-        except KeyError:
+        if not config.has_section("register") or not config["register"]["recruit_id"]:
             return
         csv_handler = CsvHandler(['member', 'timer'])
 
         # Member is now a recruit
-        if int(config['register']['recruit_id']) in [role.id for role in after.roles] and int(config['register']['recruit_id']) not in [role.id for role in before.roles] and config['register']['input']:
-            all_members = csv_handler.csv_get_all_data(os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value), Modules.REGISTER)
+        if (
+                int(config['register']['recruit_id']) in [role.id for role in after.roles]
+                and int(config['register']['recruit_id']) not in [role.id for role in before.roles]
+                and config['register']['input']
+        ):
+            all_members = csv_handler.csv_get_all_data(
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
+                Modules.REGISTER
+            )
             await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
-            await self.update_register(str(before.guild.id), all_members + [{'member': after.id, 'timer': int(time.time())}])
+            await self.update_register(
+                str(before.guild.id), all_members + [{'member': after.id, 'timer': int(time.time())}]
+            )
 
         # Member is now a promoted recruit
         # Here I made the choice that any recruit having his recruit role removed is because he got promoted,
         # what usually happens in FCF is that recruit are kicked when they do dumb shit
         # If it becomes necessary in the future, I will add a classic member role in the config
-        elif int(config['register']['recruit_id']) in [role.id for role in before.roles] and int(config['register']['recruit_id']) not in [role.id for role in after.roles]:
+        elif (
+                int(config['register']['recruit_id']) in [role.id for role in before.roles]
+                and int(config['register']['recruit_id']) not in [role.id for role in after.roles]
+        ):
             member_name = after.display_name
             if config['register']['input']:
                 member_name.replace(config['register']['input'], '')
@@ -137,7 +153,10 @@ class Oisol(commands.Bot):
             if config['register']['promoted_get_tag'][0] == 'y':
                 member_name = f'{config["regiment"]["tag"]} {member_name}'
             await after.edit(nick=safeguarded_nickname(member_name))
-            all_members = csv_handler.csv_get_all_data(os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value), Modules.REGISTER)
+            all_members = csv_handler.csv_get_all_data(
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
+                Modules.REGISTER
+            )
             for i, member in enumerate(all_members):
                 if member['member'] == str(after.id):
                     all_members.pop(i)
