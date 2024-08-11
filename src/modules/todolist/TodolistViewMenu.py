@@ -138,14 +138,23 @@ class TodolistViewMenu(discord.ui.View):
         self.embed_uuid = interaction.message.embeds[0].footer.text
         try:
             permissions = load_json_file(
-                os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')
+                os.path.join(
+                    pathlib.Path('/'),
+                    'oisol',
+                    str(interaction.guild_id),
+                    'todolists',
+                    f'{self.embed_uuid}.json'
+                )
             )['access']
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {self.embed_uuid}')
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
-        if 'roles' in permissions.keys() and 'members' in permissions.keys() and not has_permissions(interaction, permissions):
-            await interaction.response.send_message('> Forbidden', ephemeral=True)
+        if (
+                'roles' in permissions.keys() and 'members' in permissions.keys()
+                and not has_permissions(interaction, permissions)
+        ):
+            await interaction.response.send_message('> You do not have the permission to click on this button', ephemeral=True)
             return
         await interaction.response.send_modal(
             TodolistModalAdd(self.embed_uuid, self.title)
@@ -237,10 +246,13 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             )
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
-            await interaction.response.send_message('> Unexpected Error (`TodolistButtonCheckmark.callback`)')
+            await interaction.followup.send('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)
             return
-        if 'roles' in full_dict['access'].keys() and 'members' in full_dict['access'].keys() and not has_permissions(interaction, full_dict['access']):
-            await interaction.response.send_message('> Forbidden', ephemeral=True)
+        if (
+                'roles' in full_dict['access'].keys() and 'members' in full_dict['access'].keys()
+                and not has_permissions(interaction, full_dict['access'])
+        ):
+            await interaction.followup.send('> You do not have the permission to click on this button', ephemeral=True)
             return
         self.data_list = priority_dict_to_list(full_dict['tasks'])
         self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(self.emoji))
