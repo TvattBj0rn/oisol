@@ -27,13 +27,11 @@ def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]
 
 
 def extract_td_data(td: Tag) -> dict | str:
-    # if not td.findChildren():
-
     if td.findChild('img'):
         return f"https://foxhole.wiki.gg{td.findChild('img')['src']}"
     if len(td.findChildren('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
-        return {'disabled': hmtk[0], 'kill': hmtk[1]}
+        return {'Disabled': hmtk[0], 'Kill': hmtk[1]}
     if len(td.findChildren('hr')) == 2:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'S': hmtk[0], 'M': hmtk[1], 'L': hmtk[2]}
@@ -64,8 +62,22 @@ def scrap_health(url: str, name: str) -> dict:
     for i, td in enumerate(row.select('td')):
         wiki_response_dict[header_indexes[i]] = extract_td_data(td)
 
-    for k in ['7.62mm', '7.92mm', '9mm', 'A3 Harpa Fragmentation Grenade', 'Flamethrower Ammo', 'Flame Ammo', 'Shrapnel Mortar Shell', 'Bomastone Grenade']:
+    for k in [
+        '7.62mm',
+        '7.92mm',
+        '9mm',
+        'A3 Harpa Fragmentation Grenade',
+        'Flamethrower Ammo',
+        'Flame Ammo',
+        'Shrapnel Mortar Shell',
+        'Bomastone Grenade'
+    ]:
         wiki_response_dict.pop(k, None)
+
+    # In case we are checking for a building but 2 value were retrieved in HP
+    if 'Class' not in wiki_response_dict.keys():
+        wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
+        wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
 
     return wiki_response_dict
 

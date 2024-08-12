@@ -69,8 +69,8 @@ class ModuleWiki(commands.Cog):
             if k in ['Class', 'Name', '', 'Icon', 'HP']:
                 continue
             value_string = f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: "
-            if isinstance(wiki_data[k], dict) and 'disabled' in wiki_data[k].keys():
-                value_string += wiki_data[k]['disabled'] + ' **|** ' + wiki_data[k]['kill']
+            if isinstance(wiki_data[k], dict) and 'Disabled' in wiki_data[k].keys():
+                value_string += wiki_data[k]['Disabled'] + ' **|** ' + wiki_data[k]['Kill']
             elif isinstance(wiki_data[k], dict) and len(wiki_data[k].keys()) == 3:
                 value_string += wiki_data[k]['S'] + ' **|** ' + wiki_data[k]['M'] + ' **|** ' + wiki_data[k]['L']
             elif isinstance(wiki_data[k], str):
