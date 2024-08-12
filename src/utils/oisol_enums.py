@@ -21,6 +21,10 @@ class Faction(Enum):
 class FoxholeBuildings(Enum):
     STORAGE_DEPOT = '<:storagedepotw:1130918748648394822>'
     SEAPORT = '<:seaportw:1130918734769442868>'
+    SEAPORT_WARDEN = '<:seaport_warden:1272594645809107097>'
+    SEAPORT_COLONIAL = '<:seaport_colonial:1272594646920331265>'
+    STORAGE_DEPOT_WARDEN = '<:storage_depot_warden:1272594650284167208>'
+    STORAGE_DEPOT_COLONIAL = '<:storage_depot_colonial:1272594648757436457>'
 
 
 class Language(Enum):
