@@ -126,12 +126,12 @@ class Oisol(commands.Bot):
         if (
                 int(config['register']['recruit_id']) in [role.id for role in after.roles]
                 and int(config['register']['recruit_id']) not in [role.id for role in before.roles]
-                and config['register']['input']
         ):
             all_members = csv_handler.csv_get_all_data(
                 os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
             )
-            await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
+            if config['register']['input']:
+                await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
             await self.update_register(
                 str(before.guild.id), all_members + [{'member': after.id, 'timer': int(time.time())}]
             )
