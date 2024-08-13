@@ -34,8 +34,10 @@ class ModuleRegister(commands.Cog):
 
         register_view_instance = RegisterViewMenu()
         register_view_instance.refresh_register_embed(str(interaction.guild.id))
+
         await interaction.followup.send(view=register_view_instance, embed=register_view_instance.embeds[0])
         sent_msg = await interaction.original_response()
+
         config['register']['message_id'] = str(sent_msg.id)
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)

@@ -27,6 +27,9 @@ class RegisterViewMenu(discord.ui.View):
             title='Register | Page 1',
             color=self.color
         )
+        if not self.register_members:
+            self.embeds.append(embed)
+            return
 
         for i, member_dict in enumerate(self.register_members):
             if i % 25 == 0 and i > 0:
