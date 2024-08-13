@@ -34,8 +34,8 @@ class ModuleWiki(commands.Cog):
     def generate_hmtk_embed(
             wiki_data: dict,
             url_health: str,
-            picture_url: Optional[str],
-            color: Optional[int]
+            picture_url: str,
+            color: int
     ) -> discord.Embed:
         embed_desc = ''
         if isinstance(wiki_data['HP'], dict):
@@ -43,16 +43,17 @@ class ModuleWiki(commands.Cog):
                 embed_desc += f'{k}: {v} HP\n'
         else:
             embed_desc = f"{wiki_data['HP']} HP"
-        embed = discord.Embed(
-            title=wiki_data['Name'],
-            url=url_health,
-            description=embed_desc,
-            color=color
-        )
-        if picture_url:
-            embed.set_thumbnail(url=picture_url)
         if 'Class' in wiki_data.keys():
-            embed.description += f"\n*Class: {wiki_data['Class']}*"
+            embed_desc += f"\n*Class: {wiki_data['Class']}*"
+        embed = discord.Embed().from_dict(
+            {
+                'title': wiki_data['Name'],
+                'url': url_health,
+                'description': embed_desc,
+                'color': color,
+                'thumbnail': {'url': picture_url}
+            }
+        )
 
         # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
         # This set the relic vehicles entries to the same level as normal vehicles.
@@ -83,6 +84,12 @@ class ModuleWiki(commands.Cog):
 
     @staticmethod
     def generic_autocomplete(entries: list, current: str) -> list:
+        """
+        Method to generate search suggestions to the user
+        :param entries: List of wiki entries to use (differing between health and wiki)
+        :param current: Current input given by the user
+        :return: List of the best suggestions for the user
+        """
         # Default search values, before any input in the search bar
         if not current:
             return [
@@ -111,31 +118,37 @@ class ModuleWiki(commands.Cog):
         ]
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
-        embed = discord.Embed(
-            title=wiki_data['title'],
-            description=f"*{wiki_data['description']}*" if wiki_data['description'] else None,
-            url=wiki_data['url'],
-            color=wiki_data['color']
-        )
-        embed.set_image(url=wiki_data['img_url'])
+        embed_fields = []
         for attribute_key, attribute_value in wiki_data.items():
             if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
                 continue
             if isinstance(attribute_value, str):
-                embed.add_field(name=attribute_key, value=attribute_value)
+                embed_fields.append({'name': attribute_key, 'value': attribute_value, 'inline': True})
             else:
                 attribute_string = ''
                 ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
                 for k, v in ordered_attribute_value.items():
                     attribute_string += self.retrieve_facility_mats(k, v)
                 attribute_string = attribute_string.removesuffix(' **:** ')
-                embed.add_field(name=attribute_key, value=attribute_string)
+                embed_fields.append({'name': attribute_key, 'value': attribute_string, 'inline': True})
         if 'Fuel Capacity' in wiki_data.keys():
-            embed.add_field(
-                name='Fuel Capacity',
-                value=f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys()))}"
+            embed_fields.append(
+                {
+                    'name': 'Fuel Capacity',
+                    'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys()))}",
+                    'inline': True
+                }
             )
-        return embed
+        return discord.Embed().from_dict(
+            {
+                'title': wiki_data['title'],
+                'description': f"*{wiki_data['description']}*" if wiki_data['description'] else None,
+                'url': wiki_data['url'],
+                'color': wiki_data['color'],
+                'image': {'url': wiki_data['img_url']},
+                'fields': embed_fields
+            }
+        )
 
     async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list:
         return self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
@@ -166,32 +179,38 @@ class ModuleWiki(commands.Cog):
     @app_commands.autocomplete(health_request=health_autocomplete)
     async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: bool = False):
         print(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
+
         if not health_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
             return
+
         entry_url = 'https://foxhole.wiki.gg/wiki/Vehicle_Health'
         for entry in STRUCTURES_WIKI_ENTRIES:
             if entry['url'] == health_request:
                 entry_url = 'https://foxhole.wiki.gg/wiki/Structure_Health'
                 break
+
         wiki_entry_complete_name = ''
         for entry in ALL_WIKI_ENTRIES:
             if entry['url'] == health_request:
                 wiki_entry_complete_name = entry['name']
                 break
+
         if (
                 wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base'))
                 and wiki_entry_complete_name.endswith('(Tier 1)')
         ):
             wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
         infobox_tuple = scrap_main_picture(health_request, wiki_entry_complete_name)
-        entry_picture_url, color = None, None
-        if infobox_tuple:
-            entry_picture_url, color = infobox_tuple
+
+        if not all(infobox_tuple):
+            await interaction.response.send_message(embed=discord.Embed(), ephemeral=not visible)
+            return
+
         entry_embed = self.generate_hmtk_embed(
             scrap_health(entry_url, wiki_entry_complete_name),
             entry_url,
-            entry_picture_url,
-            color
+            infobox_tuple[0],
+            infobox_tuple[1]
         )
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)

@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup, Tag
-from typing import Optional, Tuple
+from typing import Optional
 from src.utils.oisol_enums import Faction
 
 
@@ -62,6 +62,7 @@ def scrap_health(url: str, name: str) -> dict:
     for i, td in enumerate(row.select('td')):
         wiki_response_dict[header_indexes[i]] = extract_td_data(td)
 
+    # List of ammo type that will never be used for any entry
     for k in [
         '7.62mm',
         '7.92mm',
@@ -74,7 +75,7 @@ def scrap_health(url: str, name: str) -> dict:
     ]:
         wiki_response_dict.pop(k, None)
 
-    # In case we are checking for a building but 2 value were retrieved in HP
+    # In case we are checking for a building but 2 values were retrieved in HP
     if 'Class' not in wiki_response_dict.keys():
         wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
         wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
@@ -82,11 +83,11 @@ def scrap_health(url: str, name: str) -> dict:
     return wiki_response_dict
 
 
-def scrap_main_picture(url: str, name: str) -> Optional[Tuple[str, int]]:
+def scrap_main_picture(url: str, name: str) -> tuple[Optional[str], Optional[int]]:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
-        return None
+        return None, None
 
     # Whole page soup data
     soup = BeautifulSoup(response.content, features='lxml')
