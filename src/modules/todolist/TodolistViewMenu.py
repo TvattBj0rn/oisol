@@ -3,7 +3,6 @@ import os
 import pathlib
 import re
 from more_itertools.recipes import consume
-from typing_extensions import Tuple
 from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
 from src.utils.functions import load_json_file, update_json_file
@@ -39,7 +38,12 @@ def priority_dict_to_list(data_dict: dict) -> list:
     return tasks_list
 
 
-def refit_data(data_dict: dict) -> Tuple[dict, list]:
+def refit_data(data_dict: dict) -> tuple[dict, list]:
+    """
+    Refit existing data to conform with the discord API requirements.
+    :param data_dict: data to refit.
+    :return: tuple of the refitted data and the overflowing tasks.
+    """
     data_dict_tasks = data_dict['tasks']
     removed_tasks = []
     tasks_to_remove = len(data_dict_tasks['high']) + len(data_dict_tasks['medium']) + len(data_dict_tasks['low']) - 24
@@ -77,11 +81,12 @@ class TodolistViewMenu(discord.ui.View):
             guild_id: str,
             embed_uuid: str
     ):
-        self.title = todolist_title
+        self.data_dict, _ = refit_data(updated_data)
+        # The ternary is temporary to prevent regression on existing interfaces
+        self.title = self.data_dict['title'] if 'title' in self.data_dict.keys() else todolist_title
         self.guild_id = guild_id
         self.embed_uuid = embed_uuid
         self.data_list = []
-        self.data_dict, _ = refit_data(updated_data)
 
         update_json_file(
             os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'),

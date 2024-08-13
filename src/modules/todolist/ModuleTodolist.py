@@ -54,7 +54,7 @@ class ModuleTodolist(commands.Cog):
 
         todolist_view = TodolistViewMenu()
         todolist_view.refresh_view(
-            {'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
+            {'title': title, 'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
             title,
             str(interaction.guild_id),
             uuid.uuid4().hex
