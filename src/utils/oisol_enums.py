@@ -23,8 +23,10 @@ class FoxholeBuildings(Enum):
     SEAPORT = '<:seaportw:1130918734769442868>'
     SEAPORT_WARDEN = '<:seaport_warden:1272594645809107097>'
     SEAPORT_COLONIAL = '<:seaport_colonial:1272594646920331265>'
+    SEAPORT_NEUTRAL = '<:seaport_neutral:1077298856196313158>'
     STORAGE_DEPOT_WARDEN = '<:storage_depot_warden:1272594650284167208>'
     STORAGE_DEPOT_COLONIAL = '<:storage_depot_colonial:1272594648757436457>'
+    STORAGE_DEPOT_NEUTRAL = '<:storage_depot_neutral:1077298889490694204>'
 
 
 class Language(Enum):
