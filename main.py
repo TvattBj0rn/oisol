@@ -65,7 +65,7 @@ class Oisol(commands.Bot):
             except FileNotFoundError:
                 return
 
-    def validate_all_members(self, members: list, server_id: str, recruit_id: int) -> list:
+    def validate_all_members(self, members: list, server_id: int, recruit_id: int) -> list:
         """
         This function ensure that all members are unique, part of the server and recruit
         :param self:
@@ -74,7 +74,7 @@ class Oisol(commands.Bot):
         :param recruit_id: recruit role id
         :return: list of processed members
         """
-        guild = self.get_guild(int(server_id))
+        guild = self.get_guild(server_id)
         all_members = []
         all_members_id = []
         for member in members:
@@ -88,8 +88,9 @@ class Oisol(commands.Bot):
 
         return all_members
 
-    async def update_register(self, server_id: str, all_members: list):
-        oisol_server_home_path = os.path.join('/', 'oisol', server_id)
+    async def update_register(self, server_id: int, all_members: list):
+        str_server_id = str(server_id)
+        oisol_server_home_path = os.path.join('/', 'oisol', str_server_id)
         try:
             config = configparser.ConfigParser()
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
@@ -107,11 +108,11 @@ class Oisol(commands.Bot):
             Modules.REGISTER
         )
 
-        guild = self.get_guild(int(server_id))
+        guild = self.get_guild(server_id)
         channel = guild.get_channel(config.getint('register', 'channel'))
         message = await channel.fetch_message(config.getint('register', 'message_id'))
         register_view = RegisterViewMenu()
-        register_view.refresh_register_embed(server_id)
+        register_view.refresh_register_embed(str_server_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
@@ -140,7 +141,7 @@ class Oisol(commands.Bot):
             if config.has_option('register', 'input'):
                 await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
             await self.update_register(
-                str(before.guild.id), all_members + [{'member': after.id, 'timer': int(time.time())}]
+                before.guild.id, all_members + [{'member': after.id, 'timer': int(time.time())}]
             )
 
         # Member is now a promoted recruit
@@ -165,7 +166,7 @@ class Oisol(commands.Bot):
             for i, member in enumerate(all_members):
                 if member['member'] == str(after.id):
                     all_members.pop(i)
-            await self.update_register(str(before.guild.id), all_members)
+            await self.update_register(before.guild.id, all_members)
 
 
 if __name__ == '__main__':
