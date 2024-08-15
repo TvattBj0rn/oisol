@@ -10,7 +10,7 @@ class ModuleTodolist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
 
-    @app_commands.command(name='todolist_generate')
+    @app_commands.command(name='todolist-generate')
     async def todolist_generate(
             self,
             interaction: discord.Interaction,
