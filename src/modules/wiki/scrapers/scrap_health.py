@@ -12,13 +12,12 @@ def get_indexes(tbody: Tag) -> dict:
 
 
 def get_index_from_name(headers_indexes: dict) -> int:
-    for name, age in headers_indexes.items():
-        if age == 'Name':
-            return name
+    for index, value in headers_indexes.items():
+        if value == 'Name':
+            return index
 
 
 def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]:
-    print(headers_indexes)
     for tr in tbody.select('tr'):
         if tr.findChild('th'):
             continue
