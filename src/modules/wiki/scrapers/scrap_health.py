@@ -18,6 +18,7 @@ def get_index_from_name(headers_indexes: dict) -> int:
 
 
 def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]:
+    print(headers_indexes)
     for tr in tbody.select('tr'):
         if tr.findChild('th'):
             continue
@@ -76,7 +77,7 @@ def scrap_health(url: str, name: str) -> dict:
         wiki_response_dict.pop(k, None)
 
     # In case we are checking for a building but 2 values were retrieved in HP
-    if 'Class' not in wiki_response_dict.keys():
+    if 'Class' not in wiki_response_dict.keys() and isinstance(wiki_response_dict['HP'], dict):
         wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
         wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
 
