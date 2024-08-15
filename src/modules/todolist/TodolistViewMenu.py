@@ -107,11 +107,12 @@ class TodolistViewMenu(discord.ui.View):
 
     def _refresh_view_embed(self):
         if not self.embed:
-            self.embed = discord.Embed(title=f'☑️️ **|** {self.title}')
-            self.embed.add_field(name='🔴 **|** Priorité Haute', value='')
-            self.embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
-            self.embed.add_field(name='🟢 **|** Priorité Basse', value='')
-            self.embed.set_footer(text=self.embed_uuid)
+            self.embed = discord.Embed().from_dict(
+                {
+                    'title': f'☑️️ **|** {self.title}',
+                    'footer': {'text': self.embed_uuid}
+                }
+            )
         self.embed.clear_fields()
         tmp_dict, _ = refit_data(self.data_dict)
         tmp_dict = tmp_dict['tasks']
