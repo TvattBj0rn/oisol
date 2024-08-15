@@ -2,7 +2,6 @@ import configparser
 import discord
 import json
 import os
-import pathlib
 from src.utils.oisol_enums import DataFilesPath
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
 

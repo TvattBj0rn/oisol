@@ -65,13 +65,16 @@ class Oisol(commands.Bot):
             except FileNotFoundError:
                 return
 
-    def validate_all_members(self, members: list, server_id: str, recruit_id: int):
-        # Things to ensure:
-        # - All members are unique
-        # - All members are part of the guild/server
-        # - All members are recruits
-
-        guild = self.get_guild(int(server_id))
+    def validate_all_members(self, members: list, server_id: int, recruit_id: int) -> list:
+        """
+        This function ensure that all members are unique, part of the server and recruit
+        :param self:
+        :param members: members list to check
+        :param server_id: guild id
+        :param recruit_id: recruit role id
+        :return: list of processed members
+        """
+        guild = self.get_guild(server_id)
         all_members = []
         all_members_id = []
         for member in members:
@@ -85,56 +88,60 @@ class Oisol(commands.Bot):
 
         return all_members
 
-    async def update_register(self, server_id: str, all_members: list):
-        oisol_server_home_path = os.path.join('/', 'oisol', server_id)
+    async def update_register(self, server_id: int, all_members: list):
+        str_server_id = str(server_id)
+        oisol_server_home_path = os.path.join('/', 'oisol', str_server_id)
         try:
             config = configparser.ConfigParser()
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
         except FileNotFoundError:
             return
         csv_handler = CsvHandler(['member', 'timer'])
-        all_members = self.validate_all_members(all_members, server_id, int(config['register']['recruit_id']))
+        all_members = self.validate_all_members(
+            all_members,
+            server_id,
+            config.getint('register', 'recruit_id')
+        )
         csv_handler.csv_rewrite_file(
             os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
             all_members,
             Modules.REGISTER
         )
 
-        guild = self.get_guild(int(server_id))
-        channel = guild.get_channel(int(config['register']['channel']))
-        message = await channel.fetch_message(int(config['register']['message_id']))
+        guild = self.get_guild(server_id)
+        channel = guild.get_channel(config.getint('register', 'channel'))
+        message = await channel.fetch_message(config.getint('register', 'message_id'))
         register_view = RegisterViewMenu()
-        register_view.refresh_register_embed(server_id)
+        register_view.refresh_register_embed(str_server_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.id == before.guild.owner.id:
             return
         oisol_server_home_path = os.path.join('/', 'oisol', str(before.guild.id))
+        config = configparser.ConfigParser()
         try:
-            config = configparser.ConfigParser()
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
         except FileNotFoundError:
             return
         # In some cases, there might be an update of any members roles before the init command is executed.
         # As such this ensures there are no errors on the bot side when this case happens.
-        if not config.has_section("register") or not config["register"]["recruit_id"]:
+        if not config.has_section('register') or not config['register']['recruit_id']:
             return
         csv_handler = CsvHandler(['member', 'timer'])
 
         # Member is now a recruit
         if (
-                int(config['register']['recruit_id']) in [role.id for role in after.roles]
-                and int(config['register']['recruit_id']) not in [role.id for role in before.roles]
-                and config['register']['input']
+                config.getint('register', 'recruit_id') in [role.id for role in after.roles]
+                and config.getint('register', 'recruit_id') not in [role.id for role in before.roles]
         ):
             all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
-                Modules.REGISTER
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
             )
-            await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
+            if config.has_option('register', 'input'):
+                await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
             await self.update_register(
-                str(before.guild.id), all_members + [{'member': after.id, 'timer': int(time.time())}]
+                before.guild.id, all_members + [{'member': after.id, 'timer': int(time.time())}]
             )
 
         # Member is now a promoted recruit
@@ -142,8 +149,8 @@ class Oisol(commands.Bot):
         # what usually happens in FCF is that recruit are kicked when they do dumb shit
         # If it becomes necessary in the future, I will add a classic member role in the config
         elif (
-                int(config['register']['recruit_id']) in [role.id for role in before.roles]
-                and int(config['register']['recruit_id']) not in [role.id for role in after.roles]
+                config.getint('register', 'recruit_id') in [role.id for role in before.roles]
+                and config.getint('register', 'recruit_id') not in [role.id for role in after.roles]
         ):
             member_name = after.display_name
             if config['register']['input']:
@@ -154,13 +161,12 @@ class Oisol(commands.Bot):
                 member_name = f'{config["regiment"]["tag"]} {member_name}'
             await after.edit(nick=safeguarded_nickname(member_name))
             all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
-                Modules.REGISTER
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
             )
             for i, member in enumerate(all_members):
                 if member['member'] == str(after.id):
                     all_members.pop(i)
-            await self.update_register(str(before.guild.id), all_members)
+            await self.update_register(before.guild.id, all_members)
 
 
 if __name__ == '__main__':

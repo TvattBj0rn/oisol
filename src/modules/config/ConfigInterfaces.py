@@ -39,19 +39,19 @@ class ConfigViewMenu(discord.ui.View):
         )
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:language', emoji='💬')
-    async def update_language(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def update_language(self, interaction: discord.Interaction, _button: discord.ui.Button):
         await interaction.response.send_message(
             view=SelectLanguageView(message_id=interaction.message.id),
             ephemeral=True
         )
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:regiment', emoji='🚩')
-    async def update_regiment(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def update_regiment(self, interaction: discord.Interaction, _button: discord.ui.Button):
         await interaction.response.send_modal(ModalConfig())
         await self.update_config_embed(interaction)
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:register', emoji='📝')
-    async def update_register(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def update_register(self, interaction: discord.Interaction, _button: discord.ui.Button):
         await interaction.response.send_modal(ModalRegister())
         await self.update_config_embed(interaction)
 

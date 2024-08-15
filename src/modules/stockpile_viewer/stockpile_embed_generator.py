@@ -1,14 +1,15 @@
+import configparser
 import discord
 import os
 import pathlib
 from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import Faction, EmbedIds, DataFilesPath, Modules
+from src.utils.oisol_enums import Faction, EmbedIds, DataFilesPath
 from src.utils.resources import REGIONS_STOCKPILES
 
 
-def get_sorted_stockpiles(guild_id: str, csv_keys: list) -> (list, dict):
-    data_file_path = os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.STOCKPILES.value)
-    stockpiles_list = CsvHandler(csv_keys).csv_get_all_data(data_file_path, Modules.STOCKPILE)
+def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
+    data_file_path = os.path.join(pathlib.Path('/'), 'oisol', str(guild_id), DataFilesPath.STOCKPILES.value)
+    stockpiles_list = CsvHandler(csv_keys).csv_get_all_data(data_file_path)
     sorted_stockpiles = dict()
 
     for stockpile in stockpiles_list:
@@ -25,22 +26,20 @@ def get_sorted_stockpiles(guild_id: str, csv_keys: list) -> (list, dict):
     return sorted_regions_list, sorted_stockpiles
 
 
-# Split in several function instead of one big function of ~40 lines
 def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: list) -> discord.Embed:
-    sorted_regions_list, sorted_stockpiles = get_sorted_stockpiles(str(interaction.guild.id), csv_keys)
-
-    embed = discord.Embed(
-        title=f'Stockpiles | <:region:1130915923704946758>',
-        color=Faction.WARDEN.value
-    )
-    embed.set_footer(text=EmbedIds.STOCKPILES_VIEW.value)
+    config = configparser.ConfigParser()
+    config.read(os.path.join('/', 'oisol', str(interaction.guild_id), DataFilesPath.CONFIG.value))
+    sorted_regions_list, sorted_stockpiles = get_sorted_stockpiles(interaction.guild_id, csv_keys)
+    embed_fields = []
     for region in sorted_regions_list:
         sorted_subregion_list = list(sorted_stockpiles[region].keys())
         sorted_subregion_list.sort()
-        embed.add_field(
-            name=f'⠀\n{region.upper()}',
-            value='',
-            inline=False
+        embed_fields.append(
+            {
+                'name': f'⠀\n{region.upper()}',
+                'value': '',
+                'inline': False
+            }
         )
 
         for subregion in sorted_subregion_list:
@@ -51,12 +50,28 @@ def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: li
             subregion_icon = ''
             for subregion_tuple in REGIONS_STOCKPILES[region]:
                 if subregion_tuple[0] == subregion:
-                    subregion_icon = subregion_tuple[1]
+                    match config['regiment']['faction']:
+                        case 'WARDEN':
+                            subregion_icon = subregion_tuple[2]
+                        case 'COLONIAL':
+                            subregion_icon = subregion_tuple[3]
+                        case 'NEUTRAL' | _:  # Neutral is specified for readability
+                            subregion_icon = subregion_tuple[1]
+                    break
 
-            embed.add_field(
-                name=f'{subregion_icon} **|** {subregion}',
-                value=subregion_stockpiles_values,
-                inline=False
+            embed_fields.append(
+                {
+                    'name': f'{subregion_icon} **|** {subregion}',
+                    'value': subregion_stockpiles_values,
+                    'inline': False
+                }
             )
 
-    return embed
+    return discord.Embed().from_dict(
+        {
+            'title': f'Stockpiles | <:region:1130915923704946758>',
+            'color': Faction[config['regiment']['faction']].value,
+            'footer': {'text': EmbedIds.STOCKPILES_VIEW.value},
+            'fields': embed_fields
+        }
+    )

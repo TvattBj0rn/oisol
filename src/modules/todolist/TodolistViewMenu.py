@@ -3,7 +3,6 @@ import os
 import pathlib
 import re
 from more_itertools.recipes import consume
-from typing_extensions import Tuple
 from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
 from src.utils.functions import load_json_file, update_json_file
@@ -39,7 +38,12 @@ def priority_dict_to_list(data_dict: dict) -> list:
     return tasks_list
 
 
-def refit_data(data_dict: dict) -> Tuple[dict, list]:
+def refit_data(data_dict: dict) -> tuple[dict, list]:
+    """
+    Refit existing data to conform with the discord API requirements.
+    :param data_dict: data to refit.
+    :return: tuple of the refitted data and the overflowing tasks.
+    """
     data_dict_tasks = data_dict['tasks']
     removed_tasks = []
     tasks_to_remove = len(data_dict_tasks['high']) + len(data_dict_tasks['medium']) + len(data_dict_tasks['low']) - 24
@@ -77,11 +81,12 @@ class TodolistViewMenu(discord.ui.View):
             guild_id: str,
             embed_uuid: str
     ):
-        self.title = todolist_title
+        self.data_dict, _ = refit_data(updated_data)
+        # The ternary is temporary to prevent regression on existing interfaces
+        self.title = self.data_dict['title'] if 'title' in self.data_dict.keys() else todolist_title
         self.guild_id = guild_id
         self.embed_uuid = embed_uuid
         self.data_list = []
-        self.data_dict, _ = refit_data(updated_data)
 
         update_json_file(
             os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'),
@@ -102,11 +107,12 @@ class TodolistViewMenu(discord.ui.View):
 
     def _refresh_view_embed(self):
         if not self.embed:
-            self.embed = discord.Embed(title=f'☑️️ **|** {self.title}')
-            self.embed.add_field(name='🔴 **|** Priorité Haute', value='')
-            self.embed.add_field(name='🟡 **|** Priorité Moyenne', value='')
-            self.embed.add_field(name='🟢 **|** Priorité Basse', value='')
-            self.embed.set_footer(text=self.embed_uuid)
+            self.embed = discord.Embed().from_dict(
+                {
+                    'title': f'☑️️ **|** {self.title}',
+                    'footer': {'text': self.embed_uuid}
+                }
+            )
         self.embed.clear_fields()
         tmp_dict, _ = refit_data(self.data_dict)
         tmp_dict = tmp_dict['tasks']
@@ -124,9 +130,9 @@ class TodolistViewMenu(discord.ui.View):
             ] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task['content']}\n"
 
         for priority, tasks in [
-            ('🔴 **|** Priorité Haute', enumerated_tasks['high']),
-            ('🟡 **|** Priorité Moyenne', enumerated_tasks['medium']),
-            ('🟢 **|** Priorité Basse', enumerated_tasks['low'])
+            ('🔴 **|** High Priority', enumerated_tasks['high']),
+            ('🟡 **|** Medium Priority', enumerated_tasks['medium']),
+            ('🟢 **|** Low Priority', enumerated_tasks['low'])
         ]:
             self.embed.add_field(
                 name=priority,
@@ -134,18 +140,27 @@ class TodolistViewMenu(discord.ui.View):
             )
 
     @discord.ui.button(style=discord.ButtonStyle.green, custom_id='Todolist:Add', emoji='➕')
-    async def add_tasks(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def add_tasks(self, interaction: discord.Interaction, _button: discord.ui.Button):
         self.embed_uuid = interaction.message.embeds[0].footer.text
         try:
             permissions = load_json_file(
-                os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')
+                os.path.join(
+                    pathlib.Path('/'),
+                    'oisol',
+                    str(interaction.guild_id),
+                    'todolists',
+                    f'{self.embed_uuid}.json'
+                )
             )['access']
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {self.embed_uuid}')
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
-        if 'roles' in permissions.keys() and 'members' in permissions.keys() and not has_permissions(interaction, permissions):
-            await interaction.response.send_message('> Forbidden', ephemeral=True)
+        if (
+                'roles' in permissions.keys() and 'members' in permissions.keys()
+                and not has_permissions(interaction, permissions)
+        ):
+            await interaction.response.send_message('> You do not have the permission to click on this button', ephemeral=True)
             return
         await interaction.response.send_modal(
             TodolistModalAdd(self.embed_uuid, self.title)
@@ -159,19 +174,19 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         self.todolist_title = title
 
     high_priority = discord.ui.TextInput(
-        label='🔴 | Priorité Haute',
+        label='🔴 | High Priority',
         style=discord.TextStyle.long,
         required=False,
         placeholder='Use `,` for more than one item ...'
     )
     medium_priority = discord.ui.TextInput(
-        label='🟡 | Priorité Moyenne',
+        label='🟡 | Medium Priority',
         style=discord.TextStyle.long,
         required=False,
         placeholder='Use `,` for more than one item ...'
     )
     low_priority = discord.ui.TextInput(
-        label='🟢 | Priorité Basse',
+        label='🟢 | Low Priority',
         style=discord.TextStyle.long,
         required=False,
         placeholder='Use `,` for more than one item ...'
@@ -188,16 +203,16 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
             return
 
         for priority, input_field in [
-            (PriorityType.HAUTE.value, self.high_priority),
-            (PriorityType.MOYENNE.value, self.medium_priority),
-            (PriorityType.BASSE.value, self.low_priority)
+            (PriorityType.HIGH.value, self.high_priority),
+            (PriorityType.MEDIUM.value, self.medium_priority),
+            (PriorityType.LOW.value, self.low_priority)
         ]:
             for task in input_field.value.split(','):
                 if task:
                     data_dict[priority].append(task)
 
         data_dict, bypassed_tasks = refit_data(
-            {'access': full_dict['access'], 'tasks': data_dict}
+            {'title': self.todolist_title, 'access': full_dict['access'], 'tasks': data_dict}
         )
         if bypassed_tasks:
             await interaction.followup.send(
@@ -208,7 +223,6 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         updated_todolist_view = TodolistViewMenu()
         updated_todolist_view.refresh_view(data_dict, self.todolist_title, str(interaction.guild_id), self.embed_uuid)
         await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
-        await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
 
 
 class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], template=r'todolist:button:[A-Z]'):
@@ -224,7 +238,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         self.emoji = list(EMOTES_CUSTOM_ID.keys())[list(EMOTES_CUSTOM_ID.values()).index(f'TodoButton{custom_id[-1]}')]
 
     @classmethod
-    async def from_custom_id(cls, interaction: discord.Interaction, item: discord.ui.Button, match: re.Match[str]):
+    async def from_custom_id(cls, _interaction: discord.Interaction, _item: discord.ui.Button, match: re.Match[str]):
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction):
@@ -237,10 +251,13 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             )
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
-            await interaction.response.send_message('> Unexpected Error (`TodolistButtonCheckmark.callback`)')
+            await interaction.followup.send('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)
             return
-        if 'roles' in full_dict['access'].keys() and 'members' in full_dict['access'].keys() and not has_permissions(interaction, full_dict['access']):
-            await interaction.response.send_message('> Forbidden', ephemeral=True)
+        if (
+                'roles' in full_dict['access'].keys() and 'members' in full_dict['access'].keys()
+                and not has_permissions(interaction, full_dict['access'])
+        ):
+            await interaction.followup.send('> You do not have the permission to click on this button', ephemeral=True)
             return
         self.data_list = priority_dict_to_list(full_dict['tasks'])
         self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(self.emoji))

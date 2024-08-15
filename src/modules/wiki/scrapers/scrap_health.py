@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup, Tag
-from typing import Optional, Tuple
+from typing import Optional
 from src.utils.oisol_enums import Faction
 
 
@@ -12,9 +12,9 @@ def get_indexes(tbody: Tag) -> dict:
 
 
 def get_index_from_name(headers_indexes: dict) -> int:
-    for name, age in headers_indexes.items():
-        if age == 'Name':
-            return name
+    for index, value in headers_indexes.items():
+        if value == 'Name':
+            return index
 
 
 def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]:
@@ -27,13 +27,11 @@ def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]
 
 
 def extract_td_data(td: Tag) -> dict | str:
-    # if not td.findChildren():
-
     if td.findChild('img'):
         return f"https://foxhole.wiki.gg{td.findChild('img')['src']}"
     if len(td.findChildren('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
-        return {'disabled': hmtk[0], 'kill': hmtk[1]}
+        return {'Disabled': hmtk[0], 'Kill': hmtk[1]}
     if len(td.findChildren('hr')) == 2:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'S': hmtk[0], 'M': hmtk[1], 'L': hmtk[2]}
@@ -64,17 +62,32 @@ def scrap_health(url: str, name: str) -> dict:
     for i, td in enumerate(row.select('td')):
         wiki_response_dict[header_indexes[i]] = extract_td_data(td)
 
-    for k in ['7.62mm', '7.92mm', '9mm', 'A3 Harpa Fragmentation Grenade', 'Flamethrower Ammo', 'Flame Ammo', 'Shrapnel Mortar Shell', 'Bomastone Grenade']:
+    # List of ammo type that will never be used for any entry
+    for k in [
+        '7.62mm',
+        '7.92mm',
+        '9mm',
+        'A3 Harpa Fragmentation Grenade',
+        'Flamethrower Ammo',
+        'Flame Ammo',
+        'Shrapnel Mortar Shell',
+        'Bomastone Grenade'
+    ]:
         wiki_response_dict.pop(k, None)
+
+    # In case we are checking for a building but 2 values were retrieved in HP
+    if 'Class' not in wiki_response_dict.keys() and isinstance(wiki_response_dict['HP'], dict):
+        wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
+        wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
 
     return wiki_response_dict
 
 
-def scrap_main_picture(url: str, name: str) -> Optional[Tuple[str, int]]:
+def scrap_main_picture(url: str, name: str) -> tuple[Optional[str], Optional[int]]:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
-        return None
+        return None, None
 
     # Whole page soup data
     soup = BeautifulSoup(response.content, features='lxml')

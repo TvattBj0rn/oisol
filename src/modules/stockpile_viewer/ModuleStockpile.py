@@ -18,11 +18,11 @@ class ModuleStockpiles(commands.Cog):
         self.csv_keys = MODULES_CSV_KEYS['stockpiles']
         self.CsvHandler = CsvHandler(self.csv_keys)
 
-    async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+    async def region_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         regions_cities = []
-        for k, v in REGIONS_STOCKPILES.items():
-            for vv in v:
-                regions_cities.append(f'{k} | {vv[0]}')
+        for region_name, subregion_tuples in REGIONS_STOCKPILES.items():
+            for subregion_name, *_ in subregion_tuples:
+                regions_cities.append(f'{region_name} | {subregion_name}')
 
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
@@ -41,7 +41,7 @@ class ModuleStockpiles(commands.Cog):
 
         return [app_commands.Choice(name=city, value=city) for city in search_results]
 
-    @app_commands.command(name='stockpile_view')
+    @app_commands.command(name='stockpile-view')
     async def stockpile_view(self, interaction: discord.Interaction):
         print(f'> stockpile_view command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer()
@@ -55,7 +55,7 @@ class ModuleStockpiles(commands.Cog):
         stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         await interaction.followup.send(embed=stockpiles_embed)
 
-    @app_commands.command(name='stockpile_create')
+    @app_commands.command(name='stockpile-create')
     @app_commands.autocomplete(localisation=region_autocomplete)
     async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str):
         print(f'> stockpile_create command by {interaction.user.name} on {interaction.guild.name}')
@@ -93,7 +93,7 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.response.send_message('> Stockpile was properly generated', ephemeral=True)
 
-    @app_commands.command(name='stockpile_delete')
+    @app_commands.command(name='stockpile-delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
         print(f'> stockpile_delete command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
@@ -112,7 +112,7 @@ class ModuleStockpiles(commands.Cog):
             ephemeral=True
         )
 
-    @app_commands.command(name='stockpile_clear')
+    @app_commands.command(name='stockpile-clear')
     async def stockpile_clear(self, interaction: discord.Interaction):
         print(f'> stockpile_clear command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)

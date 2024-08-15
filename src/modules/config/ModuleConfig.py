@@ -4,7 +4,7 @@ import os
 from discord import app_commands
 from discord.ext import commands
 from src.utils.CsvHandler import CsvHandler
-from src.modules.config.ConfigInterfaces import ModalConfig, ModalRegister, SelectLanguageView, ConfigViewMenu
+from src.modules.config.ConfigInterfaces import ConfigViewMenu
 from src.utils.oisol_enums import DataFilesPath, Language, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 
@@ -14,7 +14,7 @@ class ModuleConfig(commands.Cog):
         self.oisol = bot
         self.csv_keys = MODULES_CSV_KEYS
 
-    @app_commands.command(name='oisol_init', description='Command to set the default config (and reset)')
+    @app_commands.command(name='oisol-init', description='Command to set the default config (and reset)')
     async def oisol_init(self, interaction: discord.Interaction):
         print(f'> oisol_init command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))

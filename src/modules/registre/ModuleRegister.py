@@ -1,12 +1,9 @@
 import configparser
 import discord
 import os
-import pathlib
-import time
 from discord import app_commands
-from discord.ext import commands, tasks
-from src.utils.functions import update_discord_interface, safeguarded_nickname
-from src.utils.oisol_enums import DataFilesPath, Modules
+from discord.ext import commands
+from src.utils.oisol_enums import DataFilesPath
 from src.utils.resources import MODULES_CSV_KEYS
 from src.utils.CsvHandler import CsvHandler
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
@@ -36,9 +33,11 @@ class ModuleRegister(commands.Cog):
             return
 
         register_view_instance = RegisterViewMenu()
-        register_view_instance.refresh_register_embed(str(interaction.guild.id))
+        register_view_instance.refresh_register_embed(str(interaction.guild_id))
+
         await interaction.followup.send(view=register_view_instance, embed=register_view_instance.embeds[0])
         sent_msg = await interaction.original_response()
+
         config['register']['message_id'] = str(sent_msg.id)
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)

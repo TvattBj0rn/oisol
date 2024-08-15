@@ -2,6 +2,7 @@ import discord
 import uuid
 from discord import app_commands
 from discord.ext import commands
+from typing import Optional
 from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
 
 
@@ -9,21 +10,21 @@ class ModuleTodolist(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
 
-    @app_commands.command(name='todolist_generate')
+    @app_commands.command(name='todolist-generate')
     async def todolist_generate(
             self,
             interaction: discord.Interaction,
             title: str,
-            role_1: discord.Role = None,
-            role_2: discord.Role = None,
-            role_3: discord.Role = None,
-            role_4: discord.Role = None,
-            role_5: discord.Role = None,
-            member_1: discord.Member = None,
-            member_2: discord.Member = None,
-            member_3: discord.Member = None,
-            member_4: discord.Member = None,
-            member_5: discord.Member = None,
+            role_1: Optional[discord.Role] = None,
+            role_2: Optional[discord.Role] = None,
+            role_3: Optional[discord.Role] = None,
+            role_4: Optional[discord.Role] = None,
+            role_5: Optional[discord.Role] = None,
+            member_1: Optional[discord.Member] = None,
+            member_2: Optional[discord.Member] = None,
+            member_3: Optional[discord.Member] = None,
+            member_4: Optional[discord.Member] = None,
+            member_5: Optional[discord.Member] = None,
 
     ):
         print(f'> todolist_generate command by {interaction.user.name} on {interaction.guild.name}')
@@ -54,7 +55,7 @@ class ModuleTodolist(commands.Cog):
 
         todolist_view = TodolistViewMenu()
         todolist_view.refresh_view(
-            {'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
+            {'title': title, 'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
             title,
             str(interaction.guild_id),
             uuid.uuid4().hex

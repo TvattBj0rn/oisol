@@ -1,6 +1,6 @@
 import os
 import csv
-from src.utils.oisol_enums import Modules, PriorityType
+from src.utils.oisol_enums import Modules
 
 
 class CsvHandler:
@@ -36,7 +36,7 @@ class CsvHandler:
             for row in new_row_list:
                 writer.writerow(row)
 
-    def csv_get_all_data(self, file_path: str, module: Modules) -> [dict]:
+    def csv_get_all_data(self, file_path: str) -> [dict]:
         data = []
 
         with open(file_path, 'r') as csv_file:
