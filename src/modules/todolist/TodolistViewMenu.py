@@ -203,9 +203,9 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
             return
 
         for priority, input_field in [
-            (PriorityType.HAUTE.value, self.high_priority),
-            (PriorityType.MOYENNE.value, self.medium_priority),
-            (PriorityType.BASSE.value, self.low_priority)
+            (PriorityType.HIGH.value, self.high_priority),
+            (PriorityType.MEDIUM.value, self.medium_priority),
+            (PriorityType.LOW.value, self.low_priority)
         ]:
             for task in input_field.value.split(','):
                 if task:
@@ -223,7 +223,6 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         updated_todolist_view = TodolistViewMenu()
         updated_todolist_view.refresh_view(data_dict, self.todolist_title, str(interaction.guild_id), self.embed_uuid)
         await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
-        await interaction.followup.send('> La todolist a été mise à jour', ephemeral=True)
 
 
 class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], template=r'todolist:button:[A-Z]'):

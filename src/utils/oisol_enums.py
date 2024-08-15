@@ -45,6 +45,6 @@ class Modules(Enum):
 
 
 class PriorityType(Enum):
-    HAUTE = 'high'
-    MOYENNE = 'medium'
-    BASSE = 'low'
+    HIGH = 'high'
+    MEDIUM = 'medium'
+    LOW = 'low'
