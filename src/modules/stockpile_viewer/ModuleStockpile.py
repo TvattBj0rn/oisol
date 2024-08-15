@@ -20,9 +20,9 @@ class ModuleStockpiles(commands.Cog):
 
     async def region_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         regions_cities = []
-        for k, v in REGIONS_STOCKPILES.items():
-            for vv in v:
-                regions_cities.append(f'{k} | {vv[0]}')
+        for region_name, subregion_tuples in REGIONS_STOCKPILES.items():
+            for subregion_name, *_ in subregion_tuples:
+                regions_cities.append(f'{region_name} | {subregion_name}')
 
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
