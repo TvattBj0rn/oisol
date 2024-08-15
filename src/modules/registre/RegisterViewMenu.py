@@ -67,7 +67,7 @@ class RegisterViewMenu(discord.ui.View):
             self.current_page_index = len(self.embeds) - 1
         else:
             self.current_page_index -= 1
-        self.refresh_register_embed(str(interaction.guild.id))
+        self.refresh_register_embed(str(interaction.guild_id))
 
         await interaction.message.edit(view=self, embed=self.get_current_embed())
         await interaction.response.defer()
@@ -78,7 +78,7 @@ class RegisterViewMenu(discord.ui.View):
             self.current_page_index = 0
         else:
             self.current_page_index += 1
-        self.refresh_register_embed(str(interaction.guild.id))
+        self.refresh_register_embed(str(interaction.guild_id))
 
         await interaction.message.edit(view=self, embed=self.get_current_embed())
         await interaction.response.defer()

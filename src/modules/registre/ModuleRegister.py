@@ -33,7 +33,7 @@ class ModuleRegister(commands.Cog):
             return
 
         register_view_instance = RegisterViewMenu()
-        register_view_instance.refresh_register_embed(str(interaction.guild.id))
+        register_view_instance.refresh_register_embed(str(interaction.guild_id))
 
         await interaction.followup.send(view=register_view_instance, embed=register_view_instance.embeds[0])
         sent_msg = await interaction.original_response()
