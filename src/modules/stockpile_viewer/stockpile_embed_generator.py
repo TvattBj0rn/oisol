@@ -56,8 +56,9 @@ def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: li
                             subregion_icon = subregion_tuple[2]
                         case 'COLONIAL':
                             subregion_icon = subregion_tuple[3]
-                        case 'NEUTRAL' | _:
+                        case 'NEUTRAL' | _:  # Neutral is specified for readability
                             subregion_icon = subregion_tuple[1]
+                    break
 
             embed_fields.append(
                 {
