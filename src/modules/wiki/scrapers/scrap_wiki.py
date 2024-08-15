@@ -73,7 +73,7 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
         data_dict['color'] = Faction.NEUTRAL.value
 
     for infobox_attribute in infobox_soup.select('section > div'):
-        attribute_title = infobox_attribute.select('h3')[0].get_text().strip()
+        attribute_title = infobox_attribute.select('h3')[0].get_text(strip=True)
         data_dict[attribute_title] = handle_specific_attribute(infobox_attribute.select_one('div[class^="pi-data-value pi-font"]'), attribute_title)
 
     return data_dict
