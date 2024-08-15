@@ -1,5 +1,4 @@
 import configparser
-
 import discord
 import os
 import pathlib
