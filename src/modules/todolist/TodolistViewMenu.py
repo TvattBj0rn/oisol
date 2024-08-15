@@ -130,9 +130,9 @@ class TodolistViewMenu(discord.ui.View):
             ] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task['content']}\n"
 
         for priority, tasks in [
-            ('🔴 **|** Priorité Haute', enumerated_tasks['high']),
-            ('🟡 **|** Priorité Moyenne', enumerated_tasks['medium']),
-            ('🟢 **|** Priorité Basse', enumerated_tasks['low'])
+            ('🔴 **|** High Priority', enumerated_tasks['high']),
+            ('🟡 **|** Medium Priority', enumerated_tasks['medium']),
+            ('🟢 **|** Low Priority', enumerated_tasks['low'])
         ]:
             self.embed.add_field(
                 name=priority,
@@ -174,19 +174,19 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         self.todolist_title = title
 
     high_priority = discord.ui.TextInput(
-        label='🔴 | Priorité Haute',
+        label='🔴 | High Priority',
         style=discord.TextStyle.long,
         required=False,
         placeholder='Use `,` for more than one item ...'
     )
     medium_priority = discord.ui.TextInput(
-        label='🟡 | Priorité Moyenne',
+        label='🟡 | Medium Priority',
         style=discord.TextStyle.long,
         required=False,
         placeholder='Use `,` for more than one item ...'
     )
     low_priority = discord.ui.TextInput(
-        label='🟢 | Priorité Basse',
+        label='🟢 | Low Priority',
         style=discord.TextStyle.long,
         required=False,
         placeholder='Use `,` for more than one item ...'
