@@ -212,7 +212,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
                     data_dict[priority].append(task)
 
         data_dict, bypassed_tasks = refit_data(
-            {'access': full_dict['access'], 'tasks': data_dict}
+            {'title': self.todolist_title, 'access': full_dict['access'], 'tasks': data_dict}
         )
         if bypassed_tasks:
             await interaction.followup.send(
