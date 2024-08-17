@@ -96,7 +96,7 @@ def scrap_wiki(url: str, name: str) -> dict:
     infoboxs_soup = soup.select('aside[class^="portable-infobox noexcerpt pi-background"]')
     for infobox in infoboxs_soup:
         wiki_response_dict = generate_infobox_data(infobox)
-        if name == wiki_response_dict['title'] or name == f"{wiki_response_dict['title']} (Tier 1)":
+        if name == wiki_response_dict['title'] or name == f"{wiki_response_dict['title']} (Tier 1)" or name == f'{wiki_response_dict['title']} (Battleship)':
             wiki_response_dict['description'] = entry_desc
             return wiki_response_dict
 

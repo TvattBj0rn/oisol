@@ -22,7 +22,7 @@ def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]
         if tr.findChild('th'):
             continue
         name_index = get_index_from_name(headers_indexes)
-        if tr.select('td')[name_index].get_text(strip=True) == name:
+        if tr.select('td')[name_index].get_text(strip=True) in [name, name.removesuffix(' (Battleship)')]:
             return tr
 
 
@@ -95,6 +95,8 @@ def scrap_main_picture(url: str, name: str) -> tuple[Optional[str], Optional[int
 
     # In case we have more than one infobox on the same page, we want to retrieve the correct one
     for infobox in soup.select('aside'):
+        if not infobox.has_attr('h2'):
+            continue
         if infobox.select_one('h2').get_text() == name:
             return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
 
