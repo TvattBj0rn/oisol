@@ -40,7 +40,6 @@ class Oisol(commands.Bot):
                 os.path.join(oisol_server_home_path, server_folder, 'config.ini')
             )
             self.config_servers[server_folder] = server_config
-        print(self.config_servers)
 
     async def on_ready(self):
         await self.add_cog(ModuleConfig(self))
