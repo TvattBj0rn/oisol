@@ -9,7 +9,7 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> d
         case 'Resistance(damage reduction)':
             attr_dict['type'] = f"\n{infobox_attribute_soup.get_text(strip=True).split('-')[0]}"
             for damage_reduction in infobox_attribute_soup.select('code'):
-                attr_dict[damage_reduction.find('a')['title']] = damage_reduction.get_text(strip=True)
+                attr_dict[damage_reduction.find('a')['title']] = f' | {damage_reduction.get_text(strip=True)}'
             return attr_dict
         case 'Subsystems disable chance':
             disable_chances = [f'{x}%' for x in infobox_attribute_soup.get_text(strip=True).split('%') if x]
@@ -73,7 +73,7 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
         data_dict['color'] = Faction.NEUTRAL.value
 
     for infobox_attribute in infobox_soup.select('section > div'):
-        attribute_title = infobox_attribute.select('h3')[0].get_text(strip=True)
+        attribute_title = infobox_attribute.select('h3')[0].get_text()
         data_dict[attribute_title] = handle_specific_attribute(infobox_attribute.select_one('div[class^="pi-data-value pi-font"]'), attribute_title)
 
     return data_dict
