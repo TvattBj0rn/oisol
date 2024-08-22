@@ -92,10 +92,8 @@ class ModuleWiki(commands.Cog):
         """
         # Default search values, before any input in the search bar
         if not current:
-            return [
-                app_commands.Choice(name=wiki_entry['name'], value=wiki_entry['url'])
-                for wiki_entry in random.choices(entries, k=5)
-            ]
+            return [(wiki_entry['name'], wiki_entry['url']) for wiki_entry in random.choices(entries, k=5)]
+
         pattern = re.compile('[\\W_]+')
         current = pattern.sub(' ', current).lower().split()
         search_results = []
@@ -112,10 +110,7 @@ class ModuleWiki(commands.Cog):
             key=lambda x: x[2],
             reverse=True
         )[:25]
-        return [
-            app_commands.Choice(name=entry_result[0], value=entry_result[1])
-            for entry_result in search_results
-        ]
+        return [(entry_result[0], entry_result[1]) for entry_result in search_results]
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
         embed_fields = []
@@ -150,14 +145,7 @@ class ModuleWiki(commands.Cog):
             }
         )
 
-    async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list:
-        return self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
-
-    async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list:
-        return self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
-
     @app_commands.command(name='wiki', description='Info wiki')
-    @app_commands.autocomplete(wiki_request=wiki_autocomplete)
     async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: bool = False):
         print(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
@@ -175,8 +163,12 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 
+    @wiki.autocomplete('wiki_request')
+    async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
+        choice_list = self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
+        return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
+
     @app_commands.command(name='health', description='Structures / Vehicles health')
-    @app_commands.autocomplete(health_request=health_autocomplete)
     async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: bool = False):
         print(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
 
@@ -214,3 +206,8 @@ class ModuleWiki(commands.Cog):
             infobox_tuple[1]
         )
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
+
+    @entities_health.autocomplete('health_request')
+    async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
+        choice_list = self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
+        return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
