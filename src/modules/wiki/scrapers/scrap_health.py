@@ -76,7 +76,11 @@ def scrap_health(url: str, name: str) -> dict:
         wiki_response_dict.pop(k, None)
 
     # In case we are checking for a building but 2 values were retrieved in HP
-    if 'Class' not in wiki_response_dict.keys() and isinstance(wiki_response_dict['HP'], dict):
+    if (
+            'Class' not in wiki_response_dict.keys()
+            and isinstance(wiki_response_dict['HP'], dict)
+            and len(wiki_response_dict['HP'].keys()) == 2
+    ):
         wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
         wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
 
