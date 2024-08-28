@@ -153,7 +153,6 @@ class TodolistViewMenu(discord.ui.View):
                 )
             )['access']
         except OSError:
-            print(f'Error opening todolist file on {interaction.guild.name} for {self.embed_uuid}')
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
         if (

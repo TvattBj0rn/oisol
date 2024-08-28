@@ -20,11 +20,9 @@ async def update_discord_interface(
         if not message.embeds:
             continue
         message_embed = discord.Embed.to_dict(message.embeds[0])
-        if message_embed['footer']['text'] == message_id:
+        if 'footer' in message_embed.keys() and message_embed['footer']['text'] == message_id:
             await message.edit(view=view, embed=view.get_current_embed()) if view else await message.edit(embed=embed)
             return
-        else:
-            print(message_embed['footer']['text'], message_id)
     await channel.send(view=view) if view else await channel.send(embed=embed)
 
 

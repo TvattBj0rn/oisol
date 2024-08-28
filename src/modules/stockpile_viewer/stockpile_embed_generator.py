@@ -2,6 +2,9 @@ import configparser
 import discord
 import os
 import pathlib
+
+from more_itertools import consume
+
 from src.utils.CsvHandler import CsvHandler
 from src.utils.oisol_enums import Faction, EmbedIds, DataFilesPath
 from src.utils.resources import REGIONS_STOCKPILES
@@ -20,6 +23,16 @@ def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']] = [stockpile]
             else:
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']].append(stockpile)
+
+    # Sort subregion stockpiles by name
+    consume(
+        consume(
+            sorted_stockpiles[region_name][subregion_name].sort(key=lambda s: s['name'])
+            for subregion_name in subregion.keys()
+            if len(sorted_stockpiles[region_name][subregion_name]) > 1
+        )
+        for region_name, subregion in sorted_stockpiles.items()
+    )
 
     sorted_regions_list = list(sorted_stockpiles.keys())
     sorted_regions_list.sort()

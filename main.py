@@ -28,6 +28,18 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands')
         )
+        self.config_servers = dict()
+
+    def load_configs(self):
+        oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
+        for server_folder in os.listdir(oisol_server_home_path):
+            if not server_folder.isdigit():
+                continue
+            server_config = configparser.ConfigParser()
+            server_config.read(
+                os.path.join(oisol_server_home_path, server_folder, 'config.ini')
+            )
+            self.config_servers[server_folder] = server_config
 
     async def on_ready(self):
         await self.add_cog(ModuleConfig(self))
@@ -42,6 +54,7 @@ class Oisol(commands.Bot):
         except Exception as e:
             print(e)
 
+        self.load_configs()
         print(f'Logged in as {self.user} (ID:{self.user.id})')
 
     async def setup_hook(self):
