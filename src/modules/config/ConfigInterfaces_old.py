@@ -57,13 +57,13 @@ class ConfigViewMenu(discord.ui.View):
 
 
 class SelectLanguage(discord.ui.Select):
-    def __init__(self, message_id: int):
+    def __init__(self):
         options = [
             discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
             discord.SelectOption(label='English', emoji='<:ukus:1205153501823377438>', value=Language.EN.name),
         ]
         super().__init__(placeholder='Choose a language', options=options)
-        self.message_id = message_id
+        # self.message_id = message_id
 
     async def callback(self, interaction: discord.Interaction):
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
@@ -74,17 +74,17 @@ class SelectLanguage(discord.ui.Select):
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
 
-        config_view = ConfigViewMenu()
-        await config_view.update_config_embed(interaction)
-        config_original_message = await interaction.channel.fetch_message(self.message_id)
-        await config_original_message.edit(embed=config_view.embed)
+        # config_view = ConfigViewMenu()
+        # await config_view.update_config_embed(interaction)
+        # config_original_message = await interaction.channel.fetch_message(self.message_id)
+        # await config_original_message.edit(embed=config_view.embed)
         await interaction.response.edit_message(content='> Language was correctly updated', delete_after=3, view=None)
 
 
 class SelectLanguageView(discord.ui.View):
-    def __init__(self, *, timeout=None, message_id: int):
+    def __init__(self, *, timeout=None):
         super().__init__(timeout=timeout)
-        self.add_item(SelectLanguage(message_id))
+        self.add_item(SelectLanguage())
 
 
 class ModalConfig(discord.ui.Modal, title='Regiment configuration'):

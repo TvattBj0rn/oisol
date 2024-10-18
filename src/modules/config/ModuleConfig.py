@@ -4,9 +4,14 @@ import os
 from discord import app_commands
 from discord.ext import commands
 from src.utils.CsvHandler import CsvHandler
-from src.modules.config.ConfigInterfaces import ConfigViewMenu
+from src.modules.config.ConfigInterfaces_old import ConfigViewMenu
+from src.modules.config.ConfigInterfaces import SelectLanguageView
 from src.utils.oisol_enums import DataFilesPath, Language, Faction
 from src.utils.resources import MODULES_CSV_KEYS
+
+
+def update_config():
+    pass
 
 
 class ModuleConfig(commands.Cog):
@@ -50,7 +55,7 @@ class ModuleConfig(commands.Cog):
                 config.write(configfile)
         await interaction.response.send_message('> Default configuration has been set', ephemeral=True, delete_after=3)
 
-    @app_commands.command(name='config')
+    @app_commands.command(name='config', description='Display current config for the server')
     async def config(self, interaction: discord.Interaction):
         print(f'> config command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
@@ -90,3 +95,38 @@ class ModuleConfig(commands.Cog):
             ephemeral=True,
             delete_after=3
         )
+
+    @app_commands.command(name='config-language', description='Set the language the bot uses for the server')
+    async def config_language(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            view=SelectLanguageView(),
+            ephemeral=True
+        )
+
+    @app_commands.command(name='config-name', description='Set the name of the regiment / coalition / group using the bot')
+    async def config_name(self, interaction: discord.Interaction, name: str):
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        config['regiment'] = {}
+        config['regiment']['name'] = str(name)
+
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+        await interaction.response.send_message('> Name was updated')
+
+    @app_commands.command(name='config-tag', description='Set the tag of the regiment / coalition / group using the bot')
+    async def config_tag(self, interaction: discord.Interaction, tag: str):
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        config['regiment'] = {}
+        config['regiment']['tag'] = str(tag)
+
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+        await interaction.response.send_message('> Tag was updated')
+
+    @app_commands.command(name='config-faction', description='Set the faction of the regiment / coalition / group using the bot, for interfaces color purposes')
+    async def config_faction(self, interaction: discord.Interaction, faction: Faction):
+        pass
