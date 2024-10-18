@@ -159,6 +159,10 @@ class ModuleWiki(commands.Cog):
 
         entry_data = scrap_wiki(wiki_request, wiki_entry_complete_name)
         entry_data['url'] = wiki_request
+
+        if 'title' not in entry_data.keys():
+            await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
+
         entry_embed = self.generate_wiki_embed(entry_data)
 
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
