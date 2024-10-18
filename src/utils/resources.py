@@ -566,9 +566,9 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'mounted fissura gd i grenade launcher colonial'
     },
     {
-        'name': "Buckhorn CCQ-18 Bayonet",
+        'name': "Buckhorn CCQ-18",
         'url': "https://foxhole.wiki.gg/wiki/Bayonet",
-        'keywords': 'buckhorn ccq 18 bayonet colonial warden'
+        'keywords': 'buckhorn bayonet colonial warden'
     },
     {
         'name': "Fists",
@@ -1792,7 +1792,7 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'dragons teeth'
     },
     {
-        'name': "Foxhole",
+        'name': "Dug Foxhole",
         'url': "https://foxhole.wiki.gg/wiki/Dug_Foxhole",
         'keywords': 'dug foxhole'
     },
@@ -2147,7 +2147,7 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'deployed listening kit lk'
     },
     {
-        'name': "Deployed Tripod",
+        'name': "Tripod",
         'url': "https://foxhole.wiki.gg/wiki/Tripod",
         'keywords': 'deployed tripod'
     },
@@ -2258,32 +2258,32 @@ STRUCTURES_WIKI_ENTRIES = [
     },
     {
         'name': "Railway Track",
-        'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Standard-0",
+        'url': "https://foxhole.wiki.gg/wiki/Railway_Track",
         'keywords': 'large railway track'
     },
     {
         'name': "Railway Track (Biarc)",
-        'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Biarc-0",
+        'url': "https://foxhole.wiki.gg/wiki/Railway_Track_(Biarc)",
         'keywords': 'large railway track'
     },
     {
         'name': "Railway Track (Foundation)",
-        'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Foundation-0",
+        'url': "https://foxhole.wiki.gg/wiki/Railway_Track_(Foundation)",
         'keywords': 'large railway track'
     },
     {
         'name': "Small Gauge Railway Track",
-        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Standard-0",
+        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track",
         'keywords': 'small gauge railway track'
     },
     {
         'name': "Small Gauge Railway Track (Biarc)",
-        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Biarc-0",
+        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track_(Biarc)",
         'keywords': 'small gauge railway track'
     },
     {
         'name': "Small Gauge Railway Track (Foundation)",
-        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Foundation-0",
+        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track_(Foundation)",
         'keywords': 'small gauge railway track'
     },
     {
