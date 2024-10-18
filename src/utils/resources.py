@@ -2049,7 +2049,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Stationary Harvester (Coal)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Coal)",
-        'keywords': 'stationary harvester'
+        'keywords': 'stationary harvester coal'
     },
     {
         'name': "Stationary Harvester (Components)",
@@ -2109,7 +2109,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Stationary Crane",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Crane",
-        'keywords': 'stationnary crane'
+        'keywords': 'stationary crane'
     },
     {
         'name': "A0E-9 Rocket",
@@ -2119,7 +2119,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "BMS Foreman Stacker",
         'url': "https://foxhole.wiki.gg/wiki/Facility_Crane",
-        'keywords': 'bms foreman stacker facilty crane'
+        'keywords': 'bms foreman stacker facility crane'
     },
     {
         'name': "Catwalk Bridge",
@@ -2229,17 +2229,17 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Pipeline (Overhead)",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_(Overhead)",
-        'keywords': 'pipeline'
+        'keywords': 'pipeline overhead'
     },
     {
         'name': "Pipeline (Underground)",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_(Underground)",
-        'keywords': 'pipeline'
+        'keywords': 'pipeline underground'
     },
     {
         'name': "Pipeline Valve",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_Valve",
-        'keywords': 'pipeline'
+        'keywords': 'pipeline valve'
     },
     {
         'name': "Power Pole",
