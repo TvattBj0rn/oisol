@@ -725,6 +725,81 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Depth_Charge",
         'keywords': 'model 7 evie depth charge'
     },
+    {
+        'name': "Herne QMW 1a Scourge Hunter",
+        'url': "https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter",
+        'keywords': 'herne qmw 1a scourge hunter mecha'
+    },
+    {
+        'name': "Centurion MV-2",
+        'url': "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
+        'keywords': 'centurion mv2 mecha'
+    },
+    {
+        'name': "Oil Field",
+        'url': "https://foxhole.wiki.gg/wiki/Oil_Field",
+        'keywords': 'oil field'
+    },
+    {
+        'name': "Coal Field",
+        'url': "https://foxhole.wiki.gg/wiki/Coal_Field",
+        'keywords': 'coal field'
+    },
+    {
+        'name': "Salvage Field",
+        'url': "https://foxhole.wiki.gg/wiki/Salvage_Field",
+        'keywords': 'salvage scrap field'
+    },
+    {
+        'name': "Sulfur Field",
+        'url': "https://foxhole.wiki.gg/wiki/Sulfur_Field",
+        'keywords': 'sulfur field'
+    },
+    {
+        'name': "Component Field",
+        'url': "https://foxhole.wiki.gg/wiki/Component_Field",
+        'keywords': 'component field'
+    },
+    {
+        'name': "A0E-9 Rocket Booster",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
+        'keywords': 'nuke rocket booster'
+    },
+    {
+        'name': "A0E-9 Rocket Body",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body",
+        'keywords': 'nuke rocket body'
+    },
+    {
+        'name': "A0E-9 Rocket Warhead",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead",
+        'keywords': 'nuke rocket warhead'
+    },
+    {
+        'name': "A0E-9 Rocket Platform",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform",
+        'keywords': 'a0e9 rocket nuke platform'
+    },
+    {
+        'name': "Diesel Power Plant",
+        'url': "https://foxhole.wiki.gg/wiki/Diesel_Power_Plant",
+        'keywords': 'diesel power plant'
+    },
+    {
+        'name': "Power Station",
+        'url': "https://foxhole.wiki.gg/wiki/Power_Station",
+        'keywords': 'power station'
+    },
+    {
+        'name': "Deployed Listening Kit",
+        'url': "https://foxhole.wiki.gg/wiki/Listening_Kit",
+        'keywords': 'deployed listening kit lk'
+    },
+    {
+        'name': "Tripod",
+        'url': "https://foxhole.wiki.gg/wiki/Tripod",
+        'keywords': 'tripod'
+    },
 ]
 
 VEHICLES_WIKI_ENTRIES = [
@@ -1433,16 +1508,6 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Repurposed_Truck",
         'keywords': 'repurposed truck relic vehicle'
     },
-    {
-        'name': "Herne QMW 1a Scourge Hunter",
-        'url': "https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter",
-        'keywords': 'herne qmw 1a scourge hunter mecha'
-    },
-    {
-        'name': "Centurion MV-2",
-        'url': "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
-        'keywords': 'centurion mv2 mecha'
-    },
 ]
 
 STRUCTURES_WIKI_ENTRIES = [
@@ -1927,11 +1992,6 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'shipyard'
     },
     {
-        'name': "A0E-9 Rocket Platform",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform",
-        'keywords': 'a0e9 rocket nuke platform'
-    },
-    {
         'name': "Ammunition Factory",
         'url': "https://foxhole.wiki.gg/wiki/Ammunition_Factory",
         'keywords': 'ammunition ammo factory ammo'
@@ -1945,11 +2005,6 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Concrete Mixer",
         'url': "https://foxhole.wiki.gg/wiki/Concrete_Mixer",
         'keywords': 'concrete mixer'
-    },
-    {
-        'name': "Diesel Power Plant",
-        'url': "https://foxhole.wiki.gg/wiki/Diesel_Power_Plant",
-        'keywords': 'diesel power plant'
     },
     {
         'name': "Dry Dock",
@@ -1987,39 +2042,9 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'oil refinery'
     },
     {
-        'name': "Power Station",
-        'url': "https://foxhole.wiki.gg/wiki/Power_Station",
-        'keywords': 'power station'
-    },
-    {
         'name': "Small Assembly Station",
         'url': "https://foxhole.wiki.gg/wiki/Small_Assembly_Station",
         'keywords': 'small assembly station upgrade pad'
-    },
-    {
-        'name': "Oil Field",
-        'url': "https://foxhole.wiki.gg/wiki/Oil_Field",
-        'keywords': 'oil field'
-    },
-    {
-        'name': "Coal Field",
-        'url': "https://foxhole.wiki.gg/wiki/Coal_Field",
-        'keywords': 'coal field'
-    },
-    {
-        'name': "Salvage Field",
-        'url': "https://foxhole.wiki.gg/wiki/Salvage_Field",
-        'keywords': 'salvage scrap field'
-    },
-    {
-        'name': "Sulfur Field",
-        'url': "https://foxhole.wiki.gg/wiki/Sulfur_Field",
-        'keywords': 'sulfur field'
-    },
-    {
-        'name': "Component Field",
-        'url': "https://foxhole.wiki.gg/wiki/Component_Field",
-        'keywords': 'component field'
     },
     {
         'name': "Salvage Mine",
@@ -2140,16 +2165,6 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Crane Railway Track",
         'url': "https://foxhole.wiki.gg/wiki/Crane_Railway_Track",
         'keywords': 'crane railway track'
-    },
-    {
-        'name': "Deployed Listening Kit",
-        'url': "https://foxhole.wiki.gg/wiki/Listening_Kit",
-        'keywords': 'deployed listening kit lk'
-    },
-    {
-        'name': "Tripod",
-        'url': "https://foxhole.wiki.gg/wiki/Tripod",
-        'keywords': 'deployed tripod'
     },
     {
         'name': "Engine Room (Tier 2)",
@@ -2287,19 +2302,14 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'small gauge railway track'
     },
     {
-        'name': "A0E-9 Rocket Booster",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
-        'keywords': 'nuke rocket booster'
+        'name': "Deployed Tripod",
+        'url': "https://foxhole.wiki.gg/wiki/Deployed_Tripod",
+        'keywords': 'deployed tripod'
     },
     {
-        'name': "A0E-9 Rocket Body",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body",
-        'keywords': 'nuke rocket body'
-    },
-    {
-        'name': "A0E-9 Rocket Warhead",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead",
-        'keywords': 'nuke rocket warhead'
+        'name': "Field Range",
+        'url': "https://foxhole.wiki.gg/wiki/Field_Range",
+        'keywords': 'field range'
     },
 ]
 
