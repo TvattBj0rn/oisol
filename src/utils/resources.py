@@ -2054,17 +2054,17 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Stationary Harvester (Components)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Components)",
-        'keywords': 'stationary harvester'
+        'keywords': 'stationary harvester components'
     },
     {
-        'name': "Stationary Harvester (Scrap)",
-        'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Scrap)",
-        'keywords': 'stationary harvester'
+        'name': "Stationary Harvester (Salvage)",
+        'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Salvage)",
+        'keywords': 'stationary harvester salvage'
     },
     {
         'name': "Stationary Harvester (Sulfur)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Sulfur)",
-        'keywords': 'stationary harvester'
+        'keywords': 'stationary harvester sulfur'
     },
     {
         'name': "Water Pump",
@@ -2072,33 +2072,28 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'water pump'
     },
     {
-        'name': "Wooden Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Wooden_Bridge-0",
-        'keywords': 'wooden bridge'
-    },
-    {
         'name': "Stone Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Stone_Bridge-0",
+        'url': "https://foxhole.wiki.gg/wiki/Stone_Bridge",
         'keywords': 'stone bridge'
     },
     {
         'name': "Two Tier Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Two_Tier_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Two_Tier_Bridge",
         'keywords': 'two tier bridge'
     },
     {
         'name': "Double Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Double_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Double_Bridge",
         'keywords': 'double bridge'
     },
     {
         'name': "Long Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Long_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Long_Bridge",
         'keywords': 'long bridge'
     },
     {
         'name': "Train Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Train_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Train_Bridge",
         'keywords': 'train bridge'
     },
     {
