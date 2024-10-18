@@ -139,7 +139,7 @@ class Oisol(commands.Bot):
             return
         # In some cases, there might be an update of any members roles before the init command is executed.
         # As such this ensures there are no errors on the bot side when this case happens.
-        if not config.has_section('register') or not config['register']['recruit_id']:
+        if not config.has_section('register') or not config.has_option('register', 'recruit_id'):
             return
         csv_handler = CsvHandler(['member', 'timer'])
 
