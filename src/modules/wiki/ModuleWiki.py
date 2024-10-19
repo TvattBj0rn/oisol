@@ -159,6 +159,11 @@ class ModuleWiki(commands.Cog):
 
         entry_data = scrap_wiki(wiki_request, wiki_entry_complete_name)
         entry_data['url'] = wiki_request
+
+        if 'title' not in entry_data.keys():
+            await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
+            return
+
         entry_embed = self.generate_wiki_embed(entry_data)
 
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
@@ -199,8 +204,13 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message(embed=discord.Embed(), ephemeral=not visible)
             return
 
+        scraped_health_data = scrap_health(entry_url, wiki_entry_complete_name)
+        if 'Name' not in scraped_health_data.keys():
+            await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
+            return
+
         entry_embed = self.generate_hmtk_embed(
-            scrap_health(entry_url, wiki_entry_complete_name),
+            scraped_health_data,
             entry_url,
             infobox_tuple[0],
             infobox_tuple[1]

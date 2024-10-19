@@ -566,9 +566,9 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'mounted fissura gd i grenade launcher colonial'
     },
     {
-        'name': "Buckhorn CCQ-18 Bayonet",
+        'name': "Buckhorn CCQ-18",
         'url': "https://foxhole.wiki.gg/wiki/Bayonet",
-        'keywords': 'buckhorn ccq 18 bayonet colonial warden'
+        'keywords': 'buckhorn bayonet colonial warden'
     },
     {
         'name': "Fists",
@@ -724,6 +724,81 @@ ITEMS_WIKI_ENTRIES = [
         'name': "Model-7 “Evie”",
         'url': "https://foxhole.wiki.gg/wiki/Depth_Charge",
         'keywords': 'model 7 evie depth charge'
+    },
+    {
+        'name': "Herne QMW 1a Scourge Hunter",
+        'url': "https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter",
+        'keywords': 'herne qmw 1a scourge hunter mecha'
+    },
+    {
+        'name': "Centurion MV-2",
+        'url': "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
+        'keywords': 'centurion mv2 mecha'
+    },
+    {
+        'name': "Oil Field",
+        'url': "https://foxhole.wiki.gg/wiki/Oil_Field",
+        'keywords': 'oil field'
+    },
+    {
+        'name': "Coal Field",
+        'url': "https://foxhole.wiki.gg/wiki/Coal_Field",
+        'keywords': 'coal field'
+    },
+    {
+        'name': "Salvage Field",
+        'url': "https://foxhole.wiki.gg/wiki/Salvage_Field",
+        'keywords': 'salvage scrap field'
+    },
+    {
+        'name': "Sulfur Field",
+        'url': "https://foxhole.wiki.gg/wiki/Sulfur_Field",
+        'keywords': 'sulfur field'
+    },
+    {
+        'name': "Component Field",
+        'url': "https://foxhole.wiki.gg/wiki/Component_Field",
+        'keywords': 'component field'
+    },
+    {
+        'name': "A0E-9 Rocket Booster",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
+        'keywords': 'nuke rocket booster'
+    },
+    {
+        'name': "A0E-9 Rocket Body",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body",
+        'keywords': 'nuke rocket body'
+    },
+    {
+        'name': "A0E-9 Rocket Warhead",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead",
+        'keywords': 'nuke rocket warhead'
+    },
+    {
+        'name': "A0E-9 Rocket Platform",
+        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform",
+        'keywords': 'a0e9 rocket nuke platform'
+    },
+    {
+        'name': "Diesel Power Plant",
+        'url': "https://foxhole.wiki.gg/wiki/Diesel_Power_Plant",
+        'keywords': 'diesel power plant'
+    },
+    {
+        'name': "Power Station",
+        'url': "https://foxhole.wiki.gg/wiki/Power_Station",
+        'keywords': 'power station'
+    },
+    {
+        'name': "Deployed Listening Kit",
+        'url': "https://foxhole.wiki.gg/wiki/Listening_Kit",
+        'keywords': 'deployed listening kit lk'
+    },
+    {
+        'name': "Tripod",
+        'url': "https://foxhole.wiki.gg/wiki/Tripod",
+        'keywords': 'tripod'
     },
 ]
 
@@ -1433,16 +1508,6 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Repurposed_Truck",
         'keywords': 'repurposed truck relic vehicle'
     },
-    {
-        'name': "Herne QMW 1a Scourge Hunter",
-        'url': "https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter",
-        'keywords': 'herne qmw 1a scourge hunter mecha'
-    },
-    {
-        'name': "Centurion MV-2",
-        'url': "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
-        'keywords': 'centurion mv2 mecha'
-    },
 ]
 
 STRUCTURES_WIKI_ENTRIES = [
@@ -1792,7 +1857,7 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'dragons teeth'
     },
     {
-        'name': "Foxhole",
+        'name': "Dug Foxhole",
         'url': "https://foxhole.wiki.gg/wiki/Dug_Foxhole",
         'keywords': 'dug foxhole'
     },
@@ -1927,11 +1992,6 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'shipyard'
     },
     {
-        'name': "A0E-9 Rocket Platform",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform",
-        'keywords': 'a0e9 rocket nuke platform'
-    },
-    {
         'name': "Ammunition Factory",
         'url': "https://foxhole.wiki.gg/wiki/Ammunition_Factory",
         'keywords': 'ammunition ammo factory ammo'
@@ -1945,11 +2005,6 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Concrete Mixer",
         'url': "https://foxhole.wiki.gg/wiki/Concrete_Mixer",
         'keywords': 'concrete mixer'
-    },
-    {
-        'name': "Diesel Power Plant",
-        'url': "https://foxhole.wiki.gg/wiki/Diesel_Power_Plant",
-        'keywords': 'diesel power plant'
     },
     {
         'name': "Dry Dock",
@@ -1987,39 +2042,9 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'oil refinery'
     },
     {
-        'name': "Power Station",
-        'url': "https://foxhole.wiki.gg/wiki/Power_Station",
-        'keywords': 'power station'
-    },
-    {
         'name': "Small Assembly Station",
         'url': "https://foxhole.wiki.gg/wiki/Small_Assembly_Station",
         'keywords': 'small assembly station upgrade pad'
-    },
-    {
-        'name': "Oil Field",
-        'url': "https://foxhole.wiki.gg/wiki/Oil_Field",
-        'keywords': 'oil field'
-    },
-    {
-        'name': "Coal Field",
-        'url': "https://foxhole.wiki.gg/wiki/Coal_Field",
-        'keywords': 'coal field'
-    },
-    {
-        'name': "Salvage Field",
-        'url': "https://foxhole.wiki.gg/wiki/Salvage_Field",
-        'keywords': 'salvage scrap field'
-    },
-    {
-        'name': "Sulfur Field",
-        'url': "https://foxhole.wiki.gg/wiki/Sulfur_Field",
-        'keywords': 'sulfur field'
-    },
-    {
-        'name': "Component Field",
-        'url': "https://foxhole.wiki.gg/wiki/Component_Field",
-        'keywords': 'component field'
     },
     {
         'name': "Salvage Mine",
@@ -2049,22 +2074,22 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Stationary Harvester (Coal)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Coal)",
-        'keywords': 'stationary harvester'
+        'keywords': 'stationary harvester coal'
     },
     {
         'name': "Stationary Harvester (Components)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Components)",
-        'keywords': 'stationary harvester'
+        'keywords': 'stationary harvester components'
     },
     {
-        'name': "Stationary Harvester (Scrap)",
-        'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Scrap)",
-        'keywords': 'stationary harvester'
+        'name': "Stationary Harvester (Salvage)",
+        'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Salvage)",
+        'keywords': 'stationary harvester salvage'
     },
     {
         'name': "Stationary Harvester (Sulfur)",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Sulfur)",
-        'keywords': 'stationary harvester'
+        'keywords': 'stationary harvester sulfur'
     },
     {
         'name': "Water Pump",
@@ -2072,33 +2097,28 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'water pump'
     },
     {
-        'name': "Wooden Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Wooden_Bridge-0",
-        'keywords': 'wooden bridge'
-    },
-    {
         'name': "Stone Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Stone_Bridge-0",
+        'url': "https://foxhole.wiki.gg/wiki/Stone_Bridge",
         'keywords': 'stone bridge'
     },
     {
         'name': "Two Tier Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Two_Tier_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Two_Tier_Bridge",
         'keywords': 'two tier bridge'
     },
     {
         'name': "Double Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Double_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Double_Bridge",
         'keywords': 'double bridge'
     },
     {
         'name': "Long Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Long_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Long_Bridge",
         'keywords': 'long bridge'
     },
     {
         'name': "Train Bridge",
-        'url': "https://foxhole.wiki.gg/wiki/Bridge#Train_Bridge-1",
+        'url': "https://foxhole.wiki.gg/wiki/Train_Bridge",
         'keywords': 'train bridge'
     },
     {
@@ -2114,7 +2134,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Stationary Crane",
         'url': "https://foxhole.wiki.gg/wiki/Stationary_Crane",
-        'keywords': 'stationnary crane'
+        'keywords': 'stationary crane'
     },
     {
         'name': "A0E-9 Rocket",
@@ -2124,7 +2144,7 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "BMS Foreman Stacker",
         'url': "https://foxhole.wiki.gg/wiki/Facility_Crane",
-        'keywords': 'bms foreman stacker facilty crane'
+        'keywords': 'bms foreman stacker facility crane'
     },
     {
         'name': "Catwalk Bridge",
@@ -2145,16 +2165,6 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Crane Railway Track",
         'url': "https://foxhole.wiki.gg/wiki/Crane_Railway_Track",
         'keywords': 'crane railway track'
-    },
-    {
-        'name': "Deployed Listening Kit",
-        'url': "https://foxhole.wiki.gg/wiki/Listening_Kit",
-        'keywords': 'deployed listening kit lk'
-    },
-    {
-        'name': "Deployed Tripod",
-        'url': "https://foxhole.wiki.gg/wiki/Tripod",
-        'keywords': 'deployed tripod'
     },
     {
         'name': "Engine Room (Tier 2)",
@@ -2234,17 +2244,17 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         'name': "Pipeline (Overhead)",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_(Overhead)",
-        'keywords': 'pipeline'
+        'keywords': 'pipeline overhead'
     },
     {
         'name': "Pipeline (Underground)",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_(Underground)",
-        'keywords': 'pipeline'
+        'keywords': 'pipeline underground'
     },
     {
         'name': "Pipeline Valve",
         'url': "https://foxhole.wiki.gg/wiki/Pipeline_Valve",
-        'keywords': 'pipeline'
+        'keywords': 'pipeline valve'
     },
     {
         'name': "Power Pole",
@@ -2263,48 +2273,43 @@ STRUCTURES_WIKI_ENTRIES = [
     },
     {
         'name': "Railway Track",
-        'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Standard-0",
+        'url': "https://foxhole.wiki.gg/wiki/Railway_Track",
         'keywords': 'large railway track'
     },
     {
         'name': "Railway Track (Biarc)",
-        'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Biarc-0",
+        'url': "https://foxhole.wiki.gg/wiki/Railway_Track_(Biarc)",
         'keywords': 'large railway track'
     },
     {
         'name': "Railway Track (Foundation)",
-        'url': "https://foxhole.wiki.gg/wiki/Railway_Track#Foundation-0",
+        'url': "https://foxhole.wiki.gg/wiki/Railway_Track_(Foundation)",
         'keywords': 'large railway track'
     },
     {
         'name': "Small Gauge Railway Track",
-        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Standard-0",
+        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track",
         'keywords': 'small gauge railway track'
     },
     {
         'name': "Small Gauge Railway Track (Biarc)",
-        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Biarc-0",
+        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track_(Biarc)",
         'keywords': 'small gauge railway track'
     },
     {
         'name': "Small Gauge Railway Track (Foundation)",
-        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track#Foundation-0",
+        'url': "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track_(Foundation)",
         'keywords': 'small gauge railway track'
     },
     {
-        'name': "A0E-9 Rocket Booster",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
-        'keywords': 'nuke rocket booster'
+        'name': "Deployed Tripod",
+        'url': "https://foxhole.wiki.gg/wiki/Deployed_Tripod",
+        'keywords': 'deployed tripod'
     },
     {
-        'name': "A0E-9 Rocket Body",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body",
-        'keywords': 'nuke rocket body'
-    },
-    {
-        'name': "A0E-9 Rocket Warhead",
-        'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead",
-        'keywords': 'nuke rocket warhead'
+        'name': "Field Range",
+        'url': "https://foxhole.wiki.gg/wiki/Field_Range",
+        'keywords': 'field range'
     },
 ]
 
