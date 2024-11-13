@@ -381,7 +381,7 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "No.4 The Pillory Scattergun",
-        'url': "https://foxhole.wiki.gg/wiki/Shotgun",
+        'url': "https://foxhole.wiki.gg/wiki/No.4_The_Pillory_Scattergun",
         'keywords': 'pillory scattergun shotgun warden'
     },
     # PISTOLS
@@ -402,14 +402,14 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "Cometa T2-9",
-        'url': "https://foxhole.wiki.gg/wiki/Revolver",
-        'keywords': 'cometa t2 9 revolver colonial warden'
+        'url': "https://foxhole.wiki.gg/wiki/Cometa_T2-9",
+        'keywords': 'cometa pistol revolver'
     },
     # LIGHT & HEAVY MACHINE GUNS
     {
         'name': "Catara mo.II",
-        'url': "https://foxhole.wiki.gg/wiki/Light_Machine_Gun",
-        'keywords': 'catara mo ii light machine gun lmg colonial'
+        'url': "https://foxhole.wiki.gg/wiki/Catara_mo.II",
+        'keywords': 'catara light machine gun lmg colonial'
     },
     {
         'name': "KRN886-127 Gast Machine Gun",
@@ -460,27 +460,27 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "Mounted Fissura gd.I",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Grenade_Launcher",
+        'url': "https://foxhole.wiki.gg/wiki/Mounted_Fissura_gd.I",
         'keywords': 'mounted fissura grenade launcher colonial'
     },
     {
         'name': "Daucus isg.III",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Infantry_Support_Gun",
+        'url': "https://foxhole.wiki.gg/wiki/Daucus_isg.III",
         'keywords': 'daucus isg mounted infantry support gun colonial'
     },
     {
         'name': "Cutler Foebreaker",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_RPG_Launcher",
+        'url': "https://foxhole.wiki.gg/wiki/Cutler_Foebreaker",
         'keywords': 'cutler foebreaker mounted rpg launcher warden'
     },
     {
         'name': "Mounted Bonesaw MK.3",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Anti-Tank_RPG",
+        'url': "https://foxhole.wiki.gg/wiki/Mounted_Bonesaw_MK.3",
         'keywords': 'mounted bonesaw arc rpg launcher warden'
     },
     {
         'name': "“Typhon” ra.XII",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Anti-Tank_Rifle",
+        'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CTyphon%E2%80%9D_ra.XII",
         'keywords': 'typhon mounted anti tank rifle atr colonial'
     },
     # FLAMETHROWERS
@@ -571,7 +571,7 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "Crow's Foot Mine",
-        'url': "https://foxhole.wiki.gg/wiki/Sea_Mine",
+        'url': "https://foxhole.wiki.gg/wiki/Crow%27s_Foot_Mine",
         'keywords': 'crow foot anti personnel land infantry mine'
     },
     # LAUNCHERS
@@ -587,8 +587,8 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "Cutler Launcher 4",
-        'url': "https://foxhole.wiki.gg/wiki/RPG_Launcher",
-        'keywords': 'cutler rpg launcher 4 warden'
+        'url': "https://foxhole.wiki.gg/wiki/Cutler_Launcher_4",
+        'keywords': 'cutler rpg launcher warden'
     },
     # AT LAUNCHERS
     {
@@ -614,8 +614,8 @@ ITEMS_WIKI_ENTRIES = [
     # MORTAR
     {
         'name': "Cremari Mortar",
-        'url': "https://foxhole.wiki.gg/wiki/Mortar",
-        'keywords': 'cremari mortar colonial warden'
+        'url': "https://foxhole.wiki.gg/wiki/Cremari_Mortar",
+        'keywords': 'cremari mortar'
     },
     # MELEE WEAPONS
     {
