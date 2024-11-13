@@ -270,6 +270,7 @@ REGIONS_STOCKPILES = {
 
 
 ITEMS_WIKI_ENTRIES = [
+    # RIFLES
     {
         'name': "Argenti r.II Rifle",
         'url': "https://foxhole.wiki.gg/wiki/Argenti_r.II_Rifle",
@@ -335,6 +336,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/KRR3-792_Auger",
         'keywords': 'krr3 792 auger sniper rifle colonial'
     },
+    # SUBMACHINE GUNS
     {
         'name': "“Lionclaw” mc.VIII",
         'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CLionclaw%E2%80%9D_mc.VIII",
@@ -355,6 +357,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/No.1_%E2%80%9CThe_Liar%E2%80%9D_Submachine_Gun",
         'keywords': 'the liar submachine gun warden'
     },
+    # ASSAULT RIFLES
     {
         'name': "“Dusk” ce.III",
         'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CDusk%E2%80%9D_ce.III",
@@ -370,11 +373,18 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Booker_Storm_Rifle_Model_838",
         'keywords': 'booker storm rifle model 838 assault rifle warden'
     },
+    # SHOTGUNS
     {
-        'name': "Brasa Shotgun",
-        'url': "https://foxhole.wiki.gg/wiki/Shotgun",
-        'keywords': 'brasa shotgun colonial warden'
+        'name': "KRF1-750 Dragonfly",
+        'url': "https://foxhole.wiki.gg/wiki/KRF1-750_Dragonfly",
+        'keywords': 'dragonfly shotgun colonial'
     },
+    {
+        'name': "No.4 The Pillory Scattergun",
+        'url': "https://foxhole.wiki.gg/wiki/No.4_The_Pillory_Scattergun",
+        'keywords': 'pillory scattergun shotgun warden'
+    },
+    # PISTOLS
     {
         'name': "Ahti Model 2",
         'url': "https://foxhole.wiki.gg/wiki/Ahti_Model_2",
@@ -392,13 +402,14 @@ ITEMS_WIKI_ENTRIES = [
     },
     {
         'name': "Cometa T2-9",
-        'url': "https://foxhole.wiki.gg/wiki/Revolver",
-        'keywords': 'cometa t2 9 revolver colonial warden'
+        'url': "https://foxhole.wiki.gg/wiki/Cometa_T2-9",
+        'keywords': 'cometa pistol revolver'
     },
+    # LIGHT & HEAVY MACHINE GUNS
     {
         'name': "Catara mo.II",
-        'url': "https://foxhole.wiki.gg/wiki/Light_Machine_Gun",
-        'keywords': 'catara mo ii light machine gun lmg colonial'
+        'url': "https://foxhole.wiki.gg/wiki/Catara_mo.II",
+        'keywords': 'catara light machine gun lmg colonial'
     },
     {
         'name': "KRN886-127 Gast Machine Gun",
@@ -410,31 +421,69 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Malone_MK.2",
         'keywords': 'malone mk 2 machine gun mg warden'
     },
+    # ATRs
     {
         'name': "20 Neville Anti-Tank Rifle",
-        'url': "https://foxhole.wiki.gg/wiki/Anti-Tank_Rifle",
+        'url': "https://foxhole.wiki.gg/wiki/20_Neville_Anti-Tank_Rifle",
         'keywords': '20 neville anti tank rifle atr warden'
     },
     {
-        'name': "“Typhon” ra.XII",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Anti-Tank_Rifle",
-        'keywords': 'typhon ra xii mounted anti tank rifle atr colonial'
+        'name': "228 Satterley Heavy Storm Rifle",
+        'url': "https://foxhole.wiki.gg/wiki/228_Satterley_Heavy_Storm_Rifle",
+        'keywords': '20 scatterley anti tank rifle atr heavy storm warden'
     },
+    {
+        'name': "Booker Greyhound Model 910",
+        'url': "https://foxhole.wiki.gg/wiki/Booker_Greyhound_Model_910",
+        'keywords': '20 booker anti tank storm rifle atr warden'
+    },
+    {
+        'name': "“Dawn” Ve.II",
+        'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CDawn%E2%80%9D_Ve.II",
+        'keywords': '20 dawn anti tank rifle atr colonial'
+    },
+    {
+        'name': "“Quickhatch” Rt.I",
+        'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CQuickhatch%E2%80%9D_Rt.I",
+        'keywords': '20 quickhatch anti tank sniper rifle atr colonial'
+    },
+    # MOUNTED WEAPONS
     {
         'name': "Lamentum mm.IV",
         'url': "https://foxhole.wiki.gg/wiki/Lamentum_mm.IV",
-        'keywords': 'lamentum mm iv mounted machine gun mg colonial'
+        'keywords': 'lamentum mounted machine gun mg colonial'
     },
     {
         'name': "Malone Ratcatcher MK.1",
         'url': "https://foxhole.wiki.gg/wiki/Malone_Ratcatcher_MK.1",
-        'keywords': 'malone ratcatcher mk 1 mounted machine gun mg warden'
+        'keywords': 'malone ratcatcher mounted machine gun mg warden'
+    },
+    {
+        'name': "Mounted Fissura gd.I",
+        'url': "https://foxhole.wiki.gg/wiki/Mounted_Fissura_gd.I",
+        'keywords': 'mounted fissura grenade launcher colonial'
     },
     {
         'name': "Daucus isg.III",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Infantry_Support_Gun",
-        'keywords': 'daucus isg iii mounted infantry support gun colonial'
+        'url': "https://foxhole.wiki.gg/wiki/Daucus_isg.III",
+        'keywords': 'daucus isg mounted infantry support gun colonial'
     },
+    {
+        'name': "Cutler Foebreaker",
+        'url': "https://foxhole.wiki.gg/wiki/Cutler_Foebreaker",
+        'keywords': 'cutler foebreaker mounted rpg launcher warden'
+    },
+    {
+        'name': "Mounted Bonesaw MK.3",
+        'url': "https://foxhole.wiki.gg/wiki/Mounted_Bonesaw_MK.3",
+        'keywords': 'mounted bonesaw arc rpg launcher warden'
+    },
+    {
+        'name': "“Typhon” ra.XII",
+        'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CTyphon%E2%80%9D_ra.XII",
+        'keywords': 'typhon mounted anti tank rifle atr colonial'
+    },
+    # FLAMETHROWERS
     {
         'name': "“Molten Wind” v.II Flame Torch",
         'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CMolten_Wind%E2%80%9D_v.II_Flame_Torch",
@@ -445,6 +494,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Model_845",
         'keywords': 'willow s bane model 845 flamethrower flame thrower warden'
     },
+    # LIGHT GRENADES
     {
         'name': "A3 Harpa Fragmentation Grenade",
         'url': "https://foxhole.wiki.gg/wiki/A3_Harpa_Fragmentation_Grenade",
@@ -456,35 +506,43 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'bomastone grenade colonial'
     },
     {
-        'name': "Mammon 91-b",
-        'url': "https://foxhole.wiki.gg/wiki/Mammon_91-b",
-        'keywords': 'mamon mammon 91 b he grenade colonial warden'
-    },
-    {
-        'name': "Tremola Grenade GPb-1",
-        'url': "https://foxhole.wiki.gg/wiki/Tremola_Grenade_GPb-1",
-        'keywords': 'tremola grenade gpb 1 he colonial warden'
-    },
-    {
         'name': "Green Ash Grenade",
         'url': "https://foxhole.wiki.gg/wiki/Gas_Grenade",
-        'keywords': 'green ash grenade gas colonial warden'
-    },
-    {
-        'name': "Anti-Tank Sticky Bomb",
-        'url': "https://foxhole.wiki.gg/wiki/Anti-Tank_Sticky_Bomb",
-        'keywords': 'anti tank sticky bomb colonial warden'
-    },
-    {
-        'name': "BF5 White Ash Flask Grenade",
-        'url': "https://foxhole.wiki.gg/wiki/Anti-Tank_Grenade",
-        'keywords': 'bf5 white ash flask anti tank grenade warden'
+        'keywords': 'green ash grenade gas'
     },
     {
         'name': "PT-815 Smoke Grenade",
         'url': "https://foxhole.wiki.gg/wiki/Smoke_Grenade",
-        'keywords': 'pt 815 smoke grenade colonial warden'
+        'keywords': 'pt 815 smoke grenade'
     },
+    # EXPLOSIVE GRENADES
+    {
+        'name': "Mammon 91-b",
+        'url': "https://foxhole.wiki.gg/wiki/Mammon_91-b",
+        'keywords': 'mamon mammon 91 b he grenade'
+    },
+    {
+        'name': "Tremola Grenade GPb-1",
+        'url': "https://foxhole.wiki.gg/wiki/Tremola_Grenade_GPb-1",
+        'keywords': 'tremola grenade gpb 1 he'
+    },
+    # ANTI TANK
+    {
+        'name': "Anti-Tank Sticky Bomb",
+        'url': "https://foxhole.wiki.gg/wiki/Anti-Tank_Sticky_Bomb",
+        'keywords': 'anti tank sticky bomb'
+    },
+    {
+        'name': "BF5 White Ash Flask Grenade",
+        'url': "https://foxhole.wiki.gg/wiki/BF5_White_Ash_Flask_Grenade",
+        'keywords': 'bf5 white ash flask anti tank grenade warden'
+    },
+    {
+        'name': "B2 Varsi Anti-Tank Grenade",
+        'url': "https://foxhole.wiki.gg/wiki/B2_Varsi_Anti-Tank_Grenade",
+        'keywords': 'b2 varsi anti tank grenade warden'
+    },
+    # DEMOLITION CHARGES
     {
         'name': "Alligator Charge",
         'url': "https://foxhole.wiki.gg/wiki/Alligator_Charge",
@@ -496,19 +554,31 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'hydra s whisper explosive charge colonial'
     },
     {
-        'name': "Abisme AT-99",
-        'url': "https://foxhole.wiki.gg/wiki/Abisme_AT-99",
-        'keywords': 'abisme at 99 anti tank mine colonial warden'
-    },
-    {
         'name': "Havoc Charge",
         'url': "https://foxhole.wiki.gg/wiki/Havoc_Charge",
-        'keywords': 'havoc explosive charge colonial warden'
+        'keywords': 'havoc explosive charge'
+    },
+    # MINES
+    {
+        'name': "Abisme AT-99",
+        'url': "https://foxhole.wiki.gg/wiki/Abisme_AT-99",
+        'keywords': 'abisme at 99 anti tank mine'
     },
     {
         'name': "E680-S Rudder Lock",
         'url': "https://foxhole.wiki.gg/wiki/Sea_Mine",
-        'keywords': 'e680 rudder lock sea mine colonial warden'
+        'keywords': 'e680 rudder lock sea naval mine'
+    },
+    {
+        'name': "Crow's Foot Mine",
+        'url': "https://foxhole.wiki.gg/wiki/Crow%27s_Foot_Mine",
+        'keywords': 'crow foot anti personnel land infantry mine'
+    },
+    # LAUNCHERS
+    {
+        'name': "The Ospreay",
+        'url': "https://foxhole.wiki.gg/wiki/The_Ospreay",
+        'keywords': 'the ospreay grenade launcher warden'
     },
     {
         'name': "KLG901-2 Lunaire F",
@@ -516,15 +586,11 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'klg901 2 lunaire f launcher colonial'
     },
     {
-        'name': "The Ospreay",
-        'url': "https://foxhole.wiki.gg/wiki/The_Ospreay",
-        'keywords': 'the ospreay grenade launcher warden'
-    },
-    {
         'name': "Cutler Launcher 4",
-        'url': "https://foxhole.wiki.gg/wiki/RPG_Launcher",
-        'keywords': 'cutler rpg launcher 4 warden'
+        'url': "https://foxhole.wiki.gg/wiki/Cutler_Launcher_4",
+        'keywords': 'cutler rpg launcher warden'
     },
+    # AT LAUNCHERS
     {
         'name': "Bane 45",
         'url': "https://foxhole.wiki.gg/wiki/Bane_45",
@@ -545,36 +611,34 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Venom_c.II_35",
         'keywords': 'venom c ii 35 at rpg launcher colonial'
     },
+    # MORTAR
     {
         'name': "Cremari Mortar",
-        'url': "https://foxhole.wiki.gg/wiki/Mortar",
-        'keywords': 'cremari mortar colonial warden'
+        'url': "https://foxhole.wiki.gg/wiki/Cremari_Mortar",
+        'keywords': 'cremari mortar'
     },
-    {
-        'name': "Cutler Foebreaker",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_RPG_Launcher",
-        'keywords': 'cutler foebreaker mounted rpg launcher warden'
-    },
-    {
-        'name': "Mounted Bonesaw MK.3",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Anti-Tank_RPG",
-        'keywords': 'mounted bonesaw mk 3 arc rpg launcher warden'
-    },
-    {
-        'name': "Mounted Fissura gd.I",
-        'url': "https://foxhole.wiki.gg/wiki/Mounted_Grenade_Launcher",
-        'keywords': 'mounted fissura gd i grenade launcher colonial'
-    },
+    # MELEE WEAPONS
     {
         'name': "Buckhorn CCQ-18",
         'url': "https://foxhole.wiki.gg/wiki/Bayonet",
-        'keywords': 'buckhorn bayonet colonial warden'
+        'keywords': 'buckhorn bayonet'
     },
     {
         'name': "Fists",
         'url': "https://foxhole.wiki.gg/wiki/Fists",
-        'keywords': 'fists colonial warden'
+        'keywords': 'fists'
     },
+    {
+        'name': "Eleos Infantry Dagger",
+        'url': "https://foxhole.wiki.gg/wiki/Eleos_Infantry_Dagger",
+        'keywords': 'eleos infantry dagger colonial melee weapon'
+    },
+    {
+        'name': "Falias Raiding Club",
+        'url': "https://foxhole.wiki.gg/wiki/Falias_Raiding_Club",
+        'keywords': 'falias raiding club warden melee weapon'
+    },
+    # AMMUNITION
     {
         'name': "9mm",
         'url': "https://foxhole.wiki.gg/wiki/9mm",
@@ -661,6 +725,12 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'mortar shell'
     },
     {
+        'name': "Incendiary Mortar Shell",
+        'url': "https://foxhole.wiki.gg/wiki/Incendiary_Mortar_Shell",
+        'keywords': 'fire incendiary mortar shell'
+    },
+    # FIRE ROCKETS
+    {
         'name': "4C-Fire Rocket",
         'url': "https://foxhole.wiki.gg/wiki/4C-Fire_Rocket",
         'keywords': '4c fire rocket'
@@ -670,6 +740,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/3C-High_Explosive_Rocket",
         'keywords': '3c high explosive fire rocket'
     },
+    # ARTY
     {
         'name': "120mm",
         'url': "https://foxhole.wiki.gg/wiki/120mm",
@@ -685,6 +756,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/300mm",
         'keywords': '300mm shell arty'
     },
+    # RPG
     {
         'name': "RPG",
         'url': "https://foxhole.wiki.gg/wiki/RPG",
@@ -700,11 +772,13 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/ARC%E2%A7%B8RPG",
         'keywords': 'arc rpg shell'
     },
+    # DEMOLITION
     {
         'name': "250mm",
         'url': "https://foxhole.wiki.gg/wiki/250mm",
         'keywords': '250mm shell'
     },
+    # FLAMETHROWER AMMO
     {
         'name': "“Molten Wind” v.II Ammo",
         'url': "https://foxhole.wiki.gg/wiki/%E2%80%9CMolten_Wind%E2%80%9D_v.II_Ammo",
@@ -715,6 +789,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Ammo",
         'keywords': 'willows bane flame ammo'
     },
+    # NAVAL AMMUNITION
     {
         'name': "Moray Torpedo",
         'url': "https://foxhole.wiki.gg/wiki/Torpedo",
@@ -725,6 +800,8 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Depth_Charge",
         'keywords': 'model 7 evie depth charge'
     },
+    # ENTRIES THAT ARE /WIKI ONLY BUT NOT /HEALTH
+    # DEAD HARVEST
     {
         'name': "Herne QMW 1a Scourge Hunter",
         'url': "https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter",
@@ -735,6 +812,13 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
         'keywords': 'centurion mv2 mecha'
     },
+    # RELIC VEHICLES
+    {
+        'name': "Heavy Infantry Carrier",
+        'url': "https://foxhole.wiki.gg/wiki/Heavy_Infantry_Carrier",
+        'keywords': 'heavy infantry carrier relic vehicle'
+    },
+    # RESOURCE FIELDS
     {
         'name': "Oil Field",
         'url': "https://foxhole.wiki.gg/wiki/Oil_Field",
@@ -760,6 +844,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Component_Field",
         'keywords': 'component field'
     },
+    # NUKE COMPONENTS
     {
         'name': "A0E-9 Rocket Booster",
         'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
@@ -780,6 +865,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform",
         'keywords': 'a0e9 rocket nuke platform'
     },
+    # FACI BUILDINGS
     {
         'name': "Diesel Power Plant",
         'url': "https://foxhole.wiki.gg/wiki/Diesel_Power_Plant",
@@ -790,6 +876,7 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Power_Station",
         'keywords': 'power station'
     },
+    # TRIPODS
     {
         'name': "Deployed Listening Kit",
         'url': "https://foxhole.wiki.gg/wiki/Listening_Kit",
@@ -803,6 +890,7 @@ ITEMS_WIKI_ENTRIES = [
 ]
 
 VEHICLES_WIKI_ENTRIES = [
+    # COLONIAL ACs
     {
         'name': "T3 “Xiphos”",
         'url': "https://foxhole.wiki.gg/wiki/T3_%E2%80%9CXiphos%E2%80%9D",
@@ -818,6 +906,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/T8_%E2%80%9CGemini%E2%80%9D",
         'keywords': 't8 gemini armored car ac colonial'
     },
+    # WARDEN ACs
     {
         'name': "O'Brien V.110",
         'url': "https://foxhole.wiki.gg/wiki/O%27Brien_V.110",
@@ -848,6 +937,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/O%27Brien_V.101_Freeman",
         'keywords': 'obrien v 101 freeman armored car hac warden'
     },
+    # COLONIAL TANKETTES
     {
         'name': "T12 “Actaeon” Tankette",
         'url': "https://foxhole.wiki.gg/wiki/T12_%E2%80%9CActaeon%E2%80%9D_Tankette",
@@ -868,6 +958,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/T20_%E2%80%9CIxion%E2%80%9D_Tankette",
         'keywords': 't20 ixion 30mm tankette colonial'
     },
+    # APC
     {
         'name': "AB-8 “Acheron”",
         'url': "https://foxhole.wiki.gg/wiki/AB-8_%E2%80%9CAcheron%E2%80%9D",
@@ -883,6 +974,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Mulloy_LPC",
         'keywords': 'mulloy lpc apc warden'
     },
+    # COLONIAL HTs
     {
         'name': "HH-a “Javelin”",
         'url': "https://foxhole.wiki.gg/wiki/HH-a_%E2%80%9CJavelin%E2%80%9D",
@@ -898,6 +990,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/HH-d_%E2%80%9CPeltast%E2%80%9D",
         'keywords': 'hhd peltast mortart halftrack mht colonial'
     },
+    # WARDEN HTs
     {
         'name': "Niska Mk. I Gun Motor Carriage",
         'url': "https://foxhole.wiki.gg/wiki/Niska_Mk._I_Gun_Motor_Carriage",
@@ -918,6 +1011,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Niska-Rycker_Mk._IX_Skycaller",
         'keywords': 'niska rycker mk  ix skycaller rocket halftrack ht warden'
     },
+    # PUSH GUNS
     {
         'name': "Swallowtail 988/127-2",
         'url': "https://foxhole.wiki.gg/wiki/Swallowtail_988/127-2",
@@ -988,6 +1082,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/945g_%E2%80%9CStygian_Bolt%E2%80%9D",
         'keywords': '945g stygian bolt large field gun pushgun colonial'
     },
+    # WARDEN SCOUT TANKS
     {
         'name': "King Spire Mk. I",
         'url': "https://foxhole.wiki.gg/wiki/King_Spire_Mk._I",
@@ -1003,6 +1098,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/King_Jester_-_Mk._I-1",
         'keywords': 'king jester mk i 1 rocket scout tank warden'
     },
+    # COLONIAL LTs
     {
         'name': "H-5 “Hatchet”",
         'url': "https://foxhole.wiki.gg/wiki/H-5_%E2%80%9CHatchet%E2%80%9D",
@@ -1023,6 +1119,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/H-8_%E2%80%9CKranesca%E2%80%9D",
         'keywords': 'h8 kranesca kranny light tank lt colonial'
     },
+    # WARDEN LTs
     {
         'name': "Devitt Mk. III",
         'url': "https://foxhole.wiki.gg/wiki/Devitt_Mk._III",
@@ -1038,6 +1135,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Devitt-Caine_Mk._IV_MMR",
         'keywords': 'devitt caine mkiv mmr mortar light tank mlt warden'
     },
+    # COLONIAL ASSAULT TANKS
     {
         'name': "85K-b “Falchion”",
         'url': "https://foxhole.wiki.gg/wiki/85K-b_%E2%80%9CFalchion%E2%80%9D",
@@ -1054,6 +1152,12 @@ VEHICLES_WIKI_ENTRIES = [
         'keywords': '85vg talos assault 75mm tank colonial'
     },
     {
+        'name': "90T-v “Nemesis”",
+        'url': "https://foxhole.wiki.gg/wiki/90T-v_%E2%80%9CNemesis%E2%80%9D",
+        'keywords': '90tv nemesis assault 68mm tank colonial'
+    },
+    # COLONIAL BRAWLERS
+    {
         'name': "86K-a “Bardiche”",
         'url': "https://foxhole.wiki.gg/wiki/86K-a_%E2%80%9CBardiche%E2%80%9D",
         'keywords': '86ka bardiche assault tank colonial'
@@ -1063,6 +1167,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/86K-c_%E2%80%9CRanseur%E2%80%9D",
         'keywords': '86kc ranseur quadiche assault rpg tank colonial'
     },
+    # WARDEN ASSAULT TANKS
     {
         'name': "Silverhand - Mk. IV",
         'url': "https://foxhole.wiki.gg/wiki/Silverhand_-_Mk._IV",
@@ -1077,6 +1182,12 @@ VEHICLES_WIKI_ENTRIES = [
         'name': "Silverhand Lordscar - Mk. X",
         'url': "https://foxhole.wiki.gg/wiki/Silverhand_Lordscar_-_Mk._X",
         'keywords': 'silverhand lordscar mkix std assault tank destroyer warden'
+    },
+    # WARDEN CRUISER TANKS
+    {
+        'name': "Gallagher Brigand Mk. I",
+        'url': "https://foxhole.wiki.gg/wiki/Gallagher_Brigand_Mk._I",
+        'keywords': 'gallagher brigand mki cruiser tank warden'
     },
     {
         'name': "Gallagher Outlaw Mk. II",
@@ -1093,6 +1204,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Gallagher_Thornfall_Mk._VI",
         'keywords': 'gallagher thornfall mkiv bonelaw cruiser tank warden'
     },
+    # COLONIAL SIEGE TANKS
     {
         'name': "HC-2 “Scorpion”",
         'url': "https://foxhole.wiki.gg/wiki/Light_Infantry_Tank",
@@ -1103,6 +1215,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Siege_Tank",
         'keywords': 'hc7 ballista siege tank colonial'
     },
+    # WARDEN HTDs
     {
         'name': "Noble Widow MK. XIV",
         'url': "https://foxhole.wiki.gg/wiki/Noble_Widow_MK._XIV",
@@ -1113,6 +1226,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Noble_Firebrand_Mk._XVII",
         'keywords': 'noblle firebrand mkvii heavy flame destroyer tank warden'
     },
+    # WARDEN BTs
     {
         'name': "Flood Juggernaut Mk. VII",
         'url': "https://foxhole.wiki.gg/wiki/Flood_Juggernaut_Mk._VII",
@@ -1128,6 +1242,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Flood_Mk._IX_Stain",
         'keywords': 'flood mkix stain battle tank bt spg warden'
     },
+    # COLONIAL BTs
     {
         'name': "Lance-25 “Hasta”",
         'url': "https://foxhole.wiki.gg/wiki/Lance-25_%E2%80%9CHasta%E2%80%9D",
@@ -1143,6 +1258,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Lance-46_%E2%80%9CSarissa%E2%80%9D",
         'keywords': 'lance46 sarissa battle tank spg colonial'
     },
+    # SUPER TANKS
     {
         'name': "Cullen Predator Mk. III",
         'url': "https://foxhole.wiki.gg/wiki/Cullen_Predator_Mk._III",
@@ -1153,6 +1269,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/O-75b_%E2%80%9CAres%E2%80%9D",
         'keywords': '075b ares super tank colonial sht'
     },
+    # LOGISTIC VEHICLES
     {
         'name': "Dunne Fuelrunner 2d",
         'url': "https://foxhole.wiki.gg/wiki/Dunne_Fuelrunner_2d",
@@ -1208,10 +1325,16 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Dunne_Leatherback_2a",
         'keywords': 'dunner leatherback 2a truck warden'
     },
+    # UTILITY VEHICLES
     {
         'name': "BMS - Class 2 Mobile Auto-Crane",
         'url': "https://foxhole.wiki.gg/wiki/Crane",
         'keywords': 'bms class 2 mobile auto crane colonial warden'
+    },
+    {
+        'name': "BMS - Overseer Sky-Hauler",
+        'url': "https://foxhole.wiki.gg/wiki/Large_Crane",
+        'keywords': 'bms overseer skyhauler large crane'
     },
     {
         'name': "BMS - Universal Assembly Rig",
@@ -1308,6 +1431,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Kivela_Power_Wheel_80-1",
         'keywords': 'kivela power wheel 801 motorcycle bike warden'
     },
+    # COLONIAL LUVs
     {
         'name': "UV-05a “Argonaut”",
         'url': "https://foxhole.wiki.gg/wiki/UV-05a_%E2%80%9CArgonaut%E2%80%9D",
@@ -1323,6 +1447,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/UV-5c_%E2%80%9COdyssey%E2%80%9D",
         'keywords': 'uv5c odyssey light utility vehicle luv colonial'
     },
+    # WARDEN LUVs
     {
         'name': "Drummond 100a",
         'url': "https://foxhole.wiki.gg/wiki/Drummond_100a",
@@ -1338,6 +1463,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Drummond_Spitfire_100d",
         'keywords': 'drummond spitfire 100d light utility vehicle luv warden'
     },
+    # NAVAL VEHICLES
     {
         'name': "MacConmara Shorerunner",
         'url': "https://foxhole.wiki.gg/wiki/MacConmara_Shorerunner",
@@ -1351,13 +1477,19 @@ VEHICLES_WIKI_ENTRIES = [
     {
         'name': "BMS - Aquatipper",
         'url': "https://foxhole.wiki.gg/wiki/Barge",
-        'keywords': 'bms aquatipper barge colonial warden'
+        'keywords': 'bms aquatipper barge'
     },
     {
         'name': "BMS - Ironship",
         'url': "https://foxhole.wiki.gg/wiki/Freighter",
-        'keywords': 'mbs ironship freighter colonial warden'
+        'keywords': 'mbs ironship freighter'
     },
+    {
+        'name': "BMS - Grouper",
+        'url': "https://foxhole.wiki.gg/wiki/Motorboat",
+        'keywords': 'bms grouper motorboat'
+    },
+    # GUNBOATS
     {
         'name': "74b-1 Ronan Gunship",
         'url': "https://foxhole.wiki.gg/wiki/74b-1_Ronan_Gunship",
@@ -1368,6 +1500,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Type_C_-_%E2%80%9CCharon%E2%80%9D",
         'keywords': 'type c charon gunboat colonial'
     },
+    # SUBMARINES
     {
         'name': "Nakki",
         'url': "https://foxhole.wiki.gg/wiki/Nakki",
@@ -1378,6 +1511,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/AC-b_%E2%80%9CTrident%E2%80%9D",
         'keywords': 'acb trident submarine colonial'
     },
+    # MEDIUM SHIPS
     {
         'name': "Blacksteele",
         'url': "https://foxhole.wiki.gg/wiki/Blacksteele",
@@ -1388,16 +1522,23 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Conqueror",
         'keywords': 'conqueror destroyer colonial dd'
     },
+    # UTILITY LARGE SHIPS
     {
         'name': "BMS - Longhook",
         'url': "https://foxhole.wiki.gg/wiki/Base_Ship",
-        'keywords': 'bms longhook base ship colonial warden lh'
+        'keywords': 'bms longhook base ship lh'
     },
     {
         'name': "BMS - Bluefin",
         'url': "https://foxhole.wiki.gg/wiki/Storage_Ship",
-        'keywords': 'bms bluefin storage ship colonial warden'
+        'keywords': 'bms bluefin storage ship'
     },
+    {
+        'name': "BMS - Bowhead",
+        'url': "https://foxhole.wiki.gg/wiki/Resource_Ship",
+        'keywords': 'bms bowhead resource ship'
+    },
+    # BATTLESHIPS
     {
         'name': "Callahan (Battleship)",
         'url': "https://foxhole.wiki.gg/wiki/Callahan_(Battleship)",
@@ -1408,11 +1549,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Titan",
         'keywords': 'titan battleship colonial bs'
     },
-    {
-        'name': "BMS - Grouper",
-        'url': "https://foxhole.wiki.gg/wiki/Motorboat",
-        'keywords': 'bms grouper motorboat colonial warden'
-    },
+    # SMALL TRAINS
     {
         'name': "BMS Railtruck",
         'url': "https://foxhole.wiki.gg/wiki/Small_Container_Car",
@@ -1429,10 +1566,16 @@ VEHICLES_WIKI_ENTRIES = [
         'keywords': 'bms tinderbox small liquid container car'
     },
     {
+        'name': "BMS Stowheel",
+        'url': "https://foxhole.wiki.gg/wiki/Small_Box_Car",
+        'keywords': 'bms Stowheel small box container car'
+    },
+    {
         'name': "BMS Mineseeker",
         'url': "https://foxhole.wiki.gg/wiki/Small_Train_Locomotive",
         'keywords': 'bms mineseeker small train locomotive'
     },
+    # LARGE TRAINS
     {
         'name': "BMS Rockhold",
         'url': "https://foxhole.wiki.gg/wiki/Container_Car",
@@ -1473,16 +1616,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Long-Range_Artillery_Car",
         'keywords': 'tempest cannon ra2 long range artillery car rsc colonial warden'
     },
-    {
-        'name': "BMS - Overseer Sky-Hauler",
-        'url': "https://foxhole.wiki.gg/wiki/Large_Crane",
-        'keywords': 'bms overseer skyhauler large crane'
-    },
-    {
-        'name': "Heavy Infantry Carrier",
-        'url': "https://foxhole.wiki.gg/wiki/Heavy_Infantry_Carrier",
-        'keywords': 'heavy infantry carrier relic vehicle'
-    },
+    # RELIC VEHICLES
     {
         'name': "Armoured Fighting Tractor",
         'url': "https://foxhole.wiki.gg/wiki/Armoured_Fighting_Tractor",
@@ -1617,6 +1751,16 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'resource transfer station rts'
     },
     {
+        'name': "Infantry Arms Factory",
+        'url': "https://foxhole.wiki.gg/wiki/Infantry_Arms_Factory",
+        'keywords': 'infantry arm factory'
+    },
+    {
+        'name': "Crate Transfer Station",
+        'url': "https://foxhole.wiki.gg/wiki/Crate_Transfer_Station",
+        'keywords': 'crate transfer station'
+    },
+    {
         'name': "Shippable Crate",
         'url': "https://foxhole.wiki.gg/wiki/Shippable_Crate",
         'keywords': 'shippable crate'
@@ -1630,6 +1774,21 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Storage Box",
         'url': "https://foxhole.wiki.gg/wiki/Storage_Box",
         'keywords': 'storage boxe'
+    },
+    {
+        'name': "Medical Room (Tier 1)",
+        'url': "https://foxhole.wiki.gg/wiki/Medical_Room",
+        'keywords': 'medical room bunker'
+    },
+    {
+        'name': "Medical Room (Tier 2)",
+        'url': "https://foxhole.wiki.gg/wiki/Medical_Room#Tier_2-0",
+        'keywords': 'medical room bunker'
+    },
+    {
+        'name': "Medical Room (Tier 3)",
+        'url': "https://foxhole.wiki.gg/wiki/Medical_Room#Tier_3-0",
+        'keywords': 'medical room bunker'
     },
     {
         'name': "Storage Room (Tier 2)",
@@ -1805,6 +1964,21 @@ STRUCTURES_WIKI_ENTRIES = [
         'name': "Barbed Wire Fence",
         'url': "https://foxhole.wiki.gg/wiki/Barbed_Wire_Fence",
         'keywords': 'barbed wire fence'
+    },
+    {
+        'name': "Prepared Minefield",
+        'url': "https://foxhole.wiki.gg/wiki/Prepared_Minefield",
+        'keywords': 'prepared minefield'
+    },
+    {
+        'name': "Crow's Foot Minefield",
+        'url': "https://foxhole.wiki.gg/wiki/Crow%27s_Foot_Minefield",
+        'keywords': 'crows foot anti personal infantry minefield'
+    },
+    {
+        'name': "Abisme AT-99 Minefield",
+        'url': "https://foxhole.wiki.gg/wiki/Abisme_AT-99_Minefield",
+        'keywords': 'abisme anti tank at minefield'
     },
     {
         'name': "Bunker (Tier 1)",
