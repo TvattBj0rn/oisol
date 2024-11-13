@@ -812,6 +812,12 @@ ITEMS_WIKI_ENTRIES = [
         'url': "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
         'keywords': 'centurion mv2 mecha'
     },
+    # RELIC VEHICLES
+    {
+        'name': "Heavy Infantry Carrier",
+        'url': "https://foxhole.wiki.gg/wiki/Heavy_Infantry_Carrier",
+        'keywords': 'heavy infantry carrier relic vehicle'
+    },
     # RESOURCE FIELDS
     {
         'name': "Oil Field",
@@ -1611,11 +1617,6 @@ VEHICLES_WIKI_ENTRIES = [
         'keywords': 'tempest cannon ra2 long range artillery car rsc colonial warden'
     },
     # RELIC VEHICLES
-    {
-        'name': "Heavy Infantry Carrier",
-        'url': "https://foxhole.wiki.gg/wiki/Heavy_Infantry_Carrier",
-        'keywords': 'heavy infantry carrier relic vehicle'
-    },
     {
         'name': "Armoured Fighting Tractor",
         'url': "https://foxhole.wiki.gg/wiki/Armoured_Fighting_Tractor",
