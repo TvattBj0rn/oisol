@@ -10,10 +10,6 @@ from src.utils.oisol_enums import DataFilesPath, Language, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 
 
-def update_config():
-    pass
-
-
 class ModuleConfig(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.oisol = bot
@@ -82,7 +78,7 @@ class ModuleConfig(commands.Cog):
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
         except FileNotFoundError:
             await interaction.response.send_message(
-                '> The default config was never set, you can set it using </oisol_init:1253044649589997609>',
+                '> The default config was never set, you can set it using `/oisol_init`',
                 ephemeral=True,
                 delete_after=5
             )
@@ -103,30 +99,34 @@ class ModuleConfig(commands.Cog):
             ephemeral=True
         )
 
-    @app_commands.command(name='config-name', description='Set the name of the regiment / coalition / group using the bot')
-    async def config_name(self, interaction: discord.Interaction, name: str):
-        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
+    @staticmethod
+    def regiment_config_generic(guild_id: int, **kwargs):
+        # Init path to file / Config object
+        oisol_server_home_path = os.path.join('/', 'oisol', str(guild_id))
         config = configparser.ConfigParser()
         config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
-        config['regiment'] = {}
-        config['regiment']['name'] = str(name)
+        if not config.has_section('regiment'):
+            config['regiment'] = {}
 
+        # For now, there can be only one item inside **kwargs when this method is called, so the first item is retrived
+        data_to_write = next(iter(kwargs.items()))
+        config['regiment'][data_to_write[0]] = data_to_write[1]
+
+        # Write updated config to file
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
-        await interaction.response.send_message('> Name was updated')
+
+    @app_commands.command(name='config-name', description='Set the name of the regiment / coalition / group using the bot')
+    async def config_name(self, interaction: discord.Interaction, name: str):
+        self.regiment_config_generic(interaction.guild_id, name=name)
+        await interaction.response.send_message('> Name was updated', ephemeral=True)
 
     @app_commands.command(name='config-tag', description='Set the tag of the regiment / coalition / group using the bot')
     async def config_tag(self, interaction: discord.Interaction, tag: str):
-        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
-        config = configparser.ConfigParser()
-        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
-        config['regiment'] = {}
-        config['regiment']['tag'] = str(tag)
+        self.regiment_config_generic(interaction.guild_id, tag=tag)
+        await interaction.response.send_message('> Tag was updated', ephemeral=True)
 
-        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
-            config.write(configfile)
-        await interaction.response.send_message('> Tag was updated')
-
-    @app_commands.command(name='config-faction', description='Set the faction of the regiment / coalition / group using the bot, for interfaces color purposes')
+    @app_commands.command(name='config-faction', description='Set the faction of the regiment / coalition / group using the bot, for interfaces colors purpose')
     async def config_faction(self, interaction: discord.Interaction, faction: Faction):
-        pass
+        self.regiment_config_generic(interaction.guild_id, faction=faction.name)
+        await interaction.response.send_message('> Faction was updated', ephemeral=True)
