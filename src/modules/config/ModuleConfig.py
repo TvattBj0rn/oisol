@@ -89,7 +89,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message(
             f'> The recruit role has been updated to {recruit_role.mention}',
             ephemeral=True,
-            delete_after=3
+            delete_after=5
         )
 
     @app_commands.command(name='config-language', description='Set the language the bot uses for the server')
@@ -119,14 +119,14 @@ class ModuleConfig(commands.Cog):
     @app_commands.command(name='config-name', description='Set the name of the group using the bot')
     async def config_name(self, interaction: discord.Interaction, name: str):
         self.regiment_config_generic(interaction.guild_id, name=name)
-        await interaction.response.send_message('> Name was updated', ephemeral=True)
+        await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-tag', description='Set the tag of the regiment group using the bot')
     async def config_tag(self, interaction: discord.Interaction, tag: str):
         self.regiment_config_generic(interaction.guild_id, tag=tag)
-        await interaction.response.send_message('> Tag was updated', ephemeral=True)
+        await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-faction', description='Set the faction of the regiment group using the bot')
     async def config_faction(self, interaction: discord.Interaction, faction: Faction):
         self.regiment_config_generic(interaction.guild_id, faction=faction.name)
-        await interaction.response.send_message('> Faction was updated', ephemeral=True)
+        await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
