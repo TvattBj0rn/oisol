@@ -60,7 +60,7 @@ class ModuleConfig(commands.Cog):
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
         except FileNotFoundError:
             await interaction.response.send_message(
-                '> The default config was never set, you can set it using </oisol_init:1253044649589997609>',
+                '> The default config was never set, you can set it using `/oisol_init`',
                 ephemeral=True,
                 delete_after=5
             )
@@ -116,17 +116,17 @@ class ModuleConfig(commands.Cog):
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
 
-    @app_commands.command(name='config-name', description='Set the name of the regiment / coalition / group using the bot')
+    @app_commands.command(name='config-name', description='Set the name of the group using the bot')
     async def config_name(self, interaction: discord.Interaction, name: str):
         self.regiment_config_generic(interaction.guild_id, name=name)
         await interaction.response.send_message('> Name was updated', ephemeral=True)
 
-    @app_commands.command(name='config-tag', description='Set the tag of the regiment / coalition / group using the bot')
+    @app_commands.command(name='config-tag', description='Set the tag of the regiment group using the bot')
     async def config_tag(self, interaction: discord.Interaction, tag: str):
         self.regiment_config_generic(interaction.guild_id, tag=tag)
         await interaction.response.send_message('> Tag was updated', ephemeral=True)
 
-    @app_commands.command(name='config-faction', description='Set the faction of the regiment / coalition / group using the bot, for interfaces colors purpose')
+    @app_commands.command(name='config-faction', description='Set the faction of the regiment group using the bot')
     async def config_faction(self, interaction: discord.Interaction, faction: Faction):
         self.regiment_config_generic(interaction.guild_id, faction=faction.name)
         await interaction.response.send_message('> Faction was updated', ephemeral=True)
