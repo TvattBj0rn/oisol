@@ -6,7 +6,7 @@ import time
 from discord.ext import commands
 from dotenv import load_dotenv
 from src.modules.config.ModuleConfig import ModuleConfig
-from src.modules.config.ConfigInterfaces_old import ConfigViewMenu
+from src.modules.config.ConfigInterfaces import ConfigViewMenu
 from src.modules.registre.ModuleRegister import ModuleRegister
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
 from src.modules.todolist.TodolistViewMenu import TodolistViewMenu, TodolistButtonCheckmark

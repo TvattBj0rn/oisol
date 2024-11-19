@@ -4,6 +4,45 @@ import os
 from src.utils.oisol_enums import Language, DataFilesPath
 
 
+class ConfigViewMenu(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.config_data = None
+        self.embed = discord.Embed(title='Configuration')
+
+    async def update_config_embed(self, interaction: discord.Interaction):
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
+        self.config_data = configparser.ConfigParser()
+        self.config_data.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+
+        self.embed.clear_fields()
+        self.embed.add_field(
+            name='💬 | Language',
+            value=self.config_data['default']['language'],
+            inline=True
+        )
+        self.embed.add_field(
+            name='🚩 | Regiment',
+            value=f"Name: {self.config_data['regiment']['name']}\nTag: {self.config_data['regiment']['tag']}\nFaction: {self.config_data['regiment']['faction']}",
+            inline=True
+        )
+        self.embed.add_field(
+            name='📝 | Register',
+            value=f"Recruit symbol: {self.config_data['register']['input']}\nPromoted recruit symbol: {self.config_data['register']['output']}\nPromotion gives regiment tag: {self.config_data['register']['promoted_get_tag']}",
+            inline=True
+        )
+        self.embed.add_field(
+            name='🪖 | Recruit role',
+            value=f'{interaction.guild.get_role(int(self.config_data["register"]["recruit_id"])).mention if self.config_data["register"]["recruit_id"] else "None"}\nTo update this role, use: </config-recruit:1261648113505140787>',
+            inline=True
+        )
+
+    @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:regiment', emoji='🔄')
+    async def refresh_embed(self, interaction: discord.Interaction, _button: discord.ui.Button):
+        await self.update_config_embed(interaction)
+        await interaction.response.defer()
+
+
 class SelectLanguageView(discord.ui.View):
     def __init__(self, *, timeout=None):
         super().__init__(timeout=timeout)
