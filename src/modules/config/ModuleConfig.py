@@ -5,11 +5,9 @@ from discord import app_commands
 from discord.ext import commands
 from typing import Optional
 from src.utils.CsvHandler import CsvHandler
-from src.modules.config.ConfigInterfaces import ConfigViewMenu
 from src.utils.functions import repair_default_config_dict
-from src.utils.oisol_enums import DataFilesPath
 from src.modules.config.ConfigInterfaces import SelectLanguageView, ConfigViewMenu
-from src.utils.oisol_enums import DataFilesPath, Language, Faction
+from src.utils.oisol_enums import DataFilesPath, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 
 
@@ -103,7 +101,7 @@ class ModuleConfig(commands.Cog):
         if not config.has_section('regiment'):
             config['regiment'] = {}
 
-        # For now, there can be only one item inside **kwargs when this method is called, so the first item is retrived
+        # There can be only one item inside **kwargs when this method is called, so the first item is retrieved
         data_to_write = next(iter(kwargs.items()))
         config['regiment'][data_to_write[0]] = data_to_write[1]
 
