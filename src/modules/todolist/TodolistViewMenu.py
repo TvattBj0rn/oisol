@@ -1,11 +1,11 @@
 import discord
+import json
 import os
 import pathlib
 import re
 from more_itertools.recipes import consume
 from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
-from src.utils.functions import load_json_file, update_json_file
 
 
 def has_permissions(interaction: discord.Interaction, permissions: dict) -> bool:
@@ -88,10 +88,8 @@ class TodolistViewMenu(discord.ui.View):
         self.embed_uuid = embed_uuid
         self.data_list = []
 
-        update_json_file(
-            os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'),
-            self.data_dict
-        )
+        with open(os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'), 'w') as file:
+            json.dump(self.data_dict, file)
 
         for k in self.data_dict['tasks'].keys():
             for elem in self.data_dict['tasks'][k]:
@@ -143,15 +141,8 @@ class TodolistViewMenu(discord.ui.View):
     async def add_tasks(self, interaction: discord.Interaction, _button: discord.ui.Button):
         self.embed_uuid = interaction.message.embeds[0].footer.text
         try:
-            permissions = load_json_file(
-                os.path.join(
-                    pathlib.Path('/'),
-                    'oisol',
-                    str(interaction.guild_id),
-                    'todolists',
-                    f'{self.embed_uuid}.json'
-                )
-            )['access']
+            with open(os.path.join(pathlib.Path('/'), 'oisol',str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
+                permissions = json.load(file)['access']
         except OSError:
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
@@ -191,11 +182,10 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         placeholder='Use `,` for more than one item ...'
     )
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
+    async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
-        full_dict = load_json_file(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')
-        )
+        with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
+            full_dict = json.load(file)
         data_dict = full_dict['tasks']
         if len(data_dict['high']) + len(data_dict['medium']) + len(data_dict['low']) >= 24:
             await interaction.followup.send('> The todolist is already full', ephemeral=True)
@@ -245,9 +235,8 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         message = await interaction.original_response()
         embed_uuid = message.embeds[0].footer.text
         try:
-            full_dict = load_json_file(
-                os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json')
-            )
+            with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'), 'r') as file:
+                full_dict = json.load(file)
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
             await interaction.followup.send('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)

@@ -3,7 +3,11 @@ import discord
 import os
 from discord import app_commands
 from discord.ext import commands
+from typing import Optional
 from src.utils.CsvHandler import CsvHandler
+from src.modules.config.ConfigInterfaces import ConfigViewMenu
+from src.utils.functions import repair_default_config_dict
+from src.utils.oisol_enums import DataFilesPath
 from src.modules.config.ConfigInterfaces import SelectLanguageView, ConfigViewMenu
 from src.utils.oisol_enums import DataFilesPath, Language, Faction
 from src.utils.resources import MODULES_CSV_KEYS
@@ -14,9 +18,9 @@ class ModuleConfig(commands.Cog):
         self.oisol = bot
         self.csv_keys = MODULES_CSV_KEYS
 
-    @app_commands.command(name='oisol-init', description='Command to set the default config (and reset)')
-    async def oisol_init(self, interaction: discord.Interaction):
-        print(f'> oisol_init command by {interaction.user.name} on {interaction.guild.name}')
+    @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')
+    async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: Optional[bool]):
+        print(f'> repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
 
         # Create oisol and oisol/todolists directories
@@ -31,24 +35,16 @@ class ModuleConfig(commands.Cog):
                 )
 
         # Create oisol/config.ini file with default config
-        if not os.path.isfile(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value)):
-            config = configparser.ConfigParser()
-            config['default'] = {}
-            config['default']['language'] = Language.EN.name
+        if not os.path.isfile(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value)) or force_reset:
+            config = repair_default_config_dict()
+        else:
+            current_config = configparser.ConfigParser()
+            current_config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+            config = repair_default_config_dict(current_config)
 
-            config['register'] = {}
-            config['register']['input'] = ''
-            config['register']['output'] = ''
-            config['register']['promoted_get_tag'] = 'False'
-            config['register']['recruit_id'] = ''
-
-            config['regiment'] = {}
-            config['regiment']['faction'] = Faction.NEUTRAL.name
-            config['regiment']['name'] = ''
-            config['regiment']['tag'] = ''
-            with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
-                config.write(configfile)
-        await interaction.response.send_message('> Default configuration has been set', ephemeral=True, delete_after=3)
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+        await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config', description='Display current config for the server')
     async def config(self, interaction: discord.Interaction):
@@ -59,7 +55,7 @@ class ModuleConfig(commands.Cog):
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
         except FileNotFoundError:
             await interaction.response.send_message(
-                '> The default config was never set, you can set it using `/oisol_init`',
+                '> The default config was never set',
                 ephemeral=True,
                 delete_after=5
             )
@@ -77,7 +73,7 @@ class ModuleConfig(commands.Cog):
             config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
         except FileNotFoundError:
             await interaction.response.send_message(
-                '> The default config was never set, you can set it using `/oisol_init`',
+                '> The default config was never set',
                 ephemeral=True,
                 delete_after=5
             )
