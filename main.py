@@ -15,7 +15,7 @@ from src.modules.todolist.ModuleTodolist import ModuleTodolist
 from src.modules.wiki.ModuleWiki import ModuleWiki
 from src.utils.CsvHandler import CsvHandler
 from src.utils.functions import safeguarded_nickname, repair_default_config_dict
-from src.utils.oisol_enums import Faction, DataFilesPath, Language, Modules
+from src.utils.oisol_enums import DataFilesPath, Modules
 from src.utils.resources import MODULES_CSV_KEYS
 
 
