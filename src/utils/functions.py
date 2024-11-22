@@ -1,13 +1,12 @@
 import configparser
-from configparser import ConfigParser
-from typing import Optional
-from src.utils.oisol_enums import Faction, Language
-
 import discord
 import json
 import os
-from src.utils.oisol_enums import DataFilesPath
+from configparser import ConfigParser
+from typing import Optional
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
+from src.utils.oisol_enums import DataFilesPath
+from src.utils.oisol_enums import Faction, Language
 
 
 async def update_discord_interface(
@@ -18,7 +17,15 @@ async def update_discord_interface(
 ) -> None:
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
-    channel = interaction.guild.get_channel(int(config['register' if view else 'stockpile']['channel']))
+    if view:
+        channel = interaction.guild.get_channel(int(config['register']['channel']))
+    else:
+        if config.has_option('stockpile', 'channel'):
+            channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
+        else:
+            # Edge case where oisol was not setup on guild but command /stockpile-create called
+            # -> Case where the interface does not exist
+            return
 
     async for message in channel.history():
         if not message.embeds:
@@ -58,19 +65,21 @@ def repair_default_config_dict(current_config: Optional[ConfigParser] = None) ->
     """
     final_config = configparser.ConfigParser()
 
-    final_config.set('default', 'language', Language.EN.name if not current_config or not current_config.has_option('default', 'language') else current_config.get('default', 'language'))
+    section_name = 'default'
+    final_config.add_section(section_name)
+    final_config.set(section_name, 'language', Language.EN.name if not current_config or not current_config.has_option(section_name, 'language') else current_config.get(section_name, 'language'))
 
-    with 'register' as section_name:
-        final_config.add_section(section_name)
-        final_config.set(section_name, 'input', '' if not current_config or not current_config.has_option(section_name, 'input') else current_config.get(section_name, 'input'))
-        final_config.set(section_name, 'output', '' if not current_config or not current_config.has_option(section_name, 'output') else current_config.get(section_name, 'output'))
-        final_config.set(section_name, 'promoted_get_tag', 'False' if not current_config or not current_config.has_option(section_name, 'promoted_get_tag') else current_config.get(section_name, 'promoted_get_tag'))
-        final_config.set(section_name, 'recruit_id', '' if not current_config or not current_config.has_option(section_name, 'recruit_id') else current_config.get(section_name, 'promoted_get_tag'))
+    section_name = 'register'
+    final_config.add_section(section_name)
+    final_config.set(section_name, 'input', '' if not current_config or not current_config.has_option(section_name, 'input') else current_config.get(section_name, 'input'))
+    final_config.set(section_name, 'output', '' if not current_config or not current_config.has_option(section_name, 'output') else current_config.get(section_name, 'output'))
+    final_config.set(section_name, 'promoted_get_tag', 'False' if not current_config or not current_config.has_option(section_name, 'promoted_get_tag') else current_config.get(section_name, 'promoted_get_tag'))
+    final_config.set(section_name, 'recruit_id', '' if not current_config or not current_config.has_option(section_name, 'recruit_id') else current_config.get(section_name, 'promoted_get_tag'))
 
-    with 'regiment' as section_name:
-        final_config.add_section(section_name)
-        final_config.set(section_name, 'faction', Faction.NEUTRAL.name if not current_config or not current_config.has_option(section_name, 'faction') else current_config.get(section_name, 'faction'))
-        final_config.set(section_name, 'name', '' if not current_config or not current_config.has_option(section_name, 'name') else current_config.get(section_name, 'name'))
-        final_config.set(section_name, 'tag', '' if not current_config or not current_config.has_option(section_name, 'tag') else current_config.get(section_name, 'tag'))
+    section_name = 'regiment'
+    final_config.add_section(section_name)
+    final_config.set(section_name, 'faction', Faction.NEUTRAL.name if not current_config or not current_config.has_option(section_name, 'faction') else current_config.get(section_name, 'faction'))
+    final_config.set(section_name, 'name', '' if not current_config or not current_config.has_option(section_name, 'name') else current_config.get(section_name, 'name'))
+    final_config.set(section_name, 'tag', '' if not current_config or not current_config.has_option(section_name, 'tag') else current_config.get(section_name, 'tag'))
 
     return final_config

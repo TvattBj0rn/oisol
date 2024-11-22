@@ -14,8 +14,9 @@ from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
 from src.modules.todolist.ModuleTodolist import ModuleTodolist
 from src.modules.wiki.ModuleWiki import ModuleWiki
 from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import safeguarded_nickname
-from src.utils.oisol_enums import DataFilesPath, Modules
+from src.utils.functions import safeguarded_nickname, repair_default_config_dict
+from src.utils.oisol_enums import Faction, DataFilesPath, Language, Modules
+from src.utils.resources import MODULES_CSV_KEYS
 
 
 class Oisol(commands.Bot):
@@ -180,6 +181,26 @@ class Oisol(commands.Bot):
                 if member['member'] == str(after.id):
                     all_members.pop(i)
             await self.update_register(before.guild.id, all_members)
+
+    async def on_guild_join(self, guild: discord.Guild):
+        oisol_server_home_path = os.path.join('/', 'oisol', str(guild.id))
+
+        # Create guild and guild/todolists directories if they do not exist
+        os.makedirs(os.path.join(oisol_server_home_path), exist_ok=True)
+        os.makedirs(os.path.join(oisol_server_home_path, 'todolists'), exist_ok=True)
+
+        # Create oisol/*.csv files
+        for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
+            if not os.path.isfile(os.path.join(oisol_server_home_path, datafile.value)):
+                CsvHandler(MODULES_CSV_KEYS[datafile.name.lower()]).csv_try_create_file(
+                    os.path.join(oisol_server_home_path, datafile.value)
+                )
+
+        # Create oisol/config.ini file with default config
+        if not os.path.isfile(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value)):
+            config = repair_default_config_dict()
+            with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+                config.write(configfile)
 
 
 if __name__ == '__main__':
