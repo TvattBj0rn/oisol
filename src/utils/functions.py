@@ -1,6 +1,5 @@
 import configparser
 import discord
-import json
 import os
 from configparser import ConfigParser
 from typing import Optional
@@ -45,16 +44,6 @@ def safeguarded_nickname(nickname: str) -> str:
     """
     return nickname[:32 - len(nickname)] if len(nickname) > 32 else nickname
 
-
-def load_json_file(file_path: str) -> dict:
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-    return data
-
-
-def update_json_file(file_path: str, new_data: dict) -> None:
-    with open(file_path, 'w') as file:
-        json.dump(new_data, file)
 
 def repair_default_config_dict(current_config: Optional[ConfigParser] = None) -> ConfigParser:
     """
