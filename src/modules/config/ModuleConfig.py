@@ -101,7 +101,7 @@ class ModuleConfig(commands.Cog):
         if not config.has_section('regiment'):
             config['regiment'] = {}
 
-        # There can be only one item inside **kwargs when this method is called, so the first item is retrieved
+        # There should be only one item inside **kwargs when this method is called, so only the first item is retrieved
         data_to_write = next(iter(kwargs.items()))
         config['regiment'][data_to_write[0]] = data_to_write[1]
 

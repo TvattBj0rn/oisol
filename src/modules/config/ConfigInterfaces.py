@@ -40,7 +40,7 @@ class ConfigViewMenu(discord.ui.View):
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:regiment', emoji='🔄')
     async def refresh_embed(self, interaction: discord.Interaction, _button: discord.ui.Button):
         await self.update_config_embed(interaction)
-        await interaction.response.defer()
+        await interaction.response.send_message(view=self, embed=self.embed)
 
 
 class SelectLanguageView(discord.ui.View):
