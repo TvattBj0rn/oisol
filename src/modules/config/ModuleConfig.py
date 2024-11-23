@@ -44,7 +44,7 @@ class ModuleConfig(commands.Cog):
             config.write(configfile)
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config', description='Display current config for the server')
+    @app_commands.command(name='config-display', description='Display current config for the server')
     async def config(self, interaction: discord.Interaction):
         print(f'> config command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
