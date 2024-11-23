@@ -5,9 +5,9 @@ from discord import app_commands
 from discord.ext import commands
 from typing import Optional
 from src.utils.CsvHandler import CsvHandler
-from src.modules.config.ConfigInterfaces import ConfigViewMenu
 from src.utils.functions import repair_default_config_dict
-from src.utils.oisol_enums import DataFilesPath
+from src.modules.config.ConfigInterfaces import SelectLanguageView, ConfigViewMenu
+from src.utils.oisol_enums import DataFilesPath, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 
 
@@ -44,7 +44,7 @@ class ModuleConfig(commands.Cog):
             config.write(configfile)
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config')
+    @app_commands.command(name='config-display', description='Display current config for the server')
     async def config(self, interaction: discord.Interaction):
         print(f'> config command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
@@ -84,3 +84,42 @@ class ModuleConfig(commands.Cog):
             ephemeral=True,
             delete_after=5
         )
+
+    @app_commands.command(name='config-language', description='Set the language the bot uses for the server')
+    async def config_language(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            view=SelectLanguageView(),
+            ephemeral=True
+        )
+
+    @staticmethod
+    def regiment_config_generic(guild_id: int, **kwargs):
+        # Init path to file / Config object
+        oisol_server_home_path = os.path.join('/', 'oisol', str(guild_id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        if not config.has_section('regiment'):
+            config['regiment'] = {}
+
+        # There should be only one item inside **kwargs when this method is called, so only the first item is retrieved
+        data_to_write = next(iter(kwargs.items()))
+        config['regiment'][data_to_write[0]] = data_to_write[1]
+
+        # Write updated config to file
+        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            config.write(configfile)
+
+    @app_commands.command(name='config-name', description='Set the name of the group using the bot')
+    async def config_name(self, interaction: discord.Interaction, name: str):
+        self.regiment_config_generic(interaction.guild_id, name=name)
+        await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
+
+    @app_commands.command(name='config-tag', description='Set the tag of the regiment group using the bot')
+    async def config_tag(self, interaction: discord.Interaction, tag: str):
+        self.regiment_config_generic(interaction.guild_id, tag=tag)
+        await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
+
+    @app_commands.command(name='config-faction', description='Set the faction of the regiment group using the bot')
+    async def config_faction(self, interaction: discord.Interaction, faction: Faction):
+        self.regiment_config_generic(interaction.guild_id, faction=faction.name)
+        await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
