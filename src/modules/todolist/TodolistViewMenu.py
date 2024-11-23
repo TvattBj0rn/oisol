@@ -1,11 +1,9 @@
 import copy
-
 import discord
 import json
 import os
 import pathlib
 import re
-from copy import deepcopy
 from more_itertools.recipes import consume
 from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
