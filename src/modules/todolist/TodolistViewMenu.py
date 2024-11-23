@@ -1,8 +1,11 @@
+import copy
+
 import discord
 import json
 import os
 import pathlib
 import re
+from copy import deepcopy
 from more_itertools.recipes import consume
 from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
@@ -97,6 +100,7 @@ class TodolistViewMenu(discord.ui.View):
 
         # Clear all task buttons
         consume(self.remove_item(button) for button in self.buttons_list)
+
         self.buttons_list = [TodolistButtonCheckmark(f'todolist:button:{emote}') for emote in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']
         self._refresh_view_embed()
         data_list = self.data_dict['tasks']['high'] + self.data_dict['tasks']['medium'] + self.data_dict['tasks']['low']
@@ -104,38 +108,25 @@ class TodolistViewMenu(discord.ui.View):
             self.add_item(self.buttons_list[i])
 
     def _refresh_view_embed(self):
-        if not self.embed:
-            self.embed = discord.Embed().from_dict(
-                {
-                    'title': f'☑️️ **|** {self.title}',
-                    'footer': {'text': self.embed_uuid}
-                }
-            )
-        self.embed.clear_fields()
-        tmp_dict, _ = refit_data(self.data_dict)
-        tmp_dict = tmp_dict['tasks']
-        priority_tasks_dict = {'high': [], 'medium': [], 'low': []}
-        for k, v in tmp_dict.items():
-            for task in v:
-                priority_tasks_dict[k].append({'content': task, 'priority': k})
+        # Retrieval of existing tasks and deepcopy for display purposes
+        current_tasks = refit_data(self.data_dict)[0]['tasks']
+        display_tasks = copy.deepcopy(current_tasks)
 
-        enumerated_tasks = {'high': '', 'medium': '', 'low': ''}
-        for i, task in enumerate(
-                (priority_tasks_dict['high'] + priority_tasks_dict['medium'] + priority_tasks_dict['low'])[:24]
-        ):
-            enumerated_tasks[
-                task['priority']
-            ] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task['content']}\n"
+        # k is priority and v tasks list of k
+        for i, (k, v) in enumerate(display_tasks.items()):
+            display_tasks[k] = ''.join([f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task}\n" for task in v])
 
-        for priority, tasks in [
-            ('🔴 **|** High Priority', enumerated_tasks['high']),
-            ('🟡 **|** Medium Priority', enumerated_tasks['medium']),
-            ('🟢 **|** Low Priority', enumerated_tasks['low'])
-        ]:
-            self.embed.add_field(
-                name=priority,
-                value=tasks
-            )
+        self.embed = discord.Embed().from_dict(
+            {
+                'title': f'☑️️ **|** {self.title}',
+                'footer': {'text': self.embed_uuid},
+                'fields': [
+                    {'name': '🔴 **|** High Priority', 'inline': True, 'value': display_tasks['high']},
+                    {'name': '🟡 **|** Medium Priority', 'inline': True, 'value': display_tasks['medium']},
+                    {'name': '🟢 **|** Low Priority', 'inline': True, 'value': display_tasks['low']}
+                ]
+            }
+        )
 
     @discord.ui.button(style=discord.ButtonStyle.green, custom_id='Todolist:Add', emoji='➕')
     async def add_tasks(self, interaction: discord.Interaction, _button: discord.ui.Button):
