@@ -4,7 +4,6 @@ import json
 import os
 import pathlib
 import re
-from more_itertools.recipes import consume
 from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
 
@@ -96,14 +95,13 @@ class TodolistViewMenu(discord.ui.View):
             for elem in self.data_dict['tasks'][k]:
                 self.data_list.append([elem, k])
 
-        # Clear all task buttons
-        consume(self.remove_item(button) for button in self.buttons_list)
-
-        self.buttons_list = [TodolistButtonCheckmark(f'todolist:button:{emote}') for emote in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']
+        self.clear_items()
+        self.add_item(self.add_tasks)
         self._refresh_view_embed()
-        data_list = self.data_dict['tasks']['high'] + self.data_dict['tasks']['medium'] + self.data_dict['tasks']['low']
-        for i in range(len(data_list)):
-            self.add_item(self.buttons_list[i])
+
+        possible_buttons = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        for i in range(len(self.data_list)):
+            self.add_item(TodolistButtonCheckmark(f'todolist:button:{possible_buttons[i]}'))
 
     def _refresh_view_embed(self):
         # Retrieval of existing tasks and deepcopy for display purposes
