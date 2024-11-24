@@ -110,10 +110,15 @@ class TodolistViewMenu(discord.ui.View):
         current_tasks = refit_data(self.data_dict)[0]['tasks']
         display_tasks = copy.deepcopy(current_tasks)
 
-        # k is priority and v tasks list of k
-        for i, (k, v) in enumerate(display_tasks.items()):
-            display_tasks[k] = ''.join([f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task}\n" for task in v])
+        # k is priority, v tasks list of k and i regional_indicator to use (unique)
+        i = 0
+        for k, v in display_tasks.items():
+            display_tasks[k] = ''
+            for task in v:
+                display_tasks[k] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task}\n"
+                i += 1
 
+        # Update with a single call from dict instead of multiple through the method
         self.embed = discord.Embed().from_dict(
             {
                 'title': f'☑️️ **|** {self.title}',
