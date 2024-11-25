@@ -82,23 +82,21 @@ class TodolistViewMenu(discord.ui.View):
             embed_uuid: str
     ):
         self.data_dict, _ = refit_data(updated_data)
-        # The ternary is temporary to prevent regression on existing interfaces
-        self.title = self.data_dict['title'] if 'title' in self.data_dict.keys() else todolist_title
+        self.title = todolist_title
         self.guild_id = guild_id
         self.embed_uuid = embed_uuid
-        self.data_list = []
+        self.data_list = [[elem, k] for k, v in self.data_dict['tasks'].items() for elem in v]
 
+        # Save updated data
         with open(os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'), 'w') as file:
             json.dump(self.data_dict, file)
 
-        for k in self.data_dict['tasks'].keys():
-            for elem in self.data_dict['tasks'][k]:
-                self.data_list.append([elem, k])
-
+        # Clear buttons and update embed
         self.clear_items()
-        self.add_item(self.add_tasks)
         self._refresh_view_embed()
 
+        # Re-add add button & tasks buttons
+        self.add_item(self.add_tasks)
         possible_buttons = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         for i in range(len(self.data_list)):
             self.add_item(TodolistButtonCheckmark(f'todolist:button:{possible_buttons[i]}'))
@@ -226,6 +224,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         await interaction.response.defer()
         message = await interaction.original_response()
         embed_uuid = message.embeds[0].footer.text
+
         try:
             with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'), 'r') as file:
                 full_dict = json.load(file)
