@@ -45,7 +45,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-display', description='Display current config for the server')
-    async def config(self, interaction: discord.Interaction):
+    async def config(self, interaction: discord.Interaction, visible: bool = False):
         print(f'> config command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         try:
@@ -60,7 +60,7 @@ class ModuleConfig(commands.Cog):
             return
         config_view = ConfigViewMenu()
         await config_view.update_config_embed(interaction)
-        await interaction.response.send_message(view=config_view, embed=config_view.embed)
+        await interaction.response.send_message(view=config_view, embed=config_view.embed, ephemeral=not visible)
 
     @app_commands.command(name='config-recruit', description='Set the recruit role of the regiment')
     async def config_recruit(self, interaction: discord.Interaction, recruit_role: discord.Role):
