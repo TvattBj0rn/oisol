@@ -224,8 +224,6 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         embed_uuid = interaction.message.embeds[0].footer.text
         title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         guild_id = str(interaction.guild_id)
-        await interaction.message.edit(view=None)
-        await interaction.response.defer()
 
         try:
             with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json'), 'r') as file:
@@ -250,4 +248,4 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             guild_id,
             embed_uuid
         )
-        await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
+        await interaction.response.edit_message(view=updated_todolist_view, embed=updated_todolist_view.embed)
