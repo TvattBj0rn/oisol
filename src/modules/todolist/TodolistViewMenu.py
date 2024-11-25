@@ -175,13 +175,17 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
+        # Get current tasks from file
         with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
             full_dict = json.load(file)
+
+        # If the tasks are already at capacity, no need to go further
         current_tasks = full_dict['tasks']
         if len(current_tasks['high']) + len(current_tasks['medium']) + len(current_tasks['low']) >= 24:
             await interaction.followup.send('> The todolist is already full', ephemeral=True)
             return
 
+        # Update task JSON and resize it to capacity
         data_dict, bypassed_tasks = refit_data({
                 'title': self.todolist_title,
                 'access': full_dict['access'],
@@ -192,12 +196,14 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
                 }
             })
 
+        # Send the tasks that could not be added to the user with a format that makes it easier to copy / paste
         if bypassed_tasks:
             await interaction.followup.send(
                 f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`",
                 ephemeral=True
             )
 
+        # Recreate the view with the updated tasks
         updated_todolist_view = TodolistViewMenu()
         updated_todolist_view.refresh_view(data_dict, self.todolist_title, str(interaction.guild_id), self.embed_uuid)
         await interaction.response.edit_message(view=updated_todolist_view, embed=updated_todolist_view.embed)
