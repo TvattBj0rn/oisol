@@ -130,9 +130,11 @@ class TodolistViewMenu(discord.ui.View):
     @discord.ui.button(style=discord.ButtonStyle.green, custom_id='Todolist:Add', emoji='➕')
     async def add_tasks(self, interaction: discord.Interaction, _button: discord.ui.Button):
         self.embed_uuid = interaction.message.embeds[0].footer.text
+        self.title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         try:
             with open(os.path.join(pathlib.Path('/'), 'oisol',str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
                 permissions = json.load(file)['access']
+        # This probably can be removed
         except OSError:
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
@@ -173,26 +175,23 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True)
         with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
             full_dict = json.load(file)
-        data_dict = full_dict['tasks']
-        if len(data_dict['high']) + len(data_dict['medium']) + len(data_dict['low']) >= 24:
+        current_tasks = full_dict['tasks']
+        if len(current_tasks['high']) + len(current_tasks['medium']) + len(current_tasks['low']) >= 24:
             await interaction.followup.send('> The todolist is already full', ephemeral=True)
             return
 
-        for priority, input_field in [
-            (PriorityType.HIGH.value, self.high_priority),
-            (PriorityType.MEDIUM.value, self.medium_priority),
-            (PriorityType.LOW.value, self.low_priority)
-        ]:
-            for task in input_field.value.split(','):
-                if task:
-                    data_dict[priority].append(task)
+        data_dict, bypassed_tasks = refit_data({
+                'title': self.todolist_title,
+                'access': full_dict['access'],
+                'tasks': {
+                    'high': [task for task in self.high_priority.value.split(',') + current_tasks['high'] if task],
+                    'medium': [task for task in self.medium_priority.value.split(',') + current_tasks['medium'] if task],
+                    'low': [task for task in self.low_priority.value.split(',') + current_tasks['low']if task],
+                }
+            })
 
-        data_dict, bypassed_tasks = refit_data(
-            {'title': self.todolist_title, 'access': full_dict['access'], 'tasks': data_dict}
-        )
         if bypassed_tasks:
             await interaction.followup.send(
                 f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`",
@@ -201,7 +200,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
 
         updated_todolist_view = TodolistViewMenu()
         updated_todolist_view.refresh_view(data_dict, self.todolist_title, str(interaction.guild_id), self.embed_uuid)
-        await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
+        await interaction.response.edit_message(view=updated_todolist_view, embed=updated_todolist_view.embed)
 
 
 class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], template=r'todolist:button:[A-Z]'):
