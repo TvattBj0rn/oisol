@@ -221,12 +221,14 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction):
+        embed_uuid = interaction.message.embeds[0].footer.text
+        title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
+        guild_id = str(interaction.guild_id)
+        await interaction.message.edit(view=None)
         await interaction.response.defer()
-        message = await interaction.original_response()
-        embed_uuid = message.embeds[0].footer.text
 
         try:
-            with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'), 'r') as file:
+            with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json'), 'r') as file:
                 full_dict = json.load(file)
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
@@ -244,8 +246,8 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         updated_todolist_view = TodolistViewMenu()
         updated_todolist_view.refresh_view(
             {'access': full_dict['access'], 'tasks': list_to_priority_dict(self.data_list)},
-            message.embeds[0].title.removeprefix('☑️️ **|** '),
-            str(interaction.guild_id),
+            title,
+            guild_id,
             embed_uuid
         )
         await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
