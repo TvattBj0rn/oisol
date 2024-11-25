@@ -1,9 +1,9 @@
+import copy
 import discord
 import json
 import os
 import pathlib
 import re
-from more_itertools.recipes import consume
 from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
 
@@ -82,67 +82,59 @@ class TodolistViewMenu(discord.ui.View):
             embed_uuid: str
     ):
         self.data_dict, _ = refit_data(updated_data)
-        # The ternary is temporary to prevent regression on existing interfaces
-        self.title = self.data_dict['title'] if 'title' in self.data_dict.keys() else todolist_title
+        self.title = todolist_title
         self.guild_id = guild_id
         self.embed_uuid = embed_uuid
-        self.data_list = []
+        self.data_list = [[elem, k] for k, v in self.data_dict['tasks'].items() for elem in v]
 
+        # Save updated data
         with open(os.path.join(pathlib.Path('/'), 'oisol', self.guild_id, 'todolists', f'{self.embed_uuid}.json'), 'w') as file:
             json.dump(self.data_dict, file)
 
-        for k in self.data_dict['tasks'].keys():
-            for elem in self.data_dict['tasks'][k]:
-                self.data_list.append([elem, k])
-
-        # Clear all task buttons
-        consume(self.remove_item(button) for button in self.buttons_list)
-        self.buttons_list = [TodolistButtonCheckmark(f'todolist:button:{emote}') for emote in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']
+        # Clear buttons and update embed
+        self.clear_items()
         self._refresh_view_embed()
-        data_list = self.data_dict['tasks']['high'] + self.data_dict['tasks']['medium'] + self.data_dict['tasks']['low']
-        for i in range(len(data_list)):
-            self.add_item(self.buttons_list[i])
+
+        # Re-add add button & tasks buttons
+        self.add_item(self.add_tasks)
+        possible_buttons = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        for i in range(len(self.data_list)):
+            self.add_item(TodolistButtonCheckmark(f'todolist:button:{possible_buttons[i]}'))
 
     def _refresh_view_embed(self):
-        if not self.embed:
-            self.embed = discord.Embed().from_dict(
-                {
-                    'title': f'☑️️ **|** {self.title}',
-                    'footer': {'text': self.embed_uuid}
-                }
-            )
-        self.embed.clear_fields()
-        tmp_dict, _ = refit_data(self.data_dict)
-        tmp_dict = tmp_dict['tasks']
-        priority_tasks_dict = {'high': [], 'medium': [], 'low': []}
-        for k, v in tmp_dict.items():
+        # Retrieval of existing tasks and deepcopy for display purposes
+        current_tasks = refit_data(self.data_dict)[0]['tasks']
+        display_tasks = copy.deepcopy(current_tasks)
+
+        # k is priority, v tasks list of k and i regional_indicator to use (unique)
+        i = 0
+        for k, v in display_tasks.items():
+            display_tasks[k] = ''
             for task in v:
-                priority_tasks_dict[k].append({'content': task, 'priority': k})
+                display_tasks[k] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task}\n"
+                i += 1
 
-        enumerated_tasks = {'high': '', 'medium': '', 'low': ''}
-        for i, task in enumerate(
-                (priority_tasks_dict['high'] + priority_tasks_dict['medium'] + priority_tasks_dict['low'])[:24]
-        ):
-            enumerated_tasks[
-                task['priority']
-            ] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task['content']}\n"
-
-        for priority, tasks in [
-            ('🔴 **|** High Priority', enumerated_tasks['high']),
-            ('🟡 **|** Medium Priority', enumerated_tasks['medium']),
-            ('🟢 **|** Low Priority', enumerated_tasks['low'])
-        ]:
-            self.embed.add_field(
-                name=priority,
-                value=tasks
-            )
+        # Update with a single call from dict instead of multiple through the method
+        self.embed = discord.Embed().from_dict(
+            {
+                'title': f'☑️️ **|** {self.title}',
+                'footer': {'text': self.embed_uuid},
+                'fields': [
+                    {'name': '🔴 **|** High Priority', 'inline': True, 'value': display_tasks['high']},
+                    {'name': '🟡 **|** Medium Priority', 'inline': True, 'value': display_tasks['medium']},
+                    {'name': '🟢 **|** Low Priority', 'inline': True, 'value': display_tasks['low']}
+                ]
+            }
+        )
 
     @discord.ui.button(style=discord.ButtonStyle.green, custom_id='Todolist:Add', emoji='➕')
     async def add_tasks(self, interaction: discord.Interaction, _button: discord.ui.Button):
         self.embed_uuid = interaction.message.embeds[0].footer.text
+        self.title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         try:
             with open(os.path.join(pathlib.Path('/'), 'oisol',str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
                 permissions = json.load(file)['access']
+        # This probably can be removed
         except OSError:
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
@@ -183,35 +175,38 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True)
+        # Get current tasks from file
         with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
             full_dict = json.load(file)
-        data_dict = full_dict['tasks']
-        if len(data_dict['high']) + len(data_dict['medium']) + len(data_dict['low']) >= 24:
+
+        # If the tasks are already at capacity, no need to go further
+        current_tasks = full_dict['tasks']
+        if len(current_tasks['high']) + len(current_tasks['medium']) + len(current_tasks['low']) >= 24:
             await interaction.followup.send('> The todolist is already full', ephemeral=True)
             return
 
-        for priority, input_field in [
-            (PriorityType.HIGH.value, self.high_priority),
-            (PriorityType.MEDIUM.value, self.medium_priority),
-            (PriorityType.LOW.value, self.low_priority)
-        ]:
-            for task in input_field.value.split(','):
-                if task:
-                    data_dict[priority].append(task)
+        # Update task JSON and resize it to capacity
+        data_dict, bypassed_tasks = refit_data({
+                'title': self.todolist_title,
+                'access': full_dict['access'],
+                'tasks': {
+                    'high': [task for task in self.high_priority.value.split(',') + current_tasks['high'] if task],
+                    'medium': [task for task in self.medium_priority.value.split(',') + current_tasks['medium'] if task],
+                    'low': [task for task in self.low_priority.value.split(',') + current_tasks['low']if task],
+                }
+            })
 
-        data_dict, bypassed_tasks = refit_data(
-            {'title': self.todolist_title, 'access': full_dict['access'], 'tasks': data_dict}
-        )
+        # Send the tasks that could not be added to the user with a format that makes it easier to copy / paste
         if bypassed_tasks:
             await interaction.followup.send(
                 f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`",
                 ephemeral=True
             )
 
+        # Recreate the view with the updated tasks
         updated_todolist_view = TodolistViewMenu()
         updated_todolist_view.refresh_view(data_dict, self.todolist_title, str(interaction.guild_id), self.embed_uuid)
-        await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
+        await interaction.response.edit_message(view=updated_todolist_view, embed=updated_todolist_view.embed)
 
 
 class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], template=r'todolist:button:[A-Z]'):
@@ -231,11 +226,12 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-        message = await interaction.original_response()
-        embed_uuid = message.embeds[0].footer.text
+        embed_uuid = interaction.message.embeds[0].footer.text
+        title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
+        guild_id = str(interaction.guild_id)
+
         try:
-            with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{embed_uuid}.json'), 'r') as file:
+            with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json'), 'r') as file:
                 full_dict = json.load(file)
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
@@ -253,8 +249,8 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         updated_todolist_view = TodolistViewMenu()
         updated_todolist_view.refresh_view(
             {'access': full_dict['access'], 'tasks': list_to_priority_dict(self.data_list)},
-            message.embeds[0].title.removeprefix('☑️️ **|** '),
-            str(interaction.guild_id),
+            title,
+            guild_id,
             embed_uuid
         )
-        await interaction.message.edit(view=updated_todolist_view, embed=updated_todolist_view.embed)
+        await interaction.response.edit_message(view=updated_todolist_view, embed=updated_todolist_view.embed)
