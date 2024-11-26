@@ -63,9 +63,13 @@ class ModuleConfig(commands.Cog):
         await config_view.update_config_embed(interaction)
         await interaction.response.send_message(view=config_view, embed=config_view.embed)
 
-    @app_commands.command(name='config-recruit', description='Set the recruit role of the regiment')
-    async def config_recruit(self, interaction: discord.Interaction, recruit_role: discord.Role):
-        print(f'> config command by {interaction.user.name} on {interaction.guild.name}')
+    @app_commands.command(name='config-register', description='Set the recruit discord role, icons for recruit & promoted recruit and the option to not change ')
+    async def config_register(self, interaction: discord.Interaction, recruit_role: Optional[discord.Role] = None, recruit_symbol: Optional[str] = None, promoted_recruit_symbol: Optional[str] = None, promotion_gives_symbol: Optional[bool] = None):
+        print(f'> config-register command by {interaction.user.name} on {interaction.guild.name}')
+        if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
+            await interaction.response.send_message('> No changes were made because no option was changed', ephemeral=True, delete_after=5)
+            return
+
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         try:
             config = configparser.ConfigParser()
@@ -77,14 +81,18 @@ class ModuleConfig(commands.Cog):
                 delete_after=5
             )
             return
-        config['register']['recruit_id'] = str(recruit_role.id)
+        if recruit_role is not None:
+            config.set('register', 'recruit_id', str(recruit_role.id))
+        if recruit_symbol is not None:
+            config.set('register', 'input', recruit_symbol)
+        if promoted_recruit_symbol is not None:
+            config.set('register', 'output', promoted_recruit_symbol)
+        if promotion_gives_symbol is not None:
+            config.set('register', 'promoted_get_tag', str(promotion_gives_symbol))
+
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
-        await interaction.response.send_message(
-            f'> The recruit role has been updated to {recruit_role.mention}',
-            ephemeral=True,
-            delete_after=5
-        )
+        await interaction.response.send_message(f'> The register config was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-language', description='Set the language the bot uses for the server')
     async def config_language(self, interaction: discord.Interaction):
