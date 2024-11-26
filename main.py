@@ -121,6 +121,8 @@ class Oisol(commands.Bot):
             all_members,
             Modules.REGISTER
         )
+        if not config.has_option('register', 'channel'):
+            return
 
         guild = self.get_guild(server_id)
         channel = guild.get_channel(config.getint('register', 'channel'))
