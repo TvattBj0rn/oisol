@@ -14,30 +14,24 @@ class ModuleRegister(commands.Cog):
         self.oisol = bot
         self.CsvHandler = CsvHandler(MODULES_CSV_KEYS['register'])
 
-    @app_commands.command(name='register-view')
+    @app_commands.command(name='register-view', description='Command to display the current list of recruit with the date the got the recruit role')
     async def register_view(self, interaction: discord.Interaction):
         print(f'> register-view command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer()
-
-        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         config = configparser.ConfigParser()
         config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
-        try:
-            config['register']['channel'] = str(interaction.channel_id)
-        except KeyError:
-            await interaction.followup.send(
-                '> The default config was never set, you can set it using </oisol_init:1253044649589997609>',
-                ephemeral=True,
-                delete_after=5
-            )
-            return
+        if not config.has_section('register'):
+            config.add_section('register')
+        config.set('register', 'channel', str(interaction.channel_id))
 
         register_view_instance = RegisterViewMenu()
         register_view_instance.refresh_register_embed(str(interaction.guild_id))
 
-        await interaction.followup.send(view=register_view_instance, embed=register_view_instance.embeds[0])
+        # await interaction.followup.send(view=register_view_instance, embed=register_view_instance.embeds[0])
+        await interaction.response.send_message(view=register_view_instance, embed=register_view_instance.embeds[0])
+
         sent_msg = await interaction.original_response()
 
-        config['register']['message_id'] = str(sent_msg.id)
+        config.set('register', 'message_id', str(sent_msg.id))
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
