@@ -40,7 +40,7 @@ class ConfigViewMenu(discord.ui.View):
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:regiment', emoji='🔄')
     async def refresh_embed(self, interaction: discord.Interaction, _button: discord.ui.Button):
         await self.update_config_embed(interaction)
-        await interaction.response.send_message(view=self, embed=self.embed)
+        await interaction.response.edit_message(view=self, embed=self.embed)
 
 
 class SelectLanguageView(discord.ui.View):
@@ -78,7 +78,7 @@ class SelectLanguage(discord.ui.Select):
     class SelectFaction(discord.ui.Select):
         def __init__(self):
             options = [
-                discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
+                # discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
                 discord.SelectOption(label='English', emoji='<:ukus:1205153501823377438>', value=Language.EN.name),
             ]
             super().__init__(placeholder='Choose a faction', options=options)
