@@ -67,7 +67,7 @@ class ModuleConfig(commands.Cog):
     async def config_register(self, interaction: discord.Interaction, recruit_role: Optional[discord.Role] = None, recruit_symbol: Optional[str] = None, promoted_recruit_symbol: Optional[str] = None, promotion_gives_symbol: Optional[bool] = None):
         print(f'> config-register command by {interaction.user.name} on {interaction.guild.name}')
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
-            await interaction.response.send_message('> No changes were made because no option was changed', ephemeral=True, delete_after=5)
+            await interaction.response.send_message('> No changes were made because no option was given', ephemeral=True, delete_after=5)
             return
 
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
