@@ -167,12 +167,14 @@ class Oisol(commands.Bot):
                 and config.getint('register', 'recruit_id') not in [role.id for role in after.roles]
         ):
             member_name = after.display_name
-            if config['register']['input']:
-                member_name.replace(config['register']['input'], '')
-            if config['register']['output']:
-                member_name = f'{config["register"]["output"]} {member_name}'
-            if config['register']['promoted_get_tag'][0] == 'y':
-                member_name = f'{config["regiment"]["tag"]} {member_name}'
+            # For this case, no need to handle trailing spaces at string start since it is handled on Discord part
+            if config.has_option('register', 'input'):
+                member_name = member_name.replace(config.get('register', 'input'), '')
+            if config.has_option('register', 'output'):
+                member_name = f'{config.get('register', 'output')} {member_name}'
+            if config.has_option('register', 'promoted_get_tag') and config.getboolean('register', 'promoted_get_tag'):
+                member_name = f'{config.get('regiment', 'tag')} {member_name}'
+
             await after.edit(nick=safeguarded_nickname(member_name))
             all_members = csv_handler.csv_get_all_data(
                 os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
