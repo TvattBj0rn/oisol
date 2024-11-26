@@ -4,10 +4,11 @@ import os
 from discord import app_commands
 from discord.ext import commands
 from typing import Optional
-from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import repair_default_config_dict
 from src.modules.config.ConfigInterfaces import SelectLanguageView, ConfigViewMenu
-from src.utils.oisol_enums import DataFilesPath, Faction
+from src.modules.stockpile_viewer import stockpile_embed_generator
+from src.utils.CsvHandler import CsvHandler
+from src.utils.functions import repair_default_config_dict, update_discord_interface
+from src.utils.oisol_enums import DataFilesPath, Faction, EmbedIds
 from src.utils.resources import MODULES_CSV_KEYS
 
 
@@ -45,7 +46,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-display', description='Display current config for the server')
-    async def config(self, interaction: discord.Interaction, visible: bool = False):
+    async def config(self, interaction: discord.Interaction):
         print(f'> config command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         try:
@@ -60,7 +61,7 @@ class ModuleConfig(commands.Cog):
             return
         config_view = ConfigViewMenu()
         await config_view.update_config_embed(interaction)
-        await interaction.response.send_message(view=config_view, embed=config_view.embed, ephemeral=not visible)
+        await interaction.response.send_message(view=config_view, embed=config_view.embed)
 
     @app_commands.command(name='config-recruit', description='Set the recruit role of the regiment')
     async def config_recruit(self, interaction: discord.Interaction, recruit_role: discord.Role):
@@ -122,4 +123,24 @@ class ModuleConfig(commands.Cog):
     @app_commands.command(name='config-faction', description='Set the faction of the regiment group using the bot')
     async def config_faction(self, interaction: discord.Interaction, faction: Faction):
         self.regiment_config_generic(interaction.guild_id, faction=faction.name)
+
+        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
+        config = configparser.ConfigParser()
+        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        if config.has_option('stockpile', 'channel'):
+            stockpile_interface_exists = False
+            channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
+            async for message in channel.history():
+                if not message.embeds:
+                    continue
+                message_embed = discord.Embed.to_dict(message.embeds[0])
+                if 'footer' in message_embed.keys() and message_embed['footer']['text'] == EmbedIds.STOCKPILES_VIEW.value:
+                    stockpile_interface_exists = True
+            if stockpile_interface_exists:
+                stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, MODULES_CSV_KEYS['stockpiles'])
+                await update_discord_interface(
+                    interaction,
+                    EmbedIds.STOCKPILES_VIEW.value,
+                    embed=stockpiles_embed
+                )
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
