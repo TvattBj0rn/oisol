@@ -78,7 +78,7 @@ class SelectLanguage(discord.ui.Select):
     class SelectFaction(discord.ui.Select):
         def __init__(self):
             options = [
-                discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
+                # discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
                 discord.SelectOption(label='English', emoji='<:ukus:1205153501823377438>', value=Language.EN.name),
             ]
             super().__init__(placeholder='Choose a faction', options=options)
