@@ -44,16 +44,18 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile-view')
     async def stockpile_view(self, interaction: discord.Interaction):
         print(f'> stockpile_view command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer()
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
         config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
-        config['stockpile'] = {}
-        config['stockpile']['channel'] = str(interaction.channel_id)
+
+        if not config.has_section('stockpile'):
+            config.add_section('stockpile')
+        config.set('stockpile', 'channel', str(interaction.channel_id))
+
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
         stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
-        await interaction.followup.send(embed=stockpiles_embed)
+        await interaction.response.send_message(embed=stockpiles_embed)
 
     @app_commands.command(name='stockpile-create')
     @app_commands.autocomplete(localisation=region_autocomplete)
@@ -97,14 +99,13 @@ class ModuleStockpiles(commands.Cog):
             embed=stockpiles_embed
         )
 
-        await interaction.response.send_message('> Stockpile was properly generated', ephemeral=True)
+        await interaction.response.send_message('> Stockpile was properly generated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='stockpile-delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
         print(f'> stockpile_delete command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer(ephemeral=True)
         self.CsvHandler.csv_delete_data(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value),
+            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), DataFilesPath.STOCKPILES.value),
             stockpile_code
         )
 
@@ -113,22 +114,16 @@ class ModuleStockpiles(commands.Cog):
             EmbedIds.STOCKPILES_VIEW.value,
             embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-        await interaction.followup.send(
-            f'> The stockpile (code: {stockpile_code}) was properly removed',
-            ephemeral=True
-        )
+        await interaction.response.send_message(f'> The stockpile (code: {stockpile_code}) was properly removed', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='stockpile-clear')
     async def stockpile_clear(self, interaction: discord.Interaction):
         print(f'> stockpile_clear command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer(ephemeral=True)
-        self.CsvHandler.csv_clear_data(
-            os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value)
-        )
+        self.CsvHandler.csv_clear_data(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value))
 
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
             embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-        await interaction.followup.send(f'> The stockpile interface was properly cleared', ephemeral=True)
+        await interaction.response.send_message(f'> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)
