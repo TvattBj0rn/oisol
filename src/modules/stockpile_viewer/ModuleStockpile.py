@@ -63,15 +63,15 @@ class ModuleStockpiles(commands.Cog):
         print(f'> stockpile_create command by {interaction.user.name} on {interaction.guild.name}')
         # Case where a user entered an invalid sized code
         if len(code) != 6:
-            await interaction.response.send_message('> The code must be a 6-digits code', ephemeral=True)
+            await interaction.response.send_message('> The code must be a 6-digits code', ephemeral=True, delete_after=5)
             return
         # Case where a user entered a code without digits only
         if not code.isdigit():
-            await interaction.response.send_message('> The code contains non digit characters', ephemeral=True)
+            await interaction.response.send_message('> The code contains non digit characters', ephemeral=True, delete_after=5)
             return
         # Case where a user did not select a provided localisation
         if ' | ' not in localisation or localisation.startswith(' | ') or localisation.startswith(' | '):
-            await interaction.response.send_message('> The localisation you entered is incorrect, displayed localisations are clickable', ephemeral=True)
+            await interaction.response.send_message('> The localisation you entered is incorrect, displayed localisations are clickable', ephemeral=True, delete_after=5)
             return
 
         r, s = localisation.split(' | ')  # Only one '|' -> 2 splits
