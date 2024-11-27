@@ -54,7 +54,7 @@ class RegisterViewMenu(discord.ui.View):
         if not self.embeds:
             return discord.Embed().from_dict(
                 {
-                    'title': 'Registre | Page 1',
+                    'title': 'Register | Page 1',
                     'color': self.color,
                     'footer': {'text': 'Register'}
                 }
@@ -69,8 +69,7 @@ class RegisterViewMenu(discord.ui.View):
             self.current_page_index -= 1
         self.refresh_register_embed(str(interaction.guild_id))
 
-        await interaction.message.edit(view=self, embed=self.get_current_embed())
-        await interaction.response.defer()
+        await interaction.response.edit_message(view=self, embed=self.get_current_embed())
 
     @discord.ui.button(emoji='▶️', style=discord.ButtonStyle.blurple, custom_id='RegisterViewMenu:right')
     async def right_button_callback(self, interaction: discord.Interaction, _button: discord.ui.Button):
@@ -80,5 +79,4 @@ class RegisterViewMenu(discord.ui.View):
             self.current_page_index += 1
         self.refresh_register_embed(str(interaction.guild_id))
 
-        await interaction.message.edit(view=self, embed=self.get_current_embed())
-        await interaction.response.defer()
+        await interaction.response.edit_message(view=self, embed=self.get_current_embed())
