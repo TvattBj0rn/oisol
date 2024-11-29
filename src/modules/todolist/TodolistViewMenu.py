@@ -4,7 +4,6 @@ import json
 import os
 import pathlib
 import re
-from src.utils.oisol_enums import PriorityType
 from src.utils.resources import EMOTES_CUSTOM_ID
 
 
@@ -182,19 +181,47 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         # If the tasks are already at capacity, no need to go further
         current_tasks = full_dict['tasks']
         if len(current_tasks['high']) + len(current_tasks['medium']) + len(current_tasks['low']) >= 24:
-            await interaction.followup.send('> The todolist is already full', ephemeral=True)
+            await interaction.response.send_message('> The todolist is already full', ephemeral=True)
             return
 
         # Update task JSON and resize it to capacity
+        # Resize by number of tasks, discord limit at 25 buttons: 1 button add + 24 potential tasks
         data_dict, bypassed_tasks = refit_data({
                 'title': self.todolist_title,
                 'access': full_dict['access'],
                 'tasks': {
-                    'high': [task for task in self.high_priority.value.split(',') + current_tasks['high'] if task],
-                    'medium': [task for task in self.medium_priority.value.split(',') + current_tasks['medium'] if task],
-                    'low': [task for task in self.low_priority.value.split(',') + current_tasks['low']if task],
+                    'high': [task.strip() for task in self.high_priority.value.split(',') + current_tasks['high'] if task],
+                    'medium': [task.strip() for task in self.medium_priority.value.split(',') + current_tasks['medium'] if task],
+                    'low': [task.strip() for task in self.low_priority.value.split(',') + current_tasks['low'] if task],
                 }
             })
+        # Resize by char size, discord limit at 1024 chars per field
+        total_len = 0
+        for k, v in data_dict['tasks'].items():
+            for i, task in enumerate(v):
+                if total_len + len(task) + 30 < 1024:
+                    total_len += len(task) + 30
+                else:
+                    data_dict['tasks'][k] = data_dict['tasks'][k][:i]
+                    bypassed_tasks += data_dict['tasks'][k][i:]
+                    break
+
+        # Prevent bypassed_tasks going over the 1024 char limit per message
+        total_len = 0
+        for i, task in enumerate(bypassed_tasks):
+            if total_len + len(task) + 44 < 1024:
+                total_len += len(task) + 44
+            else:
+                bypassed_tasks = bypassed_tasks[:i]
+                break
+
+        # Recreate the view with the updated tasks
+        updated_todolist_view = TodolistViewMenu()
+        updated_todolist_view.refresh_view(data_dict, self.todolist_title, str(interaction.guild_id), self.embed_uuid)
+
+        # Defer is needed to edit the todolist & send potential message of bypassed tasks
+        await interaction.response.defer()
+        await interaction.edit_original_response(view=updated_todolist_view, embed=updated_todolist_view.embed)
 
         # Send the tasks that could not be added to the user with a format that makes it easier to copy / paste
         if bypassed_tasks:
@@ -202,11 +229,6 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
                 f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`",
                 ephemeral=True
             )
-
-        # Recreate the view with the updated tasks
-        updated_todolist_view = TodolistViewMenu()
-        updated_todolist_view.refresh_view(data_dict, self.todolist_title, str(interaction.guild_id), self.embed_uuid)
-        await interaction.response.edit_message(view=updated_todolist_view, embed=updated_todolist_view.embed)
 
 
 class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], template=r'todolist:button:[A-Z]'):

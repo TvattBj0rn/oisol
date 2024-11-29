@@ -126,7 +126,12 @@ class Oisol(commands.Bot):
 
         guild = self.get_guild(server_id)
         channel = guild.get_channel(config.getint('register', 'channel'))
-        message = await channel.fetch_message(config.getint('register', 'message_id'))
+        try:
+            message = await channel.fetch_message(config.getint('register', 'message_id'))
+        except discord.NotFound:
+            return
+
+        # Update existing register
         register_view = RegisterViewMenu()
         register_view.refresh_register_embed(str_server_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
