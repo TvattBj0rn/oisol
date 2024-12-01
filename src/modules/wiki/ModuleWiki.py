@@ -149,7 +149,7 @@ class ModuleWiki(commands.Cog):
     async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: Optional[bool] = False):
         print(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
-            await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
+            await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             return
         wiki_entry_complete_name = ''
         for entry in ALL_WIKI_ENTRIES:
@@ -178,7 +178,7 @@ class ModuleWiki(commands.Cog):
         print(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
 
         if not health_request.startswith('https://foxhole.wiki.gg/wiki/'):
-            await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
+            await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             return
 
         entry_url = 'https://foxhole.wiki.gg/wiki/Vehicle_Health'

@@ -14,10 +14,10 @@ def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
     sorted_stockpiles = dict()
 
     for stockpile in stockpiles_list:
-        if not stockpile['region'] in sorted_stockpiles.keys():
+        if stockpile['region'] not in sorted_stockpiles.keys():
             sorted_stockpiles[stockpile['region']] = {stockpile['subregion']: [stockpile]}
         else:
-            if not stockpile['subregion'] in sorted_stockpiles[stockpile['region']].keys():
+            if stockpile['subregion'] not in sorted_stockpiles[stockpile['region']].keys():
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']] = [stockpile]
             else:
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']].append(stockpile)
@@ -80,7 +80,7 @@ def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: li
 
     return discord.Embed().from_dict(
         {
-            'title': f'Stockpiles | <:region:1130915923704946758>',
+            'title': 'Stockpiles | <:region:1130915923704946758>',
             'color': Faction[config['regiment']['faction']].value,
             'footer': {'text': EmbedIds.STOCKPILES_VIEW.value},
             'fields': embed_fields

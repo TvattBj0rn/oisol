@@ -126,4 +126,4 @@ class ModuleStockpiles(commands.Cog):
             EmbedIds.STOCKPILES_VIEW.value,
             embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-        await interaction.response.send_message(f'> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)
+        await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)

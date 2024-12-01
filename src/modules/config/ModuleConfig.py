@@ -92,7 +92,7 @@ class ModuleConfig(commands.Cog):
 
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
-        await interaction.response.send_message(f'> The register config was updated', ephemeral=True, delete_after=5)
+        await interaction.response.send_message('> The register config was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-language', description='Set the language the bot uses for the server')
     async def config_language(self, interaction: discord.Interaction):
