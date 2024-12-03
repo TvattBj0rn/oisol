@@ -1,6 +1,6 @@
-from src.utils.resources import VEHICLES_WIKI_ENTRIES, STRUCTURES_WIKI_ENTRIES, ALL_WIKI_ENTRIES
 from src.modules.wiki.scrapers.scrap_health import scrap_health
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
+from src.utils.resources import VEHICLES_WIKI_ENTRIES, STRUCTURES_WIKI_ENTRIES, ALL_WIKI_ENTRIES
 
 
 def test_health_command_structures_entries():
