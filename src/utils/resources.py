@@ -2031,8 +2031,8 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'dragons teeth'
     },
     {
-        'name': "Dug Foxhole",
-        'url': "https://foxhole.wiki.gg/wiki/Dug_Foxhole",
+        'name': "Foxhole",
+        'url': "https://foxhole.wiki.gg/wiki/Foxhole_(Structure)",
         'keywords': 'dug foxhole'
     },
     {
