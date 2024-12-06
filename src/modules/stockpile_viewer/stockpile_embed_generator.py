@@ -14,10 +14,10 @@ def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
     sorted_stockpiles = dict()
 
     for stockpile in stockpiles_list:
-        if stockpile['region'] not in sorted_stockpiles.keys():
+        if stockpile['region'] not in sorted_stockpiles:
             sorted_stockpiles[stockpile['region']] = {stockpile['subregion']: [stockpile]}
         else:
-            if stockpile['subregion'] not in sorted_stockpiles[stockpile['region']].keys():
+            if stockpile['subregion'] not in sorted_stockpiles[stockpile['region']]:
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']] = [stockpile]
             else:
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']].append(stockpile)
@@ -26,7 +26,7 @@ def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
     consume(
         consume(
             sorted_stockpiles[region_name][subregion_name].sort(key=lambda s: s['name'])
-            for subregion_name in subregion.keys()
+            for subregion_name in subregion
             if len(sorted_stockpiles[region_name][subregion_name]) > 1
         )
         for region_name, subregion in sorted_stockpiles.items()

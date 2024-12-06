@@ -131,14 +131,14 @@ class TodolistViewMenu(discord.ui.View):
         self.embed_uuid = interaction.message.embeds[0].footer.text
         self.title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         try:
-            with open(os.path.join(pathlib.Path('/'), 'oisol',str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
+            with open(os.path.join(pathlib.Path('/'), 'oisol',str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')) as file:
                 permissions = json.load(file)['access']
         # This probably can be removed
         except OSError:
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
         if (
-                'roles' in permissions.keys() and 'members' in permissions.keys()
+                'roles' in permissions and 'members' in permissions
                 and not has_permissions(interaction, permissions)
         ):
             await interaction.response.send_message('> You do not have the permission to click on this button', ephemeral=True)
@@ -175,7 +175,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
 
     async def on_submit(self, interaction: discord.Interaction):
         # Get current tasks from file
-        with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
+        with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')) as file:
             full_dict = json.load(file)
 
         # If the tasks are already at capacity, no need to go further
@@ -253,14 +253,14 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         guild_id = str(interaction.guild_id)
 
         try:
-            with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json'), 'r') as file:
+            with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json')) as file:
                 full_dict = json.load(file)
         except OSError:
             print(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
             await interaction.followup.send('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)
             return
         if (
-                'roles' in full_dict['access'].keys() and 'members' in full_dict['access'].keys()
+                'roles' in full_dict['access'] and 'members' in full_dict['access']
                 and not has_permissions(interaction, full_dict['access'])
         ):
             await interaction.followup.send('> You do not have the permission to click on this button', ephemeral=True)

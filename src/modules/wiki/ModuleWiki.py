@@ -23,10 +23,10 @@ class ModuleWiki(commands.Cog):
 
     @staticmethod
     def retrieve_facility_mats(resource_type: str, amount: str) -> str:
-        if resource_type not in EMOJIS_FROM_DICT.keys():
+        if resource_type not in EMOJIS_FROM_DICT:
             return f'{amount} **:** '
 
-        if resource_type in NAMES_TO_ACRONYMS.keys():
+        if resource_type in NAMES_TO_ACRONYMS:
             return f'\n{EMOJIS_FROM_DICT[resource_type]} **|** {NAMES_TO_ACRONYMS[resource_type]} **-** {amount}'
         return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
 
@@ -43,7 +43,7 @@ class ModuleWiki(commands.Cog):
                 embed_desc += f'{k}: {v} HP\n'
         else:
             embed_desc = f"{wiki_data['HP']} HP"
-        if 'Class' in wiki_data.keys():
+        if 'Class' in wiki_data:
             embed_desc += f"\n*Class: {wiki_data['Class']}*"
         embed = discord.Embed().from_dict(
             {
@@ -57,7 +57,7 @@ class ModuleWiki(commands.Cog):
 
         # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
         # This set the relic vehicles entries to the same level as normal vehicles.
-        if 'Class' in wiki_data.keys() and wiki_data['Class'] == 'Relic Vehicles':
+        if 'Class' in wiki_data and wiki_data['Class'] == 'Relic Vehicles':
             consume(wiki_data.pop(entry, None) for entry in [
                 'Alligator Charge',
                 "Hydra's Whisper",
@@ -66,16 +66,16 @@ class ModuleWiki(commands.Cog):
                 'Torpedo',
                 'Sea Mine'
             ])
-        for i, (k, v) in enumerate(wiki_data.items()):
+        for k, v in wiki_data.items():
             if k in ['Class', 'Name', '', 'Icon', 'HP']:
                 continue
-            value_string = f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: "
-            if isinstance(wiki_data[k], dict) and 'Disabled' in wiki_data[k].keys():
-                value_string += wiki_data[k]['Disabled'] + ' **|** ' + wiki_data[k]['Kill']
-            elif isinstance(wiki_data[k], dict) and len(wiki_data[k].keys()) == 3:
-                value_string += wiki_data[k]['S'] + ' **|** ' + wiki_data[k]['M'] + ' **|** ' + wiki_data[k]['L']
-            elif isinstance(wiki_data[k], str):
-                value_string += wiki_data[k]
+            value_string = f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT else k}: "
+            if isinstance(v, dict) and 'Disabled' in v:
+                value_string += v['Disabled'] + ' **|** ' + v['Kill']
+            elif isinstance(v, dict) and len(v.keys()) == 3:
+                value_string += v['S'] + ' **|** ' + v['M'] + ' **|** ' + v['L']
+            elif isinstance(v, str):
+                value_string += v
             embed.add_field(
                 name='',
                 value=value_string
@@ -126,11 +126,11 @@ class ModuleWiki(commands.Cog):
                     attribute_string += self.retrieve_facility_mats(k, v)
                 attribute_string = attribute_string.removesuffix(' **:** ')
                 embed_fields.append({'name': attribute_key, 'value': attribute_string, 'inline': True})
-        if 'Fuel Capacity' in wiki_data.keys():
+        if 'Fuel Capacity' in wiki_data:
             embed_fields.append(
                 {
                     'name': 'Fuel Capacity',
-                    'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys()))}",
+                    'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT))}",
                     'inline': True
                 }
             )
@@ -160,7 +160,7 @@ class ModuleWiki(commands.Cog):
         entry_data = scrap_wiki(wiki_request, wiki_entry_complete_name)
         entry_data['url'] = wiki_request
 
-        if 'title' not in entry_data.keys():
+        if 'title' not in entry_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
             return
 
@@ -205,7 +205,7 @@ class ModuleWiki(commands.Cog):
             return
 
         scraped_health_data = scrap_health(entry_url, wiki_entry_complete_name)
-        if 'Name' not in scraped_health_data.keys():
+        if 'Name' not in scraped_health_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
             return
 

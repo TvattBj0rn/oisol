@@ -77,7 +77,7 @@ def scrap_health(url: str, name: str) -> dict:
 
     # In case we are checking for a building but 2 values were retrieved in HP
     if (
-            'Class' not in wiki_response_dict.keys()
+            'Class' not in wiki_response_dict
             and isinstance(wiki_response_dict['HP'], dict)
             and len(wiki_response_dict['HP'].keys()) == 2
     ):

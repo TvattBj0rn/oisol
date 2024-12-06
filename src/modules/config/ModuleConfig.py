@@ -142,7 +142,7 @@ class ModuleConfig(commands.Cog):
                 if not message.embeds:
                     continue
                 message_embed = discord.Embed.to_dict(message.embeds[0])
-                if 'footer' in message_embed.keys() and message_embed['footer']['text'] == EmbedIds.STOCKPILES_VIEW.value:
+                if 'footer' in message_embed and message_embed['footer']['text'] == EmbedIds.STOCKPILES_VIEW.value:
                     stockpile_interface_exists = True
             if stockpile_interface_exists:
                 stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, MODULES_CSV_KEYS['stockpiles'])
