@@ -5,7 +5,7 @@ from src.utils.oisol_enums import Faction
 
 
 def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> dict | str:
-    attr_dict = dict()
+    attr_dict = {}
     match attr_title:
         case 'Resistance(damage reduction)':
             attr_dict['type'] = f"\n{infobox_attribute_soup.get_text(strip=True).split('-')[0]}"
@@ -84,7 +84,7 @@ def scrap_wiki(url: str, name: str) -> dict:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
-        return dict()
+        return {}
 
     # Whole page soup data
     soup = BeautifulSoup(response.content, features="lxml")
@@ -97,8 +97,8 @@ def scrap_wiki(url: str, name: str) -> dict:
     infoboxs_soup = soup.select('aside[class^="portable-infobox noexcerpt pi-background"]')
     for infobox in infoboxs_soup:
         wiki_response_dict = generate_infobox_data(infobox)
-        if name in [wiki_response_dict['title'], f'{wiki_response_dict['title']} (Tier 1)', f'{wiki_response_dict['title']} (Battleship)']:
+        if name in {wiki_response_dict['title'], f'{wiki_response_dict['title']} (Tier 1)', f'{wiki_response_dict['title']} (Battleship)'}:
             wiki_response_dict['description'] = entry_desc
             return wiki_response_dict
 
-    return dict()
+    return {}

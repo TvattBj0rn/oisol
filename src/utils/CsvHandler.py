@@ -23,7 +23,7 @@ class CsvHandler:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.csv_file_keys)
 
-    def csv_delete_data(self, file_path: str, key_to_del):
+    def csv_delete_data(self, file_path: str, key_to_del: str):
         new_row_list = []
         with open(file_path) as csv_file:
             reader = csv.reader(csv_file, delimiter=';')

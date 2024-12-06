@@ -3,6 +3,7 @@ import json
 import os
 import pathlib
 import re
+import string
 
 import discord
 
@@ -32,11 +33,7 @@ def list_to_priority_dict(data_list: list) -> dict:
 
 
 def priority_dict_to_list(data_dict: dict) -> list:
-    tasks_list = []
-    for k, v in data_dict.items():
-        for task in v:
-            tasks_list.append([task, k])
-    return tasks_list
+    return [[task, k] for k, v in data_dict.items() for task in v]
 
 
 def refit_data(data_dict: dict) -> tuple[dict, list]:
@@ -49,7 +46,7 @@ def refit_data(data_dict: dict) -> tuple[dict, list]:
     removed_tasks = []
     tasks_to_remove = len(data_dict_tasks['high']) + len(data_dict_tasks['medium']) + len(data_dict_tasks['low']) - 24
     if tasks_to_remove <= 0:
-        return data_dict, list()
+        return data_dict, []
     for k in ['low', 'medium', 'high']:
         if not data_dict_tasks[k]:
             continue
@@ -98,9 +95,8 @@ class TodolistViewMenu(discord.ui.View):
 
         # Re-add add button & tasks buttons
         self.add_item(self.add_tasks)
-        possible_buttons = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         for i in range(len(self.data_list)):
-            self.add_item(TodolistButtonCheckmark(f'todolist:button:{possible_buttons[i]}'))
+            self.add_item(TodolistButtonCheckmark(f'todolist:button:{string.ascii_uppercase[i]}'))
 
     def _refresh_view_embed(self):
         # Retrieval of existing tasks and deepcopy for display purposes
@@ -112,7 +108,7 @@ class TodolistViewMenu(discord.ui.View):
         for k, v in display_tasks.items():
             display_tasks[k] = ''
             for task in v:
-                display_tasks[k] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task}\n"
+                display_tasks[k] += f":regional_indicator_{string.ascii_lowercase[i]}: **|** {task}\n"
                 i += 1
 
         # Update with a single call from dict instead of multiple through the method
@@ -228,7 +224,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         # Send the tasks that could not be added to the user with a format that makes it easier to copy / paste
         if bypassed_tasks:
             await interaction.followup.send(
-                f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`",
+                f"> Tasks that were not put in the todolist: `{','.join(bypassed_tasks)}`",
                 ephemeral=True
             )
 

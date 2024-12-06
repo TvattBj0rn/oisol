@@ -6,7 +6,7 @@ pythonpath = [
 [tool.ruff.lint]
 select = [
     # pycodestyle
-    "E",
+    "E", "W",
     # Pyflakes
     "F",
     # pyupgrade
@@ -17,5 +17,7 @@ select = [
     "SIM",
     # isort
     "I",
+    # comprehensions
+    "C4",
 ]
 ignore = ["E501"] # Line-too-long

@@ -34,7 +34,7 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands')
         )
-        self.config_servers = dict()
+        self.config_servers = {}
 
     def load_configs(self):
         oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
@@ -167,7 +167,7 @@ class Oisol(commands.Bot):
             if config.has_option('register', 'input'):
                 await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
             await self.update_register(
-                before.guild.id, all_members + [{'member': after.id, 'timer': int(time.time())}]
+                before.guild.id, [*all_members, {'member': after.id, 'timer': int(time.time())}]
             )
 
         # Member is now a promoted recruit

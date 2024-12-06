@@ -1,4 +1,5 @@
 import collections
+import operator
 import random
 import re
 from typing import Optional
@@ -69,7 +70,7 @@ class ModuleWiki(commands.Cog):
                 'Sea Mine'
             ])
         for k, v in wiki_data.items():
-            if k in ['Class', 'Name', '', 'Icon', 'HP']:
+            if k in {'Class', 'Name', '', 'Icon', 'HP'}:
                 continue
             value_string = f"{EMOJIS_FROM_DICT.get(k, k)}: "
             if isinstance(v, dict) and 'Disabled' in v:
@@ -109,7 +110,7 @@ class ModuleWiki(commands.Cog):
                 search_results.append((wiki_entry['name'], wiki_entry['url'], search_value))
         search_results = sorted(
             search_results,
-            key=lambda x: x[2],
+            key=operator.itemgetter(2),
             reverse=True
         )[:25]
         return [(entry_result[0], entry_result[1]) for entry_result in search_results]
@@ -117,7 +118,7 @@ class ModuleWiki(commands.Cog):
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
         embed_fields = []
         for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
+            if attribute_key in {'description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color'}:
                 continue
             if isinstance(attribute_value, str):
                 embed_fields.append({'name': attribute_key, 'value': attribute_value, 'inline': True})

@@ -1,4 +1,5 @@
 import configparser
+import operator
 import os
 import pathlib
 
@@ -13,7 +14,7 @@ from src.utils.resources import REGIONS_STOCKPILES
 def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
     data_file_path = os.path.join(pathlib.Path('/'), 'oisol', str(guild_id), DataFilesPath.STOCKPILES.value)
     stockpiles_list = CsvHandler(csv_keys).csv_get_all_data(data_file_path)
-    sorted_stockpiles = dict()
+    sorted_stockpiles = {}
 
     for stockpile in stockpiles_list:
         if stockpile['region'] not in sorted_stockpiles:
@@ -27,7 +28,7 @@ def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
     # Sort subregion stockpiles by name
     consume(
         consume(
-            sorted_stockpiles[region_name][subregion_name].sort(key=lambda s: s['name'])
+            sorted_stockpiles[region_name][subregion_name].sort(key=operator.itemgetter('name'))
             for subregion_name in subregion
             if len(sorted_stockpiles[region_name][subregion_name]) > 1
         )

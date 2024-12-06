@@ -29,7 +29,7 @@ class ModuleStockpiles(commands.Cog):
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
 
-        search_results = dict()
+        search_results = {}
 
         for city in regions_cities:
             search_results[city] = 0
@@ -72,7 +72,7 @@ class ModuleStockpiles(commands.Cog):
             await interaction.response.send_message('> The code contains non digit characters', ephemeral=True, delete_after=5)
             return
         # Case where a user did not select a provided localisation
-        if ' | ' not in localisation or localisation.startswith(' | ') or localisation.startswith(' | '):
+        if ' | ' not in localisation or localisation.startswith(' | '):
             await interaction.response.send_message('> The localisation you entered is incorrect, displayed localisations are clickable', ephemeral=True, delete_after=5)
             return
 
