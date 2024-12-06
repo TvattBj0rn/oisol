@@ -191,9 +191,7 @@ class Oisol(commands.Bot):
             all_members = csv_handler.csv_get_all_data(
                 os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
             )
-            for i, member in enumerate(all_members):
-                if member['member'] == str(after.id):
-                    all_members.pop(i)
+            all_members = [member for member in all_members if member['member'] != str(after.id)]
             await self.update_register(before.guild.id, all_members)
 
     async def on_guild_join(self, guild: discord.Guild):
