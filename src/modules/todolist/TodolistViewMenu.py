@@ -133,7 +133,7 @@ class TodolistViewMenu(discord.ui.View):
         self.embed_uuid = interaction.message.embeds[0].footer.text
         self.title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         try:
-            with open(os.path.join(pathlib.Path('/'), 'oisol',str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')) as file:
+            with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')) as file:
                 permissions = json.load(file)['access']
         # This probably can be removed
         except OSError:

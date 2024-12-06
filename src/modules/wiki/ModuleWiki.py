@@ -71,11 +71,11 @@ class ModuleWiki(commands.Cog):
         for k, v in wiki_data.items():
             if k in ['Class', 'Name', '', 'Icon', 'HP']:
                 continue
-            value_string = f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT else k}: "
+            value_string = f"{EMOJIS_FROM_DICT.get(k, k)}: "
             if isinstance(v, dict) and 'Disabled' in v:
-                value_string += v['Disabled'] + ' **|** ' + v['Kill']
+                value_string += f'{v['Disabled']} **|** {v['Kill']}'
             elif isinstance(v, dict) and len(v.keys()) == 3:
-                value_string += v['S'] + ' **|** ' + v['M'] + ' **|** ' + v['L']
+                value_string += f'{v['S']} **|** {v['M']} **|** {v['L']}'
             elif isinstance(v, str):
                 value_string += v
             embed.add_field(
