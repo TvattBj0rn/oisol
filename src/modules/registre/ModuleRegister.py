@@ -1,12 +1,14 @@
 import configparser
-import discord
 import os
+
+import discord
 from discord import app_commands
 from discord.ext import commands
+
+from src.modules.registre.RegisterViewMenu import RegisterViewMenu
+from src.utils.CsvHandler import CsvHandler
 from src.utils.oisol_enums import DataFilesPath
 from src.utils.resources import MODULES_CSV_KEYS
-from src.utils.CsvHandler import CsvHandler
-from src.modules.registre.RegisterViewMenu import RegisterViewMenu
 
 
 class ModuleRegister(commands.Cog):

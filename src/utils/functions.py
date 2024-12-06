@@ -1,11 +1,12 @@
 import configparser
-import discord
 import os
 from configparser import ConfigParser
 from typing import Optional
+
+import discord
+
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
-from src.utils.oisol_enums import DataFilesPath
-from src.utils.oisol_enums import Faction, Language
+from src.utils.oisol_enums import DataFilesPath, Faction, Language
 
 
 async def update_discord_interface(

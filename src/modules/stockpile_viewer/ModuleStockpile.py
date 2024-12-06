@@ -1,15 +1,17 @@
 import configparser
-import discord
 import os
 import pathlib
 import random
+
+import discord
 from discord import app_commands
 from discord.ext import commands
+
 from src.modules.stockpile_viewer import stockpile_embed_generator
 from src.utils.CsvHandler import CsvHandler
 from src.utils.functions import update_discord_interface
 from src.utils.oisol_enums import DataFilesPath, EmbedIds, Modules
-from src.utils.resources import REGIONS_STOCKPILES, MODULES_CSV_KEYS
+from src.utils.resources import MODULES_CSV_KEYS, REGIONS_STOCKPILES
 
 
 class ModuleStockpiles(commands.Cog):

@@ -1,8 +1,10 @@
-import discord
 import uuid
+from typing import Optional
+
+import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import Optional
+
 from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
 
 

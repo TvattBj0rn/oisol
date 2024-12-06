@@ -1,7 +1,9 @@
 import configparser
-import discord
 import os
-from src.utils.oisol_enums import Language, DataFilesPath
+
+import discord
+
+from src.utils.oisol_enums import DataFilesPath, Language
 
 
 class ConfigViewMenu(discord.ui.View):

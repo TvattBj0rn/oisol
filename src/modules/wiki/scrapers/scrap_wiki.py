@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup, Tag
+
 from src.utils.oisol_enums import Faction
 
 

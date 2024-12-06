@@ -1,14 +1,16 @@
 import configparser
-import discord
 import os
+from typing import Optional
+
+import discord
 from discord import app_commands
 from discord.ext import commands
-from typing import Optional
-from src.modules.config.ConfigInterfaces import SelectLanguageView, ConfigViewMenu
+
+from src.modules.config.ConfigInterfaces import ConfigViewMenu, SelectLanguageView
 from src.modules.stockpile_viewer import stockpile_embed_generator
 from src.utils.CsvHandler import CsvHandler
 from src.utils.functions import repair_default_config_dict, update_discord_interface
-from src.utils.oisol_enums import DataFilesPath, Faction, EmbedIds
+from src.utils.oisol_enums import DataFilesPath, EmbedIds, Faction
 from src.utils.resources import MODULES_CSV_KEYS
 
 

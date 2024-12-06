@@ -1,20 +1,25 @@
 import configparser
-import discord
 import os
 import pathlib
 import time
+
+import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from src.modules.config.ModuleConfig import ModuleConfig
+
 from src.modules.config.ConfigInterfaces import ConfigViewMenu
+from src.modules.config.ModuleConfig import ModuleConfig
 from src.modules.registre.ModuleRegister import ModuleRegister
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
-from src.modules.todolist.TodolistViewMenu import TodolistViewMenu, TodolistButtonCheckmark
 from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
 from src.modules.todolist.ModuleTodolist import ModuleTodolist
+from src.modules.todolist.TodolistViewMenu import (
+    TodolistButtonCheckmark,
+    TodolistViewMenu,
+)
 from src.modules.wiki.ModuleWiki import ModuleWiki
 from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import safeguarded_nickname, repair_default_config_dict
+from src.utils.functions import repair_default_config_dict, safeguarded_nickname
 from src.utils.oisol_enums import DataFilesPath, Modules
 from src.utils.resources import MODULES_CSV_KEYS
 

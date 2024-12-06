@@ -1,9 +1,11 @@
 import copy
-import discord
 import json
 import os
 import pathlib
 import re
+
+import discord
+
 from src.utils.resources import EMOTES_CUSTOM_ID
 
 

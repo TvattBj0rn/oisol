@@ -1,10 +1,12 @@
 import configparser
-import discord
 import os
 import pathlib
+
+import discord
 from more_itertools import consume
+
 from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import Faction, EmbedIds, DataFilesPath
+from src.utils.oisol_enums import DataFilesPath, EmbedIds, Faction
 from src.utils.resources import REGIONS_STOCKPILES
 
 

@@ -1,19 +1,21 @@
 import collections
-import discord
 import random
 import re
+from typing import Optional
+
+import discord
 from discord import app_commands
 from discord.ext import commands
 from more_itertools.recipes import consume
-from typing import Optional
+
 from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
 from src.utils.resources import (
     ALL_WIKI_ENTRIES,
+    EMOJIS_FROM_DICT,
+    NAMES_TO_ACRONYMS,
     STRUCTURES_WIKI_ENTRIES,
     VEHICLES_WIKI_ENTRIES,
-    EMOJIS_FROM_DICT,
-    NAMES_TO_ACRONYMS
 )
 
 

@@ -1,6 +1,8 @@
-import discord
 import os
 import pathlib
+
+import discord
+
 from src.utils.CsvHandler import CsvHandler
 from src.utils.oisol_enums import DataFilesPath, Faction
 from src.utils.resources import MODULES_CSV_KEYS
