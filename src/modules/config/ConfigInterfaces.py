@@ -1,7 +1,10 @@
 import configparser
-import discord
 import os
-from src.utils.oisol_enums import Language, DataFilesPath
+from typing import Optional
+
+import discord
+
+from src.utils.oisol_enums import DataFilesPath, Language
 
 
 class ConfigViewMenu(discord.ui.View):
@@ -44,7 +47,7 @@ class ConfigViewMenu(discord.ui.View):
 
 
 class SelectLanguageView(discord.ui.View):
-    def __init__(self, *, timeout=None):
+    def __init__(self, *, timeout: Optional[float] = None):
         super().__init__(timeout=timeout)
         self.add_item(SelectLanguage())
 
@@ -69,16 +72,15 @@ class SelectLanguage(discord.ui.Select):
         await interaction.response.edit_message(content='> Language was correctly updated', delete_after=3, view=None)
 
 
-    class SelectFactionView(discord.ui.View):
-        def __init__(self, *, timeout=None):
-            super().__init__(timeout=timeout)
-            self.add_item(SelectLanguage())
+class SelectFactionView(discord.ui.View):
+    def __init__(self, *, timeout: Optional[float] = None):
+        super().__init__(timeout=timeout)
+        self.add_item(SelectLanguage())
 
 
-    class SelectFaction(discord.ui.Select):
-        def __init__(self):
-            options = [
-                # discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
-                discord.SelectOption(label='English', emoji='<:ukus:1205153501823377438>', value=Language.EN.name),
-            ]
-            super().__init__(placeholder='Choose a faction', options=options)
+class SelectFaction(discord.ui.Select):
+    def __init__(self):
+        options = [
+            discord.SelectOption(label='English', emoji='<:ukus:1205153501823377438>', value=Language.EN.name),
+        ]
+        super().__init__(placeholder='Choose a faction', options=options)

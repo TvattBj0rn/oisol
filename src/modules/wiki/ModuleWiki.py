@@ -1,19 +1,23 @@
 import collections
-import discord
+import logging
+import operator
 import random
 import re
+from typing import Optional
+
+import discord
 from discord import app_commands
 from discord.ext import commands
 from more_itertools.recipes import consume
-from typing import Optional
+
 from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
 from src.utils.resources import (
     ALL_WIKI_ENTRIES,
+    EMOJIS_FROM_DICT,
+    NAMES_TO_ACRONYMS,
     STRUCTURES_WIKI_ENTRIES,
     VEHICLES_WIKI_ENTRIES,
-    EMOJIS_FROM_DICT,
-    NAMES_TO_ACRONYMS
 )
 
 
@@ -23,10 +27,10 @@ class ModuleWiki(commands.Cog):
 
     @staticmethod
     def retrieve_facility_mats(resource_type: str, amount: str) -> str:
-        if resource_type not in EMOJIS_FROM_DICT.keys():
+        if resource_type not in EMOJIS_FROM_DICT:
             return f'{amount} **:** '
 
-        if resource_type in NAMES_TO_ACRONYMS.keys():
+        if resource_type in NAMES_TO_ACRONYMS:
             return f'\n{EMOJIS_FROM_DICT[resource_type]} **|** {NAMES_TO_ACRONYMS[resource_type]} **-** {amount}'
         return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
 
@@ -43,7 +47,7 @@ class ModuleWiki(commands.Cog):
                 embed_desc += f'{k}: {v} HP\n'
         else:
             embed_desc = f"{wiki_data['HP']} HP"
-        if 'Class' in wiki_data.keys():
+        if 'Class' in wiki_data:
             embed_desc += f"\n*Class: {wiki_data['Class']}*"
         embed = discord.Embed().from_dict(
             {
@@ -57,7 +61,7 @@ class ModuleWiki(commands.Cog):
 
         # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
         # This set the relic vehicles entries to the same level as normal vehicles.
-        if 'Class' in wiki_data.keys() and wiki_data['Class'] == 'Relic Vehicles':
+        if 'Class' in wiki_data and wiki_data['Class'] == 'Relic Vehicles':
             consume(wiki_data.pop(entry, None) for entry in [
                 'Alligator Charge',
                 "Hydra's Whisper",
@@ -66,16 +70,16 @@ class ModuleWiki(commands.Cog):
                 'Torpedo',
                 'Sea Mine'
             ])
-        for i, (k, v) in enumerate(wiki_data.items()):
-            if k in ['Class', 'Name', '', 'Icon', 'HP']:
+        for k, v in wiki_data.items():
+            if k in {'Class', 'Name', '', 'Icon', 'HP'}:
                 continue
-            value_string = f"{EMOJIS_FROM_DICT[k] if k in EMOJIS_FROM_DICT.keys() else k}: "
-            if isinstance(wiki_data[k], dict) and 'Disabled' in wiki_data[k].keys():
-                value_string += wiki_data[k]['Disabled'] + ' **|** ' + wiki_data[k]['Kill']
-            elif isinstance(wiki_data[k], dict) and len(wiki_data[k].keys()) == 3:
-                value_string += wiki_data[k]['S'] + ' **|** ' + wiki_data[k]['M'] + ' **|** ' + wiki_data[k]['L']
-            elif isinstance(wiki_data[k], str):
-                value_string += wiki_data[k]
+            value_string = f"{EMOJIS_FROM_DICT.get(k, k)}: "
+            if isinstance(v, dict) and 'Disabled' in v:
+                value_string += f'{v['Disabled']} **|** {v['Kill']}'
+            elif isinstance(v, dict) and len(v.keys()) == 3:
+                value_string += f'{v['S']} **|** {v['M']} **|** {v['L']}'
+            elif isinstance(v, str):
+                value_string += v
             embed.add_field(
                 name='',
                 value=value_string
@@ -107,7 +111,7 @@ class ModuleWiki(commands.Cog):
                 search_results.append((wiki_entry['name'], wiki_entry['url'], search_value))
         search_results = sorted(
             search_results,
-            key=lambda x: x[2],
+            key=operator.itemgetter(2),
             reverse=True
         )[:25]
         return [(entry_result[0], entry_result[1]) for entry_result in search_results]
@@ -115,7 +119,7 @@ class ModuleWiki(commands.Cog):
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
         embed_fields = []
         for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in ['description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color']:
+            if attribute_key in {'description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color'}:
                 continue
             if isinstance(attribute_value, str):
                 embed_fields.append({'name': attribute_key, 'value': attribute_value, 'inline': True})
@@ -126,11 +130,11 @@ class ModuleWiki(commands.Cog):
                     attribute_string += self.retrieve_facility_mats(k, v)
                 attribute_string = attribute_string.removesuffix(' **:** ')
                 embed_fields.append({'name': attribute_key, 'value': attribute_string, 'inline': True})
-        if 'Fuel Capacity' in wiki_data.keys():
+        if 'Fuel Capacity' in wiki_data:
             embed_fields.append(
                 {
                     'name': 'Fuel Capacity',
-                    'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT.keys()))}",
+                    'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT))}",
                     'inline': True
                 }
             )
@@ -147,9 +151,9 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='wiki', description='Info wiki')
     async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: Optional[bool] = False):
-        print(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
+        logging.info(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
-            await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
+            await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             return
         wiki_entry_complete_name = ''
         for entry in ALL_WIKI_ENTRIES:
@@ -160,7 +164,7 @@ class ModuleWiki(commands.Cog):
         entry_data = scrap_wiki(wiki_request, wiki_entry_complete_name)
         entry_data['url'] = wiki_request
 
-        if 'title' not in entry_data.keys():
+        if 'title' not in entry_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
             return
 
@@ -175,10 +179,10 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: Optional[bool] = False):
-        print(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
+        logging.info(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
 
         if not health_request.startswith('https://foxhole.wiki.gg/wiki/'):
-            await interaction.response.send_message(f'The request you made was incorrect', ephemeral=True)
+            await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             return
 
         entry_url = 'https://foxhole.wiki.gg/wiki/Vehicle_Health'
@@ -205,7 +209,7 @@ class ModuleWiki(commands.Cog):
             return
 
         scraped_health_data = scrap_health(entry_url, wiki_entry_complete_name)
-        if 'Name' not in scraped_health_data.keys():
+        if 'Name' not in scraped_health_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
             return
 

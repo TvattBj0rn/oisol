@@ -1,5 +1,6 @@
-import os
 import csv
+import os
+
 from src.utils.oisol_enums import Modules
 
 
@@ -22,13 +23,13 @@ class CsvHandler:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.csv_file_keys)
 
-    def csv_delete_data(self, file_path: str, key_to_del):
+    def csv_delete_data(self, file_path: str, key_to_del: str):
         new_row_list = []
-        with open(file_path, 'r') as csv_file:
+        with open(file_path) as csv_file:
             reader = csv.reader(csv_file, delimiter=';')
             next(reader, None)
             for row in reader:
-                if not row[2] == key_to_del:
+                if row[2] != key_to_del:
                     new_row_list.append(row)
         with open(file_path, 'w', newline='') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
@@ -39,7 +40,7 @@ class CsvHandler:
     def csv_get_all_data(self, file_path: str) -> [dict]:
         data = []
 
-        with open(file_path, 'r') as csv_file:
+        with open(file_path) as csv_file:
             reader = csv.reader(csv_file, delimiter=';')
             next(reader, None)  # Used to skip header row
             for row in reader:

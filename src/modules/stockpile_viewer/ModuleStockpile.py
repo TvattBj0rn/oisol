@@ -1,15 +1,18 @@
 import configparser
-import discord
+import logging
 import os
 import pathlib
 import random
+
+import discord
 from discord import app_commands
 from discord.ext import commands
+
 from src.modules.stockpile_viewer import stockpile_embed_generator
 from src.utils.CsvHandler import CsvHandler
 from src.utils.functions import update_discord_interface
 from src.utils.oisol_enums import DataFilesPath, EmbedIds, Modules
-from src.utils.resources import REGIONS_STOCKPILES, MODULES_CSV_KEYS
+from src.utils.resources import MODULES_CSV_KEYS, REGIONS_STOCKPILES
 
 
 class ModuleStockpiles(commands.Cog):
@@ -27,7 +30,7 @@ class ModuleStockpiles(commands.Cog):
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
 
-        search_results = dict()
+        search_results = {}
 
         for city in regions_cities:
             search_results[city] = 0
@@ -43,7 +46,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-view')
     async def stockpile_view(self, interaction: discord.Interaction):
-        print(f'> stockpile_view command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-view command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
         config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
@@ -60,7 +63,7 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile-create')
     @app_commands.autocomplete(localisation=region_autocomplete)
     async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str):
-        print(f'> stockpile_create command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
         # Case where a user entered an invalid sized code
         if len(code) != 6:
             await interaction.response.send_message('> The code must be a 6-digits code', ephemeral=True, delete_after=5)
@@ -70,7 +73,7 @@ class ModuleStockpiles(commands.Cog):
             await interaction.response.send_message('> The code contains non digit characters', ephemeral=True, delete_after=5)
             return
         # Case where a user did not select a provided localisation
-        if ' | ' not in localisation or localisation.startswith(' | ') or localisation.startswith(' | '):
+        if ' | ' not in localisation or localisation.startswith(' | '):
             await interaction.response.send_message('> The localisation you entered is incorrect, displayed localisations are clickable', ephemeral=True, delete_after=5)
             return
 
@@ -103,7 +106,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
-        print(f'> stockpile_delete command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
         self.CsvHandler.csv_delete_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), DataFilesPath.STOCKPILES.value),
             stockpile_code
@@ -118,7 +121,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-clear')
     async def stockpile_clear(self, interaction: discord.Interaction):
-        print(f'> stockpile_clear command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-clear command by {interaction.user.name} on {interaction.guild.name}')
         self.CsvHandler.csv_clear_data(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value))
 
         await update_discord_interface(
@@ -126,4 +129,4 @@ class ModuleStockpiles(commands.Cog):
             EmbedIds.STOCKPILES_VIEW.value,
             embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
         )
-        await interaction.response.send_message(f'> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)
+        await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)

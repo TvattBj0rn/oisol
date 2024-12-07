@@ -1,20 +1,26 @@
 import configparser
-import discord
+import logging
 import os
 import pathlib
 import time
+
+import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from src.modules.config.ModuleConfig import ModuleConfig
+
 from src.modules.config.ConfigInterfaces import ConfigViewMenu
+from src.modules.config.ModuleConfig import ModuleConfig
 from src.modules.registre.ModuleRegister import ModuleRegister
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
-from src.modules.todolist.TodolistViewMenu import TodolistViewMenu, TodolistButtonCheckmark
 from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
 from src.modules.todolist.ModuleTodolist import ModuleTodolist
+from src.modules.todolist.TodolistViewMenu import (
+    TodolistButtonCheckmark,
+    TodolistViewMenu,
+)
 from src.modules.wiki.ModuleWiki import ModuleWiki
 from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import safeguarded_nickname, repair_default_config_dict
+from src.utils.functions import repair_default_config_dict, safeguarded_nickname
 from src.utils.oisol_enums import DataFilesPath, Modules
 from src.utils.resources import MODULES_CSV_KEYS
 
@@ -29,7 +35,7 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands')
         )
-        self.config_servers = dict()
+        self.config_servers = {}
 
     def load_configs(self):
         oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
@@ -43,6 +49,13 @@ class Oisol(commands.Bot):
             self.config_servers[server_folder] = server_config
 
     async def on_ready(self):
+        # Logging setup
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
+        logging.getLogger().addHandler(handler)
+        logging.getLogger().setLevel(logging.INFO)
+
+        # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
         await self.add_cog(ModuleRegister(self))
@@ -51,12 +64,12 @@ class Oisol(commands.Bot):
 
         try:
             synced = await self.tree.sync()
-            print(f'Synced {len(synced)} command(s)')
+            logging.info(f'Synced {len(synced)} command(s)')
         except Exception as e:
-            print(e)
+            logging.error(e)
 
         self.load_configs()
-        print(f'Logged in as {self.user} (ID:{self.user.id})')
+        logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
     async def setup_hook(self):
         self.add_view(ConfigViewMenu())
@@ -162,7 +175,7 @@ class Oisol(commands.Bot):
             if config.has_option('register', 'input'):
                 await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
             await self.update_register(
-                before.guild.id, all_members + [{'member': after.id, 'timer': int(time.time())}]
+                before.guild.id, [*all_members, {'member': after.id, 'timer': int(time.time())}]
             )
 
         # Member is now a promoted recruit
@@ -186,9 +199,7 @@ class Oisol(commands.Bot):
             all_members = csv_handler.csv_get_all_data(
                 os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
             )
-            for i, member in enumerate(all_members):
-                if member['member'] == str(after.id):
-                    all_members.pop(i)
+            all_members = [member for member in all_members if member['member'] != str(after.id)]
             await self.update_register(before.guild.id, all_members)
 
     async def on_guild_join(self, guild: discord.Guild):

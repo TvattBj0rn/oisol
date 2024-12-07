@@ -1,17 +1,19 @@
+from typing import Optional
+
 import requests
 from bs4 import BeautifulSoup, Tag
-from typing import Optional
+
 from src.utils.oisol_enums import Faction
 
 
 def get_indexes(tbody: Tag) -> dict:
-    indexes_dict = dict()
+    indexes_dict = {}
     for i, category in enumerate(tbody.select('tr > th')):
         indexes_dict[i] = category.select_one('a')['title'] if category.has_attr('style') else category.get_text(strip=True)
     return indexes_dict
 
 
-def get_index_from_name(headers_indexes: dict) -> int:
+def get_index_from_name(headers_indexes: dict) -> Optional[int]:
     for index, value in headers_indexes.items():
         if value == 'Name':
             return index
@@ -22,7 +24,7 @@ def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]
         if tr.findChild('th'):
             continue
         name_index = get_index_from_name(headers_indexes)
-        if tr.select('td')[name_index].get_text(strip=True) in [name, name.removesuffix(' (Battleship)')]:
+        if tr.select('td')[name_index].get_text(strip=True) in {name, name.removesuffix(' (Battleship)')}:
             return tr
 
 
@@ -43,12 +45,12 @@ def scrap_health(url: str, name: str) -> dict:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
-        return dict()
+        return {}
 
     # Whole page soup data
     soup = BeautifulSoup(response.content, features="lxml")
 
-    header_indexes = dict()
+    header_indexes = {}
     row = None
 
     for tbody in soup.select('tbody'):
@@ -57,7 +59,7 @@ def scrap_health(url: str, name: str) -> dict:
         if row:
             break
     if not row:
-        return dict()
+        return {}
 
     for i, td in enumerate(row.select('td')):
         wiki_response_dict[header_indexes[i]] = extract_td_data(td)
@@ -77,7 +79,7 @@ def scrap_health(url: str, name: str) -> dict:
 
     # In case we are checking for a building but 2 values were retrieved in HP
     if (
-            'Class' not in wiki_response_dict.keys()
+            'Class' not in wiki_response_dict
             and isinstance(wiki_response_dict['HP'], dict)
             and len(wiki_response_dict['HP'].keys()) == 2
     ):
@@ -112,6 +114,6 @@ def scrap_faction_color(soup: Tag) -> hex:
     merged_class = set(infobox_soup['class'])
     if 'pi-theme-Col' in merged_class:
         return Faction.COLONIAL.value
-    elif 'pi-theme-War' in merged_class:
+    if 'pi-theme-War' in merged_class:
         return Faction.WARDEN.value
     return Faction.NEUTRAL.value

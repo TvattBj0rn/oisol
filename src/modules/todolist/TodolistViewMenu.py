@@ -1,9 +1,13 @@
 import copy
-import discord
 import json
+import logging
 import os
 import pathlib
 import re
+import string
+
+import discord
+
 from src.utils.resources import EMOTES_CUSTOM_ID
 
 
@@ -30,11 +34,7 @@ def list_to_priority_dict(data_list: list) -> dict:
 
 
 def priority_dict_to_list(data_dict: dict) -> list:
-    tasks_list = []
-    for k, v in data_dict.items():
-        for task in v:
-            tasks_list.append([task, k])
-    return tasks_list
+    return [[task, k] for k, v in data_dict.items() for task in v]
 
 
 def refit_data(data_dict: dict) -> tuple[dict, list]:
@@ -47,7 +47,7 @@ def refit_data(data_dict: dict) -> tuple[dict, list]:
     removed_tasks = []
     tasks_to_remove = len(data_dict_tasks['high']) + len(data_dict_tasks['medium']) + len(data_dict_tasks['low']) - 24
     if tasks_to_remove <= 0:
-        return data_dict, list()
+        return data_dict, []
     for k in ['low', 'medium', 'high']:
         if not data_dict_tasks[k]:
             continue
@@ -96,9 +96,8 @@ class TodolistViewMenu(discord.ui.View):
 
         # Re-add add button & tasks buttons
         self.add_item(self.add_tasks)
-        possible_buttons = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         for i in range(len(self.data_list)):
-            self.add_item(TodolistButtonCheckmark(f'todolist:button:{possible_buttons[i]}'))
+            self.add_item(TodolistButtonCheckmark(f'todolist:button:{string.ascii_uppercase[i]}'))
 
     def _refresh_view_embed(self):
         # Retrieval of existing tasks and deepcopy for display purposes
@@ -110,7 +109,7 @@ class TodolistViewMenu(discord.ui.View):
         for k, v in display_tasks.items():
             display_tasks[k] = ''
             for task in v:
-                display_tasks[k] += f":regional_indicator_{'abcdefghijklmnopqrstuvwxyz'[i]}: **|** {task}\n"
+                display_tasks[k] += f":regional_indicator_{string.ascii_lowercase[i]}: **|** {task}\n"
                 i += 1
 
         # Update with a single call from dict instead of multiple through the method
@@ -131,14 +130,14 @@ class TodolistViewMenu(discord.ui.View):
         self.embed_uuid = interaction.message.embeds[0].footer.text
         self.title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         try:
-            with open(os.path.join(pathlib.Path('/'), 'oisol',str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
+            with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')) as file:
                 permissions = json.load(file)['access']
         # This probably can be removed
         except OSError:
             await interaction.response.send_message('> Unexpected Error (`TodolistViewMenu.add_tasks`)', ephemeral=True)
             return
         if (
-                'roles' in permissions.keys() and 'members' in permissions.keys()
+                'roles' in permissions and 'members' in permissions
                 and not has_permissions(interaction, permissions)
         ):
             await interaction.response.send_message('> You do not have the permission to click on this button', ephemeral=True)
@@ -175,7 +174,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
 
     async def on_submit(self, interaction: discord.Interaction):
         # Get current tasks from file
-        with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json'), 'r') as file:
+        with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')) as file:
             full_dict = json.load(file)
 
         # If the tasks are already at capacity, no need to go further
@@ -226,7 +225,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         # Send the tasks that could not be added to the user with a format that makes it easier to copy / paste
         if bypassed_tasks:
             await interaction.followup.send(
-                f"> Tasks that were not put in the todolist: `{','.join([x for x in bypassed_tasks])}`",
+                f"> Tasks that were not put in the todolist: `{','.join(bypassed_tasks)}`",
                 ephemeral=True
             )
 
@@ -253,14 +252,14 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         guild_id = str(interaction.guild_id)
 
         try:
-            with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json'), 'r') as file:
+            with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json')) as file:
                 full_dict = json.load(file)
         except OSError:
-            print(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
+            logging.error(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
             await interaction.followup.send('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)
             return
         if (
-                'roles' in full_dict['access'].keys() and 'members' in full_dict['access'].keys()
+                'roles' in full_dict['access'] and 'members' in full_dict['access']
                 and not has_permissions(interaction, full_dict['access'])
         ):
             await interaction.followup.send('> You do not have the permission to click on this button', ephemeral=True)

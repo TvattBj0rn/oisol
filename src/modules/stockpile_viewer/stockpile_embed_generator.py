@@ -1,23 +1,26 @@
 import configparser
-import discord
+import operator
 import os
 import pathlib
+
+import discord
 from more_itertools import consume
+
 from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import Faction, EmbedIds, DataFilesPath
+from src.utils.oisol_enums import DataFilesPath, EmbedIds, Faction
 from src.utils.resources import REGIONS_STOCKPILES
 
 
 def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
     data_file_path = os.path.join(pathlib.Path('/'), 'oisol', str(guild_id), DataFilesPath.STOCKPILES.value)
     stockpiles_list = CsvHandler(csv_keys).csv_get_all_data(data_file_path)
-    sorted_stockpiles = dict()
+    sorted_stockpiles = {}
 
     for stockpile in stockpiles_list:
-        if not stockpile['region'] in sorted_stockpiles.keys():
+        if stockpile['region'] not in sorted_stockpiles:
             sorted_stockpiles[stockpile['region']] = {stockpile['subregion']: [stockpile]}
         else:
-            if not stockpile['subregion'] in sorted_stockpiles[stockpile['region']].keys():
+            if stockpile['subregion'] not in sorted_stockpiles[stockpile['region']]:
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']] = [stockpile]
             else:
                 sorted_stockpiles[stockpile['region']][stockpile['subregion']].append(stockpile)
@@ -25,8 +28,8 @@ def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):
     # Sort subregion stockpiles by name
     consume(
         consume(
-            sorted_stockpiles[region_name][subregion_name].sort(key=lambda s: s['name'])
-            for subregion_name in subregion.keys()
+            sorted_stockpiles[region_name][subregion_name].sort(key=operator.itemgetter('name'))
+            for subregion_name in subregion
             if len(sorted_stockpiles[region_name][subregion_name]) > 1
         )
         for region_name, subregion in sorted_stockpiles.items()
@@ -80,7 +83,7 @@ def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: li
 
     return discord.Embed().from_dict(
         {
-            'title': f'Stockpiles | <:region:1130915923704946758>',
+            'title': 'Stockpiles | <:region:1130915923704946758>',
             'color': Faction[config['regiment']['faction']].value,
             'footer': {'text': EmbedIds.STOCKPILES_VIEW.value},
             'fields': embed_fields

@@ -1,6 +1,5 @@
 from src.utils.oisol_enums import FoxholeBuildings
 
-
 MODULES_CSV_KEYS = {
     'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
     'register': ['member', 'timer'],
@@ -2031,8 +2030,8 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'dragons teeth'
     },
     {
-        'name': "Dug Foxhole",
-        'url': "https://foxhole.wiki.gg/wiki/Dug_Foxhole",
+        'name': "Foxhole",
+        'url': "https://foxhole.wiki.gg/wiki/Foxhole_(Structure)",
         'keywords': 'dug foxhole'
     },
     {
