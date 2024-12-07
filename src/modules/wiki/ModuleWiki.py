@@ -1,4 +1,5 @@
 import collections
+import logging
 import operator
 import random
 import re
@@ -150,7 +151,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='wiki', description='Info wiki')
     async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: Optional[bool] = False):
-        print(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
+        logging.info(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
         if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             return
@@ -178,7 +179,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: Optional[bool] = False):
-        print(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
+        logging.info(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
 
         if not health_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)

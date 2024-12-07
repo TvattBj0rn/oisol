@@ -1,4 +1,5 @@
 import configparser
+import logging
 import os
 
 import discord
@@ -18,7 +19,7 @@ class ModuleRegister(commands.Cog):
 
     @app_commands.command(name='register-view', description='Command to display the current list of recruit with the date the got the recruit role')
     async def register_view(self, interaction: discord.Interaction):
-        print(f'> register-view command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> register-view command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         config = configparser.ConfigParser()
         config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))

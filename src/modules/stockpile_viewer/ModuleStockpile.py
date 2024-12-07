@@ -1,4 +1,5 @@
 import configparser
+import logging
 import os
 import pathlib
 import random
@@ -45,7 +46,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-view')
     async def stockpile_view(self, interaction: discord.Interaction):
-        print(f'> stockpile_view command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-view command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
         config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
@@ -62,7 +63,7 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile-create')
     @app_commands.autocomplete(localisation=region_autocomplete)
     async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str):
-        print(f'> stockpile_create command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
         # Case where a user entered an invalid sized code
         if len(code) != 6:
             await interaction.response.send_message('> The code must be a 6-digits code', ephemeral=True, delete_after=5)
@@ -105,7 +106,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-delete')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
-        print(f'> stockpile_delete command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
         self.CsvHandler.csv_delete_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), DataFilesPath.STOCKPILES.value),
             stockpile_code
@@ -120,7 +121,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-clear')
     async def stockpile_clear(self, interaction: discord.Interaction):
-        print(f'> stockpile_clear command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> stockpile-clear command by {interaction.user.name} on {interaction.guild.name}')
         self.CsvHandler.csv_clear_data(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value))
 
         await update_discord_interface(

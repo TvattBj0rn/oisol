@@ -1,3 +1,4 @@
+import logging
 import uuid
 from typing import Optional
 
@@ -29,7 +30,7 @@ class ModuleTodolist(commands.Cog):
             member_5: Optional[discord.Member] = None,
 
     ):
-        print(f'> todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'> todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         permissions = {
             'roles': [],
             'members': []

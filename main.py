@@ -1,4 +1,5 @@
 import configparser
+import logging
 import os
 import pathlib
 import time
@@ -48,6 +49,13 @@ class Oisol(commands.Bot):
             self.config_servers[server_folder] = server_config
 
     async def on_ready(self):
+        # Logging setup
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
+        logging.getLogger().addHandler(handler)
+        logging.getLogger().setLevel(logging.INFO)
+
+        # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
         await self.add_cog(ModuleRegister(self))
@@ -56,12 +64,12 @@ class Oisol(commands.Bot):
 
         try:
             synced = await self.tree.sync()
-            print(f'Synced {len(synced)} command(s)')
+            logging.info(f'Synced {len(synced)} command(s)')
         except Exception as e:
-            print(e)
+            logging.error(e)
 
         self.load_configs()
-        print(f'Logged in as {self.user} (ID:{self.user.id})')
+        logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
     async def setup_hook(self):
         self.add_view(ConfigViewMenu())
