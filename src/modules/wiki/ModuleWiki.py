@@ -62,14 +62,14 @@ class ModuleWiki(commands.Cog):
         # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
         # This set the relic vehicles entries to the same level as normal vehicles.
         if 'Class' in wiki_data and wiki_data['Class'] == 'Relic Vehicles':
-            consume(wiki_data.pop(entry, None) for entry in [
+            consume(wiki_data.pop(entry, None) for entry in {
                 'Alligator Charge',
                 "Hydra's Whisper",
                 'Havoc Charge',
                 'Sea Mine',
                 'Torpedo',
                 'Sea Mine'
-            ])
+            })
         for k, v in wiki_data.items():
             if k in {'Class', 'Name', '', 'Icon', 'HP'}:
                 continue
@@ -166,6 +166,7 @@ class ModuleWiki(commands.Cog):
 
         if 'title' not in entry_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
+            logging.warning(f'Entry URL failing: {wiki_request, wiki_entry_complete_name}')
             return
 
         entry_embed = self.generate_wiki_embed(entry_data)
@@ -179,38 +180,35 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: Optional[bool] = False):
-        logging.info(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
+        logging.info(f'[COMMAND] health command by {interaction.user.name} on {interaction.guild.name}')
 
-        if not health_request.startswith('https://foxhole.wiki.gg/wiki/'):
+        entry_searches = (
+            next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == health_request), None),
+            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_request), None)
+        )
+        if not any(entry_searches):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
+            # In case the user provided an url that is not from the official wiki
+            if health_request.startswith(('https://', 'http://')) and not health_request.startswith('https://foxhole.wiki.gg'):
+                logging.warning(f'{interaction.user.name} provided a suspicious URL to the /health command in {interaction.guild.name} ({health_request})')
             return
 
-        entry_url = 'https://foxhole.wiki.gg/wiki/Vehicle_Health'
-        for entry in STRUCTURES_WIKI_ENTRIES:
-            if entry['url'] == health_request:
-                entry_url = 'https://foxhole.wiki.gg/wiki/Structure_Health'
-                break
-
-        wiki_entry_complete_name = ''
-        for entry in ALL_WIKI_ENTRIES:
-            if entry['url'] == health_request:
-                wiki_entry_complete_name = entry['name']
-                break
-
+        entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
         if (
-                wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base'))
-                and wiki_entry_complete_name.endswith('(Tier 1)')
+                entry_name.startswith(('Bunker Base', 'Safe House', 'Town Base'))
+                and entry_name.endswith('(Tier 1)')
         ):
-            wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
-        infobox_tuple = scrap_main_picture(health_request, wiki_entry_complete_name)
+            entry_name = entry_name.removesuffix(' (Tier 1)')
+        infobox_tuple = scrap_main_picture(health_request, entry_name)
 
         if not all(infobox_tuple):
             await interaction.response.send_message(embed=discord.Embed(), ephemeral=not visible)
             return
 
-        scraped_health_data = scrap_health(entry_url, wiki_entry_complete_name)
+        scraped_health_data = scrap_health(entry_url, entry_name)
         if 'Name' not in scraped_health_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
+            logging.warning(f'Entry URL failing: {entry_url, entry_name}')
             return
 
         entry_embed = self.generate_hmtk_embed(
