@@ -49,12 +49,6 @@ class Oisol(commands.Bot):
             self.config_servers[server_folder] = server_config
 
     async def on_ready(self):
-        # Logging setup
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
-        logging.getLogger().addHandler(handler)
-        logging.getLogger().setLevel(logging.INFO)
-
         # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
@@ -224,5 +218,12 @@ class Oisol(commands.Bot):
 
 
 if __name__ == '__main__':
+    # Logging setup
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
+    logging.getLogger().addHandler(handler)
+    logging.getLogger().setLevel(logging.INFO)
+
+    # Bot Run
     load_dotenv()
     Oisol().run(os.getenv('DISCORD_TOKEN'), reconnect=True)
