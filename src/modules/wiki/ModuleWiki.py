@@ -149,48 +149,47 @@ class ModuleWiki(commands.Cog):
             }
         )
 
-    @app_commands.command(name='wiki', description='Info wiki')
-    async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: Optional[bool] = False):
-        logging.info(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
-        if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
+    @app_commands.command(name='wiki', description='Get a wiki infobox')
+    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: Optional[bool] = False):
+        logging.info(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_search_request})')
+        if not wiki_search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
+            # In case the user provided an url that is not from the official wiki
+            if wiki_search_request.startswith(('https://', 'http://')) and not wiki_search_request.startswith('https://foxhole.wiki.gg'):
+                logging.warning(f'{interaction.user.name} provided a suspicious URL to the /health command in {interaction.guild.name} ({wiki_search_request})')
             return
-        wiki_entry_complete_name = ''
-        for entry in ALL_WIKI_ENTRIES:
-            if entry['url'] == wiki_request:
-                wiki_entry_complete_name = entry['name']
-                break
 
-        entry_data = scrap_wiki(wiki_request, wiki_entry_complete_name)
-        entry_data['url'] = wiki_request
+        entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == wiki_search_request), '')
+        entry_data = scrap_wiki(wiki_search_request, entry_name)
+        entry_data['url'] = wiki_search_request
 
         if 'title' not in entry_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
-            logging.warning(f'Entry URL failing: {wiki_request, wiki_entry_complete_name}')
+            logging.warning(f'Entry URL failing: {wiki_search_request, entry_name}')
             return
 
         entry_embed = self.generate_wiki_embed(entry_data)
 
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 
-    @wiki.autocomplete('wiki_request')
+    @wiki.autocomplete('wiki_search_request')
     async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         choice_list = self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
-    async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: Optional[bool] = False):
+    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: Optional[bool] = False):
         logging.info(f'[COMMAND] health command by {interaction.user.name} on {interaction.guild.name}')
 
         entry_searches = (
-            next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == health_request), None),
-            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_request), None)
+            next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == health_search_request), None),
+            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_search_request), None)
         )
         if not any(entry_searches):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki
-            if health_request.startswith(('https://', 'http://')) and not health_request.startswith('https://foxhole.wiki.gg'):
-                logging.warning(f'{interaction.user.name} provided a suspicious URL to the /health command in {interaction.guild.name} ({health_request})')
+            if health_search_request.startswith(('https://', 'http://')) and not health_search_request.startswith('https://foxhole.wiki.gg'):
+                logging.warning(f'{interaction.user.name} provided a suspicious URL to the /health command in {interaction.guild.name} ({health_search_request})')
             return
 
         entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
@@ -199,7 +198,7 @@ class ModuleWiki(commands.Cog):
                 and entry_name.endswith('(Tier 1)')
         ):
             entry_name = entry_name.removesuffix(' (Tier 1)')
-        infobox_tuple = scrap_main_picture(health_request, entry_name)
+        infobox_tuple = scrap_main_picture(health_search_request, entry_name)
 
         if not all(infobox_tuple):
             await interaction.response.send_message(embed=discord.Embed(), ephemeral=not visible)
@@ -219,7 +218,7 @@ class ModuleWiki(commands.Cog):
         )
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 
-    @entities_health.autocomplete('health_request')
+    @entities_health.autocomplete('health_search_request')
     async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         choice_list = self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
