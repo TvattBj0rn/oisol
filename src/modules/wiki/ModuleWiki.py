@@ -3,7 +3,6 @@ import logging
 import operator
 import random
 import re
-from typing import Optional
 
 import discord
 from discord import app_commands
@@ -150,7 +149,7 @@ class ModuleWiki(commands.Cog):
         )
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
-    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: Optional[bool] = False):
+    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False):
         logging.info(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_search_request})')
         if not wiki_search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
@@ -178,7 +177,7 @@ class ModuleWiki(commands.Cog):
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
-    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: Optional[bool] = False):
+    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: bool = False):
         logging.info(f'[COMMAND] health command by {interaction.user.name} on {interaction.guild.name}')
 
         entry_searches = (

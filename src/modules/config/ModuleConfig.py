@@ -1,7 +1,6 @@
 import configparser
 import logging
 import os
-from typing import Optional
 
 import discord
 from discord import app_commands
@@ -21,7 +20,7 @@ class ModuleConfig(commands.Cog):
         self.csv_keys = MODULES_CSV_KEYS
 
     @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')
-    async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: Optional[bool]):
+    async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False):
         logging.info(f'> repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
 
@@ -67,7 +66,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message(view=config_view, embed=config_view.embed)
 
     @app_commands.command(name='config-register', description='Set the recruit discord role, icons for recruit & promoted recruit and the option to not change ')
-    async def config_register(self, interaction: discord.Interaction, recruit_role: Optional[discord.Role] = None, recruit_symbol: Optional[str] = None, promoted_recruit_symbol: Optional[str] = None, promotion_gives_symbol: Optional[bool] = None):
+    async def config_register(self, interaction: discord.Interaction, recruit_role: discord.Role = None, recruit_symbol: str = None, promoted_recruit_symbol: str = None, promotion_gives_symbol: bool = None):
         logging.info(f'> config-register command by {interaction.user.name} on {interaction.guild.name}')
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
             await interaction.response.send_message('> No changes were made because no option was given', ephemeral=True, delete_after=5)

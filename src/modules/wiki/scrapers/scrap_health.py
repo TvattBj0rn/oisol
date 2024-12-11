@@ -1,5 +1,3 @@
-from typing import Optional
-
 import requests
 from bs4 import BeautifulSoup, Tag
 
@@ -13,13 +11,13 @@ def get_indexes(tbody: Tag) -> dict:
     return indexes_dict
 
 
-def get_index_from_name(headers_indexes: dict) -> Optional[int]:
+def get_index_from_name(headers_indexes: dict) -> int | None:
     for index, value in headers_indexes.items():
         if value == 'Name':
             return index
 
 
-def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]:
+def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Tag | None:
     for tr in tbody.select('tr'):
         if tr.findChild('th'):
             continue
@@ -89,7 +87,7 @@ def scrap_health(url: str, name: str) -> dict:
     return wiki_response_dict
 
 
-def scrap_main_picture(url: str, name: str) -> tuple[Optional[str], Optional[int]]:
+def scrap_main_picture(url: str, name: str) -> tuple[str, int]:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:

@@ -1,7 +1,6 @@
 import configparser
 import os
 from configparser import ConfigParser
-from typing import Optional
 
 import discord
 
@@ -46,7 +45,7 @@ def safeguarded_nickname(nickname: str) -> str:
     return nickname[:32 - len(nickname)] if len(nickname) > 32 else nickname
 
 
-def repair_default_config_dict(current_config: Optional[ConfigParser] = None) -> ConfigParser:
+def repair_default_config_dict(current_config: ConfigParser = None) -> ConfigParser:
     """
     Function that updates the configuration of a given config file by completing the missing values with the expected
     default values. If not config is passed as parameter, the function will return the default config file.
