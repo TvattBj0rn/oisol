@@ -2,7 +2,6 @@ import collections
 import logging
 import operator
 import random
-import re
 
 import discord
 from discord import app_commands
@@ -97,8 +96,7 @@ class ModuleWiki(commands.Cog):
         if not current:
             return [(wiki_entry['name'], wiki_entry['url']) for wiki_entry in random.choices(entries, k=5)]
 
-        pattern = re.compile('[\\W_]+')
-        current = pattern.sub(' ', current).lower().split()
+        current = current.strip().lower().split()
         search_results = []
         for wiki_entry in entries:
             search_value = 0
@@ -108,6 +106,7 @@ class ModuleWiki(commands.Cog):
             # We only want entries related to the search, 0 means nothing matched for a specific entry
             if search_value > 0:
                 search_results.append((wiki_entry['name'], wiki_entry['url'], search_value))
+
         search_results = sorted(
             search_results,
             key=operator.itemgetter(2),
