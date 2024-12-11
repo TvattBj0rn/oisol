@@ -6,7 +6,6 @@ import random
 import discord
 from discord import app_commands
 from discord.ext import commands
-from more_itertools.recipes import consume
 
 from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
@@ -60,14 +59,9 @@ class ModuleWiki(commands.Cog):
         # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
         # This set the relic vehicles entries to the same level as normal vehicles.
         if 'Class' in wiki_data and wiki_data['Class'] == 'Relic Vehicles':
-            consume(wiki_data.pop(entry, None) for entry in {
-                'Alligator Charge',
-                "Hydra's Whisper",
-                'Havoc Charge',
-                'Sea Mine',
-                'Torpedo',
-                'Sea Mine'
-            })
+            for entry in ['Alligator Charge', "Hydra's Whisper", 'Havoc Charge', 'Sea Mine', 'Torpedo','Sea Mine']:
+                wiki_data.pop(entry, None)
+
         for k, v in wiki_data.items():
             if k in {'Class', 'Name', '', 'Icon', 'HP'}:
                 continue
