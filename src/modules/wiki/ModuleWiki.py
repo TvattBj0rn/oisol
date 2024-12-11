@@ -96,22 +96,15 @@ class ModuleWiki(commands.Cog):
         if not current:
             return [(wiki_entry['name'], wiki_entry['url']) for wiki_entry in random.choices(entries, k=5)]
 
+        # Tokenize user input
         current = current.strip().lower().split()
-        search_results = []
-        for wiki_entry in entries:
-            search_value = 0
-            for kw in current:
-                if kw in wiki_entry['keywords']:
-                    search_value += 1
-            # We only want entries related to the search, 0 means nothing matched for a specific entry
-            if search_value > 0:
-                search_results.append((wiki_entry['name'], wiki_entry['url'], search_value))
 
-        search_results = sorted(
-            search_results,
-            key=operator.itemgetter(2),
-            reverse=True
-        )[:25]
+        # If at least one keyword matches, the entry information are saved
+        search_results = [(wiki_entry['name'], wiki_entry['url'], search_value) for wiki_entry in entries if (search_value := sum(wiki_entry['keywords'].count(kw) for kw in current))]
+
+        # Sort by search values & get higher values at the bottom of the list in reverse order
+        search_results = sorted(search_results, key=operator.itemgetter(2))[:-25:-1]
+
         return [(entry_result[0], entry_result[1]) for entry_result in search_results]
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
