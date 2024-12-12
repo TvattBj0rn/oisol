@@ -226,4 +226,4 @@ if __name__ == '__main__':
 
     # Bot Run
     load_dotenv()
-    Oisol().run(os.getenv('DISCORD_TOKEN'), reconnect=True)
+    Oisol().run(os.getenv('DISCORD_TOKEN'), reconnect=True, log_handler=None)
