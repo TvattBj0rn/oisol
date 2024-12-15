@@ -145,7 +145,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False):
-        logging.info(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_search_request})')
+        logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_search_request})')
         if not wiki_search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki
