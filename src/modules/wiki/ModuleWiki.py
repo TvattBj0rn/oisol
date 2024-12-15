@@ -2,13 +2,10 @@ import collections
 import logging
 import operator
 import random
-import re
-from typing import Optional
 
 import discord
 from discord import app_commands
 from discord.ext import commands
-from more_itertools.recipes import consume
 
 from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
@@ -41,50 +38,45 @@ class ModuleWiki(commands.Cog):
             picture_url: str,
             color: int
     ) -> discord.Embed:
+        # Embed description
         embed_desc = ''
+        # Display each tier health's when dict
         if isinstance(wiki_data['HP'], dict):
             for k, v in wiki_data['HP'].items():
                 embed_desc += f'{k}: {v} HP\n'
         else:
             embed_desc = f"{wiki_data['HP']} HP"
+
         if 'Class' in wiki_data:
             embed_desc += f"\n*Class: {wiki_data['Class']}*"
-        embed = discord.Embed().from_dict(
+
+        fields = []
+        for damage_type, weapons in wiki_data['Damage'].items():
+            value_string = ''
+            for weapon_name, weapon_value in weapons.items():
+                value_string += f"{EMOJIS_FROM_DICT.get(weapon_name, weapon_name)}: "
+                if isinstance(weapon_value, dict) and 'Disabled' in weapon_value:
+                    value_string += f'{weapon_value['Disabled']} **|** {weapon_value['Kill']}'
+                elif isinstance(weapon_value, dict) and len(weapon_value.keys()) == 3:
+                    value_string += f'{weapon_value['S']} **|** {weapon_value['M']} **|** {weapon_value['L']}'
+                elif isinstance(weapon_value, str):
+                    value_string += weapon_value
+                if len(value_string) + 15 >= 300:
+                    value_string += '\n'
+                # Add separator chars for better readability
+                value_string += '   '
+            fields.append({'name': f'{damage_type.upper()} ({EMOJIS_FROM_DICT[damage_type]})', 'value': value_string})
+
+        return discord.Embed().from_dict(
             {
                 'title': wiki_data['Name'],
                 'url': url_health,
                 'description': embed_desc,
                 'color': color,
-                'thumbnail': {'url': picture_url}
+                'thumbnail': {'url': picture_url},
+                'fields': fields
             }
         )
-
-        # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
-        # This set the relic vehicles entries to the same level as normal vehicles.
-        if 'Class' in wiki_data and wiki_data['Class'] == 'Relic Vehicles':
-            consume(wiki_data.pop(entry, None) for entry in [
-                'Alligator Charge',
-                "Hydra's Whisper",
-                'Havoc Charge',
-                'Sea Mine',
-                'Torpedo',
-                'Sea Mine'
-            ])
-        for k, v in wiki_data.items():
-            if k in {'Class', 'Name', '', 'Icon', 'HP'}:
-                continue
-            value_string = f"{EMOJIS_FROM_DICT.get(k, k)}: "
-            if isinstance(v, dict) and 'Disabled' in v:
-                value_string += f'{v['Disabled']} **|** {v['Kill']}'
-            elif isinstance(v, dict) and len(v.keys()) == 3:
-                value_string += f'{v['S']} **|** {v['M']} **|** {v['L']}'
-            elif isinstance(v, str):
-                value_string += v
-            embed.add_field(
-                name='',
-                value=value_string
-            )
-        return embed
 
     @staticmethod
     def generic_autocomplete(entries: list, current: str) -> list:
@@ -98,8 +90,10 @@ class ModuleWiki(commands.Cog):
         if not current:
             return [(wiki_entry['name'], wiki_entry['url']) for wiki_entry in random.choices(entries, k=5)]
 
-        pattern = re.compile('[\\W_]+')
-        current = pattern.sub(' ', current).lower().split()
+        # Tokenize user input
+        current = current.strip().lower().split()
+
+        # Get number of matched keywords for each entry
         search_results = []
         for wiki_entry in entries:
             search_value = 0
@@ -107,13 +101,12 @@ class ModuleWiki(commands.Cog):
                 if kw in wiki_entry['keywords']:
                     search_value += 1
             # We only want entries related to the search, 0 means nothing matched for a specific entry
-            if search_value > 0:
+            if search_value:
                 search_results.append((wiki_entry['name'], wiki_entry['url'], search_value))
-        search_results = sorted(
-            search_results,
-            key=operator.itemgetter(2),
-            reverse=True
-        )[:25]
+
+        # Sort by descending order to get searches with more value first
+        search_results = sorted(search_results, key=operator.itemgetter(2), reverse=True)[:25]
+
         return [(entry_result[0], entry_result[1]) for entry_result in search_results]
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
@@ -149,68 +142,65 @@ class ModuleWiki(commands.Cog):
             }
         )
 
-    @app_commands.command(name='wiki', description='Info wiki')
-    async def wiki(self, interaction: discord.Interaction, wiki_request: str, visible: Optional[bool] = False):
-        logging.info(f'> wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_request})')
-        if not wiki_request.startswith('https://foxhole.wiki.gg/wiki/'):
+    @app_commands.command(name='wiki', description='Get a wiki infobox')
+    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False):
+        logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_search_request})')
+        if not wiki_search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
+            # In case the user provided an url that is not from the official wiki
+            if wiki_search_request.startswith(('https://', 'http://')) and not wiki_search_request.startswith('https://foxhole.wiki.gg'):
+                logging.warning(f'{interaction.user.name} provided a suspicious URL to the /health command in {interaction.guild.name} ({wiki_search_request})')
             return
-        wiki_entry_complete_name = ''
-        for entry in ALL_WIKI_ENTRIES:
-            if entry['url'] == wiki_request:
-                wiki_entry_complete_name = entry['name']
-                break
 
-        entry_data = scrap_wiki(wiki_request, wiki_entry_complete_name)
-        entry_data['url'] = wiki_request
+        entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == wiki_search_request), '')
+        entry_data = scrap_wiki(wiki_search_request, entry_name)
+        entry_data['url'] = wiki_search_request
 
         if 'title' not in entry_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
+            logging.warning(f'Entry URL failing: {wiki_search_request, entry_name}')
             return
 
         entry_embed = self.generate_wiki_embed(entry_data)
 
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 
-    @wiki.autocomplete('wiki_request')
+    @wiki.autocomplete('wiki_search_request')
     async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         choice_list = self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
-    async def entities_health(self, interaction: discord.Interaction, health_request: str, visible: Optional[bool] = False):
-        logging.info(f'> health command by {interaction.user.name} on {interaction.guild.name} ({health_request})')
+    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: bool = False):
+        logging.info(f'[COMMAND] health command by {interaction.user.name} on {interaction.guild.name}')
 
-        if not health_request.startswith('https://foxhole.wiki.gg/wiki/'):
+        entry_searches = (
+            next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == health_search_request), None),
+            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_search_request), None)
+        )
+        if not any(entry_searches):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
+            # In case the user provided an url that is not from the official wiki
+            if health_search_request.startswith(('https://', 'http://')) and not health_search_request.startswith('https://foxhole.wiki.gg'):
+                logging.warning(f'{interaction.user.name} provided a suspicious URL to the /health command in {interaction.guild.name} ({health_search_request})')
             return
 
-        entry_url = 'https://foxhole.wiki.gg/wiki/Vehicle_Health'
-        for entry in STRUCTURES_WIKI_ENTRIES:
-            if entry['url'] == health_request:
-                entry_url = 'https://foxhole.wiki.gg/wiki/Structure_Health'
-                break
-
-        wiki_entry_complete_name = ''
-        for entry in ALL_WIKI_ENTRIES:
-            if entry['url'] == health_request:
-                wiki_entry_complete_name = entry['name']
-                break
-
+        entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
         if (
-                wiki_entry_complete_name.startswith(('Bunker Base', 'Safe House', 'Town Base'))
-                and wiki_entry_complete_name.endswith('(Tier 1)')
+                entry_name.startswith(('Bunker Base', 'Safe House', 'Town Base'))
+                and entry_name.endswith('(Tier 1)')
         ):
-            wiki_entry_complete_name = wiki_entry_complete_name.removesuffix(' (Tier 1)')
-        infobox_tuple = scrap_main_picture(health_request, wiki_entry_complete_name)
+            entry_name = entry_name.removesuffix(' (Tier 1)')
+        infobox_tuple = scrap_main_picture(health_search_request, entry_name)
 
         if not all(infobox_tuple):
             await interaction.response.send_message(embed=discord.Embed(), ephemeral=not visible)
             return
 
-        scraped_health_data = scrap_health(entry_url, wiki_entry_complete_name)
+        scraped_health_data = scrap_health(entry_url, entry_name)
         if 'Name' not in scraped_health_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
+            logging.warning(f'Entry URL failing: {entry_url, entry_name}')
             return
 
         entry_embed = self.generate_hmtk_embed(
@@ -221,7 +211,7 @@ class ModuleWiki(commands.Cog):
         )
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 
-    @entities_health.autocomplete('health_request')
+    @entities_health.autocomplete('health_search_request')
     async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         choice_list = self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]

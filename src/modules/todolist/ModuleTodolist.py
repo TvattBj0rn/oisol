@@ -1,6 +1,5 @@
 import logging
 import uuid
-from typing import Optional
 
 import discord
 from discord import app_commands
@@ -18,19 +17,19 @@ class ModuleTodolist(commands.Cog):
             self,
             interaction: discord.Interaction,
             title: str,
-            role_1: Optional[discord.Role] = None,
-            role_2: Optional[discord.Role] = None,
-            role_3: Optional[discord.Role] = None,
-            role_4: Optional[discord.Role] = None,
-            role_5: Optional[discord.Role] = None,
-            member_1: Optional[discord.Member] = None,
-            member_2: Optional[discord.Member] = None,
-            member_3: Optional[discord.Member] = None,
-            member_4: Optional[discord.Member] = None,
-            member_5: Optional[discord.Member] = None,
+            role_1: discord.Role = None,
+            role_2: discord.Role = None,
+            role_3: discord.Role = None,
+            role_4: discord.Role = None,
+            role_5: discord.Role = None,
+            member_1: discord.Member = None,
+            member_2: discord.Member = None,
+            member_3: discord.Member = None,
+            member_4: discord.Member = None,
+            member_5: discord.Member = None,
 
     ):
-        logging.info(f'> todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'[COMMAND] todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         permissions = {
             'roles': [],
             'members': []

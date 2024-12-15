@@ -1,30 +1,27 @@
-from typing import Optional
-
 import requests
 from bs4 import BeautifulSoup, Tag
 
 from src.utils.oisol_enums import Faction
+from src.utils.resources import DAMAGE_TYPES_ATTRIBUTION
 
 
-def get_indexes(tbody: Tag) -> dict:
-    indexes_dict = {}
-    for i, category in enumerate(tbody.select('tr > th')):
-        indexes_dict[i] = category.select_one('a')['title'] if category.has_attr('style') else category.get_text(strip=True)
-    return indexes_dict
+def get_columns_order(tbody: Tag) -> list:
+    return [category.select_one('a')['title'] if category.has_attr('style') else category.get_text(strip=True) for category in tbody.select('tr > th')]
 
 
-def get_index_from_name(headers_indexes: dict) -> Optional[int]:
-    for index, value in headers_indexes.items():
-        if value == 'Name':
-            return index
-
-
-def get_entry_row(tbody: Tag, headers_indexes: dict, name: str) -> Optional[Tag]:
+def get_entry_row(tbody: Tag, headers_indexes: list, name: str) -> Tag | None:
+    """
+    Check for an entry in a damage array (tbdoy).
+    :param tbody: damage array
+    :param headers_indexes: columns order
+    :param name: entry name
+    :return: row object of the entry within the array if the entry is found else None
+    """
     for tr in tbody.select('tr'):
         if tr.findChild('th'):
             continue
-        name_index = get_index_from_name(headers_indexes)
-        if tr.select('td')[name_index].get_text(strip=True) in {name, name.removesuffix(' (Battleship)')}:
+        # It is assumed that Name will always be scrapped
+        if tr.select('td')[headers_indexes.index('Name')].get_text(strip=True) in {name, name.removesuffix(' (Battleship)')}:
             return tr
 
 
@@ -50,32 +47,20 @@ def scrap_health(url: str, name: str) -> dict:
     # Whole page soup data
     soup = BeautifulSoup(response.content, features="lxml")
 
-    header_indexes = {}
+    header_indexes = []
     row = None
 
     for tbody in soup.select('tbody'):
-        header_indexes = get_indexes(tbody)
+        header_indexes = get_columns_order(tbody)
         row = get_entry_row(tbody, header_indexes, name)
         if row:
             break
+    # Entry was not found in the wiki
     if not row:
         return {}
 
     for i, td in enumerate(row.select('td')):
         wiki_response_dict[header_indexes[i]] = extract_td_data(td)
-
-    # List of ammo type that will never be used for any entry
-    for k in [
-        '7.62mm',
-        '7.92mm',
-        '9mm',
-        'A3 Harpa Fragmentation Grenade',
-        'Flamethrower Ammo',
-        'Flame Ammo',
-        'Shrapnel Mortar Shell',
-        'Bomastone Grenade'
-    ]:
-        wiki_response_dict.pop(k, None)
 
     # In case we are checking for a building but 2 values were retrieved in HP
     if (
@@ -86,10 +71,17 @@ def scrap_health(url: str, name: str) -> dict:
         wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
         wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
 
-    return wiki_response_dict
+    final_response_dict = {k: wiki_response_dict.pop(k) for k in ['', 'Icon', 'Name', 'Class', 'HP'] if k in wiki_response_dict} | {'Damage': {}}
+    for k, v in wiki_response_dict.items():
+        if DAMAGE_TYPES_ATTRIBUTION[k] not in final_response_dict['Damage']:
+            final_response_dict['Damage'][DAMAGE_TYPES_ATTRIBUTION[k]] = {k: v}
+        else:
+            final_response_dict['Damage'][DAMAGE_TYPES_ATTRIBUTION[k]].update({k: v})
+
+    return final_response_dict
 
 
-def scrap_main_picture(url: str, name: str) -> tuple[Optional[str], Optional[int]]:
+def scrap_main_picture(url: str, name: str) -> tuple:
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:

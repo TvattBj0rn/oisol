@@ -1,7 +1,6 @@
 import configparser
 import logging
 import os
-from typing import Optional
 
 import discord
 from discord import app_commands
@@ -21,8 +20,8 @@ class ModuleConfig(commands.Cog):
         self.csv_keys = MODULES_CSV_KEYS
 
     @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')
-    async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: Optional[bool]):
-        logging.info(f'> repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
+    async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False):
+        logging.info(f'[COMMAND] repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
 
         # Create oisol and oisol/todolists directories
@@ -50,7 +49,7 @@ class ModuleConfig(commands.Cog):
 
     @app_commands.command(name='config-display', description='Display current config for the server')
     async def config(self, interaction: discord.Interaction):
-        logging.info(f'> config-display command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'[COMMAND] config-display command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         try:
             config = configparser.ConfigParser()
@@ -67,8 +66,8 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message(view=config_view, embed=config_view.embed)
 
     @app_commands.command(name='config-register', description='Set the recruit discord role, icons for recruit & promoted recruit and the option to not change ')
-    async def config_register(self, interaction: discord.Interaction, recruit_role: Optional[discord.Role] = None, recruit_symbol: Optional[str] = None, promoted_recruit_symbol: Optional[str] = None, promotion_gives_symbol: Optional[bool] = None):
-        logging.info(f'> config-register command by {interaction.user.name} on {interaction.guild.name}')
+    async def config_register(self, interaction: discord.Interaction, recruit_role: discord.Role = None, recruit_symbol: str = None, promoted_recruit_symbol: str = None, promotion_gives_symbol: bool = None):
+        logging.info(f'[COMMAND] config-register command by {interaction.user.name} on {interaction.guild.name}')
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
             await interaction.response.send_message('> No changes were made because no option was given', ephemeral=True, delete_after=5)
             return
@@ -123,19 +122,19 @@ class ModuleConfig(commands.Cog):
 
     @app_commands.command(name='config-name', description='Set the name of the group using the bot')
     async def config_name(self, interaction: discord.Interaction, name: str):
-        logging.info(f'> config-name command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'[COMMAND] config-name command by {interaction.user.name} on {interaction.guild.name}')
         self.regiment_config_generic(interaction.guild_id, name=name)
         await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-tag', description='Set the tag of the regiment group using the bot')
     async def config_tag(self, interaction: discord.Interaction, tag: str):
-        logging.info(f'> config-tag command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'[COMMAND] config-tag command by {interaction.user.name} on {interaction.guild.name}')
         self.regiment_config_generic(interaction.guild_id, tag=tag)
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-faction', description='Set the faction of the regiment group using the bot')
     async def config_faction(self, interaction: discord.Interaction, faction: Faction):
-        logging.info(f'> config-faction command by {interaction.user.name} on {interaction.guild.name}')
+        logging.info(f'[COMMAND] config-faction command by {interaction.user.name} on {interaction.guild.name}')
         self.regiment_config_generic(interaction.guild_id, faction=faction.name)
 
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
