@@ -11,6 +11,7 @@ from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_pict
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
 from src.utils.resources import (
     ALL_WIKI_ENTRIES,
+    DAMAGE_TYPES_ATTRIBUTION,
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS,
     STRUCTURES_WIKI_ENTRIES,
@@ -38,45 +39,45 @@ class ModuleWiki(commands.Cog):
             picture_url: str,
             color: int
     ) -> discord.Embed:
+        # Embed description
         embed_desc = ''
+        # Display each tier health's when dict
         if isinstance(wiki_data['HP'], dict):
             for k, v in wiki_data['HP'].items():
                 embed_desc += f'{k}: {v} HP\n'
         else:
             embed_desc = f"{wiki_data['HP']} HP"
+
         if 'Class' in wiki_data:
             embed_desc += f"\n*Class: {wiki_data['Class']}*"
-        embed = discord.Embed().from_dict(
+
+        fields = []
+        for damage_type, weapons in wiki_data['Damage'].items():
+            value_string = ''
+            for weapon_name, weapon_value in weapons.items():
+                value_string += f"{EMOJIS_FROM_DICT.get(weapon_name, weapon_name)}: "
+                if isinstance(weapon_value, dict) and 'Disabled' in weapon_value:
+                    value_string += f'{weapon_value['Disabled']} **|** {weapon_value['Kill']}'
+                elif isinstance(weapon_value, dict) and len(weapon_value.keys()) == 3:
+                    value_string += f'{weapon_value['S']} **|** {weapon_value['M']} **|** {weapon_value['L']}'
+                elif isinstance(weapon_value, str):
+                    value_string += weapon_value
+                if len(value_string) + 15 >= 300:
+                    value_string += '\n'
+                # Add separator chars for better readability
+                value_string += '   '
+            fields.append({'name': f'{damage_type.upper()} ({EMOJIS_FROM_DICT[damage_type]})', 'value': value_string})
+
+        return discord.Embed().from_dict(
             {
                 'title': wiki_data['Name'],
                 'url': url_health,
                 'description': embed_desc,
                 'color': color,
-                'thumbnail': {'url': picture_url}
+                'thumbnail': {'url': picture_url},
+                'fields': fields
             }
         )
-
-        # For relic vehicles, there are more available entries on the wiki, causing embed fields to be > 25.
-        # This set the relic vehicles entries to the same level as normal vehicles.
-        if 'Class' in wiki_data and wiki_data['Class'] == 'Relic Vehicles':
-            for entry in ['Alligator Charge', "Hydra's Whisper", 'Havoc Charge', 'Sea Mine', 'Torpedo','Sea Mine']:
-                wiki_data.pop(entry, None)
-
-        for k, v in wiki_data.items():
-            if k in {'Class', 'Name', '', 'Icon', 'HP'}:
-                continue
-            value_string = f"{EMOJIS_FROM_DICT.get(k, k)}: "
-            if isinstance(v, dict) and 'Disabled' in v:
-                value_string += f'{v['Disabled']} **|** {v['Kill']}'
-            elif isinstance(v, dict) and len(v.keys()) == 3:
-                value_string += f'{v['S']} **|** {v['M']} **|** {v['L']}'
-            elif isinstance(v, str):
-                value_string += v
-            embed.add_field(
-                name='',
-                value=value_string
-            )
-        return embed
 
     @staticmethod
     def generic_autocomplete(entries: list, current: str) -> list:
