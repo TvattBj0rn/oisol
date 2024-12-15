@@ -11,7 +11,6 @@ from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_pict
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
 from src.utils.resources import (
     ALL_WIKI_ENTRIES,
-    DAMAGE_TYPES_ATTRIBUTION,
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS,
     STRUCTURES_WIKI_ENTRIES,

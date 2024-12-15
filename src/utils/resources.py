@@ -1,4 +1,4 @@
-from src.utils.oisol_enums import FoxholeBuildings, DamageTypes
+from src.utils.oisol_enums import DamageTypes, FoxholeBuildings
 
 MODULES_CSV_KEYS = {
     'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
@@ -35,11 +35,11 @@ DAMAGE_TYPES_ATTRIBUTION = {
     '150mm': DamageTypes.HIGH_EXPLOSIVE.value,
     '300mm': DamageTypes.HIGH_EXPLOSIVE.value,
     'E680-S Rudder Lock': DamageTypes.HIGH_EXPLOSIVE.value,
-    'Sea Mine': DamageTypes.HIGH_EXPLOSIVE.value, # Alias of E680-S Rudder Lock
+    'Sea Mine': DamageTypes.HIGH_EXPLOSIVE.value,  # Alias of E680-S Rudder Lock
     'Model-7 “Evie”': DamageTypes.HIGH_EXPLOSIVE.value,
-    'Depth Charge': DamageTypes.HIGH_EXPLOSIVE.value, # Alias of Model-7 “Evie”
+    'Depth Charge': DamageTypes.HIGH_EXPLOSIVE.value,  # Alias of Model-7 “Evie”
     'Moray Torpedo': DamageTypes.HIGH_EXPLOSIVE.value,
-    'Torpedo': DamageTypes.HIGH_EXPLOSIVE.value, # Alias of Moray Torpedo
+    'Torpedo': DamageTypes.HIGH_EXPLOSIVE.value,  # Alias of Moray Torpedo
     'Mortar Shell': DamageTypes.HIGH_EXPLOSIVE.value,
     '250mm': DamageTypes.DEMOLITION.value,
     'Alligator Charge': DamageTypes.DEMOLITION.value,
@@ -54,7 +54,7 @@ DAMAGE_TYPES_ATTRIBUTION = {
     'Anti-Tank Sticky Bomb': DamageTypes.ANTI_TANK_EXPLOSIVE.value,
     'B2 Varsi Anti-Tank Grenade': DamageTypes.ANTI_TANK_EXPLOSIVE.value,
     'BF5 White Ash Flask Grenade': DamageTypes.ANTI_TANK_EXPLOSIVE.value,
-    'Flamethrower Ammo': DamageTypes.INCENDIARY.value, # Alias of Willow's Bane Ammo & “Molten Wind” v.II Ammo
+    'Flamethrower Ammo': DamageTypes.INCENDIARY.value,  # Alias of Willow's Bane Ammo & “Molten Wind” v.II Ammo
     '“Molten Wind” v.II Ammo': DamageTypes.INCENDIARY.value,
     'Flame Ammo': DamageTypes.INCENDIARY.value,
     "Willow's Bane Ammo": DamageTypes.INCENDIARY.value,

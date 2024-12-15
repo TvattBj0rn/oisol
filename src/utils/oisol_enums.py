@@ -49,6 +49,7 @@ class PriorityType(Enum):
     MEDIUM = 'medium'
     LOW = 'low'
 
+
 class DamageTypes(Enum):
     LIGHT_KINETIC = 'Light Kinetic'
     HEAVY_KINETIC = 'Heavy Kinetic'
