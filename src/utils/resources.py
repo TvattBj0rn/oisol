@@ -35,8 +35,11 @@ DAMAGE_TYPES_ATTRIBUTION = {
     '150mm': DamageTypes.HIGH_EXPLOSIVE.value,
     '300mm': DamageTypes.HIGH_EXPLOSIVE.value,
     'E680-S Rudder Lock': DamageTypes.HIGH_EXPLOSIVE.value,
+    'Sea Mine': DamageTypes.HIGH_EXPLOSIVE.value, # Alias of E680-S Rudder Lock
     'Model-7 “Evie”': DamageTypes.HIGH_EXPLOSIVE.value,
+    'Depth Charge': DamageTypes.HIGH_EXPLOSIVE.value, # Alias of Model-7 “Evie”
     'Moray Torpedo': DamageTypes.HIGH_EXPLOSIVE.value,
+    'Torpedo': DamageTypes.HIGH_EXPLOSIVE.value, # Alias of Moray Torpedo
     'Mortar Shell': DamageTypes.HIGH_EXPLOSIVE.value,
     '250mm': DamageTypes.DEMOLITION.value,
     'Alligator Charge': DamageTypes.DEMOLITION.value,
@@ -51,6 +54,7 @@ DAMAGE_TYPES_ATTRIBUTION = {
     'Anti-Tank Sticky Bomb': DamageTypes.ANTI_TANK_EXPLOSIVE.value,
     'B2 Varsi Anti-Tank Grenade': DamageTypes.ANTI_TANK_EXPLOSIVE.value,
     'BF5 White Ash Flask Grenade': DamageTypes.ANTI_TANK_EXPLOSIVE.value,
+    'Flamethrower Ammo': DamageTypes.INCENDIARY.value, # Alias of Willow's Bane Ammo & “Molten Wind” v.II Ammo
     '“Molten Wind” v.II Ammo': DamageTypes.INCENDIARY.value,
     'Flame Ammo': DamageTypes.INCENDIARY.value,
     "Willow's Bane Ammo": DamageTypes.INCENDIARY.value,
@@ -97,7 +101,11 @@ EMOJIS_FROM_DICT = {
     'Armour Piercing': '<:AP:1239343423807553547>',
     'Demolition': '<:demolition:1239343432367870035>',
     'Shrapnel': '<:shrapnel:1239343483286716417>',
-    'Incendiary High Explosive': '<:incendiary:1239343406854049824>',
+    'Incendiary High Explosive': '<:incendiary_high_explosive:1317944748157173770>',
+    'Incendiary': '<:incendiary:1239343406854049824>',
+    'Flamethrower Ammo': '<:flamethrower_ammo:1317941667386490992>',
+    'Flame Ammo': '<:flame_ammo:1317941665016844392>',
+    'Shrapnel Mortar Shell': '<:shrapnel_mortar:1317941666019152012>',
     'Tracks': '<:tracked:1239349968767291454>',
     'Fuel Tank': '<:fuel_leak:1239349986471313499>',
     'Turret': '<:turret:1239349978170921060>',
@@ -149,7 +157,6 @@ EMOJIS_FROM_DICT = {
     'Torpedo': '<:torpedo:1239625563057160345>',
     'Depth Charge': '<:depth_charge:1239625562373361737>',
     'RPG': '<:rpg:1088828056073945179>',
-    'R.P.G. Shell': '<:rpg:1088828056073945179>',
     'ARC⧸RPG': '<:arcrpg:1088830211799392316>',
     '250mm': '<:250mm:1239630880289329262>',
     '3C-High Explosive Rocket': '<:3c_rocket:1239630879026970655>',
@@ -194,6 +201,7 @@ EMOJIS_FROM_DICT = {
     'MapIconCoal': '<:coal_field:1240332917369212940>',
     'MapIconRocketSite': '<:rocket_site:1244068454688886844>',
     'A3 Harpa Fragmentation Grenade': '<:harpa:1088824018653679626>',
+    'Bomastone Grenade': '<:bomastone:1317941669785501840>',
     'Tremola Grenade GPb-1': '<:tremola:1088827774787125349>',
     'PT-815 Smoke Grenade': '<:smoke:1239713145375948840>',
     'Green Ash Grenade': '<:gas:1239713326720880740>',
