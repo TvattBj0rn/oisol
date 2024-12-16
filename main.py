@@ -187,7 +187,7 @@ class Oisol(commands.Bot):
             if config.has_option('register', 'output'):
                 member_name = f'{config.get('register', 'output')} {member_name}'
             if config.has_option('register', 'promoted_get_tag') and config.getboolean('register', 'promoted_get_tag'):
-                member_name = f'{config.get('regiment', 'tag')} {member_name}'
+                member_name = f'[{config.get('regiment', 'tag')}] {member_name}'
 
             await after.edit(nick=safeguarded_nickname(member_name))
             all_members = csv_handler.csv_get_all_data(
