@@ -19,10 +19,14 @@ from src.modules.todolist.TodolistViewMenu import (
     TodolistViewMenu,
 )
 from src.modules.wiki.ModuleWiki import ModuleWiki
-from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import repair_default_config_dict, safeguarded_nickname
-from src.utils.oisol_enums import DataFilesPath, Modules
-from src.utils.resources import MODULES_CSV_KEYS
+from src.utils import (
+    CsvHandler,
+    DataFilesPath,
+    MODULES_CSV_KEYS,
+    Modules,
+    repair_default_config_dict,
+    safeguarded_nickname
+)
 
 
 class Oisol(commands.Bot):

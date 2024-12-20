@@ -8,10 +8,15 @@ from discord.ext import commands
 
 from src.modules.config.ConfigInterfaces import ConfigViewMenu, SelectLanguageView
 from src.modules.stockpile_viewer import stockpile_embed_generator
-from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import repair_default_config_dict, update_discord_interface
-from src.utils.oisol_enums import DataFilesPath, EmbedIds, Faction
-from src.utils.resources import MODULES_CSV_KEYS
+from src.utils import (
+    CsvHandler,
+    DataFilesPath,
+    EmbedIds,
+    Faction,
+    MODULES_CSV_KEYS,
+    repair_default_config_dict,
+    update_discord_interface
+)
 
 
 class ModuleConfig(commands.Cog):

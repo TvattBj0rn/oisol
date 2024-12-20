@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils.oisol_enums import Faction
+from src.utils import Faction
 
 
 def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> dict | str:

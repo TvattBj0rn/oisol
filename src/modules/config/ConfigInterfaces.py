@@ -3,7 +3,7 @@ import os
 
 import discord
 
-from src.utils.oisol_enums import DataFilesPath, Language
+from src.utils import DataFilesPath, Language
 
 
 class ConfigViewMenu(discord.ui.View):

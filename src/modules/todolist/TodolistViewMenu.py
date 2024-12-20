@@ -8,7 +8,7 @@ import string
 
 import discord
 
-from src.utils.resources import EMOTES_CUSTOM_ID
+from src.utils import EMOTES_CUSTOM_ID
 
 
 def has_permissions(interaction: discord.Interaction, permissions: dict) -> bool:

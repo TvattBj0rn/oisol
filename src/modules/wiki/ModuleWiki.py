@@ -9,7 +9,7 @@ from discord.ext import commands
 
 from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
 from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
-from src.utils.resources import (
+from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS,

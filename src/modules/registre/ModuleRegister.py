@@ -7,9 +7,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.modules.registre.RegisterViewMenu import RegisterViewMenu
-from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import DataFilesPath
-from src.utils.resources import MODULES_CSV_KEYS
+from src.utils import CsvHandler, DataFilesPath, MODULES_CSV_KEYS
 
 
 class ModuleRegister(commands.Cog):

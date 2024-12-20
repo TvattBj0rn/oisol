@@ -6,9 +6,13 @@ import pathlib
 import discord
 from more_itertools import consume
 
-from src.utils.CsvHandler import CsvHandler
-from src.utils.oisol_enums import DataFilesPath, EmbedIds, Faction
-from src.utils.resources import REGIONS_STOCKPILES
+from src.utils import (
+    CsvHandler,
+    DataFilesPath,
+    EmbedIds,
+    Faction,
+    REGIONS_STOCKPILES,
+)
 
 
 def get_sorted_stockpiles(guild_id: int, csv_keys: list) -> (list, dict):

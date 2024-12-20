@@ -9,10 +9,15 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.modules.stockpile_viewer import stockpile_embed_generator
-from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import update_discord_interface
-from src.utils.oisol_enums import DataFilesPath, EmbedIds, Modules
-from src.utils.resources import MODULES_CSV_KEYS, REGIONS_STOCKPILES
+from src.utils import (
+    CsvHandler,
+    DataFilesPath,
+    EmbedIds,
+    MODULES_CSV_KEYS,
+    Modules,
+    REGIONS_STOCKPILES,
+    update_discord_interface,
+)
 
 
 class ModuleStockpiles(commands.Cog):

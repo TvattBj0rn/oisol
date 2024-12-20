@@ -4,36 +4,32 @@ from configparser import ConfigParser
 
 import discord
 
-from src.modules.registre.RegisterViewMenu import RegisterViewMenu
-from src.utils.oisol_enums import DataFilesPath, Faction, Language
+from .oisol_enums import DataFilesPath, Faction, Language
 
 
 async def update_discord_interface(
         interaction: discord.Interaction,
         message_id: str,
-        view: RegisterViewMenu = None,
         embed: discord.Embed = None
 ) -> None:
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
-    if view:
-        channel = interaction.guild.get_channel(int(config['register']['channel']))
+
+    if config.has_option('stockpile', 'channel'):
+        channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
     else:
-        if config.has_option('stockpile', 'channel'):
-            channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
-        else:
-            # Edge case where oisol was not setup on guild but command /stockpile-create called
-            # -> Case where the interface does not exist
-            return
+        # Edge case where oisol was not setup on guild but command /stockpile-create called
+        # -> Case where the interface does not exist
+        return
 
     async for message in channel.history():
         if not message.embeds:
             continue
         message_embed = discord.Embed.to_dict(message.embeds[0])
         if 'footer' in message_embed and message_embed['footer']['text'] == message_id:
-            await message.edit(view=view, embed=view.get_current_embed()) if view else await message.edit(embed=embed)
+            await message.edit(embed=embed)
             return
-    await channel.send(view=view) if view else await channel.send(embed=embed)
+    await channel.send(embed=embed)
 
 
 def safeguarded_nickname(nickname: str) -> str:

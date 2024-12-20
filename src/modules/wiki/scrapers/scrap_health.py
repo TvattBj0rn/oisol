@@ -1,8 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils.oisol_enums import Faction
-from src.utils.resources import DAMAGE_TYPES_ATTRIBUTION
+from src.utils import DAMAGE_TYPES_ATTRIBUTION, Faction
 
 
 def get_columns_order(tbody: Tag) -> list:
