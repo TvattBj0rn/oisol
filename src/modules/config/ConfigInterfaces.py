@@ -46,7 +46,7 @@ class ConfigViewMenu(discord.ui.View):
 
 
 class SelectLanguageView(discord.ui.View):
-    def __init__(self, *, timeout: float = None):
+    def __init__(self, *, timeout: float | None = None):
         super().__init__(timeout=timeout)
         self.add_item(SelectLanguage())
 
@@ -72,7 +72,7 @@ class SelectLanguage(discord.ui.Select):
 
 
 class SelectFactionView(discord.ui.View):
-    def __init__(self, *, timeout: float = None):
+    def __init__(self, *, timeout: float | None = None):
         super().__init__(timeout=timeout)
         self.add_item(SelectLanguage())
 

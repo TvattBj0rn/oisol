@@ -20,10 +20,12 @@ select = [
     "RET", # Return
     "ERA", # Commented code
     "TRY", # Tryceratops (Exception related)
+    "RUF", # Ruff specific rules
 ]
 ignore = [
     "E501", # Line-too-long
     "ANN204", # missing-return-type-special-method
+    "RUF001", # Unicode chars
 ]
 
 [lint.flake8-quotes]

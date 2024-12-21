@@ -72,7 +72,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message(view=config_view, embed=config_view.embed)
 
     @app_commands.command(name='config-register', description='Set the recruit discord role, icons for recruit & promoted recruit and the option to not change ')
-    async def config_register(self, interaction: discord.Interaction, recruit_role: discord.Role = None, recruit_symbol: str = None, promoted_recruit_symbol: str = None, promotion_gives_symbol: bool = None) -> None:
+    async def config_register(self, interaction: discord.Interaction, recruit_role: discord.Role | None = None, recruit_symbol: str | None = None, promoted_recruit_symbol: str | None = None, promotion_gives_symbol: bool | None = None) -> None:
         logging.info(f'[COMMAND] config-register command by {interaction.user.name} on {interaction.guild.name}')
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
             await interaction.response.send_message('> No changes were made because no option was given', ephemeral=True, delete_after=5)
