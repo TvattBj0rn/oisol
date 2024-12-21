@@ -26,7 +26,7 @@ class ModuleConfig(commands.Cog):
         self.csv_keys = MODULES_CSV_KEYS
 
     @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')
-    async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False):
+    async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False) -> None:
         logging.info(f'[COMMAND] repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
 
@@ -54,7 +54,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-display', description='Display current config for the server')
-    async def config(self, interaction: discord.Interaction):
+    async def config(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] config-display command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         try:
@@ -72,7 +72,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message(view=config_view, embed=config_view.embed)
 
     @app_commands.command(name='config-register', description='Set the recruit discord role, icons for recruit & promoted recruit and the option to not change ')
-    async def config_register(self, interaction: discord.Interaction, recruit_role: discord.Role = None, recruit_symbol: str = None, promoted_recruit_symbol: str = None, promotion_gives_symbol: bool = None):
+    async def config_register(self, interaction: discord.Interaction, recruit_role: discord.Role = None, recruit_symbol: str = None, promoted_recruit_symbol: str = None, promotion_gives_symbol: bool = None) -> None:
         logging.info(f'[COMMAND] config-register command by {interaction.user.name} on {interaction.guild.name}')
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
             await interaction.response.send_message('> No changes were made because no option was given', ephemeral=True, delete_after=5)
@@ -103,14 +103,14 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> The register config was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-language', description='Set the language the bot uses for the server')
-    async def config_language(self, interaction: discord.Interaction):
+    async def config_language(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_message(
             view=SelectLanguageView(),
             ephemeral=True
         )
 
     @staticmethod
-    def regiment_config_generic(guild_id: int, **kwargs):
+    def regiment_config_generic(guild_id: int, **kwargs: str) -> None:
         # Init path to file / Config object
         oisol_server_home_path = os.path.join('/', 'oisol', str(guild_id))
         config = configparser.ConfigParser()
@@ -119,27 +119,27 @@ class ModuleConfig(commands.Cog):
             config['regiment'] = {}
 
         # There should be only one item inside **kwargs when this method is called, so only the first item is retrieved
-        data_to_write = next(iter(kwargs.items()))
-        config['regiment'][data_to_write[0]] = data_to_write[1]
+        param_name, param_value = next(iter(kwargs.items()))
+        config['regiment'][param_name] = param_value
 
         # Write updated config to file
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
 
     @app_commands.command(name='config-name', description='Set the name of the group using the bot')
-    async def config_name(self, interaction: discord.Interaction, name: str):
+    async def config_name(self, interaction: discord.Interaction, name: str) -> None:
         logging.info(f'[COMMAND] config-name command by {interaction.user.name} on {interaction.guild.name}')
         self.regiment_config_generic(interaction.guild_id, name=name)
         await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-tag', description='Set the tag of the regiment group using the bot')
-    async def config_tag(self, interaction: discord.Interaction, tag: str):
+    async def config_tag(self, interaction: discord.Interaction, tag: str) -> None:
         logging.info(f'[COMMAND] config-tag command by {interaction.user.name} on {interaction.guild.name}')
         self.regiment_config_generic(interaction.guild_id, tag=tag)
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-faction', description='Set the faction of the regiment group using the bot')
-    async def config_faction(self, interaction: discord.Interaction, faction: Faction):
+    async def config_faction(self, interaction: discord.Interaction, faction: Faction) -> None:
         logging.info(f'[COMMAND] config-faction command by {interaction.user.name} on {interaction.guild.name}')
         self.regiment_config_generic(interaction.guild_id, faction=faction.name)
 

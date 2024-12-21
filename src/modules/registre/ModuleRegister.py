@@ -17,7 +17,7 @@ class ModuleRegister(commands.Cog):
         self.CsvHandler = CsvHandler(MODULES_CSV_KEYS['register'])
 
     @app_commands.command(name='register-view', description='Command to display the current list of recruit with the date the got the recruit role')
-    async def register_view(self, interaction: discord.Interaction):
+    async def register_view(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] register-view command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         config = configparser.ConfigParser()

@@ -12,7 +12,7 @@ class ConfigViewMenu(discord.ui.View):
         self.config_data = None
         self.embed = discord.Embed(title='Configuration')
 
-    async def update_config_embed(self, interaction: discord.Interaction):
+    async def update_config_embed(self, interaction: discord.Interaction) -> None:
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         self.config_data = configparser.ConfigParser()
         self.config_data.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
@@ -40,7 +40,7 @@ class ConfigViewMenu(discord.ui.View):
         )
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:regiment', emoji='🔄')
-    async def refresh_embed(self, interaction: discord.Interaction, _button: discord.ui.Button):
+    async def refresh_embed(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         await self.update_config_embed(interaction)
         await interaction.response.edit_message(view=self, embed=self.embed)
 
@@ -59,7 +59,7 @@ class SelectLanguage(discord.ui.Select):
         ]
         super().__init__(placeholder='Choose a language', options=options)
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
         config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))

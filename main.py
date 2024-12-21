@@ -39,7 +39,7 @@ class Oisol(commands.Bot):
         )
         self.config_servers = {}
 
-    def load_configs(self):
+    def load_configs(self) -> None:
         oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
         for server_folder in os.listdir(oisol_server_home_path):
             if not server_folder.isdigit():
@@ -50,7 +50,7 @@ class Oisol(commands.Bot):
             )
             self.config_servers[server_folder] = server_config
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
@@ -67,14 +67,14 @@ class Oisol(commands.Bot):
         self.load_configs()
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
-    async def setup_hook(self):
+    async def setup_hook(self) -> None:
         self.add_view(ConfigViewMenu())
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
         self.add_dynamic_items(TodolistButtonCheckmark)
 
     @staticmethod
-    async def on_message_delete(message: discord.Message):
+    async def on_message_delete(message: discord.Message) -> None:
         if message.embeds and message.embeds[0].footer:
             test_path = os.path.join(
                 pathlib.Path('/'),
@@ -111,7 +111,7 @@ class Oisol(commands.Bot):
 
         return all_members
 
-    async def update_register(self, server_id: int, all_members: list):
+    async def update_register(self, server_id: int, all_members: list) -> None:
         str_server_id = str(server_id)
         oisol_server_home_path = os.path.join('/', 'oisol', str_server_id)
         try:
@@ -145,7 +145,7 @@ class Oisol(commands.Bot):
         register_view.refresh_register_embed(str_server_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
+    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         if before.id == before.guild.owner.id:
             return
         oisol_server_home_path = os.path.join('/', 'oisol', str(before.guild.id))
@@ -198,7 +198,7 @@ class Oisol(commands.Bot):
             all_members = [member for member in all_members if member['member'] != str(after.id)]
             await self.update_register(before.guild.id, all_members)
 
-    async def on_guild_join(self, guild: discord.Guild):
+    async def on_guild_join(self, guild: discord.Guild) -> None:
         oisol_server_home_path = os.path.join('/', 'oisol', str(guild.id))
 
         # Create guild and guild/todolists directories if they do not exist

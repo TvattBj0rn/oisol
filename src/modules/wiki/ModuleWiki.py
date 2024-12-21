@@ -20,7 +20,7 @@ from .scrapers.scrap_wiki import scrap_wiki
 
 
 class ModuleWiki(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.oisol = bot
 
     @staticmethod
@@ -144,7 +144,7 @@ class ModuleWiki(commands.Cog):
         )
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
-    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False):
+    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False) -> None:
         logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name}')
         if not wiki_search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
@@ -172,7 +172,7 @@ class ModuleWiki(commands.Cog):
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
-    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: bool = False):
+    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: bool = False) -> None:
         logging.info(f'[COMMAND] health command by {interaction.user.name} on {interaction.guild.name}')
 
         entry_searches = (

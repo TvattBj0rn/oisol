@@ -1,23 +1,23 @@
 target-version = "py312"
-exclude = ["__init__.py"] # Waiting for non preview fixes for F401 & F403
+exclude = [
+    "__init__.py",  # Waiting for non preview fixes for F401 & F403
+    "tests/"
+]
 
 [lint]
 select = [
-    # pycodestyle
-    "E", "W",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
-    # comprehensions
-    "C4",
-    # prints
-    "T20",
+    "E", "W", # Pycodestyle
+    "F", # Pyflakes
+    "UP", # Pyupgrade
+    "B", # Flake8-bugbear
+    "SIM", # Flake8-simplify
+    "I", # Isort
+    "C4", # Comprehensions
+    "T20", # Prints
+    "ANN", # Types annotation
+    "S"
 ]
-ignore = ["E501"] # Line-too-long
+ignore = [
+    "E501", # Line-too-long
+    "ANN204", # missing-return-type-special-method
+]
