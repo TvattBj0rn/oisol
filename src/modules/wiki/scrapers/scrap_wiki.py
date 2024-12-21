@@ -87,7 +87,7 @@ def scrap_wiki(url: str, name: str) -> dict:
         return {}
 
     # Whole page soup data
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
 
     # Description soup and retrieving (we make sure the description exists)
     desc_soup = soup.select_one('table > tbody > tr > td > i')

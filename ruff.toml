@@ -16,8 +16,12 @@ select = [
     "T20", # Prints
     "ANN", # Types annotation
     "COM", # Commas handling
+    "Q"
 ]
 ignore = [
     "E501", # Line-too-long
     "ANN204", # missing-return-type-special-method
 ]
+
+[lint.flake8-quotes]
+inline-quotes = "single"

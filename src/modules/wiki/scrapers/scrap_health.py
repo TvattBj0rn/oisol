@@ -44,7 +44,7 @@ def scrap_health(url: str, name: str) -> dict:
         return {}
 
     # Whole page soup data
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
 
     header_indexes = []
     row = None

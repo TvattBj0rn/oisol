@@ -55,7 +55,7 @@ class ModuleWiki(commands.Cog):
         for damage_type, weapons in wiki_data['Damage'].items():
             value_string = ''
             for weapon_name, weapon_value in weapons.items():
-                value_string += f"{EMOJIS_FROM_DICT.get(weapon_name, weapon_name)}: "
+                value_string += f'{EMOJIS_FROM_DICT.get(weapon_name, weapon_name)}: '
                 if isinstance(weapon_value, dict) and 'Disabled' in weapon_value:
                     value_string += f'{weapon_value['Disabled']} **|** {weapon_value['Kill']}'
                 elif isinstance(weapon_value, dict) and len(weapon_value.keys()) == 3:

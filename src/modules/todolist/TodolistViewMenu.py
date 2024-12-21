@@ -110,7 +110,7 @@ class TodolistViewMenu(discord.ui.View):
         for k, v in display_tasks.items():
             display_tasks[k] = ''
             for task in v:
-                display_tasks[k] += f":regional_indicator_{string.ascii_lowercase[i]}: **|** {task}\n"
+                display_tasks[k] += f':regional_indicator_{string.ascii_lowercase[i]}: **|** {task}\n'
                 i += 1
 
         # Update with a single call from dict instead of multiple through the method
