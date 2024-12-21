@@ -17,6 +17,7 @@ select = [
     "ANN", # Types annotation
     "COM", # Commas handling
     "Q", # Quoting
+    "RET", # Return
 ]
 ignore = [
     "E501", # Line-too-long

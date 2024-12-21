@@ -22,6 +22,7 @@ def get_entry_row(tbody: Tag, headers_indexes: list, name: str) -> Tag | None:
         # It is assumed that Name will always be scrapped
         if tr.select('td')[headers_indexes.index('Name')].get_text(strip=True) in {name, name.removesuffix(' (Battleship)')}:
             return tr
+    return None
 
 
 def extract_td_data(td: Tag) -> dict | str:
