@@ -7,11 +7,11 @@ import discord
 from more_itertools import consume
 
 from src.utils import (
+    REGIONS_STOCKPILES,
     CsvHandler,
     DataFilesPath,
     EmbedIds,
     Faction,
-    REGIONS_STOCKPILES,
 )
 
 

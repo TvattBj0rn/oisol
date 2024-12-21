@@ -1,4 +1,5 @@
 target-version = "py312"
+exclude = ["__init__.py"] # Waiting for non preview fixes for F401 & F403
 
 [lint]
 select = [

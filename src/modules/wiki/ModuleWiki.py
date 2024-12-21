@@ -7,8 +7,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .scrapers.scrap_health import scrap_health, scrap_main_picture
-from .scrapers.scrap_wiki import scrap_wiki
 from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
@@ -16,6 +14,9 @@ from src.utils import (
     STRUCTURES_WIKI_ENTRIES,
     VEHICLES_WIKI_ENTRIES,
 )
+
+from .scrapers.scrap_health import scrap_health, scrap_main_picture
+from .scrapers.scrap_wiki import scrap_wiki
 
 
 class ModuleWiki(commands.Cog):

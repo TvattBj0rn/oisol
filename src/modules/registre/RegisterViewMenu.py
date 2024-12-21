@@ -3,7 +3,7 @@ import pathlib
 
 import discord
 
-from src.utils import CsvHandler, DataFilesPath, Faction, MODULES_CSV_KEYS
+from src.utils import MODULES_CSV_KEYS, CsvHandler, DataFilesPath, Faction
 
 
 class RegisterViewMenu(discord.ui.View):

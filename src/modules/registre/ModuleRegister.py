@@ -6,8 +6,9 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from src.utils import MODULES_CSV_KEYS, CsvHandler, DataFilesPath
+
 from .RegisterViewMenu import RegisterViewMenu
-from src.utils import CsvHandler, DataFilesPath, MODULES_CSV_KEYS
 
 
 class ModuleRegister(commands.Cog):

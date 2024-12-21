@@ -18,12 +18,12 @@ from src.modules.todolist import (
 )
 from src.modules.wiki import ModuleWiki
 from src.utils import (
+    MODULES_CSV_KEYS,
     CsvHandler,
     DataFilesPath,
-    MODULES_CSV_KEYS,
     Modules,
     repair_default_config_dict,
-    safeguarded_nickname
+    safeguarded_nickname,
 )
 
 

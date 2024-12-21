@@ -6,17 +6,18 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .ConfigInterfaces import ConfigViewMenu, SelectLanguageView
 from src.modules.stockpile_viewer import generate_view_stockpile_embed
 from src.utils import (
+    MODULES_CSV_KEYS,
     CsvHandler,
     DataFilesPath,
     EmbedIds,
     Faction,
-    MODULES_CSV_KEYS,
     repair_default_config_dict,
-    update_discord_interface
+    update_discord_interface,
 )
+
+from .ConfigInterfaces import ConfigViewMenu, SelectLanguageView
 
 
 class ModuleConfig(commands.Cog):

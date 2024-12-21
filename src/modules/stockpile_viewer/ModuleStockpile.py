@@ -8,16 +8,17 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .stockpile_embed_generator import generate_view_stockpile_embed
 from src.utils import (
+    MODULES_CSV_KEYS,
+    REGIONS_STOCKPILES,
     CsvHandler,
     DataFilesPath,
     EmbedIds,
-    MODULES_CSV_KEYS,
     Modules,
-    REGIONS_STOCKPILES,
     update_discord_interface,
 )
+
+from .stockpile_embed_generator import generate_view_stockpile_embed
 
 
 class ModuleStockpiles(commands.Cog):
