@@ -1,0 +1,1 @@
+from .ModuleWiki import ModuleWiki

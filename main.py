@@ -8,17 +8,15 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from src.modules.config.ConfigInterfaces import ConfigViewMenu
-from src.modules.config.ModuleConfig import ModuleConfig
-from src.modules.registre.ModuleRegister import ModuleRegister
-from src.modules.registre.RegisterViewMenu import RegisterViewMenu
-from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
-from src.modules.todolist.ModuleTodolist import ModuleTodolist
-from src.modules.todolist.TodolistViewMenu import (
+from src.modules.config import ConfigViewMenu, ModuleConfig
+from src.modules.registre import ModuleRegister, RegisterViewMenu
+from src.modules.stockpile_viewer import ModuleStockpiles
+from src.modules.todolist import (
+    ModuleTodolist,
     TodolistButtonCheckmark,
     TodolistViewMenu,
 )
-from src.modules.wiki.ModuleWiki import ModuleWiki
+from src.modules.wiki import ModuleWiki
 from src.utils import (
     CsvHandler,
     DataFilesPath,

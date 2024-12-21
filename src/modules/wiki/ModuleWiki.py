@@ -7,8 +7,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
-from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
+from .scrapers.scrap_health import scrap_health, scrap_main_picture
+from .scrapers.scrap_wiki import scrap_wiki
 from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
@@ -144,7 +144,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False):
-        logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_search_request})')
+        logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name}')
         if not wiki_search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki

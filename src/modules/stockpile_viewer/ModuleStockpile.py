@@ -8,7 +8,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.stockpile_viewer import stockpile_embed_generator
+from .stockpile_embed_generator import generate_view_stockpile_embed
 from src.utils import (
     CsvHandler,
     DataFilesPath,
@@ -62,7 +62,7 @@ class ModuleStockpiles(commands.Cog):
 
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
-        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+        stockpiles_embed = generate_view_stockpile_embed(interaction, self.csv_keys)
         await interaction.response.send_message(embed=stockpiles_embed)
 
     @app_commands.command(name='stockpile-create')
@@ -99,7 +99,7 @@ class ModuleStockpiles(commands.Cog):
         self.CsvHandler.csv_try_create_file(file_path)
         self.CsvHandler.csv_append_data(file_path, stockpile, Modules.STOCKPILE)
 
-        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+        stockpiles_embed = generate_view_stockpile_embed(interaction, self.csv_keys)
 
         await update_discord_interface(
             interaction,
@@ -120,7 +120,7 @@ class ModuleStockpiles(commands.Cog):
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+            embed=generate_view_stockpile_embed(interaction, self.csv_keys)
         )
         await interaction.response.send_message(f'> The stockpile (code: {stockpile_code}) was properly removed', ephemeral=True, delete_after=5)
 
@@ -132,6 +132,6 @@ class ModuleStockpiles(commands.Cog):
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+            embed=generate_view_stockpile_embed(interaction, self.csv_keys)
         )
         await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)

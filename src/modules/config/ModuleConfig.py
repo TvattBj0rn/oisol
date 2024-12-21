@@ -6,8 +6,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.config.ConfigInterfaces import ConfigViewMenu, SelectLanguageView
-from src.modules.stockpile_viewer import stockpile_embed_generator
+from .ConfigInterfaces import ConfigViewMenu, SelectLanguageView
+from src.modules.stockpile_viewer import generate_view_stockpile_embed
 from src.utils import (
     CsvHandler,
     DataFilesPath,
@@ -155,7 +155,7 @@ class ModuleConfig(commands.Cog):
                 if 'footer' in message_embed and message_embed['footer']['text'] == EmbedIds.STOCKPILES_VIEW.value:
                     stockpile_interface_exists = True
             if stockpile_interface_exists:
-                stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, MODULES_CSV_KEYS['stockpiles'])
+                stockpiles_embed = generate_view_stockpile_embed(interaction, MODULES_CSV_KEYS['stockpiles'])
                 await update_discord_interface(
                     interaction,
                     EmbedIds.STOCKPILES_VIEW.value,
