@@ -45,7 +45,7 @@ class CsvHandler:
             next(reader, None)  # Used to skip header row
             for row in reader:
                 data.append(
-                    {self.csv_file_keys[i]: row[i] for i in range(len(self.csv_file_keys))}
+                    {self.csv_file_keys[i]: row[i] for i in range(len(self.csv_file_keys))},
                 )
         return data
 

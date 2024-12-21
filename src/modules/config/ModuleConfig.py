@@ -38,7 +38,7 @@ class ModuleConfig(commands.Cog):
         for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
             if not os.path.isfile(os.path.join(oisol_server_home_path, datafile.value)):
                 CsvHandler(self.csv_keys[datafile.name.lower()]).csv_try_create_file(
-                    os.path.join(oisol_server_home_path, datafile.value)
+                    os.path.join(oisol_server_home_path, datafile.value),
                 )
 
         # Create oisol/config.ini file with default config
@@ -64,7 +64,7 @@ class ModuleConfig(commands.Cog):
             await interaction.response.send_message(
                 '> The default config was never set',
                 ephemeral=True,
-                delete_after=5
+                delete_after=5,
             )
             return
         config_view = ConfigViewMenu()
@@ -86,7 +86,7 @@ class ModuleConfig(commands.Cog):
             await interaction.response.send_message(
                 '> The default config was never set',
                 ephemeral=True,
-                delete_after=5
+                delete_after=5,
             )
             return
         if recruit_role is not None:
@@ -106,7 +106,7 @@ class ModuleConfig(commands.Cog):
     async def config_language(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_message(
             view=SelectLanguageView(),
-            ephemeral=True
+            ephemeral=True,
         )
 
     @staticmethod
@@ -160,6 +160,6 @@ class ModuleConfig(commands.Cog):
                 await update_discord_interface(
                     interaction,
                     EmbedIds.STOCKPILES_VIEW.value,
-                    embed=stockpiles_embed
+                    embed=stockpiles_embed,
                 )
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)

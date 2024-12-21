@@ -105,7 +105,7 @@ class ModuleStockpiles(commands.Cog):
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=stockpiles_embed
+            embed=stockpiles_embed,
         )
 
         await interaction.response.send_message('> Stockpile was properly generated', ephemeral=True, delete_after=5)
@@ -115,13 +115,13 @@ class ModuleStockpiles(commands.Cog):
         logging.info(f'[COMMAND] stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
         self.CsvHandler.csv_delete_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), DataFilesPath.STOCKPILES.value),
-            stockpile_code
+            stockpile_code,
         )
 
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=generate_view_stockpile_embed(interaction, self.csv_keys)
+            embed=generate_view_stockpile_embed(interaction, self.csv_keys),
         )
         await interaction.response.send_message(f'> The stockpile (code: {stockpile_code}) was properly removed', ephemeral=True, delete_after=5)
 
@@ -133,6 +133,6 @@ class ModuleStockpiles(commands.Cog):
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=generate_view_stockpile_embed(interaction, self.csv_keys)
+            embed=generate_view_stockpile_embed(interaction, self.csv_keys),
         )
         await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)

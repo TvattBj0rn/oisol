@@ -18,7 +18,7 @@ class RegisterViewMenu(discord.ui.View):
     def refresh_register_embed(self, guild_id: str) -> None:
         self.current_page_index = 0
         self.register_members = CsvHandler(self.csv_keys).csv_get_all_data(
-            os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value)
+            os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value),
         )
         self.generate_embeds()
 
@@ -26,7 +26,7 @@ class RegisterViewMenu(discord.ui.View):
         self.embeds = []
         embed = discord.Embed(
             title='Register | Page 1',
-            color=self.color
+            color=self.color,
         )
         if not self.register_members:
             self.embeds.append(embed)
@@ -38,13 +38,13 @@ class RegisterViewMenu(discord.ui.View):
                 self.embeds.append(embed)
                 embed = discord.Embed(
                     title=f'Register | Page {(i // 25) + 1}',  # Page 0 might seem weird to non-devs
-                    color=self.color
+                    color=self.color,
                 )
                 embed.set_footer(text='Register')
             embed.add_field(
                 name='',
                 value=f'<@{member_dict[self.csv_keys[0]]}> **|** <t:{member_dict[self.csv_keys[1]]}>',
-                inline=False
+                inline=False,
             )
             # If "i" is the last of the list, the embed is appended as-is
             if i == len(self.register_members) - 1:
@@ -56,8 +56,8 @@ class RegisterViewMenu(discord.ui.View):
                 {
                     'title': 'Register | Page 1',
                     'color': self.color,
-                    'footer': {'text': 'Register'}
-                }
+                    'footer': {'text': 'Register'},
+                },
             )
         return self.embeds[self.current_page_index]
 

@@ -56,8 +56,8 @@ def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: li
             {
                 'name': f'⠀\n{region.upper()}',
                 'value': '',
-                'inline': False
-            }
+                'inline': False,
+            },
         )
 
         for subregion in sorted_subregion_list:
@@ -81,8 +81,8 @@ def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: li
                 {
                     'name': f'{subregion_icon} **|** {subregion}',
                     'value': subregion_stockpiles_values,
-                    'inline': False
-                }
+                    'inline': False,
+                },
             )
 
     return discord.Embed().from_dict(
@@ -90,6 +90,6 @@ def generate_view_stockpile_embed(interaction: discord.Interaction, csv_keys: li
             'title': 'Stockpiles | <:region:1130915923704946758>',
             'color': Faction[config['regiment']['faction']].value,
             'footer': {'text': EmbedIds.STOCKPILES_VIEW.value},
-            'fields': embed_fields
-        }
+            'fields': embed_fields,
+        },
     )

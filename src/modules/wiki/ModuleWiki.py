@@ -37,7 +37,7 @@ class ModuleWiki(commands.Cog):
             wiki_data: dict,
             url_health: str,
             picture_url: str,
-            color: int
+            color: int,
     ) -> discord.Embed:
         # Embed description
         embed_desc = ''
@@ -75,8 +75,8 @@ class ModuleWiki(commands.Cog):
                 'description': embed_desc,
                 'color': color,
                 'thumbnail': {'url': picture_url},
-                'fields': fields
-            }
+                'fields': fields,
+            },
         )
 
     @staticmethod
@@ -129,8 +129,8 @@ class ModuleWiki(commands.Cog):
                 {
                     'name': 'Fuel Capacity',
                     'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT))}",
-                    'inline': True
-                }
+                    'inline': True,
+                },
             )
         return discord.Embed().from_dict(
             {
@@ -139,8 +139,8 @@ class ModuleWiki(commands.Cog):
                 'url': wiki_data['url'],
                 'color': wiki_data['color'],
                 'image': {'url': wiki_data['img_url']},
-                'fields': embed_fields
-            }
+                'fields': embed_fields,
+            },
         )
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
@@ -177,7 +177,7 @@ class ModuleWiki(commands.Cog):
 
         entry_searches = (
             next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == health_search_request), None),
-            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_search_request), None)
+            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_search_request), None),
         )
         if not any(entry_searches):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
@@ -208,7 +208,7 @@ class ModuleWiki(commands.Cog):
             scraped_health_data,
             entry_url,
             infobox_tuple[0],
-            infobox_tuple[1]
+            infobox_tuple[1],
         )
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 

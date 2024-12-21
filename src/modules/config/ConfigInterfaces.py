@@ -21,22 +21,22 @@ class ConfigViewMenu(discord.ui.View):
         self.embed.add_field(
             name='💬 | Language',
             value=self.config_data['default']['language'],
-            inline=True
+            inline=True,
         )
         self.embed.add_field(
             name='🚩 | Regiment',
             value=f"Name: {self.config_data['regiment']['name']}\nTag: {self.config_data['regiment']['tag']}\nFaction: {self.config_data['regiment']['faction']}",
-            inline=True
+            inline=True,
         )
         self.embed.add_field(
             name='📝 | Register',
             value=f"Recruit symbol: {self.config_data['register']['input']}\nPromoted recruit symbol: {self.config_data['register']['output']}\nPromotion gives regiment tag: {self.config_data['register']['promoted_get_tag']}",
-            inline=True
+            inline=True,
         )
         self.embed.add_field(
             name='🪖 | Recruit role',
             value=f'{interaction.guild.get_role(int(self.config_data["register"]["recruit_id"])).mention if self.config_data["register"]["recruit_id"] else "None"}\nTo update this role, use: </config-recruit:1261648113505140787>',
-            inline=True
+            inline=True,
         )
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:regiment', emoji='🔄')

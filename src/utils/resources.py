@@ -238,7 +238,7 @@ EMOTES_CUSTOM_ID = {
     '🇼': 'TodoButtonW',
     '🇽': 'TodoButtonX',
     '🇾': 'TodoButtonY',
-    '🇿': 'TodoButtonZ'
+    '🇿': 'TodoButtonZ',
 }
 
 # All regions and their subregions
@@ -285,7 +285,7 @@ REGIONS = {
     'Umbral Wildwood': ['Amethyst', "Atropos' Fate", "Clotho's Refuge", 'GoldenRoot Ranch', "Hermit's Rest", "Lachesis' Tally ", 'Sentry', 'Stray', 'The Foundry', 'Thunderfoot', 'Vagrant Bastion'],
     'Viper Pit': ['Blackthroat', 'Earl Crowley', 'Fleck Crossing', 'Fort Viper', 'Kirknell', 'Moltworth', "Serenity's Blight", 'The Friars'],
     'Weathered Expanse': ["Crow's Nest", 'Foxcatcher', 'Frostmarch', 'Huntsfort', 'Necropolis', 'Shattered Advance', 'Spirit Watch', 'The Weathering Halls', 'Wightwalk'],
-    'Westgate': ['Holdfast', 'Kingstone', 'Longstone', "Lord's Mouth", 'Lost Partition', "Rancher's Fast", 'The Gallows', 'Westgate Keep', 'Wyattwick', "Zeus' Demise"]
+    'Westgate': ['Holdfast', 'Kingstone', 'Longstone', "Lord's Mouth", 'Lost Partition', "Rancher's Fast", 'The Gallows', 'Westgate Keep', 'Wyattwick', "Zeus' Demise"],
 }
 
 # All regions and their subregions with depot / seaport
@@ -332,594 +332,594 @@ REGIONS_STOCKPILES = {
     'Umbral Wildwood': [("Hermit's Rest", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Thunderfoot', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
     'Viper Pit': [('Earl Crowley', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Kirknell', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
     'Weathered Expanse': [("Crow's Nest", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Foxcatcher', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Weathering Halls', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Westgate': [('Kingstone', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Gallows', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Longstone', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)]
+    'Westgate': [('Kingstone', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Gallows', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Longstone', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
 }
 
 ITEMS_WIKI_ENTRIES = [
     {
         "name": "Argenti r.II Rifle",
         "url": "https://foxhole.wiki.gg/wiki/Argenti_r.II_Rifle",
-        "keywords": 'colonialrifleargenti'
+        "keywords": 'colonialrifleargenti',
     },
     {
         "name": "Blakerow 871",
         "url": "https://foxhole.wiki.gg/wiki/Blakerow_871",
-        "keywords": 'rifleblakerowwarden'
+        "keywords": 'rifleblakerowwarden',
     },
     {
         "name": "Catena rt.IV Auto-Rifle",
         "url": "https://foxhole.wiki.gg/wiki/Catena_rt.IV_Auto-Rifle",
-        "keywords": 'colonialcatenarifleauto'
+        "keywords": 'colonialcatenarifleauto',
     },
     {
         "name": "Fuscina pi.I",
         "url": "https://foxhole.wiki.gg/wiki/Fuscina_pi.I",
-        "keywords": 'colonialfusinafucinariflefuscina'
+        "keywords": 'colonialfusinafucinariflefuscina',
     },
     {
         "name": "No.2 Loughcaster",
         "url": "https://foxhole.wiki.gg/wiki/No.2_Loughcaster",
-        "keywords": 'loughcasterriflewarden'
+        "keywords": 'loughcasterriflewarden',
     },
     {
         "name": "No.2B Hawthorne",
         "url": "https://foxhole.wiki.gg/wiki/No.2B_Hawthorne",
-        "keywords": 'riflehawthornewarden'
+        "keywords": 'riflehawthornewarden',
     },
     {
         "name": "Sampo Auto-Rifle 77",
         "url": "https://foxhole.wiki.gg/wiki/Sampo_Auto-Rifle_77",
-        "keywords": 'autoriflesampowarden'
+        "keywords": 'autoriflesampowarden',
     },
     {
         "name": "The Hangman 757",
         "url": "https://foxhole.wiki.gg/wiki/The_Hangman_757",
-        "keywords": 'riflewardenheavythehangman'
+        "keywords": 'riflewardenheavythehangman',
     },
     {
         "name": "Volta r.I Repeater",
         "url": "https://foxhole.wiki.gg/wiki/Volta_r.I_Repeater",
-        "keywords": 'colonialriflerepeaterheavyvolta'
+        "keywords": 'colonialriflerepeaterheavyvolta',
     },
     {
         "name": "Clancy Cinder M3",
         "url": "https://foxhole.wiki.gg/wiki/Clancy_Cinder_M3",
-        "keywords": 'longcinderclancywardenrifle'
+        "keywords": 'longcinderclancywardenrifle',
     },
     {
         "name": "KRR2-790 Omen",
         "url": "https://foxhole.wiki.gg/wiki/KRR2-790_Omen",
-        "keywords": 'coloniallongrifleomen'
+        "keywords": 'coloniallongrifleomen',
     },
     {
         "name": "Clancy-Raca M4",
         "url": "https://foxhole.wiki.gg/wiki/Clancy-Raca_M4",
-        "keywords": 'clancysniperwardenrifleraca'
+        "keywords": 'clancysniperwardenrifleraca',
     },
     {
         "name": "KRR3-792 Auger",
         "url": "https://foxhole.wiki.gg/wiki/KRR3-792_Auger",
-        "keywords": 'colonialrifleaugersniper'
+        "keywords": 'colonialrifleaugersniper',
     },
     {
         "name": "“Lionclaw” mc.VIII",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CLionclaw%E2%80%9D_mc.VIII",
-        "keywords": 'colonialgunlionclawsubmachine'
+        "keywords": 'colonialgunlionclawsubmachine',
     },
     {
         "name": "“The Pitch Gun” mc.V",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CThe_Pitch_Gun%E2%80%9D_mc.V",
-        "keywords": 'colonialgunpitchsubmachine'
+        "keywords": 'colonialgunpitchsubmachine',
     },
     {
         "name": "Fiddler Submachine Gun Model 868",
         "url": "https://foxhole.wiki.gg/wiki/Fiddler_Submachine_Gun_Model_868",
-        "keywords": 'gunfiddlersubmachinewarden'
+        "keywords": 'gunfiddlersubmachinewarden',
     },
     {
         "name": "No.1 “The Liar” Submachine Gun",
         "url": "https://foxhole.wiki.gg/wiki/No.1_%E2%80%9CThe_Liar%E2%80%9D_Submachine_Gun",
-        "keywords": 'wardengunliarsubmachine'
+        "keywords": 'wardengunliarsubmachine',
     },
     {
         "name": "“Dusk” ce.III",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CDusk%E2%80%9D_ce.III",
-        "keywords": 'colonialrifleassaultdusk'
+        "keywords": 'colonialrifleassaultdusk',
     },
     {
         "name": "Aalto Storm Rifle 24",
         "url": "https://foxhole.wiki.gg/wiki/Aalto_Storm_Rifle_24",
-        "keywords": 'stormwardenrifleaaltoassault'
+        "keywords": 'stormwardenrifleaaltoassault',
     },
     {
         "name": "Booker Storm Rifle Model 838",
         "url": "https://foxhole.wiki.gg/wiki/Booker_Storm_Rifle_Model_838",
-        "keywords": 'stormbookerwardenrifleassault'
+        "keywords": 'stormbookerwardenrifleassault',
     },
     {
         "name": "KRF1-750 Dragonfly",
         "url": "https://foxhole.wiki.gg/wiki/KRF1-750_Dragonfly",
-        "keywords": 'colonialshotgundragonfly'
+        "keywords": 'colonialshotgundragonfly',
     },
     {
         "name": "No.4 The Pillory Scattergun",
         "url": "https://foxhole.wiki.gg/wiki/No.4_The_Pillory_Scattergun",
-        "keywords": 'wardenpilloryscattergunshotgun'
+        "keywords": 'wardenpilloryscattergunshotgun',
     },
     {
         "name": "Ahti Model 2",
         "url": "https://foxhole.wiki.gg/wiki/Ahti_Model_2",
-        "keywords": 'wardenatipistolahti'
+        "keywords": 'wardenatipistolahti',
     },
     {
         "name": "Cascadier 873",
         "url": "https://foxhole.wiki.gg/wiki/Cascadier_873",
-        "keywords": 'cascadierpistolwarden'
+        "keywords": 'cascadierpistolwarden',
     },
     {
         "name": "Ferro 879",
         "url": "https://foxhole.wiki.gg/wiki/Ferro_879",
-        "keywords": 'colonialferropistol'
+        "keywords": 'colonialferropistol',
     },
     {
         "name": "Cometa T2-9",
         "url": "https://foxhole.wiki.gg/wiki/Cometa_T2-9",
-        "keywords": 'revolvercometapistol'
+        "keywords": 'revolvercometapistol',
     },
     {
         "name": "Catara mo.II",
         "url": "https://foxhole.wiki.gg/wiki/Catara_mo.II",
-        "keywords": 'machinecolonialguncataralmglight'
+        "keywords": 'machinecolonialguncataralmglight',
     },
     {
         "name": "KRN886-127 Gast Machine Gun",
         "url": "https://foxhole.wiki.gg/wiki/KRN886-127_Gast_Machine_Gun",
-        "keywords": 'machinecolonialgungastmg'
+        "keywords": 'machinecolonialgungastmg',
     },
     {
         "name": "Malone MK.2",
         "url": "https://foxhole.wiki.gg/wiki/Malone_MK.2",
-        "keywords": 'machinegunwardenmalonemg'
+        "keywords": 'machinegunwardenmalonemg',
     },
     {
         "name": "20 Neville Anti-Tank Rifle",
         "url": "https://foxhole.wiki.gg/wiki/20_Neville_Anti-Tank_Rifle",
-        "keywords": 'wardennevilleatrrifleantitank'
+        "keywords": 'wardennevilleatrrifleantitank',
     },
     {
         "name": "228 Satterley Heavy Storm Rifle",
         "url": "https://foxhole.wiki.gg/wiki/228_Satterley_Heavy_Storm_Rifle",
-        "keywords": 'scatterleywardenatrheavyantitankstormrifle'
+        "keywords": 'scatterleywardenatrheavyantitankstormrifle',
     },
     {
         "name": "Booker Greyhound Model 910",
         "url": "https://foxhole.wiki.gg/wiki/Booker_Greyhound_Model_910",
-        "keywords": 'stormbookerwardenatrrifleantitank'
+        "keywords": 'stormbookerwardenatrrifleantitank',
     },
     {
         "name": "“Dawn” Ve.II",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CDawn%E2%80%9D_Ve.II",
-        "keywords": 'colonialdawnatrrifleantitank'
+        "keywords": 'colonialdawnatrrifleantitank',
     },
     {
         "name": "“Quickhatch” Rt.I",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CQuickhatch%E2%80%9D_Rt.I",
-        "keywords": 'colonialquickhatchsniperatrrifleantitank'
+        "keywords": 'colonialquickhatchsniperatrrifleantitank',
     },
     {
         "name": "Lamentum mm.IV",
         "url": "https://foxhole.wiki.gg/wiki/Lamentum_mm.IV",
-        "keywords": 'machinelamentumcolonialgunmountedmg'
+        "keywords": 'machinelamentumcolonialgunmountedmg',
     },
     {
         "name": "Malone Ratcatcher MK.1",
         "url": "https://foxhole.wiki.gg/wiki/Malone_Ratcatcher_MK.1",
-        "keywords": 'machineratcatchergunwardenmountedmalonemg'
+        "keywords": 'machineratcatchergunwardenmountedmalonemg',
     },
     {
         "name": "Mounted Fissura gd.I",
         "url": "https://foxhole.wiki.gg/wiki/Mounted_Fissura_gd.I",
-        "keywords": 'fissuracoloniallaunchermountedgrenade'
+        "keywords": 'fissuracoloniallaunchermountedgrenade',
     },
     {
         "name": "Daucus isg.III",
         "url": "https://foxhole.wiki.gg/wiki/Daucus_isg.III",
-        "keywords": 'colonialguninfantrydaucusmountedisgsupport'
+        "keywords": 'colonialguninfantrydaucusmountedisgsupport',
     },
     {
         "name": "Cutler Foebreaker",
         "url": "https://foxhole.wiki.gg/wiki/Cutler_Foebreaker",
-        "keywords": 'cutlerfoebreakerlauncherwardenrpgmounted'
+        "keywords": 'cutlerfoebreakerlauncherwardenrpgmounted',
     },
     {
         "name": "Mounted Bonesaw MK.3",
         "url": "https://foxhole.wiki.gg/wiki/Mounted_Bonesaw_MK.3",
-        "keywords": 'arclauncherrpgwardenmountedbonesaw'
+        "keywords": 'arclauncherrpgwardenmountedbonesaw',
     },
     {
         "name": "“Typhon” ra.XII",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CTyphon%E2%80%9D_ra.XII",
-        "keywords": 'colonialtyphonmountedatrrifleantitank'
+        "keywords": 'colonialtyphonmountedatrrifleantitank',
     },
     {
         "name": "“Molten Wind” v.II Flame Torch",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CMolten_Wind%E2%80%9D_v.II_Flame_Torch",
-        "keywords": 'flamethrowercolonialtorchwindthrowermoltenflame'
+        "keywords": 'flamethrowercolonialtorchwindthrowermoltenflame',
     },
     {
         "name": "Willow's Bane Model 845",
         "url": "https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Model_845",
-        "keywords": 'flamethrowerwillowthrowermodelwardenbaneflame'
+        "keywords": 'flamethrowerwillowthrowermodelwardenbaneflame',
     },
     {
         "name": "A3 Harpa Fragmentation Grenade",
         "url": "https://foxhole.wiki.gg/wiki/A3_Harpa_Fragmentation_Grenade",
-        "keywords": 'fragmentationharpawardena3grenade'
+        "keywords": 'fragmentationharpawardena3grenade',
     },
     {
         "name": "Bomastone Grenade",
         "url": "https://foxhole.wiki.gg/wiki/Bomastone_Grenade",
-        "keywords": 'colonialgrenadebomastone'
+        "keywords": 'colonialgrenadebomastone',
     },
     {
         "name": "Green Ash Grenade",
         "url": "https://foxhole.wiki.gg/wiki/Gas_Grenade",
-        "keywords": 'grenadeashgasgreen'
+        "keywords": 'grenadeashgasgreen',
     },
     {
         "name": "PT-815 Smoke Grenade",
         "url": "https://foxhole.wiki.gg/wiki/Smoke_Grenade",
-        "keywords": 'smokegrenade'
+        "keywords": 'smokegrenade',
     },
     {
         "name": "Mammon 91-b",
         "url": "https://foxhole.wiki.gg/wiki/Mammon_91-b",
-        "keywords": 'grenadehemammonmamon'
+        "keywords": 'grenadehemammonmamon',
     },
     {
         "name": "Tremola Grenade GPb-1",
         "url": "https://foxhole.wiki.gg/wiki/Tremola_Grenade_GPb-1",
-        "keywords": 'grenadehetremola'
+        "keywords": 'grenadehetremola',
     },
     {
         "name": "Anti-Tank Sticky Bomb",
         "url": "https://foxhole.wiki.gg/wiki/Anti-Tank_Sticky_Bomb",
-        "keywords": 'antistickybombtank'
+        "keywords": 'antistickybombtank',
     },
     {
         "name": "BF5 White Ash Flask Grenade",
         "url": "https://foxhole.wiki.gg/wiki/BF5_White_Ash_Flask_Grenade",
-        "keywords": 'flaskwhitewardengrenadeashantitank'
+        "keywords": 'flaskwhitewardengrenadeashantitank',
     },
     {
         "name": "B2 Varsi Anti-Tank Grenade",
         "url": "https://foxhole.wiki.gg/wiki/B2_Varsi_Anti-Tank_Grenade",
-        "keywords": 'grenadewardenantivarsitank'
+        "keywords": 'grenadewardenantivarsitank',
     },
     {
         "name": "Alligator Charge",
         "url": "https://foxhole.wiki.gg/wiki/Alligator_Charge",
-        "keywords": 'chargeexplosivealigatorwardenalligator'
+        "keywords": 'chargeexplosivealigatorwardenalligator',
     },
     {
         "name": "Hydra's Whisper",
         "url": "https://foxhole.wiki.gg/wiki/Hydra%27s_Whisper",
-        "keywords": 'colonialchargeexplosivehydrawhisper'
+        "keywords": 'colonialchargeexplosivehydrawhisper',
     },
     {
         "name": "Havoc Charge",
         "url": "https://foxhole.wiki.gg/wiki/Havoc_Charge",
-        "keywords": 'chargeexplosivehavoc'
+        "keywords": 'chargeexplosivehavoc',
     },
     {
         "name": "Abisme AT-99",
         "url": "https://foxhole.wiki.gg/wiki/Abisme_AT-99",
-        "keywords": 'abismeatmineantitank'
+        "keywords": 'abismeatmineantitank',
     },
     {
         "name": "E680-S Rudder Lock",
         "url": "https://foxhole.wiki.gg/wiki/Sea_Mine",
-        "keywords": 'lockseaminenavalrudder'
+        "keywords": 'lockseaminenavalrudder',
     },
     {
         "name": "Crow's Foot Mine",
         "url": "https://foxhole.wiki.gg/wiki/Crow%27s_Foot_Mine",
-        "keywords": 'crowinfantrylandpersonnelfootmineanti'
+        "keywords": 'crowinfantrylandpersonnelfootmineanti',
     },
     {
         "name": "The Ospreay",
         "url": "https://foxhole.wiki.gg/wiki/The_Ospreay",
-        "keywords": 'grenadeospreaylauncherwarden'
+        "keywords": 'grenadeospreaylauncherwarden',
     },
     {
         "name": "KLG901-2 Lunaire F",
         "url": "https://foxhole.wiki.gg/wiki/KLG901-2_Lunaire_F",
-        "keywords": 'colonialgrenadelauncherlunaire'
+        "keywords": 'colonialgrenadelauncherlunaire',
     },
     {
         "name": "Cutler Launcher 4",
         "url": "https://foxhole.wiki.gg/wiki/Cutler_Launcher_4",
-        "keywords": 'cutlerrpglauncherwarden'
+        "keywords": 'cutlerrpglauncherwarden',
     },
     {
         "name": "Bane 45",
         "url": "https://foxhole.wiki.gg/wiki/Bane_45",
-        "keywords": 'apantitankcolonialrpglauncheratbane'
+        "keywords": 'apantitankcolonialrpglauncheratbane',
     },
     {
         "name": "Bonesaw MK.3",
         "url": "https://foxhole.wiki.gg/wiki/Bonesaw_MK.3",
-        "keywords": 'arclauncherrpgwardenbonesaw'
+        "keywords": 'arclauncherrpgwardenbonesaw',
     },
     {
         "name": "Ignifist 30",
         "url": "https://foxhole.wiki.gg/wiki/Ignifist_30",
-        "keywords": 'colonialignifistlauncherat'
+        "keywords": 'colonialignifistlauncherat',
     },
     {
         "name": "Venom c.II 35",
         "url": "https://foxhole.wiki.gg/wiki/Venom_c.II_35",
-        "keywords": 'coloniallauncherrpgapatvenom'
+        "keywords": 'coloniallauncherrpgapatvenom',
     },
     {
         "name": "Cremari Mortar",
         "url": "https://foxhole.wiki.gg/wiki/Cremari_Mortar",
-        "keywords": 'mortarcremari'
+        "keywords": 'mortarcremari',
     },
     {
         "name": "Buckhorn CCQ-18",
         "url": "https://foxhole.wiki.gg/wiki/Bayonet",
-        "keywords": 'buckhornbayonet'
+        "keywords": 'buckhornbayonet',
     },
     {
         "name": "Fists",
         "url": "https://foxhole.wiki.gg/wiki/Fists",
-        "keywords": 'fists'
+        "keywords": 'fists',
     },
     {
         "name": "Eleos Infantry Dagger",
         "url": "https://foxhole.wiki.gg/wiki/Eleos_Infantry_Dagger",
-        "keywords": 'colonialdaggermeleeinfantryeleosweapon'
+        "keywords": 'colonialdaggermeleeinfantryeleosweapon',
     },
     {
         "name": "Falias Raiding Club",
         "url": "https://foxhole.wiki.gg/wiki/Falias_Raiding_Club",
-        "keywords": 'meleeclubraidingwardenfaliasweapon'
+        "keywords": 'meleeclubraidingwardenfaliasweapon',
     },
     {
         "name": "9mm",
         "url": "https://foxhole.wiki.gg/wiki/9mm",
-        "keywords": 'magazinemm9'
+        "keywords": 'magazinemm9',
     },
     {
         "name": "8mm",
         "url": "https://foxhole.wiki.gg/wiki/8mm",
-        "keywords": 'magazinemm8'
+        "keywords": 'magazinemm8',
     },
     {
         "name": "7.92mm",
         "url": "https://foxhole.wiki.gg/wiki/7.92mm",
-        "keywords": '7.92mm7magazine'
+        "keywords": '7.92mm7magazine',
     },
     {
         "name": "7.62mm",
         "url": "https://foxhole.wiki.gg/wiki/7.62mm",
-        "keywords": 'magazine7mm7.62'
+        "keywords": 'magazine7mm7.62',
     },
     {
         "name": ".44",
         "url": "https://foxhole.wiki.gg/wiki/.44",
-        "keywords": 'magazinemm44'
+        "keywords": 'magazinemm44',
     },
     {
         "name": "Buckshot",
         "url": "https://foxhole.wiki.gg/wiki/Buckshot",
-        "keywords": 'buckshotammoshotgun'
+        "keywords": 'buckshotammoshotgun',
     },
     {
         "name": "Flame Ammo",
         "url": "https://foxhole.wiki.gg/wiki/Flame_Ammo",
-        "keywords": 'ammoflame'
+        "keywords": 'ammoflame',
     },
     {
         "name": "12.7mm",
         "url": "https://foxhole.wiki.gg/wiki/12.7mm",
-        "keywords": 'magazine1212.7mm'
+        "keywords": 'magazine1212.7mm',
     },
     {
         "name": "20mm",
         "url": "https://foxhole.wiki.gg/wiki/20mm",
-        "keywords": 'magazinemm20'
+        "keywords": 'magazinemm20',
     },
     {
         "name": "30mm",
         "url": "https://foxhole.wiki.gg/wiki/30mm",
-        "keywords": 'shellmm30'
+        "keywords": 'shellmm30',
     },
     {
         "name": "40mm",
         "url": "https://foxhole.wiki.gg/wiki/40mm",
-        "keywords": 'shellmm40'
+        "keywords": 'shellmm40',
     },
     {
         "name": "68mm",
         "url": "https://foxhole.wiki.gg/wiki/68mm",
-        "keywords": 'shell68mm'
+        "keywords": 'shell68mm',
     },
     {
         "name": "75mm",
         "url": "https://foxhole.wiki.gg/wiki/75mm",
-        "keywords": 'shell75mm'
+        "keywords": 'shell75mm',
     },
     {
         "name": "94.5mm",
         "url": "https://foxhole.wiki.gg/wiki/94.5mm",
-        "keywords": '9494.5shellmm'
+        "keywords": '9494.5shellmm',
     },
     {
         "name": "Flare Mortar Shell",
         "url": "https://foxhole.wiki.gg/wiki/Flare_Mortar_Shell",
-        "keywords": 'shellflaremortar'
+        "keywords": 'shellflaremortar',
     },
     {
         "name": "Shrapnel Mortar Shell",
         "url": "https://foxhole.wiki.gg/wiki/Shrapnel_Mortar_Shell",
-        "keywords": 'shellmortarshrapnel'
+        "keywords": 'shellmortarshrapnel',
     },
     {
         "name": "Mortar Shell",
         "url": "https://foxhole.wiki.gg/wiki/Mortar_Shell",
-        "keywords": 'shellmortar'
+        "keywords": 'shellmortar',
     },
     {
         "name": "Incendiary Mortar Shell",
         "url": "https://foxhole.wiki.gg/wiki/Incendiary_Mortar_Shell",
-        "keywords": 'fireshellmortarincendiary'
+        "keywords": 'fireshellmortarincendiary',
     },
     {
         "name": "4C-Fire Rocket",
         "url": "https://foxhole.wiki.gg/wiki/4C-Fire_Rocket",
-        "keywords": '4crocketfire'
+        "keywords": '4crocketfire',
     },
     {
         "name": "3C-High Explosive Rocket",
         "url": "https://foxhole.wiki.gg/wiki/3C-High_Explosive_Rocket",
-        "keywords": 'explosivefire3crockethigh'
+        "keywords": 'explosivefire3crockethigh',
     },
     {
         "name": "120mm",
         "url": "https://foxhole.wiki.gg/wiki/120mm",
-        "keywords": 'shellmm120'
+        "keywords": 'shellmm120',
     },
     {
         "name": "150mm",
         "url": "https://foxhole.wiki.gg/wiki/150mm",
-        "keywords": '150shellmm'
+        "keywords": '150shellmm',
     },
     {
         "name": "300mm",
         "url": "https://foxhole.wiki.gg/wiki/300mm",
-        "keywords": 'shellmm300'
+        "keywords": 'shellmm300',
     },
     {
         "name": "RPG",
         "url": "https://foxhole.wiki.gg/wiki/RPG",
-        "keywords": 'shellrpg'
+        "keywords": 'shellrpg',
     },
     {
         "name": "AP⧸RPG",
         "url": "https://foxhole.wiki.gg/wiki/AP%E2%A7%B8RPG",
-        "keywords": 'shellrpgap'
+        "keywords": 'shellrpgap',
     },
     {
         "name": "ARC⧸RPG",
         "url": "https://foxhole.wiki.gg/wiki/ARC%E2%A7%B8RPG",
-        "keywords": 'arcshellrpg'
+        "keywords": 'arcshellrpg',
     },
     {
         "name": "250mm",
         "url": "https://foxhole.wiki.gg/wiki/250mm",
-        "keywords": 'shell250mm'
+        "keywords": 'shell250mm',
     },
     {
         "name": "“Molten Wind” v.II Ammo",
         "url": "https://foxhole.wiki.gg/wiki/%E2%80%9CMolten_Wind%E2%80%9D_v.II_Ammo",
-        "keywords": 'moltenammoflamewind'
+        "keywords": 'moltenammoflamewind',
     },
     {
         "name": "Willow's Bane Ammo",
         "url": "https://foxhole.wiki.gg/wiki/Willow%27s_Bane_Ammo",
-        "keywords": 'willowsflameammobane'
+        "keywords": 'willowsflameammobane',
     },
     {
         "name": "Moray Torpedo",
         "url": "https://foxhole.wiki.gg/wiki/Torpedo",
-        "keywords": 'torpedomoray'
+        "keywords": 'torpedomoray',
     },
     {
         "name": "Model-7 “Evie”",
         "url": "https://foxhole.wiki.gg/wiki/Depth_Charge",
-        "keywords": 'eviechargedepth'
+        "keywords": 'eviechargedepth',
     },
     {
         "name": "Herne QMW 1a Scourge Hunter",
         "url": "https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter",
-        "keywords": 'scourgemechahunterherne'
+        "keywords": 'scourgemechahunterherne',
     },
     {
         "name": "Centurion MV-2",
         "url": "https://foxhole.wiki.gg/wiki/Centurion_MV-2",
-        "keywords": 'centurionmecha'
+        "keywords": 'centurionmecha',
     },
     {
         "name": "Heavy Infantry Carrier",
         "url": "https://foxhole.wiki.gg/wiki/Heavy_Infantry_Carrier",
-        "keywords": 'vehiclerelicinfantrycarrierheavy'
+        "keywords": 'vehiclerelicinfantrycarrierheavy',
     },
     {
         "name": "Oil Field",
         "url": "https://foxhole.wiki.gg/wiki/Oil_Field",
-        "keywords": 'oilfield'
+        "keywords": 'oilfield',
     },
     {
         "name": "Coal Field",
         "url": "https://foxhole.wiki.gg/wiki/Coal_Field",
-        "keywords": 'coalfield'
+        "keywords": 'coalfield',
     },
     {
         "name": "Salvage Field",
         "url": "https://foxhole.wiki.gg/wiki/Salvage_Field",
-        "keywords": 'fieldscrapsalvage'
+        "keywords": 'fieldscrapsalvage',
     },
     {
         "name": "Sulfur Field",
         "url": "https://foxhole.wiki.gg/wiki/Sulfur_Field",
-        "keywords": 'sulfurfield'
+        "keywords": 'sulfurfield',
     },
     {
         "name": "Component Field",
         "url": "https://foxhole.wiki.gg/wiki/Component_Field",
-        "keywords": 'componentfield'
+        "keywords": 'componentfield',
     },
     {
         "name": "A0E-9 Rocket Booster",
         "url": "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster",
-        "keywords": 'nukeboosterrocket'
+        "keywords": 'nukeboosterrocket',
     },
     {
         "name": "A0E-9 Rocket Body",
         "url": "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body",
-        "keywords": 'nukerocketbody'
+        "keywords": 'nukerocketbody',
     },
     {
         "name": "A0E-9 Rocket Warhead",
         "url": "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead",
-        "keywords": 'nukewarheadrocket'
+        "keywords": 'nukewarheadrocket',
     },
     {
         "name": "A0E-9 Rocket Platform",
         "url": "https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform",
-        "keywords": 'nukerocketplatform'
+        "keywords": 'nukerocketplatform',
     },
     {
         "name": "Diesel Power Plant",
         "url": "https://foxhole.wiki.gg/wiki/Diesel_Power_Plant",
-        "keywords": 'powerdieselplant'
+        "keywords": 'powerdieselplant',
     },
     {
         "name": "Power Station",
         "url": "https://foxhole.wiki.gg/wiki/Power_Station",
-        "keywords": 'powerstation'
+        "keywords": 'powerstation',
     },
     {
         "name": "Deployed Listening Kit",
         "url": "https://foxhole.wiki.gg/wiki/Listening_Kit",
-        "keywords": 'deployedlklisteningkit'
+        "keywords": 'deployedlklisteningkit',
     },
     {
         "name": "Tripod",
         "url": "https://foxhole.wiki.gg/wiki/Tripod",
-        "keywords": 'tripod'
+        "keywords": 'tripod',
     },
 ]
 
@@ -927,722 +927,722 @@ VEHICLES_WIKI_ENTRIES = [
     {
         "name": "T3 “Xiphos”",
         "url": "https://foxhole.wiki.gg/wiki/T3_%E2%80%9CXiphos%E2%80%9D",
-        "keywords": 'colonialt3armouredarmoredxiphoscarac'
+        "keywords": 'colonialt3armouredarmoredxiphoscarac',
     },
     {
         "name": "T5 “Percutio”",
         "url": "https://foxhole.wiki.gg/wiki/T5_%E2%80%9CPercutio%E2%80%9D",
-        "keywords": 'colonialatacarmouredt5carpercutioarmored'
+        "keywords": 'colonialatacarmouredt5carpercutioarmored',
     },
     {
         "name": "T8 “Gemini”",
         "url": "https://foxhole.wiki.gg/wiki/T8_%E2%80%9CGemini%E2%80%9D",
-        "keywords": 'colonialgeminiarmouredt8caracarmored'
+        "keywords": 'colonialgeminiarmouredt8caracarmored',
     },
     {
         "name": "O'Brien V.110",
         "url": "https://foxhole.wiki.gg/wiki/O%27Brien_V.110",
-        "keywords": 'warden110armouredarmoredcaracobrien'
+        "keywords": 'warden110armouredarmoredcaracobrien',
     },
     {
         "name": "O'Brien V.113 Gravekeeper",
         "url": "https://foxhole.wiki.gg/wiki/O%27Brien_V.113_Gravekeeper",
-        "keywords": 'gravekeeperarmouredcaracwarden113bonewagonobrienamored'
+        "keywords": 'gravekeeperarmouredcaracwarden113bonewagonobrienamored',
     },
     {
         "name": "O'Brien V.121 Highlander",
         "url": "https://foxhole.wiki.gg/wiki/O%27Brien_V.121_Highlander",
-        "keywords": 'armoured121carhighlandertacwardenobrienamored'
+        "keywords": 'armoured121carhighlandertacwardenobrienamored',
     },
     {
         "name": "O'Brien V.130 Wild Jack",
         "url": "https://foxhole.wiki.gg/wiki/O%27Brien_V.130_Wild_Jack",
-        "keywords": 'armouredflamecaracwardenarmoredwildjackobrien130'
+        "keywords": 'armouredflamecaracwardenarmoredwildjackobrien130',
     },
     {
         "name": "O'Brien V.190 Knave",
         "url": "https://foxhole.wiki.gg/wiki/O%27Brien_V.190_Knave",
-        "keywords": '190carwardenarmoredknavegacglacobrien'
+        "keywords": '190carwardenarmoredknavegacglacobrien',
     },
     {
         "name": "O'Brien V.101 Freeman",
         "url": "https://foxhole.wiki.gg/wiki/O%27Brien_V.101_Freeman",
-        "keywords": 'freemanarmouredcar101hacwardenarmoredobrien'
+        "keywords": 'freemanarmouredcar101hacwardenarmoredobrien',
     },
     {
         "name": "T12 “Actaeon” Tankette",
         "url": "https://foxhole.wiki.gg/wiki/T12_%E2%80%9CActaeon%E2%80%9D_Tankette",
-        "keywords": 'colonialtankettet12actaeon'
+        "keywords": 'colonialtankettet12actaeon',
     },
     {
         "name": "T13 “Deioneus” Rocket Battery",
         "url": "https://foxhole.wiki.gg/wiki/T13_%E2%80%9CDeioneus%E2%80%9D_Rocket_Battery",
-        "keywords": 'colonialrockettankettet13deioneusbattery'
+        "keywords": 'colonialrockettankettet13deioneusbattery',
     },
     {
         "name": "T14 “Vesta” Tankette",
         "url": "https://foxhole.wiki.gg/wiki/T14_%E2%80%9CVesta%E2%80%9D_Tankette",
-        "keywords": 'colonialtankettet14flamevesta'
+        "keywords": 'colonialtankettet14flamevesta',
     },
     {
         "name": "T20 “Ixion” Tankette",
         "url": "https://foxhole.wiki.gg/wiki/T20_%E2%80%9CIxion%E2%80%9D_Tankette",
-        "keywords": 'colonialtankettet2030mmixion'
+        "keywords": 'colonialtankettet2030mmixion',
     },
     {
         "name": "AB-8 “Acheron”",
         "url": "https://foxhole.wiki.gg/wiki/AB-8_%E2%80%9CAcheron%E2%80%9D",
-        "keywords": 'colonialapcacheronab8'
+        "keywords": 'colonialapcacheronab8',
     },
     {
         "name": "AB-11 “Doru”",
         "url": "https://foxhole.wiki.gg/wiki/AB-11_%E2%80%9CDoru%E2%80%9D",
-        "keywords": 'colonialapc12.7ab11dorumm'
+        "keywords": 'colonialapc12.7ab11dorumm',
     },
     {
         "name": "Mulloy LPC",
         "url": "https://foxhole.wiki.gg/wiki/Mulloy_LPC",
-        "keywords": 'apcwardenmulloylpc'
+        "keywords": 'apcwardenmulloylpc',
     },
     {
         "name": "HH-a “Javelin”",
         "url": "https://foxhole.wiki.gg/wiki/HH-a_%E2%80%9CJavelin%E2%80%9D",
-        "keywords": 'colonialhalftrackhtjavelin'
+        "keywords": 'colonialhalftrackhtjavelin',
     },
     {
         "name": "HH-b “Hoplite”",
         "url": "https://foxhole.wiki.gg/wiki/HH-b_%E2%80%9CHoplite%E2%80%9D",
-        "keywords": 'colonialhalftrackhopliteht'
+        "keywords": 'colonialhalftrackhopliteht',
     },
     {
         "name": "HH-d “Peltast”",
         "url": "https://foxhole.wiki.gg/wiki/HH-d_%E2%80%9CPeltast%E2%80%9D",
-        "keywords": 'colonialhalftrackmortartmhtpeltast'
+        "keywords": 'colonialhalftrackmortartmhtpeltast',
     },
     {
         "name": "Niska Mk. I Gun Motor Carriage",
         "url": "https://foxhole.wiki.gg/wiki/Niska_Mk._I_Gun_Motor_Carriage",
-        "keywords": 'halftrackwardenhtcarriageniskagunmotor'
+        "keywords": 'halftrackwardenhtcarriageniskagunmotor',
     },
     {
         "name": "Niska Mk. II Blinder",
         "url": "https://foxhole.wiki.gg/wiki/Niska_Mk._II_Blinder",
-        "keywords": 'halftrackwarden68mmniskablinderatht'
+        "keywords": 'halftrackwarden68mmniskablinderatht',
     },
     {
         "name": "Niska Mk. III Scar Twin",
         "url": "https://foxhole.wiki.gg/wiki/Niska_Mk._III_Scar_Twin",
-        "keywords": 'halftrackwardenhtniskatwinscar'
+        "keywords": 'halftrackwardenhtniskatwinscar',
     },
     {
         "name": "Niska-Rycker Mk. IX Skycaller",
         "url": "https://foxhole.wiki.gg/wiki/Niska-Rycker_Mk._IX_Skycaller",
-        "keywords": 'skycallerhalftrackrockethtwardenniskarycker'
+        "keywords": 'skycallerhalftrackrockethtwardenniskarycker',
     },
     {
         "name": "Swallowtail 988/127-2",
         "url": "https://foxhole.wiki.gg/wiki/Swallowtail_988/127-2",
-        "keywords": 'wardenfieldfmgswallotailgunmachine'
+        "keywords": 'wardenfieldfmgswallotailgunmachine',
     },
     {
         "name": "G40 “Sagittarii”",
         "url": "https://foxhole.wiki.gg/wiki/G40_%E2%80%9CSagittarii%E2%80%9D",
-        "keywords": 'colonialsagittariig40fieldfmggunmachine'
+        "keywords": 'colonialsagittariig40fieldfmggunmachine',
     },
     {
         "name": "Duncan's Coin 20mm",
         "url": "https://foxhole.wiki.gg/wiki/Duncan%27s_Coin_20mm",
-        "keywords": 'tank20mmfieldfatrantiwardencoinduncans'
+        "keywords": 'tank20mmfieldfatrantiwardencoinduncans',
     },
     {
         "name": "GA6 “Cestus”",
         "url": "https://foxhole.wiki.gg/wiki/GA6_%E2%80%9CCestus%E2%80%9D",
-        "keywords": 'tankcolonialga6fieldfatranticestus'
+        "keywords": 'tankcolonialga6fieldfatranticestus',
     },
     {
         "name": "120-68 “Koronides” Field Gun",
         "url": "https://foxhole.wiki.gg/wiki/Field_Artillery",
-        "keywords": 'colonialkoronidesartyfieldartillery120gun'
+        "keywords": 'colonialkoronidesartyfieldartillery120gun',
     },
     {
         "name": "Balfour Wolfhound 40mm",
         "url": "https://foxhole.wiki.gg/wiki/Field_Cannon",
-        "keywords": 'pushgunbalfourwardenwolfhoundfieldcannon40mm'
+        "keywords": 'pushgunbalfourwardenwolfhoundfieldcannon40mm',
     },
     {
         "name": "Rycker 4/3-F Wasp Nest",
         "url": "https://foxhole.wiki.gg/wiki/Field_Launcher",
-        "keywords": 'wasprocketfieldwardenlauncherryckernest'
+        "keywords": 'wasprocketfieldwardenlauncherryckernest',
     },
     {
         "name": "Collins Cannon 68mm",
         "url": "https://foxhole.wiki.gg/wiki/Collins_Cannon_68mm",
-        "keywords": 'tankfieldanticannonwarden68mmfatcollins'
+        "keywords": 'tankfieldanticannonwarden68mmfatcollins',
     },
     {
         "name": "AA-2 Battering Ram",
         "url": "https://foxhole.wiki.gg/wiki/AA-2_Battering_Ram",
-        "keywords": 'tankcolonialbatteringfatfieldantiram'
+        "keywords": 'tankcolonialbatteringfatfieldantiram',
     },
     {
         "name": "Balfour Falconer 250mm",
         "url": "https://foxhole.wiki.gg/wiki/Field_Mortar",
-        "keywords": 'falconerbarlfourfmpushgunwardenbaby250mmballista'
+        "keywords": 'falconerbarlfourfmpushgunwardenbaby250mmballista',
     },
     {
         "name": "Balfour Rampart 68mm",
         "url": "https://foxhole.wiki.gg/wiki/Heavy_Field_Cannon",
-        "keywords": 'pushgunbalfourhv68wardenrampart68mmhvfat'
+        "keywords": 'pushgunbalfourhv68wardenrampart68mmhvfat',
     },
     {
         "name": "40-45 “Smelter” Heavy Field Gun",
         "url": "https://foxhole.wiki.gg/wiki/Heavy_Field_Gun",
-        "keywords": 'colonialpushgunheavyfieldsmeltergunhv40'
+        "keywords": 'colonialpushgunheavyfieldsmeltergunhv40',
     },
     {
         "name": "Balfour Stockade 75mm",
         "url": "https://foxhole.wiki.gg/wiki/Balfour_Stockade_75mm",
-        "keywords": 'stockadefield75mmlargegunpushgunbalfourwarden'
+        "keywords": 'stockadefield75mmlargegunpushgunbalfourwarden',
     },
     {
         "name": "945g “Stygian Bolt”",
         "url": "https://foxhole.wiki.gg/wiki/945g_%E2%80%9CStygian_Bolt%E2%80%9D",
-        "keywords": 'colonialfieldlargeboltgun945gpushgunstygian'
+        "keywords": 'colonialfieldlargeboltgun945gpushgunstygian',
     },
     {
         "name": "King Spire Mk. I",
         "url": "https://foxhole.wiki.gg/wiki/King_Spire_Mk._I",
-        "keywords": 'tankscoutkingwardenspiremgst'
+        "keywords": 'tankscoutkingwardenspiremgst',
     },
     {
         "name": "King Gallant Mk. II",
         "url": "https://foxhole.wiki.gg/wiki/King_Gallant_Mk._II",
-        "keywords": 'tankscoutkingwarden30mmgallant'
+        "keywords": 'tankscoutkingwarden30mmgallant',
     },
     {
         "name": "King Jester - Mk. I-1",
         "url": "https://foxhole.wiki.gg/wiki/King_Jester_-_Mk._I-1",
-        "keywords": 'tankscoutkingwardenrocketjester'
+        "keywords": 'tankscoutkingwardenrocketjester',
     },
     {
         "name": "H-5 “Hatchet”",
         "url": "https://foxhole.wiki.gg/wiki/H-5_%E2%80%9CHatchet%E2%80%9D",
-        "keywords": 'tankcolonialh5lightlthatchet'
+        "keywords": 'tankcolonialh5lightlthatchet',
     },
     {
         "name": "H-10 “Pelekys”",
         "url": "https://foxhole.wiki.gg/wiki/H-10_%E2%80%9CPelekys%E2%80%9D",
-        "keywords": 'tankpelekyscolonialdestroyerlightltdh10'
+        "keywords": 'tankpelekyscolonialdestroyerlightltdh10',
     },
     {
         "name": "H-19 “Vulcan”",
         "url": "https://foxhole.wiki.gg/wiki/H-19_%E2%80%9CVulcan%E2%80%9D",
-        "keywords": 'tankcoloniallightvulcanh19flamelt'
+        "keywords": 'tankcoloniallightvulcanh19flamelt',
     },
     {
         "name": "H-8 “Kranesca”",
         "url": "https://foxhole.wiki.gg/wiki/H-8_%E2%80%9CKranesca%E2%80%9D",
-        "keywords": 'tankcoloniallightkrannylth8kranesca'
+        "keywords": 'tankcoloniallightkrannylth8kranesca',
     },
     {
         "name": "Devitt Mk. III",
         "url": "https://foxhole.wiki.gg/wiki/Devitt_Mk._III",
-        "keywords": 'tankwardenlightltdevit'
+        "keywords": 'tankwardenlightltdevit',
     },
     {
         "name": "Devitt Ironhide Mk. IV",
         "url": "https://foxhole.wiki.gg/wiki/Devitt_Ironhide_Mk._IV",
-        "keywords": 'tankwardenlightltdevitironhide'
+        "keywords": 'tankwardenlightltdevitironhide',
     },
     {
         "name": "Devitt-Caine Mk. IV MMR",
         "url": "https://foxhole.wiki.gg/wiki/Devitt-Caine_Mk._IV_MMR",
-        "keywords": 'tankwardencainelightmortardevittmlt'
+        "keywords": 'tankwardencainelightmortardevittmlt',
     },
     {
         "name": "85K-b “Falchion”",
         "url": "https://foxhole.wiki.gg/wiki/85K-b_%E2%80%9CFalchion%E2%80%9D",
-        "keywords": 'tankcolonialassaultmpt85kbfalchion'
+        "keywords": 'tankcolonialassaultmpt85kbfalchion',
     },
     {
         "name": "85K-a “Spatha”",
         "url": "https://foxhole.wiki.gg/wiki/85K-a_%E2%80%9CSpatha%E2%80%9D",
-        "keywords": 'tankcolonialspata85kaassaultspathaspahtaspatah'
+        "keywords": 'tankcolonialspata85kaassaultspathaspahtaspatah',
     },
     {
         "name": "85V-g “Talos”",
         "url": "https://foxhole.wiki.gg/wiki/85V-g_%E2%80%9CTalos%E2%80%9D",
-        "keywords": 'tankcolonial85vgassault75mmtalos'
+        "keywords": 'tankcolonial85vgassault75mmtalos',
     },
     {
         "name": "90T-v “Nemesis”",
         "url": "https://foxhole.wiki.gg/wiki/90T-v_%E2%80%9CNemesis%E2%80%9D",
-        "keywords": 'tankcolonialassault68mm90tvnemesis'
+        "keywords": 'tankcolonialassault68mm90tvnemesis',
     },
     {
         "name": "86K-a “Bardiche”",
         "url": "https://foxhole.wiki.gg/wiki/86K-a_%E2%80%9CBardiche%E2%80%9D",
-        "keywords": 'tankcolonialassaultbardiche86ka'
+        "keywords": 'tankcolonialassaultbardiche86ka',
     },
     {
         "name": "86K-c “Ranseur”",
         "url": "https://foxhole.wiki.gg/wiki/86K-c_%E2%80%9CRanseur%E2%80%9D",
-        "keywords": 'tankcolonialrpgassaultranseurquadiche86kc'
+        "keywords": 'tankcolonialrpgassaultranseurquadiche86kc',
     },
     {
         "name": "Silverhand - Mk. IV",
         "url": "https://foxhole.wiki.gg/wiki/Silverhand_-_Mk._IV",
-        "keywords": 'tankassaultwardensilverhandsvh'
+        "keywords": 'tankassaultwardensilverhandsvh',
     },
     {
         "name": "Silverhand Chieftain - Mk. VI",
         "url": "https://foxhole.wiki.gg/wiki/Silverhand_Chieftain_-_Mk._VI",
-        "keywords": 'tankassaultwardenchieftainsilverhand'
+        "keywords": 'tankassaultwardenchieftainsilverhand',
     },
     {
         "name": "Silverhand Lordscar - Mk. X",
         "url": "https://foxhole.wiki.gg/wiki/Silverhand_Lordscar_-_Mk._X",
-        "keywords": 'tankassaultwardendestroyerlordscarsilverhandstd'
+        "keywords": 'tankassaultwardendestroyerlordscarsilverhandstd',
     },
     {
         "name": "Gallagher Brigand Mk. I",
         "url": "https://foxhole.wiki.gg/wiki/Gallagher_Brigand_Mk._I",
-        "keywords": 'tankwardencruiserbrigandgallagher'
+        "keywords": 'tankwardencruiserbrigandgallagher',
     },
     {
         "name": "Gallagher Outlaw Mk. II",
         "url": "https://foxhole.wiki.gg/wiki/Gallagher_Outlaw_Mk._II",
-        "keywords": 'tankwardenoutlawcruisergallagher'
+        "keywords": 'tankwardenoutlawcruisergallagher',
     },
     {
         "name": "Gallagher Highwayman Mk. III",
         "url": "https://foxhole.wiki.gg/wiki/Gallagher_Highwayman_Mk._III",
-        "keywords": 'tankwardenhwmcruiserhighwaymangallagher'
+        "keywords": 'tankwardenhwmcruiserhighwaymangallagher',
     },
     {
         "name": "Gallagher Thornfall Mk. VI",
         "url": "https://foxhole.wiki.gg/wiki/Gallagher_Thornfall_Mk._VI",
-        "keywords": 'tankwardenbonelawcruiserthornfallgallagher'
+        "keywords": 'tankwardenbonelawcruiserthornfallgallagher',
     },
     {
         "name": "HC-2 “Scorpion”",
         "url": "https://foxhole.wiki.gg/wiki/Light_Infantry_Tank",
-        "keywords": 'tankcolonialistsupporthc2scorpioninfantrylight'
+        "keywords": 'tankcolonialistsupporthc2scorpioninfantrylight',
     },
     {
         "name": "HC-7 “Ballista”",
         "url": "https://foxhole.wiki.gg/wiki/Siege_Tank",
-        "keywords": 'tankcolonialsiegeballista'
+        "keywords": 'tankcolonialsiegeballista',
     },
     {
         "name": "Noble Widow MK. XIV",
         "url": "https://foxhole.wiki.gg/wiki/Noble_Widow_MK._XIV",
-        "keywords": 'widowtankhtdheavywardendestroyernoble'
+        "keywords": 'widowtankhtdheavywardendestroyernoble',
     },
     {
         "name": "Noble Firebrand Mk. XVII",
         "url": "https://foxhole.wiki.gg/wiki/Noble_Firebrand_Mk._XVII",
-        "keywords": 'firebrandtankheavywardendestroyernoblleflame'
+        "keywords": 'firebrandtankheavywardendestroyernoblleflame',
     },
     {
         "name": "Flood Juggernaut Mk. VII",
         "url": "https://foxhole.wiki.gg/wiki/Flood_Juggernaut_Mk._VII",
-        "keywords": 'tankwardenflamebattlejuggernautbtflood'
+        "keywords": 'tankwardenflamebattlejuggernautbtflood',
     },
     {
         "name": "Flood Mk. I",
         "url": "https://foxhole.wiki.gg/wiki/Flood_Mk._I",
-        "keywords": 'tankwardenbattlebtflood'
+        "keywords": 'tankwardenbattlebtflood',
     },
     {
         "name": "Flood Mk. IX Stain",
         "url": "https://foxhole.wiki.gg/wiki/Flood_Mk._IX_Stain",
-        "keywords": 'tankwardenbattlestainspgbtflood'
+        "keywords": 'tankwardenbattlestainspgbtflood',
     },
     {
         "name": "Lance-25 “Hasta”",
         "url": "https://foxhole.wiki.gg/wiki/Lance-25_%E2%80%9CHasta%E2%80%9D",
-        "keywords": 'tankcolonialdestroyerlance25battlebtdhasta'
+        "keywords": 'tankcolonialdestroyerlance25battlebtdhasta',
     },
     {
         "name": "Lance-36",
         "url": "https://foxhole.wiki.gg/wiki/Lance-36",
-        "keywords": 'tankcoloniallance36battlebt'
+        "keywords": 'tankcoloniallance36battlebt',
     },
     {
         "name": "Lance-46 “Sarissa”",
         "url": "https://foxhole.wiki.gg/wiki/Lance-46_%E2%80%9CSarissa%E2%80%9D",
-        "keywords": 'tankcoloniallance46battlesarissaspg'
+        "keywords": 'tankcoloniallance46battlesarissaspg',
     },
     {
         "name": "Cullen Predator Mk. III",
         "url": "https://foxhole.wiki.gg/wiki/Cullen_Predator_Mk._III",
-        "keywords": 'tanksuperwardenshtcullenpredator'
+        "keywords": 'tanksuperwardenshtcullenpredator',
     },
     {
         "name": "O-75b “Ares”",
         "url": "https://foxhole.wiki.gg/wiki/O-75b_%E2%80%9CAres%E2%80%9D",
-        "keywords": 'tankcolonialsupershtares'
+        "keywords": 'tankcolonialsupershtares',
     },
     {
         "name": "Dunne Fuelrunner 2d",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Fuelrunner_2d",
-        "keywords": 'wardentankerdunnelfuelfuelrunner'
+        "keywords": 'wardentankerdunnelfuelfuelrunner',
     },
     {
         "name": "RR-3 “Stolon” Tanker",
         "url": "https://foxhole.wiki.gg/wiki/RR-3_%E2%80%9CStolon%E2%80%9D_Tanker",
-        "keywords": 'fuelcolonialstolontanker'
+        "keywords": 'fuelcolonialstolontanker',
     },
     {
         "name": "R-1 Hauler",
         "url": "https://foxhole.wiki.gg/wiki/R-1_Hauler",
-        "keywords": 'colonialtruckr1hauler'
+        "keywords": 'colonialtruckr1hauler',
     },
     {
         "name": "R-17 “Retiarius” Skirmisher",
         "url": "https://foxhole.wiki.gg/wiki/R-17_%E2%80%9CRetiarius%E2%80%9D_Skirmisher",
-        "keywords": 'colonialskirmisherretiariusr17katyushatruck'
+        "keywords": 'colonialskirmisherretiariusr17katyushatruck',
     },
     {
         "name": "R-5b “Sisyphus” Hauler",
         "url": "https://foxhole.wiki.gg/wiki/R-5b_%E2%80%9CSisyphus%E2%80%9D_Hauler",
-        "keywords": 'colonialr5btrucksisyphushauler'
+        "keywords": 'colonialr5btrucksisyphushauler',
     },
     {
         "name": "R-9 “Speartip” Escort",
         "url": "https://foxhole.wiki.gg/wiki/R-9_%E2%80%9CSpeartip%E2%80%9D_Escort",
-        "keywords": 'colonialescortspeartiptruckr9'
+        "keywords": 'colonialescortspeartiptruckr9',
     },
     {
         "name": "R-5 “Atlas” Hauler",
         "url": "https://foxhole.wiki.gg/wiki/R-5_%E2%80%9CAtlas%E2%80%9D_Hauler",
-        "keywords": 'colonialr5truckatlashauler'
+        "keywords": 'colonialr5truckatlashauler',
     },
     {
         "name": "Dunne Loadlugger 3c",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Loadlugger_3c",
-        "keywords": 'loadluggerwardendunne3ctruck'
+        "keywords": 'loadluggerwardendunne3ctruck',
     },
     {
         "name": "Dunne Transport",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Transport",
-        "keywords": 'transportwardentruckdunne'
+        "keywords": 'transportwardentruckdunne',
     },
     {
         "name": "Dunne Landrunner 12c",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Landrunner_12c",
-        "keywords": 'dunnewardenlandrunnertruck12c'
+        "keywords": 'dunnewardenlandrunnertruck12c',
     },
     {
         "name": "Dunne Leatherback 2a",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Leatherback_2a",
-        "keywords": '2adunnerleatherbackwardentruck'
+        "keywords": '2adunnerleatherbackwardentruck',
     },
     {
         "name": "BMS - Class 2 Mobile Auto-Crane",
         "url": "https://foxhole.wiki.gg/wiki/Crane",
-        "keywords": 'bmscraneclassmobile'
+        "keywords": 'bmscraneclassmobile',
     },
     {
         "name": "BMS - Overseer Sky-Hauler",
         "url": "https://foxhole.wiki.gg/wiki/Large_Crane",
-        "keywords": 'overseercranelargebmsskyhauler'
+        "keywords": 'overseercranelargebmsskyhauler',
     },
     {
         "name": "BMS - Universal Assembly Rig",
         "url": "https://foxhole.wiki.gg/wiki/Construction_Vehicle",
-        "keywords": 'rigassemblyvehicleuniversalcvconstructionbms'
+        "keywords": 'rigassemblyvehicleuniversalcvconstructionbms',
     },
     {
         "name": "BMS - Fabricator",
         "url": "https://foxhole.wiki.gg/wiki/Advanced_Construction_Vehicle",
-        "keywords": 'fabricatorvehicleadvancedbmsconstructionacv'
+        "keywords": 'fabricatorvehicleadvancedbmsconstructionacv',
     },
     {
         "name": "BMS - Packmule Flatbed",
         "url": "https://foxhole.wiki.gg/wiki/Flatbed_Truck",
-        "keywords": 'bmstruckflatbedpackmule'
+        "keywords": 'bmstruckflatbedpackmule',
     },
     {
         "name": "BMS - Scrap Hauler",
         "url": "https://foxhole.wiki.gg/wiki/Harvester",
-        "keywords": 'bmsscrapharvesterhauler'
+        "keywords": 'bmsscrapharvesterhauler',
     },
     {
         "name": "Rooster - Junkwagon",
         "url": "https://foxhole.wiki.gg/wiki/Rooster_-_Junkwagon",
-        "keywords": 'junkwagonroostertrailer'
+        "keywords": 'junkwagonroostertrailer',
     },
     {
         "name": "Rooster - Lamploader",
         "url": "https://foxhole.wiki.gg/wiki/Rooster_-_Lamploader",
-        "keywords": 'lamploaderroostertrailer'
+        "keywords": 'lamploaderroostertrailer',
     },
     {
         "name": "Rooster - Tumblebox",
         "url": "https://foxhole.wiki.gg/wiki/Rooster_-_Tumblebox",
-        "keywords": 'tumbleboxroostertrailer'
+        "keywords": 'tumbleboxroostertrailer',
     },
     {
         "name": "Dunne Dousing Engine 3r",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Dousing_Engine_3r",
-        "keywords": 'dousingwardenfiretruckdunne3rengine'
+        "keywords": 'dousingwardenfiretruckdunne3rengine',
     },
     {
         "name": "R-12b - “Salva” Flame Truck",
         "url": "https://foxhole.wiki.gg/wiki/R-12b_-_%E2%80%9CSalva%E2%80%9D_Flame_Truck",
-        "keywords": 'colonialtruckfiretruckflamesalvaenginer12b'
+        "keywords": 'colonialtruckfiretruckflamesalvaenginer12b',
     },
     {
         "name": "Dunne Caravaner 2f",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Caravaner_2f",
-        "keywords": 'caravanerwardenbus2fdunne'
+        "keywords": 'caravanerwardenbus2fdunne',
     },
     {
         "name": "R-15 - “Chariot”",
         "url": "https://foxhole.wiki.gg/wiki/R-15_-_%E2%80%9CChariot%E2%80%9D",
-        "keywords": 'colonialchariotbusr15'
+        "keywords": 'colonialchariotbusr15',
     },
     {
         "name": "Dunne Responder 3e",
         "url": "https://foxhole.wiki.gg/wiki/Dunne_Responder_3e",
-        "keywords": '3eresponderdunnerwardenambulance'
+        "keywords": '3eresponderdunnerwardenambulance',
     },
     {
         "name": "R-12 - “Salus” Ambulance",
         "url": "https://foxhole.wiki.gg/wiki/R-12_-_%E2%80%9CSalus%E2%80%9D_Ambulance",
-        "keywords": 'ambulancecolonialsalusr12'
+        "keywords": 'ambulancecolonialsalusr12',
     },
     {
         "name": "Cnute Cliffwrest",
         "url": "https://foxhole.wiki.gg/wiki/Cnute_Cliffwrest",
-        "keywords": 'cnutecliffwrestheavywardendutytruck'
+        "keywords": 'cnutecliffwrestheavywardendutytruck',
     },
     {
         "name": "AU-A150 Taurine Rigger",
         "url": "https://foxhole.wiki.gg/wiki/AU-A150_Taurine_Rigger",
-        "keywords": 'colonialtaurineheavydutytruckrigger'
+        "keywords": 'colonialtaurineheavydutytruckrigger',
     },
     {
         "name": "Blumfield LK205",
         "url": "https://foxhole.wiki.gg/wiki/Bicycle",
-        "keywords": 'blumfieldcolonialwardenbicycle'
+        "keywords": 'blumfieldcolonialwardenbicycle',
     },
     {
         "name": "03MM “Caster”",
         "url": "https://foxhole.wiki.gg/wiki/03MM_%E2%80%9CCaster%E2%80%9D",
-        "keywords": 'motorcyclebikecolonialcaster'
+        "keywords": 'motorcyclebikecolonialcaster',
     },
     {
         "name": "00MS “Stinger”",
         "url": "https://foxhole.wiki.gg/wiki/00MS_%E2%80%9CStinger%E2%80%9D",
-        "keywords": 'motorcyclecolonialbikemgstinger'
+        "keywords": 'motorcyclecolonialbikemgstinger',
     },
     {
         "name": "Kivela Power Wheel 80-1",
         "url": "https://foxhole.wiki.gg/wiki/Kivela_Power_Wheel_80-1",
-        "keywords": 'motorcyclebikewheelwardenpowerkivela'
+        "keywords": 'motorcyclebikewheelwardenpowerkivela',
     },
     {
         "name": "UV-05a “Argonaut”",
         "url": "https://foxhole.wiki.gg/wiki/UV-05a_%E2%80%9CArgonaut%E2%80%9D",
-        "keywords": 'colonialargonautlightvehicleluvuv05autility'
+        "keywords": 'colonialargonautlightvehicleluvuv05autility',
     },
     {
         "name": "UV-24 “Icarus”",
         "url": "https://foxhole.wiki.gg/wiki/UV-24_%E2%80%9CIcarus%E2%80%9D",
-        "keywords": 'colonialrpguv24vehiclejeepicarusluvlightutility'
+        "keywords": 'colonialrpguv24vehiclejeepicarusluvlightutility',
     },
     {
         "name": "UV-5c “Odyssey”",
         "url": "https://foxhole.wiki.gg/wiki/UV-5c_%E2%80%9COdyssey%E2%80%9D",
-        "keywords": 'coloniallightvehicleluvodysseyuv5cutility'
+        "keywords": 'coloniallightvehicleluvodysseyuv5cutility',
     },
     {
         "name": "Drummond 100a",
         "url": "https://foxhole.wiki.gg/wiki/Drummond_100a",
-        "keywords": 'wardenlightvehicledrummondluv100autility'
+        "keywords": 'wardenlightvehicledrummondluv100autility',
     },
     {
         "name": "Drummond Loscann 55c",
         "url": "https://foxhole.wiki.gg/wiki/Drummond_Loscann_55c",
-        "keywords": 'aluvdrummondvehiclecar55camphibiouswardenloscannlightutility'
+        "keywords": 'aluvdrummondvehiclecar55camphibiouswardenloscannlightutility',
     },
     {
         "name": "Drummond Spitfire 100d",
         "url": "https://foxhole.wiki.gg/wiki/Drummond_Spitfire_100d",
-        "keywords": '100ddrummondvehiclespitfirewardenluvlightutility'
+        "keywords": '100ddrummondvehiclespitfirewardenluvlightutility',
     },
     {
         "name": "MacConmara Shorerunner",
         "url": "https://foxhole.wiki.gg/wiki/MacConmara_Shorerunner",
-        "keywords": 'wardenshiplandingshorerunnermacconmara'
+        "keywords": 'wardenshiplandingshorerunnermacconmara',
     },
     {
         "name": "Interceptor PA-12",
         "url": "https://foxhole.wiki.gg/wiki/Interceptor_PA-12",
-        "keywords": 'colonialinterceptorshippa12landing'
+        "keywords": 'colonialinterceptorshippa12landing',
     },
     {
         "name": "BMS - Aquatipper",
         "url": "https://foxhole.wiki.gg/wiki/Barge",
-        "keywords": 'bmsbargeaquatipper'
+        "keywords": 'bmsbargeaquatipper',
     },
     {
         "name": "BMS - Ironship",
         "url": "https://foxhole.wiki.gg/wiki/Freighter",
-        "keywords": 'mbsironshipfreighter'
+        "keywords": 'mbsironshipfreighter',
     },
     {
         "name": "BMS - Grouper",
         "url": "https://foxhole.wiki.gg/wiki/Motorboat",
-        "keywords": 'bmsmotorboatgrouper'
+        "keywords": 'bmsmotorboatgrouper',
     },
     {
         "name": "74b-1 Ronan Gunship",
         "url": "https://foxhole.wiki.gg/wiki/74b-1_Ronan_Gunship",
-        "keywords": 'warden74b1gunboatgunshipronan'
+        "keywords": 'warden74b1gunboatgunshipronan',
     },
     {
         "name": "Type C - “Charon”",
         "url": "https://foxhole.wiki.gg/wiki/Type_C_-_%E2%80%9CCharon%E2%80%9D",
-        "keywords": 'colonialcharongunboat'
+        "keywords": 'colonialcharongunboat',
     },
     {
         "name": "Nakki",
         "url": "https://foxhole.wiki.gg/wiki/Nakki",
-        "keywords": 'submarinenakkiwarden'
+        "keywords": 'submarinenakkiwarden',
     },
     {
         "name": "AC-b “Trident”",
         "url": "https://foxhole.wiki.gg/wiki/AC-b_%E2%80%9CTrident%E2%80%9D",
-        "keywords": 'colonialsubmarinetrident'
+        "keywords": 'colonialsubmarinetrident',
     },
     {
         "name": "Blacksteele",
         "url": "https://foxhole.wiki.gg/wiki/Blacksteele",
-        "keywords": 'lightwardenfrigateblacksteele'
+        "keywords": 'lightwardenfrigateblacksteele',
     },
     {
         "name": "Conqueror",
         "url": "https://foxhole.wiki.gg/wiki/Conqueror",
-        "keywords": 'colonialdddestroyerconqueror'
+        "keywords": 'colonialdddestroyerconqueror',
     },
     {
         "name": "BMS - Longhook",
         "url": "https://foxhole.wiki.gg/wiki/Base_Ship",
-        "keywords": 'shipbmslonghookbaselh'
+        "keywords": 'shipbmslonghookbaselh',
     },
     {
         "name": "BMS - Bluefin",
         "url": "https://foxhole.wiki.gg/wiki/Storage_Ship",
-        "keywords": 'bmsstorageshipbluefin'
+        "keywords": 'bmsstorageshipbluefin',
     },
     {
         "name": "BMS - Bowhead",
         "url": "https://foxhole.wiki.gg/wiki/Resource_Ship",
-        "keywords": 'resourcebmsbowheadship'
+        "keywords": 'resourcebmsbowheadship',
     },
     {
         "name": "Callahan (Battleship)",
         "url": "https://foxhole.wiki.gg/wiki/Callahan_(Battleship)",
-        "keywords": 'callahanwardenbsbattleship'
+        "keywords": 'callahanwardenbsbattleship',
     },
     {
         "name": "Titan",
         "url": "https://foxhole.wiki.gg/wiki/Titan",
-        "keywords": 'colonialtitanbsbattleship'
+        "keywords": 'colonialtitanbsbattleship',
     },
     {
         "name": "BMS Railtruck",
         "url": "https://foxhole.wiki.gg/wiki/Small_Container_Car",
-        "keywords": 'railtruckbmscarsmallcontainer'
+        "keywords": 'railtruckbmscarsmallcontainer',
     },
     {
         "name": "BMS Linerunner",
         "url": "https://foxhole.wiki.gg/wiki/Small_Flatbed_Car",
-        "keywords": 'linerunnerflatbedbmscarsmall'
+        "keywords": 'linerunnerflatbedbmscarsmall',
     },
     {
         "name": "BMS Tinderbox",
         "url": "https://foxhole.wiki.gg/wiki/Small_Liquid_Container_Car",
-        "keywords": 'tinderboxbmsliquidcarsmallcontainer'
+        "keywords": 'tinderboxbmsliquidcarsmallcontainer',
     },
     {
         "name": "BMS Stowheel",
         "url": "https://foxhole.wiki.gg/wiki/Small_Box_Car",
-        "keywords": 'boxstowheelbmscarsmallcontainer'
+        "keywords": 'boxstowheelbmscarsmallcontainer',
     },
     {
         "name": "BMS Mineseeker",
         "url": "https://foxhole.wiki.gg/wiki/Small_Train_Locomotive",
-        "keywords": 'mineseekerbmstrainlocomotivesmall'
+        "keywords": 'mineseekerbmstrainlocomotivesmall',
     },
     {
         "name": "BMS Rockhold",
         "url": "https://foxhole.wiki.gg/wiki/Container_Car",
-        "keywords": 'bmslargetraincarrockholdcontainer'
+        "keywords": 'bmslargetraincarrockholdcontainer',
     },
     {
         "name": "BMS Roadhouse",
         "url": "https://foxhole.wiki.gg/wiki/Caboose",
-        "keywords": 'largecaboosetrainbmsroadhouse'
+        "keywords": 'largecaboosetrainbmsroadhouse',
     },
     {
         "name": "BMS Longrider",
         "url": "https://foxhole.wiki.gg/wiki/Flatbed_Car",
-        "keywords": 'flatbedlongriderlargetraincarbms'
+        "keywords": 'flatbedlongriderlargetraincarbms',
     },
     {
         "name": "BMS Holdout",
         "url": "https://foxhole.wiki.gg/wiki/Infantry_Car",
-        "keywords": 'infantrylargetraincarbmsholdout'
+        "keywords": 'infantrylargetraincarbmsholdout',
     },
     {
         "name": "BMS Black Bolt",
         "url": "https://foxhole.wiki.gg/wiki/Locomotive",
-        "keywords": 'locomotivelargetrainboltbmsblack'
+        "keywords": 'locomotivelargetrainboltbmsblack',
     },
     {
         "name": "O'Brien Warsmith v.215",
         "url": "https://foxhole.wiki.gg/wiki/O%27Brien_Warsmith_v.215",
-        "keywords": 'wardenv215combatcarwarsmithobrien'
+        "keywords": 'wardenv215combatcarwarsmithobrien',
     },
     {
         "name": "Aegis Steelbreaker K5a",
         "url": "https://foxhole.wiki.gg/wiki/Aegis_Steelbreaker_K5a",
-        "keywords": 'aegiscolonialcombatsteelbreakerk5acar'
+        "keywords": 'aegiscolonialcombatsteelbreakerk5acar',
     },
     {
         "name": "Tempest Cannon RA-2",
         "url": "https://foxhole.wiki.gg/wiki/Long-Range_Artillery_Car",
-        "keywords": 'rscartillerycannoncarrangetempestlong'
+        "keywords": 'rscartillerycannoncarrangetempestlong',
     },
     {
         "name": "Armoured Fighting Tractor",
         "url": "https://foxhole.wiki.gg/wiki/Armoured_Fighting_Tractor",
-        "keywords": 'relicarmouredfightingvehicletractoramored'
+        "keywords": 'relicarmouredfightingvehicletractoramored',
     },
     {
         "name": "PL-1 “Phalanx”",
         "url": "https://foxhole.wiki.gg/wiki/Relic_Assault_Tank",
-        "keywords": 'tankassaultrelicvehiclephalanxpl1'
+        "keywords": 'tankassaultrelicvehiclephalanxpl1',
     },
     {
         "name": "Storm Tank",
         "url": "https://foxhole.wiki.gg/wiki/Storm_Tank",
-        "keywords": 'tankstormrelicvehicle'
+        "keywords": 'tankstormrelicvehicle',
     },
     {
         "name": "Staff Car",
         "url": "https://foxhole.wiki.gg/wiki/Staff_Car",
-        "keywords": 'carvehiclerelicstaff'
+        "keywords": 'carvehiclerelicstaff',
     },
     {
         "name": "Repurposed Truck",
         "url": "https://foxhole.wiki.gg/wiki/Repurposed_Truck",
-        "keywords": 'repurposedtruckrelicvehicle'
+        "keywords": 'repurposedtruckrelicvehicle',
     },
 ]
 
@@ -1650,842 +1650,842 @@ STRUCTURES_WIKI_ENTRIES = [
     {
         "name": "Border Base",
         "url": "https://foxhole.wiki.gg/wiki/Border_Base",
-        "keywords": 'borderbobbbbase'
+        "keywords": 'borderbobbbbase',
     },
     {
         "name": "Relic Base",
         "url": "https://foxhole.wiki.gg/wiki/Relic_Base",
-        "keywords": 'relicbase'
+        "keywords": 'relicbase',
     },
     {
         "name": "Town Base (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Town_Base#Tier_1-0",
-        "keywords": 't1townbase'
+        "keywords": 't1townbase',
     },
     {
         "name": "Town Base (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Town_Base#Tier_2-0",
-        "keywords": 't2townbase'
+        "keywords": 't2townbase',
     },
     {
         "name": "Town Base (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Town_Base#Tier_3-0",
-        "keywords": 't3townbase'
+        "keywords": 't3townbase',
     },
     {
         "name": "Bunker Base (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_1-0",
-        "keywords": 'bunkert1basebbbob'
+        "keywords": 'bunkert1basebbbob',
     },
     {
         "name": "Bunker Base (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_2-0",
-        "keywords": 'bunkerbasebbcoret2bob'
+        "keywords": 'bunkerbasebbcoret2bob',
     },
     {
         "name": "Bunker Base (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Base#Tier_3-0",
-        "keywords": 'bunkerbasebbconcretecoret3bob'
+        "keywords": 'bunkerbasebbconcretecoret3bob',
     },
     {
         "name": "Encampment",
         "url": "https://foxhole.wiki.gg/wiki/Encampment",
-        "keywords": 'encampment'
+        "keywords": 'encampment',
     },
     {
         "name": "Keep",
         "url": "https://foxhole.wiki.gg/wiki/Keep",
-        "keywords": 'keep'
+        "keywords": 'keep',
     },
     {
         "name": "Safe House (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Safe_House#Tier_1-0",
-        "keywords": 'safet1house'
+        "keywords": 'safet1house',
     },
     {
         "name": "Safe House (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Safe_House#Tier_2-0",
-        "keywords": 'safet2house'
+        "keywords": 'safet2house',
     },
     {
         "name": "Safe House (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Safe_House#Tier_3-0",
-        "keywords": 'safet3house'
+        "keywords": 'safet3house',
     },
     {
         "name": "Seaport",
         "url": "https://foxhole.wiki.gg/wiki/Seaport",
-        "keywords": 'seaport'
+        "keywords": 'seaport',
     },
     {
         "name": "Storage Depot",
         "url": "https://foxhole.wiki.gg/wiki/Storage_Depot",
-        "keywords": 'depotstorage'
+        "keywords": 'depotstorage',
     },
     {
         "name": "Liquid Container",
         "url": "https://foxhole.wiki.gg/wiki/Liquid_Container",
-        "keywords": 'containerliquid'
+        "keywords": 'containerliquid',
     },
     {
         "name": "Liquid Transfer Station",
         "url": "https://foxhole.wiki.gg/wiki/Liquid_Transfer_Station",
-        "keywords": 'stationtransferliquidlts'
+        "keywords": 'stationtransferliquidlts',
     },
     {
         "name": "Material Pallet",
         "url": "https://foxhole.wiki.gg/wiki/Material_Pallet",
-        "keywords": 'palletmaterial'
+        "keywords": 'palletmaterial',
     },
     {
         "name": "Material Transfer Station",
         "url": "https://foxhole.wiki.gg/wiki/Material_Transfer_Station",
-        "keywords": 'mtstransfermaterialstation'
+        "keywords": 'mtstransfermaterialstation',
     },
     {
         "name": "Resource Container",
         "url": "https://foxhole.wiki.gg/wiki/Resource_Container",
-        "keywords": 'containerresource'
+        "keywords": 'containerresource',
     },
     {
         "name": "Resource Transfer Station",
         "url": "https://foxhole.wiki.gg/wiki/Resource_Transfer_Station",
-        "keywords": 'transferresourcertsstation'
+        "keywords": 'transferresourcertsstation',
     },
     {
         "name": "Infantry Arms Factory",
         "url": "https://foxhole.wiki.gg/wiki/Infantry_Arms_Factory",
-        "keywords": 'infantryarmsfactory'
+        "keywords": 'infantryarmsfactory',
     },
     {
         "name": "Crate Transfer Station",
         "url": "https://foxhole.wiki.gg/wiki/Crate_Transfer_Station",
-        "keywords": 'transfercratestation'
+        "keywords": 'transfercratestation',
     },
     {
         "name": "Shippable Crate",
         "url": "https://foxhole.wiki.gg/wiki/Shippable_Crate",
-        "keywords": 'crateshippable'
+        "keywords": 'crateshippable',
     },
     {
         "name": "Shipping Container",
         "url": "https://foxhole.wiki.gg/wiki/Shipping_Container",
-        "keywords": 'containershipping'
+        "keywords": 'containershipping',
     },
     {
         "name": "Storage Box",
         "url": "https://foxhole.wiki.gg/wiki/Storage_Box",
-        "keywords": 'boxstorage'
+        "keywords": 'boxstorage',
     },
     {
         "name": "Medical Room (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Medical_Room",
-        "keywords": 'bunkert1medicalroom'
+        "keywords": 'bunkert1medicalroom',
     },
     {
         "name": "Medical Room (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Medical_Room#Tier_2-0",
-        "keywords": 'bunkert2medicalroom'
+        "keywords": 'bunkert2medicalroom',
     },
     {
         "name": "Medical Room (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Medical_Room#Tier_3-0",
-        "keywords": 'bunkert3medicalroom'
+        "keywords": 'bunkert3medicalroom',
     },
     {
         "name": "Storage Room (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Storage_Room#Tier_2-0",
-        "keywords": 'bunkert2roomstorage'
+        "keywords": 'bunkert2roomstorage',
     },
     {
         "name": "Storage Room (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Storage_Room#Tier_3-0",
-        "keywords": 'bunkert3roomstorage'
+        "keywords": 'bunkert3roomstorage',
     },
     {
         "name": "Coastal Gun",
         "url": "https://foxhole.wiki.gg/wiki/Coastal_Gun",
-        "keywords": 'coastalgun'
+        "keywords": 'coastalgun',
     },
     {
         "name": "Garrisoned House",
         "url": "https://foxhole.wiki.gg/wiki/Garrisoned_House",
-        "keywords": 'ghousegarrisonedhouse'
+        "keywords": 'ghousegarrisonedhouse',
     },
     {
         "name": "Observation Tower",
         "url": "https://foxhole.wiki.gg/wiki/Observation_Tower",
-        "keywords": 'towerobsobservation'
+        "keywords": 'towerobsobservation',
     },
     {
         "name": "Anti-Tank Pillbox",
         "url": "https://foxhole.wiki.gg/wiki/Anti-Tank_Pillbox",
-        "keywords": 'attankantipillbox'
+        "keywords": 'attankantipillbox',
     },
     {
         "name": "AT Gun Garrison (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_2-0",
-        "keywords": 'bunkeratatggunt2garrison'
+        "keywords": 'bunkeratatggunt2garrison',
     },
     {
         "name": "AT Gun Garrison (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/AT_Gun_Garrison#Tier_3-0",
-        "keywords": 'bunkeratatggunconcretet3garrison'
+        "keywords": 'bunkeratatggunconcretet3garrison',
     },
     {
         "name": "Howitzer Garrison",
         "url": "https://foxhole.wiki.gg/wiki/Howitzer_Garrison",
-        "keywords": 'bunkerhowieshowitzerconcretegarrison'
+        "keywords": 'bunkerhowieshowitzerconcretegarrison',
     },
     {
         "name": "Machine Gun Garrison (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_1-0",
-        "keywords": 'bunkert1mgmgggunmachinegarrison'
+        "keywords": 'bunkert1mgmgggunmachinegarrison',
     },
     {
         "name": "Machine Gun Garrison (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_2-0",
-        "keywords": 'bunkermgmgggunmachinet2garrison'
+        "keywords": 'bunkermgmgggunmachinet2garrison',
     },
     {
         "name": "Machine Gun Garrison (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Machine_Gun_Garrison#Tier_3-0",
-        "keywords": 'bunkermgconcretemgggunmachinet3garrison'
+        "keywords": 'bunkermgconcretemgggunmachinet3garrison',
     },
     {
         "name": "Machine Gun Pillbox",
         "url": "https://foxhole.wiki.gg/wiki/Machine_Gun_Pillbox",
-        "keywords": 'mgpillboxmachinegun'
+        "keywords": 'mgpillboxmachinegun',
     },
     {
         "name": "Observation Bunker (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_2-0",
-        "keywords": 'bunkert2obsobservation'
+        "keywords": 'bunkert2obsobservation',
     },
     {
         "name": "Observation Bunker (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Observation_Bunker#Tier_3-0",
-        "keywords": 'bunkerobsconcretet3observation'
+        "keywords": 'bunkerobsconcretet3observation',
     },
     {
         "name": "Rifle Garrison (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_1-0",
-        "keywords": 'bunkert1riflerggarrison'
+        "keywords": 'bunkert1riflerggarrison',
     },
     {
         "name": "Rifle Garrison (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_2-0",
-        "keywords": 'bunkerriflergt2garrison'
+        "keywords": 'bunkerriflergt2garrison',
     },
     {
         "name": "Rifle Garrison (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Rifle_Garrison#Tier_3-0",
-        "keywords": 'bunkerriflergconcretet3garrison'
+        "keywords": 'bunkerriflergconcretet3garrison',
     },
     {
         "name": "Rifle Pillbox",
         "url": "https://foxhole.wiki.gg/wiki/Rifle_Pillbox",
-        "keywords": 'riflepillbox'
+        "keywords": 'riflepillbox',
     },
     {
         "name": "Watch Tower",
         "url": "https://foxhole.wiki.gg/wiki/Watch_Tower",
-        "keywords": 'wtwatchtower'
+        "keywords": 'wtwatchtower',
     },
     {
         "name": "Emplacement House",
         "url": "https://foxhole.wiki.gg/wiki/Emplacement_House",
-        "keywords": 'emplacementmhousemortar'
+        "keywords": 'emplacementmhousemortar',
     },
     {
         "name": "50-500 “Thunderbolt” Cannon",
         "url": "https://foxhole.wiki.gg/wiki/50-500_%E2%80%9CThunderbolt%E2%80%9D_Cannon",
-        "keywords": 'cannonthunderboltartilleryarty150mmcolonial'
+        "keywords": 'cannonthunderboltartilleryarty150mmcolonial',
     },
     {
         "name": "DAE 1b-2 “Serra”",
         "url": "https://foxhole.wiki.gg/wiki/DAE_1b-2_%E2%80%9CSerra%E2%80%9D",
-        "keywords": 'gunemplacedmachinecolonialserraemg'
+        "keywords": 'gunemplacedmachinecolonialserraemg',
     },
     {
         "name": "DAE 1o-3 “Polybolos”",
         "url": "https://foxhole.wiki.gg/wiki/DAE_1o-3_%E2%80%9CPolybolos%E2%80%9D",
-        "keywords": 'atpolybolosemplacedgunbeatcolonial'
+        "keywords": 'atpolybolosemplacedgunbeatcolonial',
     },
     {
         "name": "DAE 2a-1 “Ruptura”",
         "url": "https://foxhole.wiki.gg/wiki/DAE_2a-1_%E2%80%9CRuptura%E2%80%9D",
-        "keywords": 'colonialruptura'
+        "keywords": 'colonialruptura',
     },
     {
         "name": "DAE 3b-2 “Hades' Net”",
         "url": "https://foxhole.wiki.gg/wiki/DAE_3b-2_%E2%80%9CHades%27_Net%E2%80%9D",
-        "keywords": 'artilleryemplacednethadescolonialrocket'
+        "keywords": 'artilleryemplacednethadescolonialrocket',
     },
     {
         "name": "Huber Exalt 150mm",
         "url": "https://foxhole.wiki.gg/wiki/Huber_Exalt_150mm",
-        "keywords": 'wardenexaltartilleryarty150mmhubert'
+        "keywords": 'wardenexaltartilleryarty150mmhubert',
     },
     {
         "name": "Huber Lariat 120mm",
         "url": "https://foxhole.wiki.gg/wiki/Light_Artillery",
-        "keywords": 'wardenartillerylariatartyhuber'
+        "keywords": 'wardenartillerylariatartyhuber',
     },
     {
         "name": "Huber Starbreaker 94.5mm",
         "url": "https://foxhole.wiki.gg/wiki/Huber_Starbreaker_94.5mm",
-        "keywords": '945mmwardenhuberstarbreaker'
+        "keywords": '945mmwardenhuberstarbreaker',
     },
     {
         "name": "Intelligence Center",
         "url": "https://foxhole.wiki.gg/wiki/Intelligence_Center",
-        "keywords": 'centerintelligenceic'
+        "keywords": 'centerintelligenceic',
     },
     {
         "name": "Leary Shellbore 68mm",
         "url": "https://foxhole.wiki.gg/wiki/Leary_Shellbore_68mm",
-        "keywords": '68mmatwardenshellboreemplacedeatlearygun'
+        "keywords": '68mmatwardenshellboreemplacedeatlearygun',
     },
     {
         "name": "Leary Snare Trap 127",
         "url": "https://foxhole.wiki.gg/wiki/Leary_Snare_Trap_127",
-        "keywords": 'snarewarden127emplacedlearyguntrapmachineemg'
+        "keywords": 'snarewarden127emplacedlearyguntrapmachineemg',
     },
     {
         "name": "Storm Cannon",
         "url": "https://foxhole.wiki.gg/wiki/Storm_Cannon",
-        "keywords": 'cannonscstorm'
+        "keywords": 'cannonscstorm',
     },
     {
         "name": "Barbed Wire",
         "url": "https://foxhole.wiki.gg/wiki/Barbed_Wire_(Structure)",
-        "keywords": 'barbedwire'
+        "keywords": 'barbedwire',
     },
     {
         "name": "Barbed Wire Fence",
         "url": "https://foxhole.wiki.gg/wiki/Barbed_Wire_Fence",
-        "keywords": 'barbedfencewire'
+        "keywords": 'barbedfencewire',
     },
     {
         "name": "Prepared Minefield",
         "url": "https://foxhole.wiki.gg/wiki/Prepared_Minefield",
-        "keywords": 'minefieldprepared'
+        "keywords": 'minefieldprepared',
     },
     {
         "name": "Crow's Foot Minefield",
         "url": "https://foxhole.wiki.gg/wiki/Crow%27s_Foot_Minefield",
-        "keywords": 'infantrycrowsfootantiminefieldpersonal'
+        "keywords": 'infantrycrowsfootantiminefieldpersonal',
     },
     {
         "name": "Abisme AT-99 Minefield",
         "url": "https://foxhole.wiki.gg/wiki/Abisme_AT-99_Minefield",
-        "keywords": 'atabismetankantiminefield'
+        "keywords": 'atabismetankantiminefield',
     },
     {
         "name": "Bunker (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker#Tier_1-0",
-        "keywords": 'bunkert1'
+        "keywords": 'bunkert1',
     },
     {
         "name": "Bunker (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker#Tier_2-0",
-        "keywords": 'bunkert2'
+        "keywords": 'bunkert2',
     },
     {
         "name": "Bunker (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker#Tier_3-0",
-        "keywords": 'bunkert3'
+        "keywords": 'bunkert3',
     },
     {
         "name": "Bunker Corner (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Corner#Tier_1-0",
-        "keywords": 'bunkert1corner'
+        "keywords": 'bunkert1corner',
     },
     {
         "name": "Bunker Corner (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Corner#Tier_2-0",
-        "keywords": 'bunkert2corner'
+        "keywords": 'bunkert2corner',
     },
     {
         "name": "Bunker Corner (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Corner#Tier_3-0",
-        "keywords": 'bunkert3corner'
+        "keywords": 'bunkert3corner',
     },
     {
         "name": "Bunker Ramp (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Ramp#Tier_1-0",
-        "keywords": 'bunkert1ramp'
+        "keywords": 'bunkert1ramp',
     },
     {
         "name": "Bunker Ramp (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Ramp#Tier_2-0",
-        "keywords": 'bunkert2ramp'
+        "keywords": 'bunkert2ramp',
     },
     {
         "name": "Bunker Ramp (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Bunker_Ramp#Tier_3-0",
-        "keywords": 'bunkert3ramp'
+        "keywords": 'bunkert3ramp',
     },
     {
         "name": "Dragon's Teeth",
         "url": "https://foxhole.wiki.gg/wiki/Dragon%27s_Teeth",
-        "keywords": 'dragonteeth'
+        "keywords": 'dragonteeth',
     },
     {
         "name": "Foxhole",
         "url": "https://foxhole.wiki.gg/wiki/Foxhole_(Structure)",
-        "keywords": 'foxholedug'
+        "keywords": 'foxholedug',
     },
     {
         "name": "Gate (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Gate#Tier_1-0",
-        "keywords": 'gatet1'
+        "keywords": 'gatet1',
     },
     {
         "name": "Gate (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Gate#Tier_2-0",
-        "keywords": 'gatet2'
+        "keywords": 'gatet2',
     },
     {
         "name": "Gate (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Gate#Tier_3-0",
-        "keywords": 'gatet3concrete'
+        "keywords": 'gatet3concrete',
     },
     {
         "name": "Sandbag Cover",
         "url": "https://foxhole.wiki.gg/wiki/Sandbag_Cover#Sandbag_Cover_(Tier_1)-0",
-        "keywords": 'sandbagscover'
+        "keywords": 'sandbagscover',
     },
     {
         "name": "Sandbag Wall",
         "url": "https://foxhole.wiki.gg/wiki/Sandbag_Cover#Sandbag_Wall_(Tier_2)-0",
-        "keywords": 'sandbagswall'
+        "keywords": 'sandbagswall',
     },
     {
         "name": "Tank Trap",
         "url": "https://foxhole.wiki.gg/wiki/Tank_Trap",
-        "keywords": 'tanktrap'
+        "keywords": 'tanktrap',
     },
     {
         "name": "Trench (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Trench#Tier_1-0",
-        "keywords": 't1trench'
+        "keywords": 't1trench',
     },
     {
         "name": "Trench (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Trench#Tier_2-0",
-        "keywords": 'trencht2'
+        "keywords": 'trencht2',
     },
     {
         "name": "Trench (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Trench#Tier_3-0",
-        "keywords": 'trencht3'
+        "keywords": 'trencht3',
     },
     {
         "name": "Trench Connector (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Trench_Connector#Tier_1-0",
-        "keywords": 't1trenchconnector'
+        "keywords": 't1trenchconnector',
     },
     {
         "name": "Trench Connector (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Trench_Connector#Tier_2-0",
-        "keywords": 'trencht2connector'
+        "keywords": 'trencht2connector',
     },
     {
         "name": "Trench Connector (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Trench_Connector#Tier_3-0",
-        "keywords": 'concretetrencht3connector'
+        "keywords": 'concretetrencht3connector',
     },
     {
         "name": "Trench Emplacement (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Trench_Emplacement#Tier_1-0",
-        "keywords": 'emplacementt1trenchpit'
+        "keywords": 'emplacementt1trenchpit',
     },
     {
         "name": "Trench Emplacement (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Trench_Emplacement#Tier_2-0",
-        "keywords": 'emplacementpittrencht2'
+        "keywords": 'emplacementpittrencht2',
     },
     {
         "name": "Trench Emplacement (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Trench_Emplacement#Tier_3-0",
-        "keywords": 'concreteemplacementpittrencht3'
+        "keywords": 'concreteemplacementpittrencht3',
     },
     {
         "name": "Wall (Tier 1)",
         "url": "https://foxhole.wiki.gg/wiki/Wall#Tier_1-0",
-        "keywords": 't1wall'
+        "keywords": 't1wall',
     },
     {
         "name": "Wall (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Wall#Tier_2-0",
-        "keywords": 't2wall'
+        "keywords": 't2wall',
     },
     {
         "name": "Wall (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Wall#Tier_3-0",
-        "keywords": 'concretet3wall'
+        "keywords": 'concretet3wall',
     },
     {
         "name": "Construction Yard",
         "url": "https://foxhole.wiki.gg/wiki/Construction_Yard",
-        "keywords": 'yardconstruction'
+        "keywords": 'yardconstruction',
     },
     {
         "name": "Engineering Center",
         "url": "https://foxhole.wiki.gg/wiki/Engineering_Center",
-        "keywords": 'centertechengineering'
+        "keywords": 'centertechengineering',
     },
     {
         "name": "Factory",
         "url": "https://foxhole.wiki.gg/wiki/Factory",
-        "keywords": 'factory'
+        "keywords": 'factory',
     },
     {
         "name": "Garage",
         "url": "https://foxhole.wiki.gg/wiki/Garage",
-        "keywords": 'garage'
+        "keywords": 'garage',
     },
     {
         "name": "Hospital",
         "url": "https://foxhole.wiki.gg/wiki/Hospital",
-        "keywords": 'hospital'
+        "keywords": 'hospital',
     },
     {
         "name": "Mass Production Factory",
         "url": "https://foxhole.wiki.gg/wiki/Mass_Production_Factory",
-        "keywords": 'productionfactorympfmass'
+        "keywords": 'productionfactorympfmass',
     },
     {
         "name": "Refinery",
         "url": "https://foxhole.wiki.gg/wiki/Refinery",
-        "keywords": 'rafrefinery'
+        "keywords": 'rafrefinery',
     },
     {
         "name": "Shipyard",
         "url": "https://foxhole.wiki.gg/wiki/Shipyard",
-        "keywords": 'shipyard'
+        "keywords": 'shipyard',
     },
     {
         "name": "Ammunition Factory",
         "url": "https://foxhole.wiki.gg/wiki/Ammunition_Factory",
-        "keywords": 'factoryammoammunition'
+        "keywords": 'factoryammoammunition',
     },
     {
         "name": "Coal Refinery",
         "url": "https://foxhole.wiki.gg/wiki/Coal_Refinery",
-        "keywords": 'coalrefinery'
+        "keywords": 'coalrefinery',
     },
     {
         "name": "Concrete Mixer",
         "url": "https://foxhole.wiki.gg/wiki/Concrete_Mixer",
-        "keywords": 'concretemixer'
+        "keywords": 'concretemixer',
     },
     {
         "name": "Dry Dock",
         "url": "https://foxhole.wiki.gg/wiki/Dry_Dock",
-        "keywords": 'drydock'
+        "keywords": 'drydock',
     },
     {
         "name": "Field Hospital",
         "url": "https://foxhole.wiki.gg/wiki/Field_Hospital",
-        "keywords": 'hospitalfield'
+        "keywords": 'hospitalfield',
     },
     {
         "name": "Field Modification Center",
         "url": "https://foxhole.wiki.gg/wiki/Field_Modification_Center",
-        "keywords": 'centermodificationfield'
+        "keywords": 'centermodificationfield',
     },
     {
         "name": "Large Assembly Station",
         "url": "https://foxhole.wiki.gg/wiki/Large_Assembly_Station",
-        "keywords": 'stationassemblyupgradepadlarge'
+        "keywords": 'stationassemblyupgradepadlarge',
     },
     {
         "name": "Materials Factory",
         "url": "https://foxhole.wiki.gg/wiki/Materials_Factory",
-        "keywords": 'factorymaterials'
+        "keywords": 'factorymaterials',
     },
     {
         "name": "Metalworks Factory",
         "url": "https://foxhole.wiki.gg/wiki/Metalworks_Factory",
-        "keywords": 'factorymetalworks'
+        "keywords": 'factorymetalworks',
     },
     {
         "name": "Oil Refinery",
         "url": "https://foxhole.wiki.gg/wiki/Oil_Refinery",
-        "keywords": 'oilrefinery'
+        "keywords": 'oilrefinery',
     },
     {
         "name": "Small Assembly Station",
         "url": "https://foxhole.wiki.gg/wiki/Small_Assembly_Station",
-        "keywords": 'assemblysmallupgradepadstation'
+        "keywords": 'assemblysmallupgradepadstation',
     },
     {
         "name": "Salvage Mine",
         "url": "https://foxhole.wiki.gg/wiki/Salvage_Mine",
-        "keywords": 'scrapsalvagemine'
+        "keywords": 'scrapsalvagemine',
     },
     {
         "name": "Sulfur Mine",
         "url": "https://foxhole.wiki.gg/wiki/Sulfur_Mine",
-        "keywords": 'sulfurmine'
+        "keywords": 'sulfurmine',
     },
     {
         "name": "Component Mine",
         "url": "https://foxhole.wiki.gg/wiki/Component_Mine",
-        "keywords": 'componentmine'
+        "keywords": 'componentmine',
     },
     {
         "name": "Offshore Platform",
         "url": "https://foxhole.wiki.gg/wiki/Offshore_Platform",
-        "keywords": 'offshoreplatform'
+        "keywords": 'offshoreplatform',
     },
     {
         "name": "Oil Well",
         "url": "https://foxhole.wiki.gg/wiki/Oil_Well",
-        "keywords": 'oilwell'
+        "keywords": 'oilwell',
     },
     {
         "name": "Stationary Harvester (Coal)",
         "url": "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Coal)",
-        "keywords": 'coalharvesterstationary'
+        "keywords": 'coalharvesterstationary',
     },
     {
         "name": "Stationary Harvester (Components)",
         "url": "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Components)",
-        "keywords": 'harvesterstationarycomponents'
+        "keywords": 'harvesterstationarycomponents',
     },
     {
         "name": "Stationary Harvester (Salvage)",
         "url": "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Salvage)",
-        "keywords": 'harvesterstationarysalvage'
+        "keywords": 'harvesterstationarysalvage',
     },
     {
         "name": "Stationary Harvester (Sulfur)",
         "url": "https://foxhole.wiki.gg/wiki/Stationary_Harvester_(Sulfur)",
-        "keywords": 'sulfurharvesterstationary'
+        "keywords": 'sulfurharvesterstationary',
     },
     {
         "name": "Water Pump",
         "url": "https://foxhole.wiki.gg/wiki/Water_Pump",
-        "keywords": 'pumpwater'
+        "keywords": 'pumpwater',
     },
     {
         "name": "Stone Bridge",
         "url": "https://foxhole.wiki.gg/wiki/Stone_Bridge",
-        "keywords": 'stonebridge'
+        "keywords": 'stonebridge',
     },
     {
         "name": "Two Tier Bridge",
         "url": "https://foxhole.wiki.gg/wiki/Two_Tier_Bridge",
-        "keywords": 'twobridgetier'
+        "keywords": 'twobridgetier',
     },
     {
         "name": "Double Bridge",
         "url": "https://foxhole.wiki.gg/wiki/Double_Bridge",
-        "keywords": 'bridgedouble'
+        "keywords": 'bridgedouble',
     },
     {
         "name": "Long Bridge",
         "url": "https://foxhole.wiki.gg/wiki/Long_Bridge",
-        "keywords": 'longbridge'
+        "keywords": 'longbridge',
     },
     {
         "name": "Train Bridge",
         "url": "https://foxhole.wiki.gg/wiki/Train_Bridge",
-        "keywords": 'trainbridge'
+        "keywords": 'trainbridge',
     },
     {
         "name": "Field Bridge",
         "url": "https://foxhole.wiki.gg/wiki/Field_Bridge",
-        "keywords": 'fieldbridge'
+        "keywords": 'fieldbridge',
     },
     {
         "name": "Dock",
         "url": "https://foxhole.wiki.gg/wiki/Dock",
-        "keywords": 'docksdock'
+        "keywords": 'docksdock',
     },
     {
         "name": "Stationary Crane",
         "url": "https://foxhole.wiki.gg/wiki/Stationary_Crane",
-        "keywords": 'stationarycrane'
+        "keywords": 'stationarycrane',
     },
     {
         "name": "A0E-9 Rocket",
         "url": "https://foxhole.wiki.gg/wiki/A0E-9_Rocket",
-        "keywords": 'nukerocket'
+        "keywords": 'nukerocket',
     },
     {
         "name": "BMS Foreman Stacker",
         "url": "https://foxhole.wiki.gg/wiki/Facility_Crane",
-        "keywords": 'bmsstackercraneforemanfacility'
+        "keywords": 'bmsstackercraneforemanfacility',
     },
     {
         "name": "Catwalk Bridge",
         "url": "https://foxhole.wiki.gg/wiki/Catwalk_Bridge",
-        "keywords": 'catwalkbridge'
+        "keywords": 'catwalkbridge',
     },
     {
         "name": "Catwalk Platform",
         "url": "https://foxhole.wiki.gg/wiki/Catwalk_Platform",
-        "keywords": 'catwalkplatform'
+        "keywords": 'catwalkplatform',
     },
     {
         "name": "Catwalk Stairs",
         "url": "https://foxhole.wiki.gg/wiki/Catwalk_Stairs",
-        "keywords": 'catwalkstairs'
+        "keywords": 'catwalkstairs',
     },
     {
         "name": "Crane Railway Track",
         "url": "https://foxhole.wiki.gg/wiki/Crane_Railway_Track",
-        "keywords": 'trackrailwaycrane'
+        "keywords": 'trackrailwaycrane',
     },
     {
         "name": "Engine Room (Tier 2)",
         "url": "https://foxhole.wiki.gg/wiki/Engine_Room#Tier_2-0",
-        "keywords": 'bunkert2roomengine'
+        "keywords": 'bunkert2roomengine',
     },
     {
         "name": "Engine Room (Tier 3)",
         "url": "https://foxhole.wiki.gg/wiki/Engine_Room#Tier_3-0",
-        "keywords": 'bunkerroomengineconcretet3'
+        "keywords": 'bunkerroomengineconcretet3',
     },
     {
         "name": "Fire Pit",
         "url": "https://foxhole.wiki.gg/wiki/Fire_Pit",
-        "keywords": 'pitfirecampfire'
+        "keywords": 'pitfirecampfire',
     },
     {
         "name": "Foundation (1x1)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#1x1-0",
-        "keywords": 'foundation'
+        "keywords": 'foundation',
     },
     {
         "name": "Concrete Foundation (1x1)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#1x1_Concrete-0",
-        "keywords": 'foundationconcrete'
+        "keywords": 'foundationconcrete',
     },
     {
         "name": "Foundation Corner (1x1)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#Corner_1x1-0",
-        "keywords": 'foundation'
+        "keywords": 'foundation',
     },
     {
         "name": "Concrete Foundation Corner (1x1)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#Corner_1x1_Concrete-0",
-        "keywords": 'foundationconcrete'
+        "keywords": 'foundationconcrete',
     },
     {
         "name": "Foundation (1x2)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#1x2-0",
-        "keywords": 'foundation'
+        "keywords": 'foundation',
     },
     {
         "name": "Concrete Foundation (1x2)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#1x2_Concrete-0",
-        "keywords": 'foundationconcrete'
+        "keywords": 'foundationconcrete',
     },
     {
         "name": "Foundation (2x2)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#2x2-0",
-        "keywords": 'foundation'
+        "keywords": 'foundation',
     },
     {
         "name": "Concrete Foundation (2x2)",
         "url": "https://foxhole.wiki.gg/wiki/Foundation#2x2_Concrete-0",
-        "keywords": 'foundationconcrete'
+        "keywords": 'foundationconcrete',
     },
     {
         "name": "Fuel Silo",
         "url": "https://foxhole.wiki.gg/wiki/Fuel_Silo",
-        "keywords": 'fuelsilo'
+        "keywords": 'fuelsilo',
     },
     {
         "name": "Maintenance Tunnel",
         "url": "https://foxhole.wiki.gg/wiki/Maintenance_Tunnel",
-        "keywords": 'tunnelmaintenance'
+        "keywords": 'tunnelmaintenance',
     },
     {
         "name": "Navy Pier",
         "url": "https://foxhole.wiki.gg/wiki/Navy_Pier",
-        "keywords": 'navypier'
+        "keywords": 'navypier',
     },
     {
         "name": "Pipeline",
         "url": "https://foxhole.wiki.gg/wiki/Pipeline",
-        "keywords": 'pipeline'
+        "keywords": 'pipeline',
     },
     {
         "name": "Pipeline (Overhead)",
         "url": "https://foxhole.wiki.gg/wiki/Pipeline_(Overhead)",
-        "keywords": 'overheadpipeline'
+        "keywords": 'overheadpipeline',
     },
     {
         "name": "Pipeline (Underground)",
         "url": "https://foxhole.wiki.gg/wiki/Pipeline_(Underground)",
-        "keywords": 'pipelineunderground'
+        "keywords": 'pipelineunderground',
     },
     {
         "name": "Pipeline Valve",
         "url": "https://foxhole.wiki.gg/wiki/Pipeline_Valve",
-        "keywords": 'pipelinevalve'
+        "keywords": 'pipelinevalve',
     },
     {
         "name": "Power Pole",
         "url": "https://foxhole.wiki.gg/wiki/Power_Pole",
-        "keywords": 'polepower'
+        "keywords": 'polepower',
     },
     {
         "name": "Power Switch",
         "url": "https://foxhole.wiki.gg/wiki/Power_Switch",
-        "keywords": 'powerswitch'
+        "keywords": 'powerswitch',
     },
     {
         "name": "Provisional Road",
         "url": "https://foxhole.wiki.gg/wiki/Provisional_Road",
-        "keywords": 'provisionalroad'
+        "keywords": 'provisionalroad',
     },
     {
         "name": "Railway Track",
         "url": "https://foxhole.wiki.gg/wiki/Railway_Track",
-        "keywords": 'trackrailwaylarge'
+        "keywords": 'trackrailwaylarge',
     },
     {
         "name": "Railway Track (Biarc)",
         "url": "https://foxhole.wiki.gg/wiki/Railway_Track_(Biarc)",
-        "keywords": 'trackrailwaybiarclarge'
+        "keywords": 'trackrailwaybiarclarge',
     },
     {
         "name": "Railway Track (Foundation)",
         "url": "https://foxhole.wiki.gg/wiki/Railway_Track_(Foundation)",
-        "keywords": 'foundationtrackrailwaylarge'
+        "keywords": 'foundationtrackrailwaylarge',
     },
     {
         "name": "Small Gauge Railway Track",
         "url": "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track",
-        "keywords": 'smallrailwaytrackgauge'
+        "keywords": 'smallrailwaytrackgauge',
     },
     {
         "name": "Small Gauge Railway Track (Biarc)",
         "url": "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track_(Biarc)",
-        "keywords": 'railwaysmalltrackbiarcgauge'
+        "keywords": 'railwaysmalltrackbiarcgauge',
     },
     {
         "name": "Small Gauge Railway Track (Foundation)",
         "url": "https://foxhole.wiki.gg/wiki/Small_Gauge_Railway_Track_(Foundation)",
-        "keywords": 'foundationrailwaysmalltrackgauge'
+        "keywords": 'foundationrailwaysmalltrackgauge',
     },
     {
         "name": "Deployed Tripod",
         "url": "https://foxhole.wiki.gg/wiki/Deployed_Tripod",
-        "keywords": 'deployedtripod'
+        "keywords": 'deployedtripod',
     },
     {
         "name": "Field Range",
         "url": "https://foxhole.wiki.gg/wiki/Field_Range",
-        "keywords": 'rangefield'
+        "keywords": 'rangefield',
     },
 ]
 

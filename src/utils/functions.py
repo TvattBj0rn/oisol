@@ -10,7 +10,7 @@ from .oisol_enums import DataFilesPath, Faction, Language
 async def update_discord_interface(
         interaction: discord.Interaction,
         message_id: str,
-        embed: discord.Embed = None
+        embed: discord.Embed = None,
 ) -> None:
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))

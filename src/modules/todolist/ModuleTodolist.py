@@ -32,7 +32,7 @@ class ModuleTodolist(commands.Cog):
         logging.info(f'[COMMAND] todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         permissions = {
             'roles': [],
-            'members': []
+            'members': [],
         }
         if role_1:
             permissions['roles'].append(role_1.id)
@@ -60,7 +60,7 @@ class ModuleTodolist(commands.Cog):
             {'title': title, 'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
             title,
             str(interaction.guild_id),
-            uuid.uuid4().hex
+            uuid.uuid4().hex,
         )
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)

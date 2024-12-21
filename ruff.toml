@@ -15,7 +15,7 @@ select = [
     "C4", # Comprehensions
     "T20", # Prints
     "ANN", # Types annotation
-    "S"
+    "COM", # Commas handling
 ]
 ignore = [
     "E501", # Line-too-long
