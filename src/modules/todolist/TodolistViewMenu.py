@@ -256,7 +256,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             with open(os.path.join(pathlib.Path('/'), 'oisol', guild_id, 'todolists', f'{embed_uuid}.json')) as file:
                 full_dict = json.load(file)
         except OSError:
-            logging.error(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
+            logging.exception(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
             await interaction.followup.send('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)
             return
         if (

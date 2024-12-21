@@ -18,6 +18,8 @@ select = [
     "COM", # Commas handling
     "Q", # Quoting
     "RET", # Return
+    "ERA", # Commented code
+    "TRY", # Tryceratops (Exception related)
 ]
 ignore = [
     "E501", # Line-too-long
