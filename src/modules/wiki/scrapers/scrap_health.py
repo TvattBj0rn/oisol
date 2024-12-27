@@ -1,8 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils.oisol_enums import Faction
-from src.utils.resources import DAMAGE_TYPES_ATTRIBUTION
+from src.utils import DAMAGE_TYPES_ATTRIBUTION, Faction
 
 
 def get_columns_order(tbody: Tag) -> list:
@@ -23,6 +22,7 @@ def get_entry_row(tbody: Tag, headers_indexes: list, name: str) -> Tag | None:
         # It is assumed that Name will always be scrapped
         if tr.select('td')[headers_indexes.index('Name')].get_text(strip=True) in {name, name.removesuffix(' (Battleship)')}:
             return tr
+    return None
 
 
 def extract_td_data(td: Tag) -> dict | str:
@@ -45,7 +45,7 @@ def scrap_health(url: str, name: str) -> dict:
         return {}
 
     # Whole page soup data
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
 
     header_indexes = []
     row = None
@@ -93,12 +93,13 @@ def scrap_main_picture(url: str, name: str) -> tuple:
 
     # In case we have more than one infobox on the same page, we want to retrieve the correct one
     for infobox in soup.select('aside'):
-        if not infobox.has_attr('h2'):
+        if not infobox.findChild('h2'):
             continue
         if infobox.select_one('h2').get_text() == name:
-            return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
+            return f"https://foxhole.wiki.gg{infobox.select_one('a > img')['src']}", faction_color
 
-    return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}", faction_color
+    # If we have a single infobox
+    return f"https://foxhole.wiki.gg{soup.select_one('aside').select_one('a > img')['src']}", faction_color
 
 
 def scrap_faction_color(soup: Tag) -> hex:

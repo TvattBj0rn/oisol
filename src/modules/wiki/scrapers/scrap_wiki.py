@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils.oisol_enums import Faction
+from src.utils import Faction
 
 
 def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> dict | str:
@@ -63,9 +63,9 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> d
 def generate_infobox_data(infobox_soup: Tag) -> dict:
     data_dict = {
         'title': infobox_soup.find('h2', {'class': 'pi-item pi-item-spacing pi-title'}).get_text(),
-        'img_url': f"https://foxhole.wiki.gg{infobox_soup.select('figure > a > img')[0]['src']}",
+        'img_url': f"https://foxhole.wiki.gg{infobox_soup.select_one('a > img')['src']}",
     }
-    merged_class = set(infobox_soup['class'])
+    merged_class = infobox_soup['class']
     if 'pi-theme-Col' in merged_class:
         data_dict['color'] = Faction.COLONIAL.value
     elif 'pi-theme-War' in merged_class:
@@ -87,15 +87,14 @@ def scrap_wiki(url: str, name: str) -> dict:
         return {}
 
     # Whole page soup data
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
 
     # Description soup and retrieving (we make sure the description exists)
     desc_soup = soup.select_one('table > tbody > tr > td > i')
     entry_desc = desc_soup.get_text() if desc_soup else ''
 
     # Infobox handling within a function to allow for loop later on
-    infoboxs_soup = soup.select('aside[class^="portable-infobox noexcerpt pi-background"]')
-    for infobox in infoboxs_soup:
+    for infobox in soup.select('aside[class^="portable-infobox noexcerpt pi-background"]'):
         wiki_response_dict = generate_infobox_data(infobox)
         if name in {wiki_response_dict['title'], f'{wiki_response_dict['title']} (Tier 1)', f'{wiki_response_dict['title']} (Battleship)'}:
             wiki_response_dict['description'] = entry_desc

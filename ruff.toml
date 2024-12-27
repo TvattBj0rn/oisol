@@ -1,0 +1,32 @@
+target-version = "py312"
+exclude = [
+    "__init__.py",  # Waiting for non preview fixes for F401 & F403
+    "tests/"
+]
+
+[lint]
+select = [
+    "E", "W", # Pycodestyle
+    "F", # Pyflakes
+    "UP", # Pyupgrade
+    "B", # Flake8-bugbear
+    "SIM", # Flake8-simplify
+    "I", # Isort
+    "C4", # Comprehensions
+    "T20", # Prints
+    "ANN", # Types annotation
+    "COM", # Commas handling
+    "Q", # Quoting
+    "RET", # Return
+    "ERA", # Commented code
+    "TRY", # Tryceratops (Exception related)
+    "RUF", # Ruff specific rules
+]
+ignore = [
+    "E501", # Line-too-long
+    "ANN204", # missing-return-type-special-method
+    "RUF001", # Unicode chars
+]
+
+[lint.flake8-quotes]
+inline-quotes = "single"

@@ -8,21 +8,23 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from src.modules.config.ConfigInterfaces import ConfigViewMenu
-from src.modules.config.ModuleConfig import ModuleConfig
-from src.modules.registre.ModuleRegister import ModuleRegister
-from src.modules.registre.RegisterViewMenu import RegisterViewMenu
-from src.modules.stockpile_viewer.ModuleStockpile import ModuleStockpiles
-from src.modules.todolist.ModuleTodolist import ModuleTodolist
-from src.modules.todolist.TodolistViewMenu import (
+from src.modules.config import ConfigViewMenu, ModuleConfig
+from src.modules.registre import ModuleRegister, RegisterViewMenu
+from src.modules.stockpile_viewer import ModuleStockpiles
+from src.modules.todolist import (
+    ModuleTodolist,
     TodolistButtonCheckmark,
     TodolistViewMenu,
 )
-from src.modules.wiki.ModuleWiki import ModuleWiki
-from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import repair_default_config_dict, safeguarded_nickname
-from src.utils.oisol_enums import DataFilesPath, Modules
-from src.utils.resources import MODULES_CSV_KEYS
+from src.modules.wiki import ModuleWiki
+from src.utils import (
+    MODULES_CSV_KEYS,
+    CsvHandler,
+    DataFilesPath,
+    Modules,
+    repair_default_config_dict,
+    safeguarded_nickname,
+)
 
 
 class Oisol(commands.Bot):
@@ -33,22 +35,22 @@ class Oisol(commands.Bot):
         super().__init__(
             command_prefix='$',
             intents=intents,
-            help_command=commands.DefaultHelpCommand(no_category='Commands')
+            help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
         self.config_servers = {}
 
-    def load_configs(self):
+    def load_configs(self) -> None:
         oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
         for server_folder in os.listdir(oisol_server_home_path):
             if not server_folder.isdigit():
                 continue
             server_config = configparser.ConfigParser()
             server_config.read(
-                os.path.join(oisol_server_home_path, server_folder, 'config.ini')
+                os.path.join(oisol_server_home_path, server_folder, 'config.ini'),
             )
             self.config_servers[server_folder] = server_config
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
@@ -59,27 +61,27 @@ class Oisol(commands.Bot):
         try:
             synced = await self.tree.sync()
             logging.info(f'Synced {len(synced)} command(s)')
-        except Exception as e:
-            logging.error(e)
+        except Exception:
+            logging.exception('Could not sync tree properly')
 
         self.load_configs()
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
-    async def setup_hook(self):
+    async def setup_hook(self) -> None:
         self.add_view(ConfigViewMenu())
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
         self.add_dynamic_items(TodolistButtonCheckmark)
 
     @staticmethod
-    async def on_message_delete(message: discord.Message):
+    async def on_message_delete(message: discord.Message) -> None:
         if message.embeds and message.embeds[0].footer:
             test_path = os.path.join(
                 pathlib.Path('/'),
                 'oisol',
                 str(message.guild.id),
                 'todolists',
-                f'{message.embeds[0].footer.text}.json'
+                f'{message.embeds[0].footer.text}.json',
             )
             try:
                 os.remove(test_path)
@@ -109,7 +111,7 @@ class Oisol(commands.Bot):
 
         return all_members
 
-    async def update_register(self, server_id: int, all_members: list):
+    async def update_register(self, server_id: int, all_members: list) -> None:
         str_server_id = str(server_id)
         oisol_server_home_path = os.path.join('/', 'oisol', str_server_id)
         try:
@@ -121,12 +123,12 @@ class Oisol(commands.Bot):
         all_members = self.validate_all_members(
             all_members,
             server_id,
-            config.getint('register', 'recruit_id')
+            config.getint('register', 'recruit_id'),
         )
         csv_handler.csv_rewrite_file(
             os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
             all_members,
-            Modules.REGISTER
+            Modules.REGISTER,
         )
         if not config.has_option('register', 'channel'):
             return
@@ -143,7 +145,7 @@ class Oisol(commands.Bot):
         register_view.refresh_register_embed(str_server_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
+    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         if before.id == before.guild.owner.id:
             return
         oisol_server_home_path = os.path.join('/', 'oisol', str(before.guild.id))
@@ -164,12 +166,12 @@ class Oisol(commands.Bot):
                 and config.getint('register', 'recruit_id') not in [role.id for role in before.roles]
         ):
             all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
             )
             if config.has_option('register', 'input'):
                 await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
             await self.update_register(
-                before.guild.id, [*all_members, {'member': after.id, 'timer': int(time.time())}]
+                before.guild.id, [*all_members, {'member': after.id, 'timer': int(time.time())}],
             )
 
         # Member is now a promoted recruit
@@ -191,12 +193,12 @@ class Oisol(commands.Bot):
 
             await after.edit(nick=safeguarded_nickname(member_name))
             all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value)
+                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
             )
             all_members = [member for member in all_members if member['member'] != str(after.id)]
             await self.update_register(before.guild.id, all_members)
 
-    async def on_guild_join(self, guild: discord.Guild):
+    async def on_guild_join(self, guild: discord.Guild) -> None:
         oisol_server_home_path = os.path.join('/', 'oisol', str(guild.id))
 
         # Create guild and guild/todolists directories if they do not exist
@@ -207,7 +209,7 @@ class Oisol(commands.Bot):
         for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
             if not os.path.isfile(os.path.join(oisol_server_home_path, datafile.value)):
                 CsvHandler(MODULES_CSV_KEYS[datafile.name.lower()]).csv_try_create_file(
-                    os.path.join(oisol_server_home_path, datafile.value)
+                    os.path.join(oisol_server_home_path, datafile.value),
                 )
 
         # Create oisol/config.ini file with default config

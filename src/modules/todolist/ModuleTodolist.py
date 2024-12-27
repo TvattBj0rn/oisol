@@ -5,7 +5,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.todolist.TodolistViewMenu import TodolistViewMenu
+from .TodolistViewMenu import TodolistViewMenu
 
 
 class ModuleTodolist(commands.Cog):
@@ -28,11 +28,11 @@ class ModuleTodolist(commands.Cog):
             member_4: discord.Member = None,
             member_5: discord.Member = None,
 
-    ):
+    ) -> None:
         logging.info(f'[COMMAND] todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         permissions = {
             'roles': [],
-            'members': []
+            'members': [],
         }
         if role_1:
             permissions['roles'].append(role_1.id)
@@ -60,7 +60,7 @@ class ModuleTodolist(commands.Cog):
             {'title': title, 'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
             title,
             str(interaction.guild_id),
-            uuid.uuid4().hex
+            uuid.uuid4().hex,
         )
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)

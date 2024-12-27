@@ -7,9 +7,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.wiki.scrapers.scrap_health import scrap_health, scrap_main_picture
-from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
-from src.utils.resources import (
+from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS,
@@ -17,9 +15,12 @@ from src.utils.resources import (
     VEHICLES_WIKI_ENTRIES,
 )
 
+from .scrapers.scrap_health import scrap_health, scrap_main_picture
+from .scrapers.scrap_wiki import scrap_wiki
+
 
 class ModuleWiki(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.oisol = bot
 
     @staticmethod
@@ -36,7 +37,7 @@ class ModuleWiki(commands.Cog):
             wiki_data: dict,
             url_health: str,
             picture_url: str,
-            color: int
+            color: int,
     ) -> discord.Embed:
         # Embed description
         embed_desc = ''
@@ -54,7 +55,7 @@ class ModuleWiki(commands.Cog):
         for damage_type, weapons in wiki_data['Damage'].items():
             value_string = ''
             for weapon_name, weapon_value in weapons.items():
-                value_string += f"{EMOJIS_FROM_DICT.get(weapon_name, weapon_name)}: "
+                value_string += f'{EMOJIS_FROM_DICT.get(weapon_name, weapon_name)}: '
                 if isinstance(weapon_value, dict) and 'Disabled' in weapon_value:
                     value_string += f'{weapon_value['Disabled']} **|** {weapon_value['Kill']}'
                 elif isinstance(weapon_value, dict) and len(weapon_value.keys()) == 3:
@@ -74,8 +75,8 @@ class ModuleWiki(commands.Cog):
                 'description': embed_desc,
                 'color': color,
                 'thumbnail': {'url': picture_url},
-                'fields': fields
-            }
+                'fields': fields,
+            },
         )
 
     @staticmethod
@@ -128,8 +129,8 @@ class ModuleWiki(commands.Cog):
                 {
                     'name': 'Fuel Capacity',
                     'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT))}",
-                    'inline': True
-                }
+                    'inline': True,
+                },
             )
         return discord.Embed().from_dict(
             {
@@ -138,13 +139,13 @@ class ModuleWiki(commands.Cog):
                 'url': wiki_data['url'],
                 'color': wiki_data['color'],
                 'image': {'url': wiki_data['img_url']},
-                'fields': embed_fields
-            }
+                'fields': embed_fields,
+            },
         )
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
-    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False):
-        logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name} ({wiki_search_request})')
+    async def wiki(self, interaction: discord.Interaction, wiki_search_request: str, visible: bool = False) -> None:
+        logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name}')
         if not wiki_search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki
@@ -171,12 +172,12 @@ class ModuleWiki(commands.Cog):
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
-    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: bool = False):
+    async def entities_health(self, interaction: discord.Interaction, health_search_request: str, visible: bool = False) -> None:
         logging.info(f'[COMMAND] health command by {interaction.user.name} on {interaction.guild.name}')
 
         entry_searches = (
             next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == health_search_request), None),
-            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_search_request), None)
+            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == health_search_request), None),
         )
         if not any(entry_searches):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
@@ -207,7 +208,7 @@ class ModuleWiki(commands.Cog):
             scraped_health_data,
             entry_url,
             infobox_tuple[0],
-            infobox_tuple[1]
+            infobox_tuple[1],
         )
         await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
 

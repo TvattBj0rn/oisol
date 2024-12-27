@@ -8,11 +8,17 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.stockpile_viewer import stockpile_embed_generator
-from src.utils.CsvHandler import CsvHandler
-from src.utils.functions import update_discord_interface
-from src.utils.oisol_enums import DataFilesPath, EmbedIds, Modules
-from src.utils.resources import MODULES_CSV_KEYS, REGIONS_STOCKPILES
+from src.utils import (
+    MODULES_CSV_KEYS,
+    REGIONS_STOCKPILES,
+    CsvHandler,
+    DataFilesPath,
+    EmbedIds,
+    Modules,
+    update_discord_interface,
+)
+
+from .stockpile_embed_generator import generate_view_stockpile_embed
 
 
 class ModuleStockpiles(commands.Cog):
@@ -45,7 +51,7 @@ class ModuleStockpiles(commands.Cog):
         return [app_commands.Choice(name=city, value=city) for city in search_results]
 
     @app_commands.command(name='stockpile-view')
-    async def stockpile_view(self, interaction: discord.Interaction):
+    async def stockpile_view(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] stockpile-view command by {interaction.user.name} on {interaction.guild.name}')
         oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
@@ -57,12 +63,12 @@ class ModuleStockpiles(commands.Cog):
 
         with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
             config.write(configfile)
-        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+        stockpiles_embed = generate_view_stockpile_embed(interaction, self.csv_keys)
         await interaction.response.send_message(embed=stockpiles_embed)
 
     @app_commands.command(name='stockpile-create')
     @app_commands.autocomplete(localisation=region_autocomplete)
-    async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str):
+    async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str) -> None:
         logging.info(f'[COMMAND] stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
         # Case where a user entered an invalid sized code
         if len(code) != 6:
@@ -94,39 +100,39 @@ class ModuleStockpiles(commands.Cog):
         self.CsvHandler.csv_try_create_file(file_path)
         self.CsvHandler.csv_append_data(file_path, stockpile, Modules.STOCKPILE)
 
-        stockpiles_embed = stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+        stockpiles_embed = generate_view_stockpile_embed(interaction, self.csv_keys)
 
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=stockpiles_embed
+            embed=stockpiles_embed,
         )
 
         await interaction.response.send_message('> Stockpile was properly generated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='stockpile-delete')
-    async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str):
+    async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str) -> None:
         logging.info(f'[COMMAND] stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
         self.CsvHandler.csv_delete_data(
             os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), DataFilesPath.STOCKPILES.value),
-            stockpile_code
+            stockpile_code,
         )
 
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+            embed=generate_view_stockpile_embed(interaction, self.csv_keys),
         )
         await interaction.response.send_message(f'> The stockpile (code: {stockpile_code}) was properly removed', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='stockpile-clear')
-    async def stockpile_clear(self, interaction: discord.Interaction):
+    async def stockpile_clear(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] stockpile-clear command by {interaction.user.name} on {interaction.guild.name}')
         self.CsvHandler.csv_clear_data(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild.id), DataFilesPath.STOCKPILES.value))
 
         await update_discord_interface(
             interaction,
             EmbedIds.STOCKPILES_VIEW.value,
-            embed=stockpile_embed_generator.generate_view_stockpile_embed(interaction, self.csv_keys)
+            embed=generate_view_stockpile_embed(interaction, self.csv_keys),
         )
         await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)

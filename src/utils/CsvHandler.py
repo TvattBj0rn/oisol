@@ -1,14 +1,14 @@
 import csv
 import os
 
-from src.utils.oisol_enums import Modules
+from .oisol_enums import Modules
 
 
 class CsvHandler:
     def __init__(self, csv_file_keys: list):
         self.csv_file_keys = csv_file_keys
 
-    def csv_try_create_file(self, file_path: str):
+    def csv_try_create_file(self, file_path: str) -> None:
         separated_path = os.path.split(file_path)
         os.makedirs(separated_path[0], exist_ok=True)
         try:
@@ -18,12 +18,12 @@ class CsvHandler:
         except FileExistsError:
             pass
 
-    def csv_clear_data(self, file_path: str):
+    def csv_clear_data(self, file_path: str) -> None:
         with open(file_path, 'w', newline='') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.csv_file_keys)
 
-    def csv_delete_data(self, file_path: str, key_to_del: str):
+    def csv_delete_data(self, file_path: str, key_to_del: str) -> None:
         new_row_list = []
         with open(file_path) as csv_file:
             reader = csv.reader(csv_file, delimiter=';')
@@ -45,18 +45,18 @@ class CsvHandler:
             next(reader, None)  # Used to skip header row
             for row in reader:
                 data.append(
-                    {self.csv_file_keys[i]: row[i] for i in range(len(self.csv_file_keys))}
+                    {self.csv_file_keys[i]: row[i] for i in range(len(self.csv_file_keys))},
                 )
         return data
 
-    def csv_rewrite_file(self, file_path: str, data: list, module: Modules):
+    def csv_rewrite_file(self, file_path: str, data: list, module: Modules) -> None:
         with open(file_path, 'w', newline='') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(self.csv_file_keys)
             for row in data:
                 writer.writerow([row[self.csv_file_keys[0]], row[self.csv_file_keys[1]]] if module == Modules.REGISTER else row)
 
-    def csv_append_data(self, file_path: str, data_to_be_appended: dict, module: Modules):
+    def csv_append_data(self, file_path: str, data_to_be_appended: dict, module: Modules) -> None:
         if os.stat(file_path).st_size == 0:
             with open(file_path, 'w', newline='') as csv_file:
                 writer = csv.writer(csv_file, delimiter=';')
