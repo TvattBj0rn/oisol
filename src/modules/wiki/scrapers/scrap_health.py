@@ -93,12 +93,13 @@ def scrap_main_picture(url: str, name: str) -> tuple:
 
     # In case we have more than one infobox on the same page, we want to retrieve the correct one
     for infobox in soup.select('aside'):
-        if not infobox.has_attr('h2'):
+        if not infobox.findChild('h2'):
             continue
         if infobox.select_one('h2').get_text() == name:
-            return f"https://foxhole.wiki.gg{infobox.select_one('figure > a > img')['src']}", faction_color
+            return f"https://foxhole.wiki.gg{infobox.select_one('a > img')['src']}", faction_color
 
-    return f"https://foxhole.wiki.gg{soup.select_one('aside > figure > a > img')['src']}", faction_color
+    # If we have a single infobox
+    return f"https://foxhole.wiki.gg{soup.select_one('aside').select_one('a > img')['src']}", faction_color
 
 
 def scrap_faction_color(soup: Tag) -> hex:
