@@ -174,6 +174,8 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
     )
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
+        logging.info(f'[INTERFACE] todolist tasks added by {interaction.user.name} on {interaction.guild.name}')
+
         # Get current tasks from file
         with open(os.path.join(pathlib.Path('/'), 'oisol', str(interaction.guild_id), 'todolists', f'{self.embed_uuid}.json')) as file:
             full_dict = json.load(file)
@@ -248,6 +250,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction) -> None:
+        logging.info(f'[INTERFACE] todolist button checked by {interaction.user.name} on {interaction.guild.name}')
         embed_uuid = interaction.message.embeds[0].footer.text
         title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         guild_id = str(interaction.guild_id)
