@@ -5,12 +5,18 @@ from src.utils import DAMAGE_TYPES_ATTRIBUTION, Faction
 
 
 def get_columns_order(tbody: Tag) -> list:
-    return [category.select_one('a')['title'] if category.has_attr('style') else category.get_text(strip=True) for category in tbody.select('tr > th')]
+    """
+    iterate over a header row of a tbody to get category order
+    :param tbody:
+    :return: list of categories using wiki order
+    """
+    # is an icon category if non-blank style else a title category
+    return [category.select_one('a')['title'] if category.has_attr('style') and not category['style'].endswith('#000;') else category.get_text(strip=True) for category in tbody.select('tr > th')]
 
 
 def get_entry_row(tbody: Tag, headers_indexes: list, name: str) -> Tag | None:
     """
-    Check for an entry in a damage array (tbdoy).
+    Check for an entry in a damage array (tbody).
     :param tbody: damage array
     :param headers_indexes: columns order
     :param name: entry name
@@ -50,6 +56,7 @@ def scrap_health(url: str, name: str) -> dict:
     header_indexes = []
     row = None
 
+    # There are multiple tbody in a page
     for tbody in soup.select('tbody'):
         header_indexes = get_columns_order(tbody)
         row = get_entry_row(tbody, header_indexes, name)
