@@ -260,13 +260,13 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
                 full_dict = json.load(file)
         except OSError:
             logging.exception(f'Error opening todolist file on {interaction.guild.name} for {embed_uuid}')
-            await interaction.followup.send('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)
+            await interaction.response.send_message('> Unexpected Error (`TodolistButtonCheckmark.callback`)', ephemeral=True)
             return
         if (
                 'roles' in full_dict['access'] and 'members' in full_dict['access']
                 and not has_permissions(interaction, full_dict['access'])
         ):
-            await interaction.followup.send('> You do not have the permission to click on this button', ephemeral=True)
+            await interaction.response.send_message('> You do not have the permission to click on this button', ephemeral=True)
             return
         self.data_list = priority_dict_to_list(full_dict['tasks'])
         self.data_list.pop(list(EMOTES_CUSTOM_ID.keys()).index(self.emoji))
