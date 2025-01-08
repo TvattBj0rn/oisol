@@ -1,6 +1,10 @@
-name: Run Unit Test via Pytest
+name: Run UT on wiki module commands
 
-on: push
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
 
 jobs:
   build:
@@ -18,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |  
           python -m pip install --upgrade pip  
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -r requirements.txt
       - name: Tests with pytest
         run: |  
           pip install pytest
