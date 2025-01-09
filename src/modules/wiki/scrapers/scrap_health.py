@@ -31,12 +31,19 @@ def get_entry_row(tbody: Tag, headers_indexes: list, name: str) -> Tag | None:
     return None
 
 
-def extract_td_data(td: Tag) -> dict | str:
-    if td.findChild('img'):
-        return f"https://foxhole.wiki.gg{td.findChild('img')['src']}"
+def extract_td_data(td: Tag, column_name: str) -> dict | str | tuple:
+    if img_path := td.findChild('img'):
+        highest_res_img_path = '/'.join(f'https://foxhole.wiki.gg{img_path['src']}'.replace('/thumb', '').split('/')[:-1]) if '/thumb' in img_path['src'] else f'https://foxhole.wiki.gg{img_path['src']}'
+        # Structures array format
+        if not column_name:
+            return highest_res_img_path
+        # Vehicles array format
+        return td.findChild('a').get_text(strip=True), highest_res_img_path
+    # Case for vehicles
     if len(td.findChildren('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'Disabled': hmtk[0], 'Kill': hmtk[1]}
+    # Case for 3-typed structures
     if len(td.findChildren('hr')) == 2:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'S': hmtk[0], 'M': hmtk[1], 'L': hmtk[2]}
@@ -65,10 +72,13 @@ def scrap_health(url: str, name: str) -> dict:
     # Entry was not found in the wiki
     if not row:
         return {}
-
     for i, td in enumerate(row.select('td')):
-        wiki_response_dict[header_indexes[i]] = extract_td_data(td)
-
+        extracted_data = extract_td_data(td, header_indexes[i])
+        if isinstance(extracted_data, tuple):
+            wiki_response_dict[header_indexes[i]] = extracted_data[0]
+            wiki_response_dict[''] = extracted_data[1]
+        else:
+            wiki_response_dict[header_indexes[i]] = extract_td_data(td, header_indexes[i])
     # In case we are checking for a building but 2 values were retrieved in HP
     if (
             'Class' not in wiki_response_dict
