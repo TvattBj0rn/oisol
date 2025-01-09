@@ -15,8 +15,8 @@ from src.utils import (
     VEHICLES_WIKI_ENTRIES,
 )
 
-from .scrapers.scrap_health import scrap_health
-from .scrapers.scrap_wiki import scrap_wiki
+from .scrapers.scrap_wiki_entry_health import scrap_health
+from .scrapers.scrap_wiki_entry_infobox import scrap_wiki
 
 
 class ModuleWiki(commands.Cog):
@@ -172,8 +172,9 @@ class ModuleWiki(commands.Cog):
             if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
                 logging.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
-
         entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
+
+
 
 
     ## Search bar autocompletes

@@ -58,12 +58,12 @@ def scrap_health(url: str, name: str) -> dict:
     :param name: name of the entry
     :return: dict of entry parameters
     """
-    wiki_response_dict = {}
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
         return {}
 
+    wiki_response_dict = {}
     # Whole page soup data
     soup = BeautifulSoup(response.content, features='lxml')
 
