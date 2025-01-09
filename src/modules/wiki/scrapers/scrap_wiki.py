@@ -63,8 +63,9 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> d
 def generate_infobox_data(infobox_soup: Tag) -> dict:
     data_dict = {
         'title': infobox_soup.find('h2', {'class': 'pi-item pi-item-spacing pi-title'}).get_text(),
-        'img_url': f"https://foxhole.wiki.gg{infobox_soup.select_one('a > img')['src']}",
-    }
+        # For img_url, we want to use the highest resolution pic, if /thumb is found in img_path, we use its original picture instead
+        'img_url': '/'.join(f'https://foxhole.wiki.gg{img_path}'.replace('/thumb', '').split('/')[:-1]) if '/thumb' in (img_path := infobox_soup.select_one('a > img')['src']) else f"https://foxhole.wiki.gg{img_path}"}
+
     merged_class = infobox_soup['class']
     if 'pi-theme-Col' in merged_class:
         data_dict['color'] = Faction.COLONIAL.value
