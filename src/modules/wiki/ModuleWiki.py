@@ -12,11 +12,12 @@ from src.utils import (
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS,
     STRUCTURES_WIKI_ENTRIES,
-    VEHICLES_WIKI_ENTRIES,
+    VEHICLES_WIKI_ENTRIES, ITEMS_WIKI_ENTRIES,
 )
 
 from .scrapers.scrap_wiki_entry_health import scrap_health
 from .scrapers.scrap_wiki_entry_infobox import scrap_wiki
+from .scrapers.scrap_wiki_entry_production import scrap_production
 
 
 class ModuleWiki(commands.Cog):
@@ -52,7 +53,7 @@ class ModuleWiki(commands.Cog):
         fields = []
         for damage_type, weapons in wiki_data['Damage'].items():
             value_string = ''
-            for weapon_name, weapon_value in weapons.items():
+            for i, (weapon_name, weapon_value) in enumerate(weapons.items()):
                 value_string += f'{EMOJIS_FROM_DICT.get(weapon_name, weapon_name)}: '
                 if isinstance(weapon_value, dict) and 'Disabled' in weapon_value:
                     value_string += f'{weapon_value['Disabled']} **|** {weapon_value['Kill']}'
@@ -60,11 +61,9 @@ class ModuleWiki(commands.Cog):
                     value_string += f'{weapon_value['S']} **|** {weapon_value['M']} **|** {weapon_value['L']}'
                 elif isinstance(weapon_value, str):
                     value_string += weapon_value
-                if len(value_string) + 15 >= 300:
-                    value_string += '\n'
-                # Add separator chars for better readability
-                value_string += '   '
-            fields.append({'name': f'{damage_type.upper()} ({EMOJIS_FROM_DICT[damage_type]})', 'value': value_string})
+                value_string += '\n' if i and not i % 3 else '   '
+            fields.append({'name': f'{damage_type.upper()} ({EMOJIS_FROM_DICT[damage_type]})', 'value': f'{value_string[:-1]}\n‎'})
+        fields[-1]['value'] = fields[-1]['value'][:-1]
 
         return discord.Embed().from_dict(
             {
@@ -173,6 +172,8 @@ class ModuleWiki(commands.Cog):
                 logging.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
         entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
+        scraped_production_data = scrap_production(search_request, entry_name)
+        await interaction.response.send_message('ok')
 
 
 
@@ -209,9 +210,8 @@ class ModuleWiki(commands.Cog):
 
         return [(entry_result[0], entry_result[1]) for entry_result in search_results]
 
-    # used in wiki & production commands
+    # used in wiki commands
     @wiki.autocomplete('search_request')
-    @get_item_production_parameters.autocomplete('search_request')
     async def all_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         choice_list = self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
@@ -220,4 +220,10 @@ class ModuleWiki(commands.Cog):
     @entities_health.autocomplete('search_request')
     async def structures_vehicles_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         choice_list = self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
+        return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
+
+    # used in production commands
+    @get_item_production_parameters.autocomplete('search_request')
+    async def items_vehicles_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
+        choice_list = self.generic_autocomplete(ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
