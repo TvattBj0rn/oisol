@@ -68,3 +68,11 @@ def repair_default_config_dict(current_config: ConfigParser | None = None) -> Co
     final_config.set(section_name, 'tag', '' if not current_config or not current_config.has_option(section_name, 'tag') else current_config.get(section_name, 'tag'))
 
     return final_config
+
+def get_highest_res_img_link(img_path: str) -> str:
+    """
+    Create a link with the given img path. If the given image is a thumbnail, a pattern is applied to get the full res path
+    :param img_path: internal picture path
+    :return: external link to the correct picture
+    """
+    return '/'.join(f'https://foxhole.wiki.gg{img_path}'.replace('/thumb', '').split('/')[:-1]) if '/thumb' in img_path else f'https://foxhole.wiki.gg{img_path}'

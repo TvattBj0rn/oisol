@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils import DAMAGE_TYPES_ATTRIBUTION, Faction
+from src.utils import DAMAGE_TYPES_ATTRIBUTION, Faction, get_highest_res_img_link
 
 
 def get_columns_order(tbody: Tag) -> list:
@@ -35,11 +35,10 @@ def extract_td_data(td: Tag) -> dict | str | tuple:
     """
     Analyse a specific column of a row and returns its formatted value
     :param td: specific column
-    :param column_name: td name
     :return: formatted td value
     """
-    if img_path := td.findChild('img'):
-        return td.findChild('a').get_text(strip=True), '/'.join(f'https://foxhole.wiki.gg{img_path['src']}'.replace('/thumb', '').split('/')[:-1]) if '/thumb' in img_path['src'] else f'https://foxhole.wiki.gg{img_path['src']}'
+    if img_path := td.findChild('img')['src']:
+        return td.findChild('a').get_text(strip=True), get_highest_res_img_link(img_path)
     # Case for vehicles
     if len(td.findChildren('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
