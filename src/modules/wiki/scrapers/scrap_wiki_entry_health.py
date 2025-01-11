@@ -1,13 +1,13 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils import DAMAGE_TYPES_ATTRIBUTION, Faction
+from src.utils import DAMAGE_TYPES_ATTRIBUTION, Faction, get_highest_res_img_link
 
 
 def get_columns_order(tbody: Tag) -> list:
     """
     iterate over a header row of a tbody to get category order
-    :param tbody:
+    :param tbody: damage array
     :return: list of categories using wiki order
     """
     # is an icon category if non-blank style else a title category
@@ -31,12 +31,19 @@ def get_entry_row(tbody: Tag, headers_indexes: list, name: str) -> Tag | None:
     return None
 
 
-def extract_td_data(td: Tag) -> dict | str:
-    if td.findChild('img'):
-        return f"https://foxhole.wiki.gg{td.findChild('img')['src']}"
+def extract_td_data(td: Tag) -> dict | str | tuple:
+    """
+    Analyse a specific column of a row and returns its formatted value
+    :param td: specific column
+    :return: formatted td value
+    """
+    if (img_path := td.findChild('img')) and 'src' in img_path:
+        return td.findChild('a').get_text(strip=True), get_highest_res_img_link(img_path['src'])
+    # Case for vehicles
     if len(td.findChildren('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'Disabled': hmtk[0], 'Kill': hmtk[1]}
+    # Case for 3-typed structures
     if len(td.findChildren('hr')) == 2:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'S': hmtk[0], 'M': hmtk[1], 'L': hmtk[2]}
@@ -44,12 +51,18 @@ def extract_td_data(td: Tag) -> dict | str:
 
 
 def scrap_health(url: str, name: str) -> dict:
-    wiki_response_dict = {}
+    """
+    Generate data from a user given url
+    :param url: wiki page url
+    :param name: name of the entry
+    :return: dict of entry parameters
+    """
     # Request to the given url, check if response is valid
     response = requests.get(url)
     if not response:
         return {}
 
+    wiki_response_dict = {}
     # Whole page soup data
     soup = BeautifulSoup(response.content, features='lxml')
 
@@ -65,10 +78,23 @@ def scrap_health(url: str, name: str) -> dict:
     # Entry was not found in the wiki
     if not row:
         return {}
+    # If a row is faction colored, it is selected
+    if row.has_attr('style'):
+        if 'foxhole-colonial-color' in row['style']:
+            wiki_response_dict['Color'] = Faction.COLONIAL.value
+        elif 'foxhole-warden-color' in row['style']:
+            wiki_response_dict['Color'] = Faction.WARDEN.value
+    # Faction neutral row / no color
+    if 'Color' not in wiki_response_dict:
+        wiki_response_dict['Color'] = Faction.NEUTRAL.value
 
     for i, td in enumerate(row.select('td')):
-        wiki_response_dict[header_indexes[i]] = extract_td_data(td)
-
+        extracted_data = extract_td_data(td)
+        if isinstance(extracted_data, tuple):
+            wiki_response_dict[header_indexes[i]] = extracted_data[0]
+            wiki_response_dict['img_url'] = extracted_data[1]
+        else:
+            wiki_response_dict[header_indexes[i]] = extracted_data
     # In case we are checking for a building but 2 values were retrieved in HP
     if (
             'Class' not in wiki_response_dict
@@ -78,7 +104,7 @@ def scrap_health(url: str, name: str) -> dict:
         wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
         wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
 
-    final_response_dict = {k: wiki_response_dict.pop(k) for k in ['', 'Icon', 'Name', 'Class', 'HP'] if k in wiki_response_dict} | {'Damage': {}}
+    final_response_dict = {k: wiki_response_dict.pop(k) for k in ['img_url', 'Icon', 'Name', 'Class', 'HP', 'Color'] if k in wiki_response_dict} | {'Damage': {}}
     for k, v in wiki_response_dict.items():
         if DAMAGE_TYPES_ATTRIBUTION[k] not in final_response_dict['Damage']:
             final_response_dict['Damage'][DAMAGE_TYPES_ATTRIBUTION[k]] = {k: v}
@@ -86,34 +112,3 @@ def scrap_health(url: str, name: str) -> dict:
             final_response_dict['Damage'][DAMAGE_TYPES_ATTRIBUTION[k]].update({k: v})
 
     return final_response_dict
-
-
-def scrap_main_picture(url: str, name: str) -> tuple:
-    # Request to the given url, check if response is valid
-    response = requests.get(url)
-    if not response:
-        return None, None
-
-    # Whole page soup data
-    soup = BeautifulSoup(response.content, features='lxml')
-    faction_color = scrap_faction_color(soup)
-
-    # In case we have more than one infobox on the same page, we want to retrieve the correct one
-    for infobox in soup.select('aside'):
-        if not infobox.findChild('h2'):
-            continue
-        if infobox.select_one('h2').get_text() == name:
-            return f"https://foxhole.wiki.gg{infobox.select_one('a > img')['src']}", faction_color
-
-    # If we have a single infobox
-    return f"https://foxhole.wiki.gg{soup.select_one('aside').select_one('a > img')['src']}", faction_color
-
-
-def scrap_faction_color(soup: Tag) -> hex:
-    infobox_soup = soup.select_one('aside')
-    merged_class = set(infobox_soup['class'])
-    if 'pi-theme-Col' in merged_class:
-        return Faction.COLONIAL.value
-    if 'pi-theme-War' in merged_class:
-        return Faction.WARDEN.value
-    return Faction.NEUTRAL.value

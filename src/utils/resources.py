@@ -88,6 +88,12 @@ NAMES_TO_ACRONYMS = {
     'A0E-9 Rocket Booster': 'Rocket Booster',
 }
 
+RESOURCE_TO_CRATE = {
+    'Refined Materials': 20,
+    'Basic Materials': 100,
+    'Explosive Powder': 40,
+    'Heavy Explosive Powder': 30,
+}
 
 EMOJIS_FROM_DICT = {
     'Light Kinetic': '<:light_kinetic:1239343508725174355>',
@@ -118,8 +124,11 @@ EMOJIS_FROM_DICT = {
     'Assembly Materials III': '<:asmat3:1239353124653760584>',
     'Assembly Materials IV': '<:asmat4:1239353135772995584>',
     'Assembly Materials V': '<:asmat5:1239353106404474951>',
+    'Crate': '<:crate:1327695652494508085>',
     'Refined Materials': '<:rmat:1239353730172715048>',
     'Basic Materials': '<:bmat:1239353181474127943>',
+    'Explosive Powder': '<:emat:1327687090590449818>',
+    'Heavy Explosive Powder': '<:hemat:1327688754617647184>',
     'Construction Materials': '<:cmat:1239353162616279122>',
     'Processed Construction Materials': '<:pcmat:1239353173488042005>',
     'Steel Construction Materials': '<:scmat:1239353153694994533>',
@@ -186,8 +195,12 @@ EMOJIS_FROM_DICT = {
     'MapIconShipyard': '<:shipyard:1239655207353323640>',
     'MapIconConstructionYard': '<:construction_yard:1239655212705251410>',
     'Tech Center Map Icon': '<:tech_center:1239655211161616427>',
-    'MapIconMassProductionFactory': '<:mpf:1239655209903456267>',
-    'MapIconFactory': '<:factory_building:1239655208485781575>',
+    'Mass Production Factory': '<:mpf:1239655209903456267>',
+    'Factory': '<:factory_building:1239655208485781575>',
+    'Garage': '<:garage:1078410297099948032>',
+    'MW of power': '<:mw_of_power:1327439074184794185>',
+    'Small Assembly Station': '<:lightassembly:1196074987879153724>',
+    'Infantry Arms Factory': '<:infantry_arms_factory:1327437914719780884>',
     'MapIconManufacturing': '<:refinery:1239656064761200640>',
     'MapIconSeaport': '<:seaport:1239655214059880529>',
     'MapIconStorageFacility': '<:storage_depot:1239655214936752159>',
@@ -923,6 +936,14 @@ ITEMS_WIKI_ENTRIES = [
     },
 ]
 
+TEST_ENTRIES = [
+{
+        'name': 'Metal Beam',
+        'url': 'https://foxhole.wiki.gg/wiki/Metal_Beam',
+        'keywords': 'metalbeam',
+    },
+]
+
 VEHICLES_WIKI_ENTRIES = [
     {
         'name': 'T3 “Xiphos”',
@@ -1147,12 +1168,12 @@ VEHICLES_WIKI_ENTRIES = [
     {
         'name': 'Devitt Mk. III',
         'url': 'https://foxhole.wiki.gg/wiki/Devitt_Mk._III',
-        'keywords': 'tankwardenlightltdevit',
+        'keywords': 'tankwardenlightltdevitt',
     },
     {
         'name': 'Devitt Ironhide Mk. IV',
         'url': 'https://foxhole.wiki.gg/wiki/Devitt_Ironhide_Mk._IV',
-        'keywords': 'tankwardenlightltdevitironhide',
+        'keywords': 'tankwardenlightltdevittironhide',
     },
     {
         'name': 'Devitt-Caine Mk. IV MMR',
@@ -2490,3 +2511,4 @@ STRUCTURES_WIKI_ENTRIES = [
 ]
 
 ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES
+ITEMS_WIKI_ENTRIES += TEST_ENTRIES

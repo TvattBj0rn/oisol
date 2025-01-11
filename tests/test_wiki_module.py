@@ -1,5 +1,5 @@
-from src.modules.wiki.scrapers.scrap_health import scrap_health
-from src.modules.wiki.scrapers.scrap_wiki import scrap_wiki
+from src.modules.wiki.scrapers.scrap_wiki_entry_health import scrap_health
+from src.modules.wiki.scrapers.scrap_wiki_entry_infobox import scrap_wiki
 from src.utils.resources import (
     ALL_WIKI_ENTRIES,
     STRUCTURES_WIKI_ENTRIES,
