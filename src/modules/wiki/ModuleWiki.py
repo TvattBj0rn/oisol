@@ -117,12 +117,10 @@ class ModuleWiki(commands.Cog):
         embed_fields = []
         for i in range(row_number):
             for k in ['Structure', 'Input(s)', 'Output']:
-                if isinstance(wiki_data[k][i], tuple):
+                if isinstance(wiki_data[k][i], tuple):  # Structure
                     value = ' '.join(wiki_data[k][i])
-                elif isinstance(wiki_data[k][i], list):
+                else:  # Input(s) / Output
                     value = '\n- '.join(' '.join(j) for j in wiki_data[k][i])
-                else:
-                    value = wiki_data[k][i]
                 embed_fields.append({'name': k, 'value': f'- {value}', 'inline': True})
 
         production_embed_dict = {
