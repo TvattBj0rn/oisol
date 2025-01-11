@@ -1,5 +1,6 @@
 import collections
 import logging
+import math
 import operator
 import random
 
@@ -13,7 +14,7 @@ from src.utils import (
     ITEMS_WIKI_ENTRIES,
     NAMES_TO_ACRONYMS,
     STRUCTURES_WIKI_ENTRIES,
-    VEHICLES_WIKI_ENTRIES,
+    VEHICLES_WIKI_ENTRIES, RESOURCE_TO_CRATE,
 )
 
 from .mpf_generation import generate_mpf_data
@@ -123,14 +124,33 @@ class ModuleWiki(commands.Cog):
                     value = '\n- '.join(' '.join(j) for j in wiki_data[k][i])
                 embed_fields.append({'name': k, 'value': f'- {value}', 'inline': True})
 
-        production_embed_dict = {
+        generated_embeds = [discord.Embed().from_dict({
             'title': wiki_data['name'],
             'url': wiki_data['url'],
             'thumbnail': wiki_data['thumbnail'],
             'color': wiki_data['color'],
-            'fields': embed_fields
-        }
-        return [discord.Embed().from_dict(production_embed_dict)]
+            'fields': embed_fields,
+        })]
+
+        if 'mpf_data' in wiki_data:
+            mpf_fields = []
+
+            # Max slots of MPF -> 9
+            for i in range(9):
+                mpf_fields.append({
+                    'name': f'{i + 1} {EMOJIS_FROM_DICT.get('Crate', 'Crate')}',
+                    'value': '\n'.join(f'- x{f'{math.ceil(v[i] / RESOURCE_TO_CRATE.get(k, 1))} crates of '} {k} {EMOJIS_FROM_DICT.get(k, '')} *({v[i]})*' for k, v in wiki_data['mpf_data'].items()),
+                    'inline': True,
+                },)
+
+            generated_embeds.append(discord.Embed().from_dict({
+                'title': 'MPF Stats',
+                'url': 'https://foxhole.wiki.gg/wiki/Mass_Production_Factory',
+                'thumbnail': {'url': 'https://foxhole.wiki.gg/images/e/eb/MapIconMassProductionFactory.png'},
+                'color': wiki_data['color'],
+                'fields': mpf_fields,
+            }))
+        return generated_embeds
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:

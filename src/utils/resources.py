@@ -88,6 +88,12 @@ NAMES_TO_ACRONYMS = {
     'A0E-9 Rocket Booster': 'Rocket Booster',
 }
 
+RESOURCE_TO_CRATE = {
+    'Refined Materials': 20,
+    'Basic Materials': 100,
+    'Explosive Powder': 40,
+    'Heavy Explosive Powder': 30,
+}
 
 EMOJIS_FROM_DICT = {
     'Light Kinetic': '<:light_kinetic:1239343508725174355>',
@@ -118,6 +124,7 @@ EMOJIS_FROM_DICT = {
     'Assembly Materials III': '<:asmat3:1239353124653760584>',
     'Assembly Materials IV': '<:asmat4:1239353135772995584>',
     'Assembly Materials V': '<:asmat5:1239353106404474951>',
+    'Crate': '<:crate:1327695652494508085>',
     'Refined Materials': '<:rmat:1239353730172715048>',
     'Basic Materials': '<:bmat:1239353181474127943>',
     'Explosive Powder': '<:emat:1327687090590449818>',
