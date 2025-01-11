@@ -13,8 +13,9 @@ from src.utils import (
     EMOJIS_FROM_DICT,
     ITEMS_WIKI_ENTRIES,
     NAMES_TO_ACRONYMS,
+    RESOURCE_TO_CRATE,
     STRUCTURES_WIKI_ENTRIES,
-    VEHICLES_WIKI_ENTRIES, RESOURCE_TO_CRATE,
+    VEHICLES_WIKI_ENTRIES,
 )
 
 from .mpf_generation import generate_mpf_data
@@ -135,13 +136,13 @@ class ModuleWiki(commands.Cog):
         if 'mpf_data' in wiki_data:
             mpf_fields = []
 
-            # Max slots of MPF -> 9
-            for i in range(9):
+            # Iterate over MPF slots (5 or 9)
+            for i in range(len(wiki_data['mpf_data'][list(wiki_data['mpf_data'].keys())[0]])):
                 mpf_fields.append({
                     'name': f'{i + 1} {EMOJIS_FROM_DICT.get('Crate', 'Crate')}',
                     'value': '\n'.join(f'- x{f'{math.ceil(v[i] / RESOURCE_TO_CRATE.get(k, 1))} crates of '} {k} {EMOJIS_FROM_DICT.get(k, '')} *({v[i]})*' for k, v in wiki_data['mpf_data'].items()),
                     'inline': True,
-                },)
+                })
 
             generated_embeds.append(discord.Embed().from_dict({
                 'title': 'MPF Stats',
@@ -222,10 +223,13 @@ class ModuleWiki(commands.Cog):
         scraped_production_data['name'] = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
         scraped_production_data['url'] = search_request
 
-        # If an entry refers to the MPF in the wiki, a new key is added with the calculated MPF data
+        # If any entry refers to the MPF in the wiki, a new key is added with the calculated MPF data
         if any(tup for tup in scraped_production_data['Structure'] if tup[0] == 'Mass Production Factory'):
+            # For vehicles and structures, the maximum slots of mpf is 5 instead of 9
+            is_short_mpf = any(tup for tup in scraped_production_data['Structure'] if tup[0] in {'Garage', 'Shipyard', 'Construction Yard', 'Home Base'})
+
             # The input is a flattened tuple without the emojis
-            scraped_production_data['mpf_data'] = generate_mpf_data(list(sum(scraped_production_data['Input(s)'][next(i for i, (v, *_) in enumerate(scraped_production_data['Structure']) if v == 'Mass Production Factory')], ()))[::2])
+            scraped_production_data['mpf_data'] = generate_mpf_data(list(sum(scraped_production_data['Input(s)'][next(i for i, (v, *_) in enumerate(scraped_production_data['Structure']) if v == 'Mass Production Factory')], ()))[::2], is_short_mpf)
 
         await interaction.response.send_message(embeds=self.generate_production_embed(scraped_production_data), ephemeral=not visible)
 
