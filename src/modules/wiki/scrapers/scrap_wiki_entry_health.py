@@ -37,8 +37,8 @@ def extract_td_data(td: Tag) -> dict | str | tuple:
     :param td: specific column
     :return: formatted td value
     """
-    if img_path := td.findChild('img')['src']:
-        return td.findChild('a').get_text(strip=True), get_highest_res_img_link(img_path)
+    if (img_path := td.findChild('img')) and 'src' in img_path:
+        return td.findChild('a').get_text(strip=True), get_highest_res_img_link(img_path['src'])
     # Case for vehicles
     if len(td.findChildren('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
