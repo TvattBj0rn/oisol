@@ -111,5 +111,4 @@ def scrap_health(url: str, name: str) -> dict:
         else:
             final_response_dict['Damage'][DAMAGE_TYPES_ATTRIBUTION[k]].update({k: v})
 
-    print(final_response_dict)
     return final_response_dict
