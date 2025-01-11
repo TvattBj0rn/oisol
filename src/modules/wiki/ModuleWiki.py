@@ -120,11 +120,10 @@ class ModuleWiki(commands.Cog):
                 if isinstance(wiki_data[k][i], tuple):
                     value = ' '.join(wiki_data[k][i])
                 elif isinstance(wiki_data[k][i], list):
-                    value = '\n'.join(' '.join(j) for j in wiki_data[k][i])
+                    value = '\n- '.join(' '.join(j) for j in wiki_data[k][i])
                 else:
                     value = wiki_data[k][i]
-                print(wiki_data[k][i])
-                embed_fields.append({'name': k, 'value': value, 'inline': True})
+                embed_fields.append({'name': k, 'value': f'- {value}', 'inline': True})
 
         production_embed_dict = {
             'title': wiki_data['name'],
