@@ -69,6 +69,7 @@ def repair_default_config_dict(current_config: ConfigParser | None = None) -> Co
 
     return final_config
 
+
 def get_highest_res_img_link(img_path: str) -> str:
     """
     Create a link with the given img path. If the given image is a thumbnail, a pattern is applied to get the full res path

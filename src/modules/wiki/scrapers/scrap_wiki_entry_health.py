@@ -85,7 +85,7 @@ def scrap_health(url: str, name: str) -> dict:
         elif 'foxhole-warden-color' in row['style']:
             wiki_response_dict['Color'] = Faction.WARDEN.value
     # Faction neutral row / no color
-    if not 'Color' in wiki_response_dict:
+    if 'Color' not in wiki_response_dict:
         wiki_response_dict['Color'] = Faction.NEUTRAL.value
 
     for i, td in enumerate(row.select('td')):

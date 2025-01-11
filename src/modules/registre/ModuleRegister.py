@@ -7,7 +7,13 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import MODULES_CSV_KEYS, CsvHandler, DataFilesPath, safeguarded_nickname, Modules
+from src.utils import (
+    MODULES_CSV_KEYS,
+    CsvHandler,
+    DataFilesPath,
+    Modules,
+    safeguarded_nickname,
+)
 
 from .RegisterViewMenu import RegisterViewMenu
 
@@ -95,7 +101,7 @@ class ModuleRegister(commands.Cog):
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
     @commands.Cog.listener()
-    async def on_member_update(self,before: discord.Member, after: discord.Member) -> None:
+    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         if before.id == before.guild.owner.id:
             return
         oisol_server_home_path = os.path.join('/', 'oisol', str(before.guild.id))

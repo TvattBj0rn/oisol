@@ -10,9 +10,10 @@ from discord.ext import commands
 from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
+    ITEMS_WIKI_ENTRIES,
     NAMES_TO_ACRONYMS,
     STRUCTURES_WIKI_ENTRIES,
-    VEHICLES_WIKI_ENTRIES, ITEMS_WIKI_ENTRIES,
+    VEHICLES_WIKI_ENTRIES,
 )
 
 from .scrapers.scrap_wiki_entry_health import scrap_health
@@ -172,13 +173,10 @@ class ModuleWiki(commands.Cog):
                 logging.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
         entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
-        scraped_production_data = scrap_production(search_request, entry_name)
+        scraped_production_data = scrap_production(search_request)
+        print(scraped_production_data)
         await interaction.response.send_message('ok')
 
-
-
-
-    ## Search bar autocompletes
     @staticmethod
     def generic_autocomplete(entries: list, current: str) -> list:
         """
