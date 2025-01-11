@@ -43,25 +43,25 @@ def scrap_production(url: str) -> dict:
                 # 0 -> Struct: name & icon
                 case 0:
                     wiki_response_dict[list(wiki_response_dict.keys())[i]].append(
-                        ((struct_name := td.select_one('a')['title']), EMOJIS_FROM_DICT.get(struct_name, struct_name)),
+                        ((struct_name := td.select_one('a')['title']), EMOJIS_FROM_DICT.get(struct_name, '')),
                     )
                 # 1 -> Inputs split 'a' tags no children (text) & 'a' tags children (icon)
                 case 1:
                     # second comprehension because there is at least one case of string operations generating empty strings
                     split_text = [x for x in [substr.replace('\xa0', ' ').strip() for substr in td.get_text(separator='\n').splitlines() if substr and substr != '\xa0'] if x]
                     wiki_response_dict[list(wiki_response_dict.keys())[i]].append(
-                        [((input_row := ' '.join((x, y))), EMOJIS_FROM_DICT.get((item_name := re.sub(remover_pattern, '', input_row)), item_name)) for x, y in zip(split_text[::2], split_text[1::2], strict=True)],
+                        [((input_row := ' '.join((x, y))), EMOJIS_FROM_DICT.get(re.sub(remover_pattern, '', input_row), '')) for x, y in zip(split_text[::2], split_text[1::2], strict=True)],
                     )
             # 2 -> Outputs
                 case 2:
                     split_text = [substr.replace('\xa0', ' ').strip() for substr in td.get_text(separator='\n').splitlines() if substr and substr != '\xa0']
                     if not len(split_text) % 2 and not split_text[0].strip().isdigit():
                         wiki_response_dict[list(wiki_response_dict.keys())[i]].append(
-                            [(output_row := (' '.join((x, y))), re.sub(remover_pattern, '', output_row)) for x, y in zip(split_text[::2], split_text[1::2], strict=True)],
+                            [(output_row := (' '.join((x, y))), EMOJIS_FROM_DICT.get(re.sub(remover_pattern, '', output_row), '')) for x, y in zip(split_text[::2], split_text[1::2], strict=True)],
                         )
                     else:
                         wiki_response_dict[list(wiki_response_dict.keys())[i]].append(
-                            [((output_row := ' '.join(split_text)), re.sub(remover_pattern, '', output_row))],
+                            [((output_row := ' '.join(split_text)), EMOJIS_FROM_DICT.get(re.sub(remover_pattern, '', output_row), ''))],
                         )
                 # 3 -> Time column: get text (time or hammer hits)
                 case 3:

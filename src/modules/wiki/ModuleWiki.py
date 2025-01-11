@@ -111,6 +111,30 @@ class ModuleWiki(commands.Cog):
             },
         )
 
+    @staticmethod
+    def generate_production_embed(wiki_data: dict) -> list[discord.Embed]:
+        row_number = len(wiki_data['Structure'])  # All table related column have equal length
+        embed_fields = []
+        for i in range(row_number):
+            for k in ['Structure', 'Input(s)', 'Output']:
+                if isinstance(wiki_data[k][i], tuple):
+                    value = ' '.join(wiki_data[k][i])
+                elif isinstance(wiki_data[k][i], list):
+                    value = '\n'.join(' '.join(j) for j in wiki_data[k][i])
+                else:
+                    value = wiki_data[k][i]
+                print(wiki_data[k][i])
+                embed_fields.append({'name': k, 'value': value, 'inline': True})
+
+        production_embed_dict = {
+            'title': wiki_data['name'],
+            'url': wiki_data['url'],
+            'thumbnail': wiki_data['thumbnail'],
+            'color': wiki_data['color'],
+            'fields': embed_fields
+        }
+        return [discord.Embed().from_dict(production_embed_dict)]
+
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name}')
@@ -177,15 +201,16 @@ class ModuleWiki(commands.Cog):
         # Get costs info from the wiki
         scraped_production_data = scrap_production(search_request)
 
-        # Get correct entry name
+        # Get correct entry name & url
         scraped_production_data['name'] = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
+        scraped_production_data['url'] = search_request
 
         # If an entry refers to the MPF in the wiki, a new key is added with the calculated MPF data
         if any(tup for tup in scraped_production_data['Structure'] if tup[0] == 'Mass Production Factory'):
             # The input is a flattened tuple without the emojis
             scraped_production_data['mpf_data'] = generate_mpf_data(list(sum(scraped_production_data['Input(s)'][next(i for i, (v, *_) in enumerate(scraped_production_data['Structure']) if v == 'Mass Production Factory')], ()))[::2])
 
-        await interaction.response.send_message('ok')
+        await interaction.response.send_message(embeds=self.generate_production_embed(scraped_production_data), ephemeral=not visible)
 
     @staticmethod
     def generic_autocomplete(entries: list, current: str) -> list:
