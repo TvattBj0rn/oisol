@@ -37,7 +37,7 @@ def extract_td_data(td: Tag) -> dict | str | tuple:
     :param td: specific column
     :return: formatted td value
     """
-    if (img_path := td.findChild('img')) and 'src' in img_path:
+    if (img_path := td.findChild('img')) and img_path.has_attr('src'):
         return td.findChild('a').get_text(strip=True), get_highest_res_img_link(img_path['src'])
     # Case for vehicles
     if len(td.findChildren('hr')) == 1:
@@ -111,4 +111,5 @@ def scrap_health(url: str, name: str) -> dict:
         else:
             final_response_dict['Damage'][DAMAGE_TYPES_ATTRIBUTION[k]].update({k: v})
 
+    print(final_response_dict)
     return final_response_dict
