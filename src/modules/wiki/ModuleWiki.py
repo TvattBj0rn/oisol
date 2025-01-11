@@ -16,6 +16,7 @@ from src.utils import (
     VEHICLES_WIKI_ENTRIES,
 )
 
+from .mpf_generation import generate_mpf_data
 from .scrapers.scrap_wiki_entry_health import scrap_health
 from .scrapers.scrap_wiki_entry_infobox import scrap_wiki
 from .scrapers.scrap_wiki_entry_production import scrap_production
@@ -172,9 +173,18 @@ class ModuleWiki(commands.Cog):
             if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
                 logging.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
-        entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
+
+        # Get costs info from the wiki
         scraped_production_data = scrap_production(search_request)
-        print(scraped_production_data)
+
+        # Get correct entry name
+        scraped_production_data['name'] = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
+
+        # If an entry refers to the MPF in the wiki, a new key is added with the calculated MPF data
+        if any(tup for tup in scraped_production_data['Structure'] if tup[0] == 'Mass Production Factory'):
+            # The input is a flattened tuple without the emojis
+            scraped_production_data['mpf_data'] = generate_mpf_data(list(sum(scraped_production_data['Input(s)'][next(i for i, (v, *_) in enumerate(scraped_production_data['Structure']) if v == 'Mass Production Factory')], ()))[::2])
+
         await interaction.response.send_message('ok')
 
     @staticmethod
