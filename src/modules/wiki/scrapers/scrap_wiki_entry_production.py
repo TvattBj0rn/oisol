@@ -3,7 +3,7 @@ import re
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils import EMOJIS_FROM_DICT, Faction
+from src.utils import EMOJIS_FROM_DICT, Faction, get_highest_res_img_link
 
 
 def scrap_production(url: str) -> dict:
@@ -23,16 +23,19 @@ def scrap_production(url: str) -> dict:
 
     # Find Production or Acquisition title and grab the next table (production table)
     production_wikitable = soup.find('h2', text=('Production', 'Acquisition')).find_next_sibling('table')
-    wiki_response_dict = {column_name.get_text(strip=True): [] for column_name in production_wikitable.find('tr').find_all('th')}
+    wiki_response_dict: dict = {column_name.get_text(strip=True): [] for column_name in production_wikitable.find('tr').find_all('th')}
+
+    # Retrieve main picture url
+    wiki_response_dict['thumbnail'] = {'url': get_highest_res_img_link(soup.select_one('aside > div > div > div > div > a > img')['src'])}
 
     # Iterate on rows that are not the title columns
     for tr in production_wikitable.find('tr').find_next_siblings('tr'):
         tr: Tag  # for type hinting
-        if 'Color' not in wiki_response_dict and tr.has_attr('style'):
+        if 'color' not in wiki_response_dict and tr.has_attr('style'):
             if 'colonial-color' in tr['style']:
-                wiki_response_dict['Color'] = Faction.COLONIAL.value
+                wiki_response_dict['color'] = Faction.COLONIAL.value
             elif 'warden-color' in tr['style']:
-                wiki_response_dict['Color'] = Faction.WARDEN.value
+                wiki_response_dict['color'] = Faction.WARDEN.value
         remover_pattern = r'^(\d+ )?(x )?(\d+ x )?(Crate of )?(\d+ x )?'
         for i, td in enumerate(tr.find_all('td')):
             td: Tag
@@ -63,6 +66,6 @@ def scrap_production(url: str) -> dict:
                 # 3 -> Time column: get text (time or hammer hits)
                 case 3:
                     wiki_response_dict[list(wiki_response_dict.keys())[i]].append(td.get_text(' ', strip=True))
-    if 'Color' not in wiki_response_dict:
-        wiki_response_dict['Color'] = Faction.NEUTRAL.value
+    if 'color' not in wiki_response_dict:
+        wiki_response_dict['color'] = Faction.NEUTRAL.value
     return wiki_response_dict
