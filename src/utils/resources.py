@@ -186,8 +186,11 @@ EMOJIS_FROM_DICT = {
     'MapIconShipyard': '<:shipyard:1239655207353323640>',
     'MapIconConstructionYard': '<:construction_yard:1239655212705251410>',
     'Tech Center Map Icon': '<:tech_center:1239655211161616427>',
-    'MapIconMassProductionFactory': '<:mpf:1239655209903456267>',
-    'MapIconFactory': '<:factory_building:1239655208485781575>',
+    'Mass Production Factory': '<:mpf:1239655209903456267>',
+    'Factory': '<:factory_building:1239655208485781575>',
+    'MW of power': '<:mw_of_power:1327439074184794185>',
+    'Small Assembly Station': '<:lightassembly:1196074987879153724>',
+    'Infantry Arms Factory': '<:infantry_arms_factory:1327437914719780884>',
     'MapIconManufacturing': '<:refinery:1239656064761200640>',
     'MapIconSeaport': '<:seaport:1239655214059880529>',
     'MapIconStorageFacility': '<:storage_depot:1239655214936752159>',
@@ -923,6 +926,14 @@ ITEMS_WIKI_ENTRIES = [
     },
 ]
 
+TEST_ENTRIES = [
+{
+        'name': 'Metal Beam',
+        'url': 'https://foxhole.wiki.gg/wiki/Metal_Beam',
+        'keywords': 'metalbeam',
+    },
+]
+
 VEHICLES_WIKI_ENTRIES = [
     {
         'name': 'T3 “Xiphos”',
@@ -1147,12 +1158,12 @@ VEHICLES_WIKI_ENTRIES = [
     {
         'name': 'Devitt Mk. III',
         'url': 'https://foxhole.wiki.gg/wiki/Devitt_Mk._III',
-        'keywords': 'tankwardenlightltdevit',
+        'keywords': 'tankwardenlightltdevitt',
     },
     {
         'name': 'Devitt Ironhide Mk. IV',
         'url': 'https://foxhole.wiki.gg/wiki/Devitt_Ironhide_Mk._IV',
-        'keywords': 'tankwardenlightltdevitironhide',
+        'keywords': 'tankwardenlightltdevittironhide',
     },
     {
         'name': 'Devitt-Caine Mk. IV MMR',
@@ -2490,3 +2501,4 @@ STRUCTURES_WIKI_ENTRIES = [
 ]
 
 ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES
+ITEMS_WIKI_ENTRIES += TEST_ENTRIES
