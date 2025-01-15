@@ -27,7 +27,6 @@ def scrap_production(url: str) -> dict:
         for article_tag in soup.find_all('article'):
             article_tag: Tag
             if article_tag.has_attr('data-mw-tabber-title') and article_tag['data-mw-tabber-title'] != current_mat:
-                print('here')
                 article_tag.decompose()
 
     # Find Production or Acquisition title and grab the next table (production table)
