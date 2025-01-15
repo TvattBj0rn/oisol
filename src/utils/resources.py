@@ -936,11 +936,86 @@ ITEMS_WIKI_ENTRIES = [
     },
 ]
 
-TEST_ENTRIES = [
-{
-        'name': 'Metal Beam',
-        'url': 'https://foxhole.wiki.gg/wiki/Metal_Beam',
-        'keywords': 'metalbeam',
+FACILITY_MATERIAL_ENTRIES = [
+    {
+        'name': 'Diesel',
+        'url': 'https://foxhole.wiki.gg/wiki/Diesel',
+        'keywords': 'dieselfuel',
+    },
+    {
+        'name': 'Petrol',
+        'url': 'https://foxhole.wiki.gg/wiki/Petrol',
+        'keywords': 'petrolfuel',
+    },
+    {
+        'name': 'Oil',
+        'url': 'https://foxhole.wiki.gg/wiki/Oil',
+        'keywords': 'oil',
+    },
+    {
+        'name': 'Coal',
+        'url': 'https://foxhole.wiki.gg/wiki/Coal',
+        'keywords': 'Coal',
+    },
+    {
+        'name': 'Components',
+        'url': 'https://foxhole.wiki.gg/wiki/Components',
+        'keywords': 'components',
+    },
+    {
+        'name': 'Salvage',
+        'url': 'https://foxhole.wiki.gg/wiki/Salvage',
+        'keywords': 'salvagescroopscrap',
+    },
+    {
+        'name': 'Sulfur',
+        'url': 'https://foxhole.wiki.gg/wiki/Sulfur',
+        'keywords': 'sulfur',
+    },
+    {
+        'name': 'Water',
+        'url': 'https://foxhole.wiki.gg/wiki/Water',
+        'keywords': 'water',
+    },
+    {
+        'name': 'Construction Materials',
+        'url': 'https://foxhole.wiki.gg/wiki/Construction_Materials',
+        'keywords': 'constructionmaterialscmats',
+    },
+    {
+        'name': 'Processed Construction Materials',
+        'url': 'https://foxhole.wiki.gg/wiki/Processed_Construction_Materials',
+        'keywords': 'processedconstructionmaterialspcmats',
+    },
+    {
+        'name': 'Steel Construction Materials',
+        'url': 'https://foxhole.wiki.gg/wiki/Steel_Construction_Materials',
+        'keywords': 'steelconstructionmaterialsscmats',
+    },
+    {
+        'name': 'Assembly Materials I',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_I-0',
+        'keywords': 'amatsasmatsassemblymaterialsi1',
+    },
+    {
+        'name': 'Assembly Materials II',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_II-0',
+        'keywords': 'amatsasmatsassemblymaterialsii2',
+    },
+    {
+        'name': 'Assembly Materials III',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_III-0',
+        'keywords': 'amatsasmatsassemblymaterialsiii3',
+    },
+    {
+        'name': 'Assembly Materials IV',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_IV-0',
+        'keywords': 'amatsasmatsassemblymaterialsiv4',
+    },
+    {
+        'name': 'Assembly Materials V',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_V-0',
+        'keywords': 'amatsasmatsassemblymaterialsv5',
     },
 ]
 
@@ -2511,4 +2586,4 @@ STRUCTURES_WIKI_ENTRIES = [
 ]
 
 ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES
-ITEMS_WIKI_ENTRIES += TEST_ENTRIES
+ITEMS_WIKI_ENTRIES += FACILITY_MATERIAL_ENTRIES
