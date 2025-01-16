@@ -938,6 +938,11 @@ PLACEHOLDER_ENTRIES = [
         'url': 'https://foxhole.wiki.gg/wiki/Ahti_Model_2',
         'keywords': 'wardenatipistolahti',
     },
+    {
+        'name': 'Blumfield LK205',
+        'url': 'https://foxhole.wiki.gg/wiki/Bicycle',
+        'keywords': 'blumfieldcolonialwardenbicycle',
+    },
 ]
 
 FACILITY_MATERIAL_ENTRIES = [
@@ -1523,11 +1528,6 @@ VEHICLES_WIKI_ENTRIES = [
         'name': 'AU-A150 Taurine Rigger',
         'url': 'https://foxhole.wiki.gg/wiki/AU-A150_Taurine_Rigger',
         'keywords': 'colonialtaurineheavydutytruckrigger',
-    },
-    {
-        'name': 'Blumfield LK205',
-        'url': 'https://foxhole.wiki.gg/wiki/Bicycle',
-        'keywords': 'blumfieldcolonialwardenbicycle',
     },
     {
         'name': '03MM “Caster”',
