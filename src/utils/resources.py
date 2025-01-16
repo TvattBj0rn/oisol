@@ -460,19 +460,9 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'wardenpilloryscattergunshotgun',
     },
     {
-        'name': 'Ahti Model 2',
-        'url': 'https://foxhole.wiki.gg/wiki/Ahti_Model_2',
-        'keywords': 'wardenatipistolahti',
-    },
-    {
         'name': 'Cascadier 873',
         'url': 'https://foxhole.wiki.gg/wiki/Cascadier_873',
         'keywords': 'cascadierpistolwarden',
-    },
-    {
-        'name': 'Ferro 879',
-        'url': 'https://foxhole.wiki.gg/wiki/Ferro_879',
-        'keywords': 'colonialferropistol',
     },
     {
         'name': 'Cometa T2-9',
@@ -685,11 +675,6 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'buckhornbayonet',
     },
     {
-        'name': 'Fists',
-        'url': 'https://foxhole.wiki.gg/wiki/Fists',
-        'keywords': 'fists',
-    },
-    {
         'name': 'Eleos Infantry Dagger',
         'url': 'https://foxhole.wiki.gg/wiki/Eleos_Infantry_Dagger',
         'keywords': 'colonialdaggermeleeinfantryeleosweapon',
@@ -855,14 +840,48 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'eviechargedepth',
     },
     {
-        'name': 'Herne QMW 1a Scourge Hunter',
-        'url': 'https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter',
-        'keywords': 'scourgemechahunterherne',
+        'name': 'A0E-9 Rocket Booster',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster',
+        'keywords': 'nukeboosterrocket',
     },
     {
-        'name': 'Centurion MV-2',
-        'url': 'https://foxhole.wiki.gg/wiki/Centurion_MV-2',
-        'keywords': 'centurionmecha',
+        'name': 'A0E-9 Rocket Body',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body',
+        'keywords': 'nukerocketbody',
+    },
+    {
+        'name': 'A0E-9 Rocket Warhead',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead',
+        'keywords': 'nukewarheadrocket',
+    },
+    {
+        'name': 'Deployed Listening Kit',
+        'url': 'https://foxhole.wiki.gg/wiki/Listening_Kit',
+        'keywords': 'deployedlklisteningkit',
+    },
+    {
+        'name': 'Tripod',
+        'url': 'https://foxhole.wiki.gg/wiki/Tripod',
+        'keywords': 'tripod',
+    },
+]
+
+# Specific entries that should only be handled within the wiki command
+PLACEHOLDER_ENTRIES = [
+    {
+        'name': 'Power Station',
+        'url': 'https://foxhole.wiki.gg/wiki/Power_Station',
+        'keywords': 'powerstation',
+    },
+    {
+        'name': 'A0E-9 Rocket Platform',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform',
+        'keywords': 'nukerocketplatform',
+    },
+    {
+        'name': 'Diesel Power Plant',
+        'url': 'https://foxhole.wiki.gg/wiki/Diesel_Power_Plant',
+        'keywords': 'powerdieselplant',
     },
     {
         'name': 'Heavy Infantry Carrier',
@@ -895,52 +914,117 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'componentfield',
     },
     {
-        'name': 'A0E-9 Rocket Booster',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster',
-        'keywords': 'nukeboosterrocket',
+        'name': 'Herne QMW 1a Scourge Hunter',
+        'url': 'https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter',
+        'keywords': 'scourgemechahunterherne',
     },
     {
-        'name': 'A0E-9 Rocket Body',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body',
-        'keywords': 'nukerocketbody',
+        'name': 'Centurion MV-2',
+        'url': 'https://foxhole.wiki.gg/wiki/Centurion_MV-2',
+        'keywords': 'centurionmecha',
     },
     {
-        'name': 'A0E-9 Rocket Warhead',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead',
-        'keywords': 'nukewarheadrocket',
+        'name': 'Fists',
+        'url': 'https://foxhole.wiki.gg/wiki/Fists',
+        'keywords': 'fists',
     },
     {
-        'name': 'A0E-9 Rocket Platform',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform',
-        'keywords': 'nukerocketplatform',
+        'name': 'Ferro 879',
+        'url': 'https://foxhole.wiki.gg/wiki/Ferro_879',
+        'keywords': 'colonialferropistol',
     },
     {
-        'name': 'Diesel Power Plant',
-        'url': 'https://foxhole.wiki.gg/wiki/Diesel_Power_Plant',
-        'keywords': 'powerdieselplant',
+        'name': 'Ahti Model 2',
+        'url': 'https://foxhole.wiki.gg/wiki/Ahti_Model_2',
+        'keywords': 'wardenatipistolahti',
     },
     {
-        'name': 'Power Station',
-        'url': 'https://foxhole.wiki.gg/wiki/Power_Station',
-        'keywords': 'powerstation',
-    },
-    {
-        'name': 'Deployed Listening Kit',
-        'url': 'https://foxhole.wiki.gg/wiki/Listening_Kit',
-        'keywords': 'deployedlklisteningkit',
-    },
-    {
-        'name': 'Tripod',
-        'url': 'https://foxhole.wiki.gg/wiki/Tripod',
-        'keywords': 'tripod',
+        'name': 'Blumfield LK205',
+        'url': 'https://foxhole.wiki.gg/wiki/Bicycle',
+        'keywords': 'blumfieldcolonialwardenbicycle',
     },
 ]
 
-TEST_ENTRIES = [
-{
-        'name': 'Metal Beam',
-        'url': 'https://foxhole.wiki.gg/wiki/Metal_Beam',
-        'keywords': 'metalbeam',
+FACILITY_MATERIAL_ENTRIES = [
+    {
+        'name': 'Diesel',
+        'url': 'https://foxhole.wiki.gg/wiki/Diesel',
+        'keywords': 'dieselfuel',
+    },
+    {
+        'name': 'Petrol',
+        'url': 'https://foxhole.wiki.gg/wiki/Petrol',
+        'keywords': 'petrolfuel',
+    },
+    {
+        'name': 'Oil',
+        'url': 'https://foxhole.wiki.gg/wiki/Oil',
+        'keywords': 'oil',
+    },
+    {
+        'name': 'Coal',
+        'url': 'https://foxhole.wiki.gg/wiki/Coal',
+        'keywords': 'Coal',
+    },
+    {
+        'name': 'Components',
+        'url': 'https://foxhole.wiki.gg/wiki/Components',
+        'keywords': 'components',
+    },
+    {
+        'name': 'Salvage',
+        'url': 'https://foxhole.wiki.gg/wiki/Salvage',
+        'keywords': 'salvagescroopscrap',
+    },
+    {
+        'name': 'Sulfur',
+        'url': 'https://foxhole.wiki.gg/wiki/Sulfur',
+        'keywords': 'sulfur',
+    },
+    {
+        'name': 'Water',
+        'url': 'https://foxhole.wiki.gg/wiki/Water',
+        'keywords': 'water',
+    },
+    {
+        'name': 'Construction Materials',
+        'url': 'https://foxhole.wiki.gg/wiki/Construction_Materials',
+        'keywords': 'constructionmaterialscmats',
+    },
+    {
+        'name': 'Processed Construction Materials',
+        'url': 'https://foxhole.wiki.gg/wiki/Processed_Construction_Materials',
+        'keywords': 'processedconstructionmaterialspcmats',
+    },
+    {
+        'name': 'Steel Construction Materials',
+        'url': 'https://foxhole.wiki.gg/wiki/Steel_Construction_Materials',
+        'keywords': 'steelconstructionmaterialsscmats',
+    },
+    {
+        'name': 'Assembly Materials I',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_I-0',
+        'keywords': 'amatsasmatsassemblymaterialsi1',
+    },
+    {
+        'name': 'Assembly Materials II',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_II-0',
+        'keywords': 'amatsasmatsassemblymaterialsii2',
+    },
+    {
+        'name': 'Assembly Materials III',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_III-0',
+        'keywords': 'amatsasmatsassemblymaterialsiii3',
+    },
+    {
+        'name': 'Assembly Materials IV',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_IV-0',
+        'keywords': 'amatsasmatsassemblymaterialsiv4',
+    },
+    {
+        'name': 'Assembly Materials V',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_V-0',
+        'keywords': 'amatsasmatsassemblymaterialsv5',
     },
 ]
 
@@ -1444,11 +1528,6 @@ VEHICLES_WIKI_ENTRIES = [
         'name': 'AU-A150 Taurine Rigger',
         'url': 'https://foxhole.wiki.gg/wiki/AU-A150_Taurine_Rigger',
         'keywords': 'colonialtaurineheavydutytruckrigger',
-    },
-    {
-        'name': 'Blumfield LK205',
-        'url': 'https://foxhole.wiki.gg/wiki/Bicycle',
-        'keywords': 'blumfieldcolonialwardenbicycle',
     },
     {
         'name': '03MM “Caster”',
@@ -2510,5 +2589,5 @@ STRUCTURES_WIKI_ENTRIES = [
     },
 ]
 
-ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES
-ITEMS_WIKI_ENTRIES += TEST_ENTRIES
+ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES + PLACEHOLDER_ENTRIES
+PRODUCTION_ENTRIES = ITEMS_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES + VEHICLES_WIKI_ENTRIES
