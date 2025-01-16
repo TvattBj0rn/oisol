@@ -460,19 +460,9 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'wardenpilloryscattergunshotgun',
     },
     {
-        'name': 'Ahti Model 2',
-        'url': 'https://foxhole.wiki.gg/wiki/Ahti_Model_2',
-        'keywords': 'wardenatipistolahti',
-    },
-    {
         'name': 'Cascadier 873',
         'url': 'https://foxhole.wiki.gg/wiki/Cascadier_873',
         'keywords': 'cascadierpistolwarden',
-    },
-    {
-        'name': 'Ferro 879',
-        'url': 'https://foxhole.wiki.gg/wiki/Ferro_879',
-        'keywords': 'colonialferropistol',
     },
     {
         'name': 'Cometa T2-9',
@@ -685,11 +675,6 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'buckhornbayonet',
     },
     {
-        'name': 'Fists',
-        'url': 'https://foxhole.wiki.gg/wiki/Fists',
-        'keywords': 'fists',
-    },
-    {
         'name': 'Eleos Infantry Dagger',
         'url': 'https://foxhole.wiki.gg/wiki/Eleos_Infantry_Dagger',
         'keywords': 'colonialdaggermeleeinfantryeleosweapon',
@@ -855,14 +840,48 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'eviechargedepth',
     },
     {
-        'name': 'Herne QMW 1a Scourge Hunter',
-        'url': 'https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter',
-        'keywords': 'scourgemechahunterherne',
+        'name': 'A0E-9 Rocket Booster',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster',
+        'keywords': 'nukeboosterrocket',
     },
     {
-        'name': 'Centurion MV-2',
-        'url': 'https://foxhole.wiki.gg/wiki/Centurion_MV-2',
-        'keywords': 'centurionmecha',
+        'name': 'A0E-9 Rocket Body',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body',
+        'keywords': 'nukerocketbody',
+    },
+    {
+        'name': 'A0E-9 Rocket Warhead',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead',
+        'keywords': 'nukewarheadrocket',
+    },
+    {
+        'name': 'Deployed Listening Kit',
+        'url': 'https://foxhole.wiki.gg/wiki/Listening_Kit',
+        'keywords': 'deployedlklisteningkit',
+    },
+    {
+        'name': 'Tripod',
+        'url': 'https://foxhole.wiki.gg/wiki/Tripod',
+        'keywords': 'tripod',
+    },
+]
+
+# Specific entries that should only be handled within the wiki command
+PLACEHOLDER_ENTRIES = [
+    {
+        'name': 'Power Station',
+        'url': 'https://foxhole.wiki.gg/wiki/Power_Station',
+        'keywords': 'powerstation',
+    },
+    {
+        'name': 'A0E-9 Rocket Platform',
+        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform',
+        'keywords': 'nukerocketplatform',
+    },
+    {
+        'name': 'Diesel Power Plant',
+        'url': 'https://foxhole.wiki.gg/wiki/Diesel_Power_Plant',
+        'keywords': 'powerdieselplant',
     },
     {
         'name': 'Heavy Infantry Carrier',
@@ -895,44 +914,29 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'componentfield',
     },
     {
-        'name': 'A0E-9 Rocket Booster',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Booster',
-        'keywords': 'nukeboosterrocket',
+        'name': 'Herne QMW 1a Scourge Hunter',
+        'url': 'https://foxhole.wiki.gg/wiki/Herne_QMW_1a_Scourge_Hunter',
+        'keywords': 'scourgemechahunterherne',
     },
     {
-        'name': 'A0E-9 Rocket Body',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Body',
-        'keywords': 'nukerocketbody',
+        'name': 'Centurion MV-2',
+        'url': 'https://foxhole.wiki.gg/wiki/Centurion_MV-2',
+        'keywords': 'centurionmecha',
     },
     {
-        'name': 'A0E-9 Rocket Warhead',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Warhead',
-        'keywords': 'nukewarheadrocket',
+        'name': 'Fists',
+        'url': 'https://foxhole.wiki.gg/wiki/Fists',
+        'keywords': 'fists',
     },
     {
-        'name': 'A0E-9 Rocket Platform',
-        'url': 'https://foxhole.wiki.gg/wiki/A0E-9_Rocket_Platform',
-        'keywords': 'nukerocketplatform',
+        'name': 'Ferro 879',
+        'url': 'https://foxhole.wiki.gg/wiki/Ferro_879',
+        'keywords': 'colonialferropistol',
     },
     {
-        'name': 'Diesel Power Plant',
-        'url': 'https://foxhole.wiki.gg/wiki/Diesel_Power_Plant',
-        'keywords': 'powerdieselplant',
-    },
-    {
-        'name': 'Power Station',
-        'url': 'https://foxhole.wiki.gg/wiki/Power_Station',
-        'keywords': 'powerstation',
-    },
-    {
-        'name': 'Deployed Listening Kit',
-        'url': 'https://foxhole.wiki.gg/wiki/Listening_Kit',
-        'keywords': 'deployedlklisteningkit',
-    },
-    {
-        'name': 'Tripod',
-        'url': 'https://foxhole.wiki.gg/wiki/Tripod',
-        'keywords': 'tripod',
+        'name': 'Ahti Model 2',
+        'url': 'https://foxhole.wiki.gg/wiki/Ahti_Model_2',
+        'keywords': 'wardenatipistolahti',
     },
 ]
 
@@ -2585,5 +2589,5 @@ STRUCTURES_WIKI_ENTRIES = [
     },
 ]
 
-ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES
-ITEMS_WIKI_ENTRIES += FACILITY_MATERIAL_ENTRIES
+ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES + PLACEHOLDER_ENTRIES
+PRODUCTION_ENTRIES = ITEMS_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES
