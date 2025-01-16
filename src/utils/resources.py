@@ -962,9 +962,24 @@ FACILITY_MATERIAL_ENTRIES = [
         'keywords': 'oil',
     },
     {
+        'name': 'Heavy Oil',
+        'url': 'https://foxhole.wiki.gg/wiki/Heavy_Oil',
+        'keywords': 'heavyhoil',
+    },
+    {
+        'name': 'Enriched Oil',
+        'url': 'https://foxhole.wiki.gg/wiki/Enriched_Oil',
+        'keywords': 'enrichedeoil',
+    },
+    {
         'name': 'Coal',
         'url': 'https://foxhole.wiki.gg/wiki/Coal',
-        'keywords': 'Coal',
+        'keywords': 'coal',
+    },
+    {
+        'name': 'Coke',
+        'url': 'https://foxhole.wiki.gg/wiki/Coke',
+        'keywords': 'coke',
     },
     {
         'name': 'Components',
@@ -1025,6 +1040,26 @@ FACILITY_MATERIAL_ENTRIES = [
         'name': 'Assembly Materials V',
         'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_V-0',
         'keywords': 'amatsasmatsassemblymaterialsv5',
+    },
+    {
+        'name': 'Thermal Shielding',
+        'url': 'https://foxhole.wiki.gg/wiki/Thermal_Shielding',
+        'keywords': 'thermalshielding',
+    },
+    {
+        'name': 'Naval Hull Segments',
+        'url': 'https://foxhole.wiki.gg/wiki/Naval_Hull_Segments',
+        'keywords': 'navalhullsegments',
+    },
+    {
+        'name': 'Naval Shell Plating',
+        'url': 'https://foxhole.wiki.gg/wiki/Naval_Shell_Plating',
+        'keywords': 'navalshellplating',
+    },
+    {
+        'name': 'Naval Turbine Components',
+        'url': 'https://foxhole.wiki.gg/wiki/Naval_Turbine_Components',
+        'keywords': 'navalturbinecomponents',
     },
 ]
 
