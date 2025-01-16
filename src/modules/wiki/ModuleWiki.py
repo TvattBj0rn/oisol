@@ -11,11 +11,11 @@ from discord.ext import commands
 from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
-    ITEMS_WIKI_ENTRIES,
     NAMES_TO_ACRONYMS,
     RESOURCE_TO_CRATE,
     STRUCTURES_WIKI_ENTRIES,
     VEHICLES_WIKI_ENTRIES,
+    PRODUCTION_ENTRIES,
 )
 
 from .mpf_generation import generate_mpf_data
@@ -276,8 +276,8 @@ class ModuleWiki(commands.Cog):
         choice_list = self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
 
-    # used in production commands
+    # used in production command
     @get_item_production_parameters.autocomplete('search_request')
     async def items_vehicles_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
-        choice_list = self.generic_autocomplete(ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
+        choice_list = self.generic_autocomplete(PRODUCTION_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
