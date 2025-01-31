@@ -21,6 +21,8 @@ select = [
     "ERA", # Commented code
     "TRY", # Tryceratops (Exception related)
     "RUF", # Ruff specific rules
+    "N", # Pep-8 naming conventions
+    ""
 ]
 ignore = [
     "E501", # Line-too-long

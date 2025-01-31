@@ -17,7 +17,7 @@ from src.utils import (
     update_discord_interface,
 )
 
-from .ConfigInterfaces import ConfigViewMenu, SelectLanguageView
+from .config_interfaces import ConfigViewMenu, SelectLanguageView
 
 
 class ModuleConfig(commands.Cog):

@@ -15,7 +15,7 @@ from src.utils import (
     safeguarded_nickname,
 )
 
-from .RegisterViewMenu import RegisterViewMenu
+from .register_view_menu import RegisterViewMenu
 
 
 class ModuleRegister(commands.Cog):

@@ -1,2 +1,2 @@
-from .ModuleStockpile import ModuleStockpiles
+from .module_stockpile import ModuleStockpiles
 from .stockpile_embed_generator import generate_view_stockpile_embed

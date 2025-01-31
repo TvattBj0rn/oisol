@@ -5,7 +5,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .TodolistViewMenu import TodolistViewMenu
+from .todolist_view_menu import TodolistViewMenu
 
 
 class ModuleTodolist(commands.Cog):
