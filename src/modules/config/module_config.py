@@ -22,7 +22,7 @@ from .config_interfaces import ConfigViewMenu, SelectLanguageView
 
 class ModuleConfig(commands.Cog):
     def __init__(self, bot: commands.Bot):
-        self.oisol = bot
+        self.bot = bot
         self.csv_keys = MODULES_CSV_KEYS
 
     @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')

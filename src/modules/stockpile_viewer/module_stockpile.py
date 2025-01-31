@@ -23,7 +23,7 @@ from .stockpile_embed_generator import generate_view_stockpile_embed
 
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: commands.Bot):
-        self.oisol = bot
+        self.bot = bot
         self.csv_keys = MODULES_CSV_KEYS['stockpiles']
         self.CsvHandler = CsvHandler(self.csv_keys)
 
