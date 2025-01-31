@@ -137,7 +137,7 @@ class ModuleWiki(commands.Cog):
             mpf_fields = []
 
             # Iterate over MPF slots (5 or 9)
-            for i in range(len(wiki_data['mpf_data'][list(wiki_data['mpf_data'].keys())[0]])):
+            for i in range(len(wiki_data['mpf_data'][next(iter(wiki_data['mpf_data']))])):
                 mpf_fields.append({
                     'name': f'{i + 1} {EMOJIS_FROM_DICT.get('Crate', 'Crate')}',
                     'value': '\n'.join(f'- x{f'{math.ceil(v[i] / RESOURCE_TO_CRATE.get(k, 1))} crates of '} {k} {EMOJIS_FROM_DICT.get(k, '')} *({v[i]})*' for k, v in wiki_data['mpf_data'].items()),
