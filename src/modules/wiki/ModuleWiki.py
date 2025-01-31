@@ -12,10 +12,10 @@ from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS,
+    PRODUCTION_ENTRIES,
     RESOURCE_TO_CRATE,
     STRUCTURES_WIKI_ENTRIES,
     VEHICLES_WIKI_ENTRIES,
-    PRODUCTION_ENTRIES,
 )
 
 from .mpf_generation import generate_mpf_data

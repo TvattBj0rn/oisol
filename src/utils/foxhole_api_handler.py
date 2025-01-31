@@ -39,11 +39,11 @@ class FoxholeAPIWrapper:
         Returns a list of the active World Conquest map names.
         :return: list of world regions if the response code was 200, else an empty list.
         """
-        if (response:= requests.get(f'{self.shard}/worldconquest/maps')).status_code == 200:
+        if (response := requests.get(f'{self.shard}/worldconquest/maps')).status_code == 200:
             return response.json()
         return []
 
-    def get_region_war_report(self, region: str, etag: str = None) -> tuple[str, dict]:
+    def get_region_war_report(self, region: str, etag: str | None = None) -> tuple[str, dict]:
         """
         Returns the number of enlistments, casualties, and other map specific information as well as the etag.
         :param region: the region to pull the data from.
@@ -57,7 +57,7 @@ class FoxholeAPIWrapper:
             etag,
         )
 
-    def get_region_static_data(self, region: str, etag: str = None) -> tuple[str, dict]:
+    def get_region_static_data(self, region: str, etag: str | None = None) -> tuple[str, dict]:
         """
         Returns region static information (landmarks, labels, ...) as well as the etag.
         :param region: the region to pull the data from.
@@ -71,7 +71,7 @@ class FoxholeAPIWrapper:
             etag,
         )
 
-    def get_region_dynamic_data(self, region: str, etag: str = None) -> tuple[str, dict]:
+    def get_region_dynamic_data(self, region: str, etag: str | None = None) -> tuple[str, dict]:
         """
         Returns region dynamic information (subregion owner, advanced structures, ...) as well as the etag.
         :param region: the region to pull the data from.
