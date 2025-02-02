@@ -1,13 +1,6 @@
-from enum import Enum
-
 import requests
 
-
-class Shard(Enum):
-    ABLE = 'https://war-service-live.foxholeservices.com/api'
-    BAKER = 'https://war-service-live-2.foxholeservices.com/api'
-    CHARLIE = 'https://war-service-live-3.foxholeservices.com/api'
-    DEVBRANCH = 'https://war-service-dev.foxholeservices.com/api'
+from src.utils import Shard
 
 
 class FoxholeAPIWrapper:
