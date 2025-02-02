@@ -5,7 +5,8 @@ from src.utils import Shard
 
 class FoxholeAPIWrapper:
     def __init__(self, shard: Shard = Shard.ABLE):
-        self.shard = shard.value
+        self.shard_name = shard.name
+        self.shard_endpoint = shard.value
 
     @staticmethod
     def _response_handler(response: requests.Response, etag: str | None) -> tuple[str, dict]:
@@ -23,7 +24,7 @@ class FoxholeAPIWrapper:
         Returns data about the current state of the war. This data may update every 60 seconds.
         :return: json of the requested data if the response code was 200 else an empty dictionary.
         """
-        if (response := requests.get(f'{self.shard}/worldconquest/war')).status_code == 200:
+        if (response := requests.get(f'{self.shard_endpoint}/worldconquest/war')).status_code == 200:
             return response.json()
         return {}
 
@@ -32,7 +33,7 @@ class FoxholeAPIWrapper:
         Returns a list of the active World Conquest map names.
         :return: list of world regions if the response code was 200, else an empty list.
         """
-        if (response := requests.get(f'{self.shard}/worldconquest/maps')).status_code == 200:
+        if (response := requests.get(f'{self.shard_endpoint}/worldconquest/maps')).status_code == 200:
             return response.json()
         return []
 
@@ -45,7 +46,7 @@ class FoxholeAPIWrapper:
         """
         return self._response_handler(
             requests.get(
-                f'{self.shard}/worldconquest/warReport/{region}',
+                f'{self.shard_endpoint}/worldconquest/warReport/{region}',
                 headers={'If-None-Match': etag}),
             etag,
         )
@@ -59,7 +60,7 @@ class FoxholeAPIWrapper:
         """
         return self._response_handler(
             requests.get(
-                f'{self.shard}/worldconquest/maps/{region}/static',
+                f'{self.shard_endpoint}/worldconquest/maps/{region}/static',
                 headers={'If-None-Match': etag}),
             etag,
         )
@@ -73,7 +74,7 @@ class FoxholeAPIWrapper:
         """
         return self._response_handler(
             requests.get(
-                f'{self.shard}/worldconquest/maps/{region}/dynamic/public',
+                f'{self.shard_endpoint}/worldconquest/maps/{region}/dynamic/public',
                 headers={'If-None-Match': etag}),
             etag,
         )
