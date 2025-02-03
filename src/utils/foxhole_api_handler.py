@@ -1,6 +1,6 @@
 import requests
 
-from src.utils import Shard
+from src.utils import Shard, MapIcon
 
 
 class FoxholeAPIWrapper:
@@ -78,3 +78,54 @@ class FoxholeAPIWrapper:
                 headers={'If-None-Match': etag}),
             etag,
         )
+
+    def get_region_specific_icons(self, region: str, icons_id: list[int]) -> list[dict]:
+        """
+        Get a list of map items corresponding to icons_id. Etag not required since this function will only be called when data has changed.
+        :param region: the region to pull the data from.
+        :param icons_id: list of icon to return
+        :return: list of map items corresponding to icons_id
+        """
+        _, dynamic_data = self.get_region_dynamic_data(region)
+        if not dynamic_data:
+            return []
+
+        return [map_item for map_item in dynamic_data['mapItems'] if map_item['iconType'] in icons_id]
+
+    def get_region_specific_labels(self, region: str, is_major: bool = True) -> list[dict]:
+        """
+        Get a list of map label corresponding to icons_id. Etag not required since this function will only be called when data has changed.
+        :param region: the region to pull the data from.
+        :param is_major: expected label type
+        :return: list of map items corresponding to icons_id
+        """
+        _, static_data = self.get_region_static_data(region)
+        if not static_data:
+            return []
+
+        return [map_item for map_item in static_data['mapTextItems'] if map_item['mapMarkerType'] == ('Major' if is_major else 'Minor')]
+
+    @staticmethod
+    def get_subregion_from_map_items(map_items: list[dict], map_labels: list[dict]) -> list[tuple]:
+        """
+        Get a list of subregion from a list of map items. Etag not required since this function will only be called when data has changed.
+        :param map_items: list of map items with coordinates
+        :param map_labels: list of map labels with coordinates
+        :return: list of subregion from a list of map items
+        """
+        if not map_items or not map_labels:
+            return []
+
+        res = []
+
+        for map_item in map_items:
+            closest_label = ''
+            closest_x = 1
+            closest_y = 1
+            for map_label in map_labels:
+                if (comparison_x := abs(map_item['x'] - map_label['x']) ) + (comparison_y := abs(map_item['y'] - map_label['y'])) < closest_x + closest_y:
+                    closest_label = map_label['text']
+                    closest_x = comparison_x
+                    closest_y = comparison_y
+            res.append((closest_label, MapIcon(map_item['iconType']).name))
+        return res

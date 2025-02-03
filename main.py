@@ -2,6 +2,7 @@ import configparser
 import logging
 import os
 import pathlib
+import sqlite3
 
 import discord
 from discord.ext import commands
@@ -36,18 +37,10 @@ class Oisol(commands.Bot):
         )
         self.config_servers = {}
 
-    def load_configs(self) -> None:
-        oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
-        for server_folder in os.listdir(oisol_server_home_path):
-            if not server_folder.isdigit():
-                continue
-            server_config = configparser.ConfigParser()
-            server_config.read(
-                os.path.join(oisol_server_home_path, server_folder, 'config.ini'),
-            )
-            self.config_servers[server_folder] = server_config
-
     async def on_ready(self) -> None:
+        # Ready the db
+        self._setup_oisol_db()
+
         # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
@@ -61,7 +54,8 @@ class Oisol(commands.Bot):
         except Exception:
             logging.exception('Could not sync tree properly')
 
-        self.load_configs()
+
+        self._load_configs()
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
     async def setup_hook(self) -> None:
@@ -89,6 +83,24 @@ class Oisol(commands.Bot):
             config = repair_default_config_dict()
             with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
                 config.write(configfile)
+
+    def _load_configs(self) -> None:
+        oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
+        for server_folder in os.listdir(oisol_server_home_path):
+            if not server_folder.isdigit():
+                continue
+            server_config = configparser.ConfigParser()
+            server_config.read(
+                os.path.join(oisol_server_home_path, server_folder, 'config.ini'),
+            )
+            self.config_servers[server_folder] = server_config
+
+    def _setup_oisol_db(self):
+        self.connection = sqlite3.connect('oisol.db')
+        self.cursor = self.connection.cursor()
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT)')
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT)')
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER)')
 
 
 if __name__ == '__main__':
