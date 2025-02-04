@@ -3,6 +3,8 @@
 
 Foxhole organisation tool (Outil Intelligent de Service Opérationnel et Logistique)
 
+[Add the bot to your server](https://discord.com/oauth2/authorize?client_id=1044270302273736704)
+
 ## Modules
 
 - **Stockpile**: This module a stockpile viewer tool. It allows people to add and view stockpiles on an embedded list.
@@ -14,6 +16,3 @@ Foxhole organisation tool (Outil Intelligent de Service Opérationnel et Logisti
 
 - [Python](https://www.python.org/)
 - [Discord.py](https://discordpy.readthedocs.io/en/stable/)
-
-
-[Add the bot to your server](https://discord.com/oauth2/authorize?client_id=1044270302273736704)
