@@ -16,3 +16,4 @@ Foxhole organisation tool (Outil Intelligent de Service Opérationnel et Logisti
 - [Discord.py](https://discordpy.readthedocs.io/en/stable/)
 
 
+[Add the bot to your server](https://discord.com/oauth2/authorize?client_id=1044270302273736704)
