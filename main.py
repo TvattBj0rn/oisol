@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles
+from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -57,6 +57,7 @@ class Oisol(commands.Bot):
 
         self._load_configs()
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
+        await self.add_cog(StockpileTasks(self))
 
     async def setup_hook(self) -> None:
         self.add_view(ConfigViewMenu())
