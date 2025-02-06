@@ -1,6 +1,6 @@
 import requests
 
-from src.utils import Shard, MapIcon
+from src.utils import MapIcon, Shard
 
 
 class FoxholeAPIWrapper:
@@ -123,7 +123,7 @@ class FoxholeAPIWrapper:
             closest_x = 1
             closest_y = 1
             for map_label in map_labels:
-                if (comparison_x := abs(map_item['x'] - map_label['x']) ) + (comparison_y := abs(map_item['y'] - map_label['y'])) < closest_x + closest_y:
+                if (comparison_x := abs(map_item['x'] - map_label['x'])) + (comparison_y := abs(map_item['y'] - map_label['y'])) < closest_x + closest_y:
                     closest_label = map_label['text']
                     closest_x = comparison_x
                     closest_y = comparison_y

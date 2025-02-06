@@ -54,7 +54,6 @@ class Oisol(commands.Bot):
         except Exception:
             logging.exception('Could not sync tree properly')
 
-
         self._load_configs()
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
         await self.add_cog(StockpileTasks(self))
@@ -96,7 +95,7 @@ class Oisol(commands.Bot):
             )
             self.config_servers[server_folder] = server_config
 
-    def _setup_oisol_db(self):
+    def _setup_oisol_db(self) -> None:
         self.connection = sqlite3.connect('oisol.db')
         self.cursor = self.connection.cursor()
         self.cursor.execute('CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT)')

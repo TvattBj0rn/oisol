@@ -19,13 +19,14 @@ from src.utils import (
     CsvHandler,
     DataFilesPath,
     EmbedIds,
+    MapIcon,
     Modules,
     Shard,
-    update_discord_interface, MapIcon,
+    update_discord_interface,
 )
 
-from .stockpile_embed_generator import generate_view_stockpile_embed
 from ...utils.foxhole_api_handler import FoxholeAPIWrapper
+from .stockpile_embed_generator import generate_view_stockpile_embed
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -71,7 +72,6 @@ class ModuleStockpiles(commands.Cog):
 
         region, subregion = localisation.split(' | ')  # Only one '|' -> 2 splits
 
-
         stockpile = {
             'region': region,
             'subregion': subregion,
@@ -85,8 +85,8 @@ class ModuleStockpiles(commands.Cog):
                 break
 
         self.bot.cursor.execute(
-            f"INSERT INTO GroupsStockpiles (GroupId, Region, Subregion, Code, Name, Type) VALUES (?, ?, ?, ?, ?, ?)",
-            (interaction.guild_id, region, subregion, code, name, stockpile['type'])
+            'INSERT INTO GroupsStockpiles (GroupId, Region, Subregion, Code, Name, Type) VALUES (?, ?, ?, ?, ?, ?)',
+            (interaction.guild_id, region, subregion, code, name, stockpile['type']),
         )
         self.bot.connection.commit()
 
@@ -160,7 +160,7 @@ class StockpileTasks(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
         self.all_regions_stockpiles = []
-        # Start task
+        # Start tasks
         self.refresh_able_shard_stockpiles_subregions.start()
         self.refresh_baker_shard_stockpiles_subregions.start()
         self.refresh_charlie_shard_stockpiles_subregions.start()
@@ -173,7 +173,7 @@ class StockpileTasks(commands.Cog):
         ordered_items = api_wrapper.get_subregion_from_map_items(map_items, map_label)
         if region == 'MooringCountyHex':
             region = 'TheMoors'
-        if region == 'DeadLandsHex':
+        elif region == 'DeadLandsHex':
             region = 'Deadlands'
         if ordered_items is not None:
             for item in ordered_items:
@@ -182,28 +182,27 @@ class StockpileTasks(commands.Cog):
                     war_data['warNumber'],
                     war_data['conquestStartTime'],
                     re.sub(r'(\w)([A-Z])', r'\1 \2', region.replace('Hex', '')),
-                    *item
+                    *item,
                 ))
         return single_region_stockpiles
 
-    def _save_region_stockpiles(self, region_stockpiles: list[tuple]):
+    def _save_region_stockpiles(self, region_stockpiles: list[tuple]) -> None:
         self.all_regions_stockpiles += region_stockpiles
 
     def _get_latest_stockpiles_zones(self, api_wrapper: FoxholeAPIWrapper, war_data: dict) -> list:
         region_list = api_wrapper.get_regions_list()
         pool = Pool(processes=(cpu_count() - 1))
-
         for region in region_list:
             pool.apply_async(self._prepare_region_data, args=(api_wrapper, war_data, region), callback=self._save_region_stockpiles)
         pool.close()
         pool.join()
         return self.all_regions_stockpiles
 
-    def _update_stockpile_subregions(self, shard_api: FoxholeAPIWrapper):
+    def _update_stockpile_subregions(self, shard_api: FoxholeAPIWrapper) -> None:
         self.all_regions_stockpiles = []
         if current_war_data := shard_api.get_current_war_state():
             last_war_start_time = self.bot.cursor.execute(
-                f"SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == '{shard_api.shard_name}'"
+                f"SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == '{shard_api.shard_name}'",
             ).fetchone()[0]
             # If war has not started yet
             if not current_war_data['conquestStartTime']:
@@ -211,22 +210,21 @@ class StockpileTasks(commands.Cog):
             if last_war_start_time is None or current_war_data['conquestStartTime'] > last_war_start_time:
                 if not (latest_stockpiles := self._get_latest_stockpiles_zones(shard_api, current_war_data)):
                     return
-                print(latest_stockpiles)
                 self.bot.cursor.executemany(
-                    f"INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)",
-                    latest_stockpiles
+                    'INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)',
+                    latest_stockpiles,
                 )
                 self.bot.connection.commit()
                 logging.info(f'[TASK] Available stockpiles were updated for {shard_api.shard_name}')
 
     @tasks.loop(minutes=2)
-    async def refresh_able_shard_stockpiles_subregions(self):
+    async def refresh_able_shard_stockpiles_subregions(self) -> None:
         self._update_stockpile_subregions(FoxholeAPIWrapper())
 
     @tasks.loop(minutes=2)
-    async def refresh_baker_shard_stockpiles_subregions(self):
+    async def refresh_baker_shard_stockpiles_subregions(self) -> None:
         self._update_stockpile_subregions(FoxholeAPIWrapper(shard=Shard.BAKER))
 
     @tasks.loop(minutes=2)
-    async def refresh_charlie_shard_stockpiles_subregions(self):
+    async def refresh_charlie_shard_stockpiles_subregions(self) -> None:
         self._update_stockpile_subregions(FoxholeAPIWrapper(shard=Shard.CHARLIE))
