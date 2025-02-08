@@ -89,14 +89,20 @@ class Oisol(commands.Bot):
             if not server_folder.isdigit():
                 continue
             server_config = configparser.ConfigParser()
-            server_config.read(self.home_path / server_folder / 'config.ini')
+            server_config.read(self.home_path / server_folder / DataFilesPath.CONFIG.value)
             self.config_servers[server_folder] = server_config
 
     def _setup_oisol_db(self) -> None:
         self.connection = sqlite3.connect(self.home_path / 'oisol.db')
         self.cursor = self.connection.cursor()
+
+        # Available stockpiles per shard
         self.cursor.execute('CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT)')
+
+        # Guilds stockpiles
         self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT)')
+
+        # Guilds register
         self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER)')
 
 

@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import configparser
 import logging
 import os
 import time
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
@@ -17,18 +20,20 @@ from src.utils import (
 
 from .register_view_menu import RegisterViewMenu
 
+if TYPE_CHECKING:
+    from main import Oisol
+
 
 class ModuleRegister(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Oisol):
         self.bot = bot
         self.CsvHandler = CsvHandler(MODULES_CSV_KEYS['register'])
 
     @app_commands.command(name='register-view', description='Command to display the current list of recruit with the date the got the recruit role')
     async def register_view(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] register-view command by {interaction.user.name} on {interaction.guild.name}')
-        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         config = configparser.ConfigParser()
-        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        config.read(self.bot.home_path / str(interaction.guild_id) / DataFilesPath.CONFIG.value)
         if not config.has_section('register'):
             config.add_section('register')
         config.set('register', 'channel', str(interaction.channel_id))
@@ -41,7 +46,7 @@ class ModuleRegister(commands.Cog):
         sent_msg = await interaction.original_response()
 
         config.set('register', 'message_id', str(sent_msg.id))
-        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+        with open(self.bot.home_path / str(interaction.guild_id) / DataFilesPath.CONFIG.value, 'w', newline='') as configfile:
             config.write(configfile)
 
     def validate_all_members(self, members: list, server_id: int, recruit_id: int) -> list:
