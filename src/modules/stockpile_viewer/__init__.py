@@ -1,2 +1,1 @@
 from .module_stockpile import ModuleStockpiles, StockpileTasks
-from .stockpile_embed_generator import generate_view_stockpile_embed

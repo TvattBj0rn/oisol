@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 import configparser
 import logging
 import os
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.stockpile_viewer import generate_view_stockpile_embed
+from src.modules.stockpile_viewer import ModuleStockpiles
 from src.utils import (
     MODULES_CSV_KEYS,
     CsvHandler,
@@ -19,9 +22,11 @@ from src.utils import (
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
 
+if TYPE_CHECKING:
+    from main import Oisol
 
 class ModuleConfig(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Oisol):
         self.bot = bot
         self.csv_keys = MODULES_CSV_KEYS
 
@@ -156,10 +161,10 @@ class ModuleConfig(commands.Cog):
                 if 'footer' in message_embed and message_embed['footer']['text'] == EmbedIds.STOCKPILES_VIEW.value:
                     stockpile_interface_exists = True
             if stockpile_interface_exists:
-                stockpiles_embed = generate_view_stockpile_embed(interaction, MODULES_CSV_KEYS['stockpiles'])
+                # stockpiles_embed = generate_view_stockpile_embed(interaction, MODULES_CSV_KEYS['stockpiles'])
                 await update_discord_interface(
                     interaction,
                     EmbedIds.STOCKPILES_VIEW.value,
-                    embed=stockpiles_embed,
+                    embed=ModuleStockpiles.refresh_stockpile_interface(self.bot, interaction.guild_id),
                 )
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
