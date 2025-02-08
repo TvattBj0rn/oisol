@@ -65,6 +65,7 @@ class Oisol(commands.Bot):
         self.add_dynamic_items(TodolistButtonCheckmark)
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
+        logging.info(f'[JOIN] joined {guild.name} (id: {guild.id})')
         oisol_server_home_path = os.path.join('/', 'oisol', str(guild.id))
 
         # Create guild and guild/todolists directories if they do not exist
