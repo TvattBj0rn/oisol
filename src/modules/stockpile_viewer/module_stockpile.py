@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import configparser
+import functools
 import logging
 import os
 import pathlib
@@ -131,29 +132,40 @@ class ModuleStockpiles(commands.Cog):
         )
         await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)
 
+    @functools.lru_cache()
+    def _get_shard_stockpiles_subregions(self, shard_name: str, _code: int) -> list[str]:
+        """
+        :param shard_name: Shard to pull the data from
+        :param _code: Arbitrary value to detect new command run (new code means new stock means need to rerun the full func)
+        :return: List of all available stockpiles in a given shard
+        """
+        stockpiles_subregions = self.bot.cursor.execute(
+            f"SELECT Region, Subregion FROM StockpilesZones WHERE Shard == '{shard_name}'",
+        ).fetchall()
+        return [' | '.join(subregion) for subregion in stockpiles_subregions]
+
+    @functools.lru_cache()
+    def _get_current_shard(self, guild_id: int, _code: int) -> str:
+        """
+        :param guild_id: Id of the guild the command is running from
+        :param _code: Arbitrary value to detect new command run (new code means new stock means need to rerun the full func)
+        :return: Current shard of the guild from the config file (Able as default value)
+        """
+        config = configparser.ConfigParser()
+        config.read(self.bot.home_path / str(guild_id) / 'config.ini')
+        return config.get('default', 'shard', fallback=Shard.ABLE.name)
+
     @stockpile_create.autocomplete('localisation')
-    async def region_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
-        regions_cities = []
-        for region_name, subregion_tuples in REGIONS_STOCKPILES.items():
-            for subregion_name, *_ in subregion_tuples:
-                regions_cities.append(f'{region_name} | {subregion_name}')
+    async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+        code = next((opt['value'] for opt in interaction.data['options'] if opt.get('name', '') == 'code'), 0)
+        current_shard = self._get_current_shard(interaction.guild_id, code)
+        stockpiles = self._get_shard_stockpiles_subregions(current_shard, code)
 
         if not current:
-            return [app_commands.Choice(name=city, value=city) for city in random.choices(regions_cities, k=10)]
+            return [app_commands.Choice(name=city, value=city) for city in random.choices(stockpiles, k=10)]
 
-        search_results = {}
-
-        for city in regions_cities:
-            search_results[city] = 0
-            for cut_current in current.lower().split():
-                if cut_current in city.lower():
-                    search_results[city] += 1
-            if search_results[city] == 0:
-                search_results.pop(city)
-
-        search_results = sorted(search_results, reverse=True)[:25]
-
-        return [app_commands.Choice(name=city, value=city) for city in search_results]
+        current_stockpiles = [stockpile for stockpile in stockpiles if current.lower() in stockpile.lower()][:25]
+        return [app_commands.Choice(name=city, value=city) for city in current_stockpiles]
 
 
 class StockpileTasks(commands.Cog):
