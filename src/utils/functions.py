@@ -1,4 +1,5 @@
 import configparser
+import operator
 import os
 from configparser import ConfigParser
 
@@ -78,3 +79,12 @@ def get_highest_res_img_link(img_path: str) -> str:
     :return: external link to the correct picture
     """
     return '/'.join(f'https://foxhole.wiki.gg{img_path}'.replace('/thumb', '').split('/')[:-1]) if '/thumb' in img_path else f'https://foxhole.wiki.gg{img_path}'
+
+
+def sort_nested_dicts_by_key(input_dict: dict) -> dict:
+    return {
+        k: sort_nested_dicts_by_key(v) if isinstance(v, dict) else v for k, v in sorted(
+            input_dict.items(),
+            key=operator.itemgetter(0)
+        )
+    }
