@@ -157,6 +157,11 @@ class ModuleStockpiles(commands.Cog):
 
     @stockpile_create.autocomplete('localisation')
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+        """
+        :param interaction: discord command interaction object
+        :param current: current input given by the user
+        :return: list of possibles autocompletion results using the current input
+        """
         code = next((opt['value'] for opt in interaction.data['options'] if opt.get('name', '') == 'code'), 0)
         current_shard = self._get_current_shard(interaction.guild_id, code)
         stockpiles = self._get_shard_stockpiles_subregions(current_shard, code)
