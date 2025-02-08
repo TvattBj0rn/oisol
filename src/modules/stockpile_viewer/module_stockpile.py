@@ -87,6 +87,7 @@ class ModuleStockpiles(commands.Cog):
         guild_stockpiles = bot.cursor.execute(
             f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpiles WHERE GroupId == {guild_id}',
         ).fetchall()
+
         # Group stockpiles by regions
         grouped_stockpiles = {}
         for stockpile in guild_stockpiles:
