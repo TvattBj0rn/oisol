@@ -3,6 +3,7 @@ from __future__ import annotations
 import configparser
 import functools
 import logging
+import pathlib
 import random
 import re
 from multiprocessing import Pool, cpu_count
@@ -28,6 +29,32 @@ if TYPE_CHECKING:
     from main import Oisol
 
 
+@functools.lru_cache
+def get_shard_stockpiles_subregions(bot: Oisol, shard_name: str, _code: str) -> list[str]:
+    """
+    :param bot: Oisol instance
+    :param shard_name: Shard to pull the data from, either ABLE, BAKER or CHARLIE
+    :param _code: Arbitrary value to detect new command run (new code means new stock means need to rerun the full func)
+    :return: List of all available stockpiles in a given shard
+    """
+    stockpiles_subregions = bot.cursor.execute(
+        f"SELECT Region, Subregion FROM StockpilesZones WHERE Shard == '{shard_name}'",
+    ).fetchall()
+    return [' | '.join(subregion) for subregion in stockpiles_subregions]
+
+
+@functools.lru_cache
+def get_current_shard(path: pathlib.Path, _code: str) -> str:
+    """
+    :param path: path to read the config from
+    :param _code: Arbitrary value to detect new command run (new code means new stock means need to rerun the full func)
+    :return: Current shard of the guild from the config file (Able as default value)
+    """
+    config = configparser.ConfigParser()
+    config.read(path)
+    return config.get('default', 'shard', fallback=Shard.ABLE.name)
+
+
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
@@ -45,11 +72,11 @@ class ModuleStockpiles(commands.Cog):
         with open(self.bot.home_path / DataFilesPath.CONFIG.value, 'w', newline='') as configfile:
             config.write(configfile)
         await interaction.response.send_message(
-            embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id)
+            embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id),
         )
 
     @staticmethod
-    def refresh_stockpile_interface(bot: Oisol, guild_id: int) -> None:
+    def refresh_stockpile_interface(bot: Oisol, guild_id: int) -> discord.Embed:
         """
         This method is also used in the config module
         :param bot: Oisol instance
@@ -58,7 +85,7 @@ class ModuleStockpiles(commands.Cog):
         """
         # Get group Stockpiles from db
         guild_stockpiles = bot.cursor.execute(
-            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpiles WHERE GroupId == {guild_id}'
+            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpiles WHERE GroupId == {guild_id}',
         ).fetchall()
         # Group stockpiles by regions
         grouped_stockpiles = {}
@@ -93,8 +120,8 @@ class ModuleStockpiles(commands.Cog):
                 'title': 'Stockpiles | <:region:1130915923704946758>',
                 'color': Faction[group_faction].value,
                 'footer': {'text': EmbedIds.STOCKPILES_VIEW.value},
-                'fields': embed_fields
-            }
+                'fields': embed_fields,
+            },
         )
 
     @app_commands.command(name='stockpile-create', description='Create a new stockpile')
@@ -114,10 +141,10 @@ class ModuleStockpiles(commands.Cog):
             return
 
         region, subregion = localisation.split(' | ')  # Only one '|' -> 2 splits
-        shard_name = self._get_current_shard(interaction.guild_id, code)
+        shard_name = get_current_shard(self.bot.home_path / str(interaction.guild_id) / 'config.ini', code)
         stockpile_type = self.bot.cursor.execute(
-            f"SELECT Type FROM StockpilesZones WHERE Shard == (?) AND Subregion == (?)",
-            (shard_name, subregion)
+            'SELECT Type FROM StockpilesZones WHERE Shard == (?) AND Subregion == (?)',
+            (shard_name, subregion),
         ).fetchone()[0]
 
         self.bot.cursor.execute(
@@ -138,7 +165,7 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str) -> None:
         logging.info(f'[COMMAND] stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
         self.bot.cursor.execute(
-            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code}'
+            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code}',
         )
         self.bot.connection.commit()
 
@@ -153,7 +180,7 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_clear(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] stockpile-clear command by {interaction.user.name} on {interaction.guild.name}')
         self.bot.cursor.execute(
-            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id}'
+            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id}',
         )
         self.bot.connection.commit()
 
@@ -164,29 +191,6 @@ class ModuleStockpiles(commands.Cog):
         )
         await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)
 
-    @functools.lru_cache()
-    def _get_shard_stockpiles_subregions(self, shard_name: str, _code: str) -> list[str]:
-        """
-        :param shard_name: Shard to pull the data from, either ABLE, BAKER or CHARLIE
-        :param _code: Arbitrary value to detect new command run (new code means new stock means need to rerun the full func)
-        :return: List of all available stockpiles in a given shard
-        """
-        stockpiles_subregions = self.bot.cursor.execute(
-            f"SELECT Region, Subregion FROM StockpilesZones WHERE Shard == '{shard_name}'",
-        ).fetchall()
-        return [' | '.join(subregion) for subregion in stockpiles_subregions]
-
-    @functools.lru_cache()
-    def _get_current_shard(self, guild_id: int, _code: str) -> str:
-        """
-        :param guild_id: Id of the guild the command is running from
-        :param _code: Arbitrary value to detect new command run (new code means new stock means need to rerun the full func)
-        :return: Current shard of the guild from the config file (Able as default value)
-        """
-        config = configparser.ConfigParser()
-        config.read(self.bot.home_path / str(guild_id) / 'config.ini')
-        return config.get('default', 'shard', fallback=Shard.ABLE.name)
-
     @stockpile_create.autocomplete('localisation')
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
@@ -195,8 +199,8 @@ class ModuleStockpiles(commands.Cog):
         :return: list of possibles autocompletion results using the current input
         """
         code = next((opt['value'] for opt in interaction.data['options'] if opt.get('name', '') == 'code'), '0')
-        current_shard = self._get_current_shard(interaction.guild_id, code)
-        stockpiles = self._get_shard_stockpiles_subregions(current_shard, code)
+        current_shard = get_current_shard(self.bot.home_path / str(interaction.guild_id) / 'config.ini', code)
+        stockpiles = get_shard_stockpiles_subregions(self.bot, current_shard, code)
 
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(stockpiles, k=10)]

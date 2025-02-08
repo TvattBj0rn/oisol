@@ -25,6 +25,7 @@ from .config_interfaces import ConfigViewMenu, SelectLanguageView
 if TYPE_CHECKING:
     from main import Oisol
 
+
 class ModuleConfig(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
@@ -161,7 +162,6 @@ class ModuleConfig(commands.Cog):
                 if 'footer' in message_embed and message_embed['footer']['text'] == EmbedIds.STOCKPILES_VIEW.value:
                     stockpile_interface_exists = True
             if stockpile_interface_exists:
-                # stockpiles_embed = generate_view_stockpile_embed(interaction, MODULES_CSV_KEYS['stockpiles'])
                 await update_discord_interface(
                     interaction,
                     EmbedIds.STOCKPILES_VIEW.value,

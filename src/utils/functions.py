@@ -85,6 +85,6 @@ def sort_nested_dicts_by_key(input_dict: dict) -> dict:
     return {
         k: sort_nested_dicts_by_key(v) if isinstance(v, dict) else v for k, v in sorted(
             input_dict.items(),
-            key=operator.itemgetter(0)
+            key=operator.itemgetter(0),
         )
     }
