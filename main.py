@@ -36,6 +36,7 @@ class Oisol(commands.Bot):
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
         self.config_servers = {}
+        self.home_path = pathlib.Path('/') / 'oisol'
 
     async def on_ready(self) -> None:
         # Ready the db
@@ -66,38 +67,33 @@ class Oisol(commands.Bot):
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
         logging.info(f'[JOIN] joined {guild.name} (id: {guild.id})')
-        oisol_server_home_path = os.path.join('/', 'oisol', str(guild.id))
+        server_home_path = self.home_path / str(guild.id)
 
         # Create guild and guild/todolists directories if they do not exist
-        os.makedirs(os.path.join(oisol_server_home_path), exist_ok=True)
-        os.makedirs(os.path.join(oisol_server_home_path, 'todolists'), exist_ok=True)
+        os.makedirs(server_home_path, exist_ok=True)
+        os.makedirs(server_home_path / 'todolists', exist_ok=True)
 
         # Create oisol/*.csv files
         for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
-            if not os.path.isfile(os.path.join(oisol_server_home_path, datafile.value)):
-                CsvHandler(MODULES_CSV_KEYS[datafile.name.lower()]).csv_try_create_file(
-                    os.path.join(oisol_server_home_path, datafile.value),
-                )
+            if not os.path.isfile(module_path := server_home_path / datafile.value):
+                CsvHandler(MODULES_CSV_KEYS[datafile.name.lower()]).csv_try_create_file(module_path)
 
         # Create oisol/config.ini file with default config
-        if not os.path.isfile(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value)):
+        if not os.path.isfile(config_path := server_home_path / DataFilesPath.CONFIG.value):
             config = repair_default_config_dict()
-            with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 
     def _load_configs(self) -> None:
-        oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
-        for server_folder in os.listdir(oisol_server_home_path):
+        for server_folder in os.listdir(self.home_path):
             if not server_folder.isdigit():
                 continue
             server_config = configparser.ConfigParser()
-            server_config.read(
-                os.path.join(oisol_server_home_path, server_folder, 'config.ini'),
-            )
+            server_config.read(self.home_path / server_folder / 'config.ini')
             self.config_servers[server_folder] = server_config
 
     def _setup_oisol_db(self) -> None:
-        self.connection = sqlite3.connect('oisol.db')
+        self.connection = sqlite3.connect(self.home_path / 'oisol.db')
         self.cursor = self.connection.cursor()
         self.cursor.execute('CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT)')
         self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT)')
