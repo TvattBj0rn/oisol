@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import configparser
 import logging
-import os
 import time
 from typing import TYPE_CHECKING
 
@@ -99,12 +98,10 @@ class ModuleRegister(commands.Cog):
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         if before.id == before.guild.owner.id:
             return
-        oisol_server_home_path = os.path.join('/', 'oisol', str(before.guild.id))
+
         config = configparser.ConfigParser()
-        try:
-            config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
-        except FileNotFoundError:
-            return
+        config.read(self.bot.home_path / str(before.guild.id) / DataFilesPath.CONFIG.value)
+
         # In some cases, there might be an update of any members roles before the init command is executed.
         # As such this ensures there are no errors on the bot side when this case happens.
         if not config.has_section('register') or not config.has_option('register', 'recruit_id') or not bool(
