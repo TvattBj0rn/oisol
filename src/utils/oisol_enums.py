@@ -68,9 +68,9 @@ class Modules(Enum):
 
 
 class PriorityType(Enum):
-    HIGH = 'high'
-    MEDIUM = 'medium'
-    LOW = 'low'
+    HIGH = '🟥'
+    MEDIUM = '🟨'
+    LOW = '🟩'
 
 
 class Shard(Enum):
