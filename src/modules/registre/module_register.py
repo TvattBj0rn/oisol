@@ -14,7 +14,6 @@ from src.utils import (
     MODULES_CSV_KEYS,
     CsvHandler,
     DataFilesPath,
-    Modules,
     safeguarded_nickname,
 )
 
@@ -60,16 +59,14 @@ class ModuleRegister(commands.Cog):
         guild = self.bot.get_guild(server_id)
         return [t for t in members if t[2] in [m.id for m in guild.members] and guild.get_member(t[2]).get_role(recruit_id)]
 
-
     async def update_register(self, guild_id: int) -> None:
         config = configparser.ConfigParser()
         config.read(self.bot.home_path / str(guild_id) / DataFilesPath.CONFIG.value)
 
         all_members = self.bot.cursor.execute(
-            f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}'
+            f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}',
         ).fetchall()
 
-        # csv_handler = CsvHandler(['member', 'timer'])
         all_members = self.validate_all_members(
             all_members,
             guild_id,
@@ -113,7 +110,6 @@ class ModuleRegister(commands.Cog):
         if not config.has_section('register') or not config.has_option('register', 'recruit_id') or not bool(
                 config.get('register', 'recruit_id')):
             return
-        csv_handler = CsvHandler(['member', 'timer'])
 
         # Member is now a recruit
         if (
@@ -122,7 +118,7 @@ class ModuleRegister(commands.Cog):
         ):
             self.bot.cursor.execute(
                 'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
-                (before.guild.id, int(time.time()), before.id)
+                (before.guild.id, int(time.time()), before.id),
             )
             self.bot.connection.commit()
             await self.update_register(before.guild.id)

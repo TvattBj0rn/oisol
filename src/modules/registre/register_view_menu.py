@@ -17,7 +17,7 @@ class RegisterViewMenu(discord.ui.View):
     def refresh_register_embed(self, guild_id: int) -> None:
         self.current_page_index = 0
         self.register_members = self.cursor.execute(
-            f'SELECT MemberId, RegistrationDate FROM GroupsRegister WHERE GroupId == {guild_id}'
+            f'SELECT MemberId, RegistrationDate FROM GroupsRegister WHERE GroupId == {guild_id}',
         ).fetchall()
         self._generate_embeds()
 
