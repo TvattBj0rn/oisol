@@ -1856,9 +1856,19 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'coastalgun',
     },
     {
-        'name': 'Garrisoned House',
-        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House',
-        'keywords': 'ghousegarrisonedhouse',
+        'name': 'Garrisoned House (Tier 1)',
+        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House#Tier_1-0',
+        'keywords': 'ghousegarrisonedhousetier1',
+    },
+    {
+        'name': 'Garrisoned House (Tier 2)',
+        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House#Tier_2-0',
+        'keywords': 'ghousegarrisonedhousetier2',
+    },
+    {
+        'name': 'Garrisoned House (Tier 3)',
+        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House#Tier_3-0',
+        'keywords': 'ghousegarrisonedhousetier3',
     },
     {
         'name': 'Observation Tower',
