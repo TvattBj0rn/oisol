@@ -12,7 +12,6 @@ from discord.ext import commands
 from src.modules.stockpile_viewer import ModuleStockpiles
 from src.utils import (
     MODULES_CSV_KEYS,
-    CsvHandler,
     DataFilesPath,
     EmbedIds,
     Faction,
@@ -39,11 +38,6 @@ class ModuleConfig(commands.Cog):
         # Create oisol and oisol/todolists directories
         os.makedirs(server_home_path, exist_ok=True)
         os.makedirs(server_home_path / 'todolists', exist_ok=True)
-
-        # Create oisol/*.csv files
-        for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
-            if not os.path.isfile(server_home_path / datafile.value):
-                CsvHandler(self.csv_keys[datafile.name.lower()]).csv_try_create_file(server_home_path / datafile.value)
 
         # Create oisol/config.ini file with default config
         if not os.path.isfile(server_home_path / DataFilesPath.CONFIG.value) or force_reset:

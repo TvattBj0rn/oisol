@@ -18,8 +18,6 @@ from src.modules.todolist import (
 )
 from src.modules.wiki import ModuleWiki
 from src.utils import (
-    MODULES_CSV_KEYS,
-    CsvHandler,
     DataFilesPath,
     repair_default_config_dict,
 )
@@ -73,11 +71,6 @@ class Oisol(commands.Bot):
         os.makedirs(server_home_path, exist_ok=True)
         os.makedirs(server_home_path / 'todolists', exist_ok=True)
 
-        # Create oisol/*.csv files
-        for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
-            if not os.path.isfile(module_path := server_home_path / datafile.value):
-                CsvHandler(MODULES_CSV_KEYS[datafile.name.lower()]).csv_try_create_file(module_path)
-
         # Create oisol/config.ini file with default config
         if not os.path.isfile(config_path := server_home_path / DataFilesPath.CONFIG.value):
             config = repair_default_config_dict()
@@ -104,6 +97,10 @@ class Oisol(commands.Bot):
 
         # Guilds register
         self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER)')
+
+        # Guilds todolists
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsAccess(GroupId INTEGER, TodolistId TEXT, DiscordId INTEGER, DiscordIdType TEXT)')
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT)')
 
 
 if __name__ == '__main__':
