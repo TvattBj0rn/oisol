@@ -193,7 +193,7 @@ class ModuleWiki(commands.Cog):
 
         entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
         if (
-                entry_name.startswith(('Bunker Base', 'Safe House', 'Town Base', 'Medical Room'))
+                entry_name.startswith(('Safe House', 'Town Base'))
                 and entry_name.endswith('(Tier 1)')
         ):
             entry_name = entry_name.removesuffix(' (Tier 1)')
