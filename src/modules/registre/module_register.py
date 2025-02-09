@@ -10,8 +10,6 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.utils import (
-    MODULES_CSV_KEYS,
-    CsvHandler,
     DataFilesPath,
     safeguarded_nickname,
 )
@@ -25,24 +23,25 @@ if TYPE_CHECKING:
 class ModuleRegister(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.CsvHandler = CsvHandler(MODULES_CSV_KEYS['register'])
 
     @app_commands.command(name='register-view', description='Command to display the current list of recruit with the date the got the recruit role')
     async def register_view(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] register-view command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Retrieve config and channel ID if it exists, take the channel the command was executed from otherwise
         config = configparser.ConfigParser()
         config.read(self.bot.home_path / str(interaction.guild_id) / DataFilesPath.CONFIG.value)
         if not config.has_section('register'):
             config.add_section('register')
         config.set('register', 'channel', str(interaction.channel_id))
 
+        # Create and send register view at page index 0
         register_view_instance = RegisterViewMenu()
         register_view_instance.refresh_register_embed(interaction.guild_id)
-
         await interaction.response.send_message(view=register_view_instance, embed=register_view_instance.embeds[0])
 
+        # Update config
         sent_msg = await interaction.original_response()
-
         config.set('register', 'message_id', str(sent_msg.id))
         with open(self.bot.home_path / str(interaction.guild_id) / DataFilesPath.CONFIG.value, 'w', newline='') as configfile:
             config.write(configfile)
@@ -62,16 +61,16 @@ class ModuleRegister(commands.Cog):
         config = configparser.ConfigParser()
         config.read(self.bot.home_path / str(guild_id) / DataFilesPath.CONFIG.value)
 
-        all_members = self.bot.cursor.execute(
-            f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}',
-        ).fetchall()
-
+        # Get group data from db and validate it
         all_members = self.validate_all_members(
-            all_members,
+            self.bot.cursor.execute(
+                f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}',
+            ).fetchall(),
             guild_id,
             config.getint('register', 'recruit_id'),
         )
 
+        # Update register data
         self.bot.cursor.execute(f'DELETE FROM GroupsRegister WHERE GroupId == {guild_id}')
         self.bot.cursor.executemany(
             'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
@@ -104,8 +103,10 @@ class ModuleRegister(commands.Cog):
 
         # In some cases, there might be an update of any members roles before the init command is executed.
         # As such this ensures there are no errors on the bot side when this case happens.
-        if not config.has_section('register') or not config.has_option('register', 'recruit_id') or not bool(
-                config.get('register', 'recruit_id')):
+        if (
+                not config.has_section('register') or not config.has_option('register', 'recruit_id')
+                or not bool(config.get('register', 'recruit_id'))
+        ):
             return
 
         # Member is now a recruit
