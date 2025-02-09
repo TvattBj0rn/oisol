@@ -1,49 +1,47 @@
-import os
 import pathlib
+import sqlite3
 
 import discord
-
-from src.utils import MODULES_CSV_KEYS, CsvHandler, DataFilesPath, Faction
 
 
 class RegisterViewMenu(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-        self.color = Faction.WARDEN.value
-        self.csv_keys = MODULES_CSV_KEYS['register']
+        # Not clean because this means two connection to the same db but this will have to do for now
+        self.connection = sqlite3.connect(pathlib.Path('/') / 'oisol' / 'oisol.db')
+        self.cursor = self.connection.cursor()
         self.embeds = []
         self.register_members = []
         self.current_page_index = 0
 
-    def refresh_register_embed(self, guild_id: str) -> None:
+    def refresh_register_embed(self, guild_id: int) -> None:
         self.current_page_index = 0
-        self.register_members = CsvHandler(self.csv_keys).csv_get_all_data(
-            os.path.join(pathlib.Path('/'), 'oisol', guild_id, DataFilesPath.REGISTER.value),
-        )
-        self.generate_embeds()
+        self.register_members = self.cursor.execute(
+            f'SELECT MemberId, RegistrationDate FROM GroupsRegister WHERE GroupId == {guild_id}'
+        ).fetchall()
+        self._generate_embeds()
 
-    def generate_embeds(self) -> None:
+    def _generate_embeds(self) -> None:
         self.embeds = []
         embed = discord.Embed(
             title='Register | Page 1',
-            color=self.color,
         )
+        # Default embed when no member is registered
         if not self.register_members:
             self.embeds.append(embed)
             return
 
-        for i, member_dict in enumerate(self.register_members):
+        for i, member_tuple in enumerate(self.register_members):
             # If "i" reaches 25 and is non-null, the embed is reset
             if i % 25 == 0 and i > 0:
                 self.embeds.append(embed)
                 embed = discord.Embed(
                     title=f'Register | Page {(i // 25) + 1}',  # Page 0 might seem weird to non-devs
-                    color=self.color,
                 )
                 embed.set_footer(text='Register')
             embed.add_field(
                 name='',
-                value=f'<@{member_dict[self.csv_keys[0]]}> **|** <t:{member_dict[self.csv_keys[1]]}>',
+                value=f'<@{member_tuple[0]}> **|** <t:{member_tuple[1]}>',
                 inline=False,
             )
             # If "i" is the last of the list, the embed is appended as-is
@@ -55,7 +53,6 @@ class RegisterViewMenu(discord.ui.View):
             return discord.Embed().from_dict(
                 {
                     'title': 'Register | Page 1',
-                    'color': self.color,
                     'footer': {'text': 'Register'},
                 },
             )
@@ -67,7 +64,7 @@ class RegisterViewMenu(discord.ui.View):
             self.current_page_index = len(self.embeds) - 1
         else:
             self.current_page_index -= 1
-        self.refresh_register_embed(str(interaction.guild_id))
+        self.refresh_register_embed(interaction.guild_id)
 
         await interaction.response.edit_message(view=self, embed=self.get_current_embed())
 
@@ -77,6 +74,6 @@ class RegisterViewMenu(discord.ui.View):
             self.current_page_index = 0
         else:
             self.current_page_index += 1
-        self.refresh_register_embed(str(interaction.guild_id))
+        self.refresh_register_embed(interaction.guild_id)
 
         await interaction.response.edit_message(view=self, embed=self.get_current_embed())

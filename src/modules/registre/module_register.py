@@ -39,7 +39,7 @@ class ModuleRegister(commands.Cog):
         config.set('register', 'channel', str(interaction.channel_id))
 
         register_view_instance = RegisterViewMenu()
-        register_view_instance.refresh_register_embed(str(interaction.guild_id))
+        register_view_instance.refresh_register_embed(interaction.guild_id)
 
         await interaction.response.send_message(view=register_view_instance, embed=register_view_instance.embeds[0])
 
@@ -52,48 +52,41 @@ class ModuleRegister(commands.Cog):
     def validate_all_members(self, members: list, server_id: int, recruit_id: int) -> list:
         """
         This function ensure that all members are unique, part of the server and recruit
-        :param self:
         :param members: members list to process
         :param server_id: guild id
         :param recruit_id: recruit role id
         :return: list of processed members
         """
         guild = self.bot.get_guild(server_id)
-        all_members = []
-        all_members_id = []
-        for member in members:
-            if (
-                    int(member['member']) in [m.id for m in guild.members]
-                    and guild.get_member(int(member['member'])).get_role(recruit_id)
-                    and member['member'] not in all_members_id
-            ):
-                all_members.append(member)
-                all_members_id.append(member['member'])
-        return all_members
+        return [t for t in members if t[2] in [m.id for m in guild.members] and guild.get_member(t[2]).get_role(recruit_id)]
 
-    async def update_register(self, server_id: int, all_members: list) -> None:
-        str_server_id = str(server_id)
-        oisol_server_home_path = os.path.join('/', 'oisol', str_server_id)
-        try:
-            config = configparser.ConfigParser()
-            config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
-        except FileNotFoundError:
-            return
-        csv_handler = CsvHandler(['member', 'timer'])
+
+    async def update_register(self, guild_id: int) -> None:
+        config = configparser.ConfigParser()
+        config.read(self.bot.home_path / str(guild_id) / DataFilesPath.CONFIG.value)
+
+        all_members = self.bot.cursor.execute(
+            f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}'
+        ).fetchall()
+
+        # csv_handler = CsvHandler(['member', 'timer'])
         all_members = self.validate_all_members(
             all_members,
-            server_id,
+            guild_id,
             config.getint('register', 'recruit_id'),
         )
-        csv_handler.csv_rewrite_file(
-            os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
+
+        self.bot.cursor.execute(f'DELETE FROM GroupsRegister WHERE GroupId == {guild_id}')
+        self.bot.cursor.executemany(
+            'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
             all_members,
-            Modules.REGISTER,
         )
+        self.bot.connection.commit()
+
         if not config.has_option('register', 'channel'):
             return
 
-        guild = self.bot.get_guild(server_id)
+        guild = self.bot.get_guild(guild_id)
         channel = guild.get_channel(config.getint('register', 'channel'))
         try:
             message = await channel.fetch_message(config.getint('register', 'message_id'))
@@ -102,7 +95,7 @@ class ModuleRegister(commands.Cog):
 
         # Update existing register
         register_view = RegisterViewMenu()
-        register_view.refresh_register_embed(str_server_id)
+        register_view.refresh_register_embed(guild_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
     @commands.Cog.listener()
@@ -127,14 +120,12 @@ class ModuleRegister(commands.Cog):
                 config.getint('register', 'recruit_id') in [role.id for role in after.roles]
                 and config.getint('register', 'recruit_id') not in [role.id for role in before.roles]
         ):
-            all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
+            self.bot.cursor.execute(
+                'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
+                (before.guild.id, int(time.time()), before.id)
             )
-            if config.has_option('register', 'input'):
-                await after.edit(nick=safeguarded_nickname(f'{config["register"]["input"]} {after.display_name}'))
-            await self.update_register(
-                before.guild.id, [*all_members, {'member': after.id, 'timer': int(time.time())}],
-            )
+            self.bot.connection.commit()
+            await self.update_register(before.guild.id)
 
         # Member is now a promoted recruit
         elif (
@@ -151,8 +142,9 @@ class ModuleRegister(commands.Cog):
                 member_name = f'[{config.get('regiment', 'tag')}] {member_name}'
 
             await after.edit(nick=safeguarded_nickname(member_name))
-            all_members = csv_handler.csv_get_all_data(
-                os.path.join(oisol_server_home_path, DataFilesPath.REGISTER.value),
+
+            self.bot.cursor.execute(
+                f'DELETE FROM GroupsRegister WHERE GroupId == {before.guild.id} AND MemberId == {before.id}',
             )
-            all_members = [member for member in all_members if member['member'] != str(after.id)]
-            await self.update_register(before.guild.id, all_members)
+            self.bot.connection.commit()
+            await self.update_register(before.guild.id)
