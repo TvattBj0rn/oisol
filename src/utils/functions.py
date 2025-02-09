@@ -1,10 +1,10 @@
 import configparser
 import operator
-import os
 from configparser import ConfigParser
 
 import discord
 
+from .resources import OISOL_HOME_PATH
 from .oisol_enums import DataFilesPath, Faction, Language, Shard
 
 
@@ -14,10 +14,10 @@ async def update_discord_interface(
         embed: discord.Embed = None,
 ) -> None:
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
+    config.read(OISOL_HOME_PATH / str(interaction.guild_id) / DataFilesPath.CONFIG.value)
 
     if config.has_option('stockpile', 'channel'):
-        channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
+        channel = interaction.guild.get_channel(config.getint('stockpile', 'channel'))
     else:
         # Edge case where oisol was not setup on guild but command /stockpile-create called
         # -> Case where the interface does not exist

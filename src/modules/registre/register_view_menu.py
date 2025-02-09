@@ -1,14 +1,15 @@
-import pathlib
 import sqlite3
 
 import discord
+
+from src.utils import OISOL_HOME_PATH
 
 
 class RegisterViewMenu(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
         # Not clean because this means two connection to the same db but this will have to do for now
-        self.connection = sqlite3.connect(pathlib.Path('/') / 'oisol' / 'oisol.db')
+        self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
         self.embeds = []
         self.register_members = []

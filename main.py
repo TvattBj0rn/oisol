@@ -1,7 +1,6 @@
 import configparser
 import logging
 import os
-import pathlib
 import sqlite3
 
 import discord
@@ -19,7 +18,7 @@ from src.modules.todolist import (
 from src.modules.wiki import ModuleWiki
 from src.utils import (
     DataFilesPath,
-    repair_default_config_dict,
+    repair_default_config_dict, OISOL_HOME_PATH,
 )
 
 
@@ -34,7 +33,7 @@ class Oisol(commands.Bot):
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
         self.config_servers = {}
-        self.home_path = pathlib.Path('/') / 'oisol'
+        self.home_path = OISOL_HOME_PATH
 
     async def on_ready(self) -> None:
         # Ready the db

@@ -1,4 +1,9 @@
+import pathlib
+
 from .oisol_enums import DamageTypes
+
+
+OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
 
 
 DAMAGE_TYPES_ATTRIBUTION = {
