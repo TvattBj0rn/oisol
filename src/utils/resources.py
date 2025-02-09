@@ -1,10 +1,5 @@
 from .oisol_enums import DamageTypes
 
-MODULES_CSV_KEYS = {
-    'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
-    'register': ['member', 'timer'],
-}
-
 
 DAMAGE_TYPES_ATTRIBUTION = {
     '.44': DamageTypes.LIGHT_KINETIC.value,
@@ -88,12 +83,14 @@ NAMES_TO_ACRONYMS = {
     'A0E-9 Rocket Booster': 'Rocket Booster',
 }
 
+
 RESOURCE_TO_CRATE = {
     'Refined Materials': 20,
     'Basic Materials': 100,
     'Explosive Powder': 40,
     'Heavy Explosive Powder': 30,
 }
+
 
 EMOJIS_FROM_DICT = {
     'Light Kinetic': '<:light_kinetic:1239343508725174355>',
@@ -253,6 +250,7 @@ EMOTES_CUSTOM_ID = {
     '🇾': 'TodoButtonY',
     '🇿': 'TodoButtonZ',
 }
+
 
 ITEMS_WIKI_ENTRIES = [
     {
@@ -772,6 +770,7 @@ ITEMS_WIKI_ENTRIES = [
     },
 ]
 
+
 # Specific entries that should only be handled within the wiki command
 PLACEHOLDER_ENTRIES = [
     {
@@ -850,6 +849,7 @@ PLACEHOLDER_ENTRIES = [
         'keywords': 'blumfieldcolonialwardenbicycle',
     },
 ]
+
 
 FACILITY_MATERIAL_ENTRIES = [
     {
@@ -968,6 +968,7 @@ FACILITY_MATERIAL_ENTRIES = [
         'keywords': 'navalturbinecomponents',
     },
 ]
+
 
 VEHICLES_WIKI_ENTRIES = [
     {
@@ -1686,6 +1687,7 @@ VEHICLES_WIKI_ENTRIES = [
         'keywords': 'repurposedtruckrelicvehicle',
     },
 ]
+
 
 STRUCTURES_WIKI_ENTRIES = [
     {
@@ -2529,6 +2531,7 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'rangefield',
     },
 ]
+
 
 ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES + PLACEHOLDER_ENTRIES
 PRODUCTION_ENTRIES = ITEMS_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES + VEHICLES_WIKI_ENTRIES

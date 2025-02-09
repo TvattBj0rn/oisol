@@ -11,7 +11,6 @@ from discord.ext import commands
 
 from src.modules.stockpile_viewer import ModuleStockpiles
 from src.utils import (
-    MODULES_CSV_KEYS,
     DataFilesPath,
     EmbedIds,
     Faction,
@@ -28,7 +27,6 @@ if TYPE_CHECKING:
 class ModuleConfig(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.csv_keys = MODULES_CSV_KEYS
 
     @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')
     async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False) -> None:
