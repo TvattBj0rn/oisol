@@ -25,6 +25,11 @@ class DataFilesPath(Enum):
     CONFIG = 'config.ini'
 
 
+class DiscordIdType(Enum):
+    USER = auto()
+    ROLE = auto()
+
+
 class EmbedIds(Enum):
     STOCKPILES_VIEW = 'Stockpiles Viewer'
     REGISTER_VIEW = 'Register Viewer'
