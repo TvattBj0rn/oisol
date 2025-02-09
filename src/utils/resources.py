@@ -1,4 +1,4 @@
-from .oisol_enums import DamageTypes, FoxholeBuildings
+from .oisol_enums import DamageTypes
 
 MODULES_CSV_KEYS = {
     'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
