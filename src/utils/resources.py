@@ -4,6 +4,7 @@ from .oisol_enums import DamageTypes
 
 
 OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
+TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
 
 
 DAMAGE_TYPES_ATTRIBUTION = {
