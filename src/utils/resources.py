@@ -924,27 +924,27 @@ FACILITY_MATERIAL_ENTRIES = [
     },
     {
         'name': 'Assembly Materials I',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_I-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_I',
         'keywords': 'amatsasmatsassemblymaterialsi1',
     },
     {
         'name': 'Assembly Materials II',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_II-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_II',
         'keywords': 'amatsasmatsassemblymaterialsii2',
     },
     {
         'name': 'Assembly Materials III',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_III-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_III',
         'keywords': 'amatsasmatsassemblymaterialsiii3',
     },
     {
         'name': 'Assembly Materials IV',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_IV-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_IV',
         'keywords': 'amatsasmatsassemblymaterialsiv4',
     },
     {
         'name': 'Assembly Materials V',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_V-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_V',
         'keywords': 'amatsasmatsassemblymaterialsv5',
     },
     {
