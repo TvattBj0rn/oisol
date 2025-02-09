@@ -17,8 +17,9 @@ from src.modules.todolist import (
 )
 from src.modules.wiki import ModuleWiki
 from src.utils import (
+    OISOL_HOME_PATH,
     DataFilesPath,
-    repair_default_config_dict, OISOL_HOME_PATH,
+    repair_default_config_dict,
 )
 
 

@@ -4,8 +4,8 @@ from configparser import ConfigParser
 
 import discord
 
-from .resources import OISOL_HOME_PATH
 from .oisol_enums import DataFilesPath, Faction, Language, Shard
+from .resources import OISOL_HOME_PATH
 
 
 async def update_discord_interface(

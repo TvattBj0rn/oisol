@@ -2,7 +2,6 @@ import pathlib
 
 from .oisol_enums import DamageTypes
 
-
 OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
 TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
 

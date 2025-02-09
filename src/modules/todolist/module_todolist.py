@@ -1,16 +1,24 @@
+from __future__ import annotations
+
 import logging
 import uuid
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
+from src.utils import DiscordIdType
+
 from .todolist_view_menu import TodolistViewMenu
+
+if TYPE_CHECKING:
+    from main import Oisol
 
 
 class ModuleTodolist(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.oisol = bot
+    def __init__(self, bot: Oisol):
+        self.bot = bot
 
     @app_commands.command(name='todolist-generate')
     async def todolist_generate(
@@ -30,37 +38,38 @@ class ModuleTodolist(commands.Cog):
 
     ) -> None:
         logging.info(f'[COMMAND] todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
-        permissions = {
-            'roles': [],
-            'members': [],
-        }
+        todolist_id = uuid.uuid4().hex
+        todolist_access_list = []
+
         if role_1:
-            permissions['roles'].append(role_1.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, role_1.id, DiscordIdType.ROLE.name))
         if role_2:
-            permissions['roles'].append(role_2.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, role_2.id, DiscordIdType.ROLE.name))
         if role_3:
-            permissions['roles'].append(role_3.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, role_3.id, DiscordIdType.ROLE.name))
         if role_4:
-            permissions['roles'].append(role_4.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, role_4.id, DiscordIdType.ROLE.name))
         if role_5:
-            permissions['roles'].append(role_5.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, role_5.id, DiscordIdType.ROLE.name))
         if member_1:
-            permissions['members'].append(member_1.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, member_1.id, DiscordIdType.USER.name))
         if member_2:
-            permissions['members'].append(member_2.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, member_2.id, DiscordIdType.USER.name))
         if member_3:
-            permissions['members'].append(member_3.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, member_3.id, DiscordIdType.USER.name))
         if member_4:
-            permissions['members'].append(member_4.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, member_4.id, DiscordIdType.USER.name))
         if member_5:
-            permissions['members'].append(member_5.id)
+            todolist_access_list.append((interaction.guild_id, todolist_id, member_5.id, DiscordIdType.USER.name))
+
+        if todolist_access_list:
+            self.bot.cursor.executemany(
+                'INSERT INTO GroupsTodolistsAccess (GroupId, TodolistId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?)',
+                todolist_access_list,
+            )
+            self.bot.connection.commit()
 
         todolist_view = TodolistViewMenu()
-        todolist_view.refresh_view(
-            {'title': title, 'access': permissions, 'tasks': {'high': [], 'medium': [], 'low': []}},
-            title,
-            str(interaction.guild_id),
-            uuid.uuid4().hex,
-        )
+        todolist_view.refresh_view(title, str(interaction.guild_id), todolist_id)
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)

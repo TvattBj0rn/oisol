@@ -2,7 +2,7 @@ import configparser
 
 import discord
 
-from src.utils import DataFilesPath, Language, OISOL_HOME_PATH
+from src.utils import OISOL_HOME_PATH, DataFilesPath, Language
 
 
 class ConfigViewMenu(discord.ui.View):
