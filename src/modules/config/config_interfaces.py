@@ -13,7 +13,7 @@ class ConfigViewMenu(discord.ui.View):
 
     async def update_config_embed(self, interaction: discord.Interaction) -> None:
         self.config_data = configparser.ConfigParser()
-        self.config_data.read(OISOL_HOME_PATH / str(interaction.guild_id) / DataFilesPath.CONFIG.value)
+        self.config_data.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
 
         self.embed.clear_fields()
         self.embed.add_field(
@@ -59,10 +59,10 @@ class SelectLanguage(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction) -> None:
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / str(interaction.guild_id) / DataFilesPath.CONFIG.value)
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
         config.set('default', 'language', self.values[0])
 
-        with open(OISOL_HOME_PATH / str(interaction.guild_id) / DataFilesPath.CONFIG.value, 'w', newline='') as configfile:
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini', 'w', newline='') as configfile:
             config.write(configfile)
 
         await interaction.response.edit_message(content='> Language was correctly updated', delete_after=3, view=None)

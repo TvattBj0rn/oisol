@@ -23,6 +23,7 @@ class DataFilesPath(Enum):
     REGISTER = 'register.csv'
     STOCKPILES = 'stockpiles.csv'
     CONFIG = 'config.ini'
+    CONFIG_DIR = 'guilds_config_files'
 
 
 class DiscordIdType(Enum):

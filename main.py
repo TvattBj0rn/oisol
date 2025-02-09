@@ -33,8 +33,6 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
-        self.config_servers = {}
-        self.home_path = OISOL_HOME_PATH
 
     async def on_ready(self) -> None:
         # Ready the db
@@ -53,7 +51,6 @@ class Oisol(commands.Bot):
         except Exception:
             logging.exception('Could not sync tree properly')
 
-        self._load_configs()
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
         await self.add_cog(StockpileTasks(self))
 
@@ -65,28 +62,18 @@ class Oisol(commands.Bot):
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
         logging.info(f'[JOIN] joined {guild.name} (id: {guild.id})')
-        server_home_path = self.home_path / str(guild.id)
 
-        # Create guild and guild/todolists directories if they do not exist
-        os.makedirs(server_home_path, exist_ok=True)
-        os.makedirs(server_home_path / 'todolists', exist_ok=True)
+        # Create guilds configs directory if it does not exist
+        os.makedirs(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value, exist_ok=True)
 
         # Create oisol/config.ini file with default config
-        if not os.path.isfile(config_path := server_home_path / DataFilesPath.CONFIG.value):
+        if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild.id)}.ini'):
             config = repair_default_config_dict()
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 
-    def _load_configs(self) -> None:
-        for server_folder in os.listdir(self.home_path):
-            if not server_folder.isdigit():
-                continue
-            server_config = configparser.ConfigParser()
-            server_config.read(self.home_path / server_folder / DataFilesPath.CONFIG.value)
-            self.config_servers[server_folder] = server_config
-
     def _setup_oisol_db(self) -> None:
-        self.connection = sqlite3.connect(self.home_path / 'oisol.db')
+        self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
 
         # Available stockpiles per shard

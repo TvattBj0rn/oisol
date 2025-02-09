@@ -14,7 +14,7 @@ async def update_discord_interface(
         embed: discord.Embed = None,
 ) -> None:
     config = configparser.ConfigParser()
-    config.read(OISOL_HOME_PATH / str(interaction.guild_id) / DataFilesPath.CONFIG.value)
+    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
 
     if config.has_option('stockpile', 'channel'):
         channel = interaction.guild.get_channel(config.getint('stockpile', 'channel'))
