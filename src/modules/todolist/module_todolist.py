@@ -35,8 +35,8 @@ class ModuleTodolist(commands.Cog):
             member_3: discord.Member = None,
             member_4: discord.Member = None,
             member_5: discord.Member = None,
-
     ) -> None:
+
         logging.info(f'[COMMAND] todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         todolist_id = uuid.uuid4().hex
         todolist_access_list = []
