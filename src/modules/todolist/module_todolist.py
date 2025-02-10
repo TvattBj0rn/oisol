@@ -75,7 +75,7 @@ class ModuleTodolist(commands.Cog):
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
         interaction_response_message = await interaction.original_response()
         self.bot.cursor.execute(
-            f'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType) VALUES (?, ?, ?, ?)',
-            (interaction.guild_id, interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name)
+            f'INSERT INTO AllInterfacesReferences (ChannelId, MessageId, InterfaceType, InterfaceReference) VALUES (?, ?, ?, ?)',
+            (interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id)
         )
         self.bot.connection.commit()

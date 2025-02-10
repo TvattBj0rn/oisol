@@ -8,6 +8,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from src.modules.config import ConfigViewMenu, ModuleConfig
+from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
 from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
 from src.modules.todolist import (
@@ -52,7 +53,10 @@ class Oisol(commands.Bot):
             logging.exception('Could not sync tree properly')
 
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
+
+        # Tasks loading
         await self.add_cog(StockpileTasks(self))
+        await self.add_cog(DatabaseCleaner(self))
 
     async def setup_hook(self) -> None:
         self.add_view(ConfigViewMenu())
@@ -90,7 +94,7 @@ class Oisol(commands.Bot):
         self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER)')
 
         # Interfaces references
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS AllInterfacesReferences(GroupId INTEGER, ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT)')
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT)')
 
 
 if __name__ == '__main__':

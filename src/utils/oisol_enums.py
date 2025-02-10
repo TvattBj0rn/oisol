@@ -61,10 +61,13 @@ class Language(Enum):
 
 
 class InterfaceType(Enum):
-    REGISTER_VIEW = auto()
-    STOCKPILE_VIEW = auto()
-    TODOLIST_VIEW = auto()
-    FACILITY_VIEW = auto()
+    """
+    Enum of possible interfaces types as name and list of associated table & column as value
+    """
+    REGISTER_VIEW = []
+    STOCKPILE_VIEW = []
+    TODOLIST_VIEW = [('GroupsTodolistsAccess', 'TodolistId'), ('GroupsTodolistsTasks', 'TodolistId')]
+    FACILITY_VIEW = []
 
 
 class PriorityType(Enum):
