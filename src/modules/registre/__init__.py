@@ -1,2 +1,2 @@
-from .ModuleRegister import ModuleRegister
-from .RegisterViewMenu import RegisterViewMenu
+from .module_register import ModuleRegister
+from .register_view_menu import RegisterViewMenu

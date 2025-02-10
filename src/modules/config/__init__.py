@@ -1,2 +1,2 @@
-from .ConfigInterfaces import ConfigViewMenu
-from .ModuleConfig import ModuleConfig
+from .config_interfaces import ConfigViewMenu
+from .module_config import ModuleConfig

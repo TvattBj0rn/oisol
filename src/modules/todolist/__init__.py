@@ -1,2 +1,2 @@
-from .ModuleTodolist import ModuleTodolist
-from .TodolistViewMenu import TodolistButtonCheckmark, TodolistViewMenu
+from .module_todolist import ModuleTodolist
+from .todolist_view_menu import TodolistButtonCheckmark, TodolistViewMenu

@@ -23,6 +23,12 @@ class DataFilesPath(Enum):
     REGISTER = 'register.csv'
     STOCKPILES = 'stockpiles.csv'
     CONFIG = 'config.ini'
+    CONFIG_DIR = 'guilds_config_files'
+
+
+class DiscordIdType(Enum):
+    USER = auto()
+    ROLE = auto()
 
 
 class EmbedIds(Enum):
@@ -54,15 +60,68 @@ class Language(Enum):
     ES = auto()
 
 
-class Modules(Enum):
-    CONFIG = auto()
-    REGISTER = auto()
-    STOCKPILE = auto()
-    TODOLIST = auto()
-    WIKI = auto()
+class InterfaceType(Enum):
+    """
+    Enum of possible interfaces types as name and list of associated table & column as value
+    """
+    REGISTER_VIEW = []
+    STOCKPILE_VIEW = []
+    TODOLIST_VIEW = [('GroupsTodolistsAccess', 'TodolistId'), ('GroupsTodolistsTasks', 'TodolistId')]
+    FACILITY_VIEW = []
 
 
 class PriorityType(Enum):
-    HIGH = 'high'
-    MEDIUM = 'medium'
-    LOW = 'low'
+    HIGH = '🟥'
+    MEDIUM = '🟨'
+    LOW = '🟩'
+
+
+class Shard(Enum):
+    ABLE = 'https://war-service-live.foxholeservices.com/api'
+    BAKER = 'https://war-service-live-2.foxholeservices.com/api'
+    CHARLIE = 'https://war-service-live-3.foxholeservices.com/api'
+    DEVBRANCH = 'https://war-service-dev.foxholeservices.com/api'
+
+
+class MapIcon(Enum):
+    FORWARD_BASE_1 = 8
+    HOSPITAL = 11
+    GARAGE = 12
+    REFINERY = 17
+    SHIPYARD = 18
+    ENGINEERING_CENTER = 19
+    SALVAGE_FIELD = 20
+    COMPONENT_FIELD = 21
+    FUEL_FIELD = 22
+    SULFUR_FIELD = 23
+    WORLD_MAP_TENT = 24
+    TRAVEL_TENT = 25
+    TRAINING_AREA = 26
+    KEEP = 27
+    OBSERVATION_TOWER = 28
+    FORT = 29
+    TROOP_SHIP = 30
+    SULFUR_MINE = 32
+    STORAGE_DEPOT = 33
+    FACTORY = 34
+    GARRISON_STATION = 35
+    ROCKET_SITE = 37
+    SALVAGE_MINE = 38
+    CONSTRUCTION_YARD = 39
+    COMPONENT_MINE = 40
+    RELIC_BASE_1 = 45
+    MPF = 51
+    SEAPORT = 52
+    COASTAL_GUN = 53
+    SOUL_FACTORY = 54
+    TOWN_BASE_1 = 56
+    STORM_CANON = 59
+    INTEL_CENTER = 60
+    COAL_FIELD = 61
+    OIL_FIELD = 62
+    ROCKET_TARGET = 70
+    ROCKET_GROUND_ZERO = 71
+    ROCKET_SITE_WITH_ROCKET = 72
+    FACILITY_MINE_OIL_RIG = 75
+    WEATHER_STATION = 83
+    MORTAR_HOUSE = 84

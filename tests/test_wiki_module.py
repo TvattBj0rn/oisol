@@ -12,11 +12,6 @@ import pytest
 
 @pytest.mark.parametrize('entry', STRUCTURES_WIKI_ENTRIES)
 def test_health_command_structures_entries(entry):
-    if (
-            entry['name'].startswith(('Bunker Base', 'Safe House', 'Town Base', 'Medical Room'))
-            and entry['name'].endswith('(Tier 1)')
-    ):
-        entry['name'] = entry['name'].removesuffix(' (Tier 1)')
     entry_output = scrap_health('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name'])
     assert 'Name' in entry_output, f'Invalid structure entry: {entry['name']}'
 

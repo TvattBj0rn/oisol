@@ -1,9 +1,9 @@
-from .oisol_enums import DamageTypes, FoxholeBuildings
+import pathlib
 
-MODULES_CSV_KEYS = {
-    'stockpiles': ['region', 'subregion', 'code', 'name', 'type'],
-    'register': ['member', 'timer'],
-}
+from .oisol_enums import DamageTypes
+
+OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
+TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
 
 
 DAMAGE_TYPES_ATTRIBUTION = {
@@ -88,12 +88,14 @@ NAMES_TO_ACRONYMS = {
     'A0E-9 Rocket Booster': 'Rocket Booster',
 }
 
+
 RESOURCE_TO_CRATE = {
     'Refined Materials': 20,
     'Basic Materials': 100,
     'Explosive Powder': 40,
     'Heavy Explosive Powder': 30,
 }
+
 
 EMOJIS_FROM_DICT = {
     'Light Kinetic': '<:light_kinetic:1239343508725174355>',
@@ -254,99 +256,6 @@ EMOTES_CUSTOM_ID = {
     '🇿': 'TodoButtonZ',
 }
 
-# All regions and their subregions
-REGIONS = {
-    'Acrithia': ['Camp Omicron', 'Heir Apparent', 'Legion Ranch', 'Nereid Keep', 'Patridia', 'Swordfort', 'The Brinehold', 'Thetus Ring'],
-    'Allods Bight': ['Belaying Trace', 'Homesick', "Mercy's Wail", 'Rumhold', 'Scurvyshire', 'The Stone Plank', 'The Turncoat'],
-    'Ash Fields': ['Ashtown', 'Camp Omega', 'Cometa', 'Electi', 'Sootflow', 'The Ashfort', 'The Calamity'],
-    'Basin Sionnach': ['Basinhome', 'Cuttail Station', 'Lamplight', 'Sess', 'Stoic', 'The Den'],
-    'Callahans Passage': ['Cragstown', 'Crumbling Post', 'Lochan Berth', 'Overlook Hill', 'Scáth Passing', 'Solas Gorge', 'The Crumbling Passage', 'The Latch', 'The Procession', 'White Chapel'],
-    'Callums Cape': ["Callum's Keep", 'Camp Hollow', 'Holdout', 'Ire', 'Lookout', 'Naofa', 'Scouts Jest'],
-    'Clahstra': ['Bewailing Fort', 'East Narthex', 'The Treasury', 'The Vault', 'Third Chapter', 'Transept', 'Watchful Nave', 'Weephome'],
-    'Clanshead Valley': ['Fallen Crown', 'Fort Ealar', 'Fort Esterwild', 'Fort Windham', 'Sweetholt', 'The King', 'The Pike'],
-    'Deadlands': ['Abandoned Ward', 'Brine Glen', "Callahan's Boot", "Callahan's Gate", "Iron's End", 'Liberation Point', "Sun's Hollow", 'The Pits', 'The Salt Farms', 'The Salt March', 'The Spine'],
-    'Drowned Vale': ['Bootnap', 'Coaldrifter Stead', 'Eastmarch', 'Loggerhead', 'Singing Serpents', 'Splinter Pens', 'The Baths', 'The Saltcaps', 'The Wash', 'Vessel', "Wisp's Warning"],
-    'Endless Shore': ['Brackish Point', 'Enduring Wake', 'Iron Junction', 'Saltbrook Channel', 'Sídhe Fall', 'The Old Jack Tar', 'The Overland', 'Tuatha Watchpost', 'Wellchurch', 'Woodbind'],
-    'Farranac Coast': ['Huskhollow', "Macha's Keening", 'Mara', 'Pleading Wharf', 'Scarp of Ambrose', 'Scythe', 'Terra', 'The Bone Haft', 'The Jade Cove', 'Transient Valley', 'Victa'],
-    'Fishermans Row': ['Arcadia', 'Black Well', 'Dankana Post', 'Eidolo', 'Fort Ember', "Hangman's Court", 'Oceanwatch', 'Peripti Landing', 'The Satyr Stone'],
-    'Godcrofts': ['Argosa', 'Exile', 'Fleecewatch', 'Isawa', 'Lipsia', 'Protos', 'Saegio', 'The Axehead', 'Ursa Base'],
-    'Great March': ['Camp Senti', 'Dendró Field', 'Leto', 'Lionsfort', "Myrmidon's Stay", 'Remnant Villa', 'Sitaria', 'The Swan', 'Violethome'],
-    'Heartlands': ['Barronswall', 'Barrony Ranch', 'Deeplaw Post', 'Fort Providence', 'Greenfield Orchard', 'Oleander Homestead', 'Proexí', 'The Blemish', 'The Breach', 'The Plough'],
-    'Howl County': ['Fort Red', 'Fort Rider', 'Great Warden Dam', 'Hungry Wolf', 'Little Lamb', 'Sickleshire', 'Slipgate Outpost', 'Teller Farm'],
-    'Kalokai': ['Baccae Ridge', 'Camp Tau', 'Hallow', 'Lost Greensward', "Night's Regret", 'Sourtooth', 'Sweethearth'],
-    'Kings Cage': ['Den of Knaves', 'Eastknife', 'Gibbet Fields', 'Scarlethold', 'Slipchain', 'Southblade', 'The Bailie', 'The Manacle'],
-    'Linn Mercy': ['Fort Duncan', 'Hardline', 'Lathair', 'Outwich Ranch', 'Rotdust', 'The Crimson Gardens', 'The First Coin', 'The Last Grove', 'The Long Whine', 'The Prairie Bazaar', 'Ulster Falls'],
-    'Loch Mor': ['Feirmor', 'Market Road', "Mercy's Wish", "Moon's Copse", 'The Roilfort', 'Tomb of the First', 'Westmarch'],
-    'Marban Hollow': ['Checkpoint Bua', 'Lockheed', "Maiden's Veil", 'Mox', 'Oster Wall', 'Sanctum', 'The Spitrocks'],
-    'Morgens Crossing': ['Allsight', "Bastard's Block", "Callum's Descent", 'Eversus', 'Lividus', 'Quietus'],
-    'Nevish Line': ['Blackcoat Way', 'Blinding Stones', 'Grief Mother', 'Mistle Shrine', 'Princefal', 'The Scrying Belt', 'Tomb Father', 'Unruly'],
-    'Oarbreaker Isles': ['Fort Fogwood', 'Gold', 'Grisly Refuge', 'Integrum', 'Partisan Island', 'Posterus', 'Silver', 'The Conclave', 'The Dirk'],
-    'Origin': ['Arise', 'Dormio', 'Finis', 'Initium', 'Teichotima', 'The Steel Road', 'World Star'],
-    'Reaching Trail': ['Brodytown', 'Dwyerstown', 'Elksford', 'Fort Mac Conaill', 'Harpy', 'Ice Ranch', 'Limestone Holdfast', 'Mousetrap', 'Nightchurch', 'Reprieve', 'The Ark'],
-    'Reavers Pass': ['Breakwater', 'Clay Coffer', 'Fort Rictus', 'Keelhaul', 'Scuttletown', 'The Bilge', 'Thimble Base'],
-    'Red River': ['Camp Upsilon', 'Cannonsmoke', 'Climb', 'Fort Matchwood', 'Judicium', 'Minos', 'Penance', 'Victoria Hill'],
-    'Sableport': ['Barronhome', 'Cinderwick', "Light's End", 'Talonsfort', 'The Pendant', "The Robin's Nest", 'The Whetstone'],
-    'Shackled Chasm': ['Firstmarch', 'Gorgon Grove', 'Limewood Holdfast', 'Reflection', 'Savages', 'Silk Farms', "Simo's Run", 'The Bell Toll', 'The Grave of Erastos', 'The Vanguard'],
-    'Speaking Woods': ['Fort Blather', 'Hush', 'Inari Base', 'Sotto Bank', 'Stem', 'The Filament', 'Tine', 'Wound'],
-    'Stema Landing': ['Acies Overlook', 'Alchimio Estate', 'Base Ferveret', 'Base Sagitta', 'The Flair', 'The Spearhead', 'The Wane', 'Ustio', 'Verge Wing'],
-    'Stlican Shelf': ['Briar', 'Cavilltown', 'Fort Hoarfrost', 'Port of Rime', 'The Old Mourn', 'The South Wind', 'Thornhold', 'Vulpine Watch'],
-    'Stonecradle': ['Buckler Sound', 'Fading Lights', 'The Cord', 'The Dais', "The Heir's Knife", 'The Long Fast', 'The Reach', 'Trammel Pool', "World's End"],
-    'Tempest Island': ['Blackwatch', 'Isle of Psyche', "Liar's Heaven", 'Plana Fada', 'Reef', 'Surge Gate', 'The Gale', 'The Iris', 'The Rush'],
-    'Terminus': ['Bloody Palm Fort', 'Cerberus Wake', 'Therizó', 'Thunderbolt', "Warlord's Stead", 'Winding Bolas'],
-    'The Fingers': ["Captain's Dread", 'Fort Barley', "Headsman's Villa", 'Plankhouse', 'Second Man', 'Tethys Base', 'The Old Captain', 'The Tusk', 'Titancall'],
-    'The Moors': ['Borderlane', "Gravekeeper's Holdfast", 'Headstone', "Luch's Workshop", 'MacConmara Barrows', "Morrighan's Grave", 'Ogmaran', 'Reaching River', 'The Cut', 'The Spade', 'The Wind Hills', 'Wiccwalk'],
-    'Umbral Wildwood': ['Amethyst', "Atropos' Fate", "Clotho's Refuge", 'GoldenRoot Ranch', "Hermit's Rest", "Lachesis' Tally ", 'Sentry', 'Stray', 'The Foundry', 'Thunderfoot', 'Vagrant Bastion'],
-    'Viper Pit': ['Blackthroat', 'Earl Crowley', 'Fleck Crossing', 'Fort Viper', 'Kirknell', 'Moltworth', "Serenity's Blight", 'The Friars'],
-    'Weathered Expanse': ["Crow's Nest", 'Foxcatcher', 'Frostmarch', 'Huntsfort', 'Necropolis', 'Shattered Advance', 'Spirit Watch', 'The Weathering Halls', 'Wightwalk'],
-    'Westgate': ['Holdfast', 'Kingstone', 'Longstone', "Lord's Mouth", 'Lost Partition', "Rancher's Fast", 'The Gallows', 'Westgate Keep', 'Wyattwick', "Zeus' Demise"],
-}
-
-# All regions and their subregions with depot / seaport
-REGIONS_STOCKPILES = {
-    'Acrithia': [('Legion Ranch', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Thetus Ring', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Patridia', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Allods Bight': [('Scurvyshire', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ("Mercy's Wail", FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Ash Fields': [('Electi', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Ashtown', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Basin Sionnach': [('Sess', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Den', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Cuttail Station', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Callahans Passage': [('Solas Gorge', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Lochan Berth', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Callums Cape': [('Holdout', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ("Callum's Keep", FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Clahstra': [('East Narthex', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Third Chapter', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Treasury', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value)],
-    'Clanshead Valley': [('The Pike', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The King', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Deadlands': [('Abandoned Ward', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Brine Glen', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ("Callahan's Gate", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Salt Farms', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Spine', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value)],
-    'Drowned Vale': [('Loggerhead', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Baths', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Endless Shore': [('Brackish Point', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Iron Junction', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Tuatha Watchpost', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Saltbrook Channel', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Farranac Coast': [('Mara', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Bone Haft', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Pleading Wharf', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Victa', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Jade Cove', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Fishermans Row': [('Arcadia', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Black Well', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Eidolo', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Godcrofts': [('Isawa', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value), ('The Axehead', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Great March': [('Sitaria', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Violethome', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value)],
-    'Heartlands': [('Greenfield Orchard', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Blemish', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value)],
-    'Howl County': [('Hungry Wolf', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Little Lamb', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Great Warden Dam', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Kalokai': [('Hallow', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Sweethearth', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Baccae Ridge', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Kings Cage': [('Gibbet Fields', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Manacle', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Linn Mercy': [('The Prairie Bazaar', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Ulster Falls', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Loch Mor': [("Mercy's Wish", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Feirmor', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Marban Hollow': [('Lockheed', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ("Maiden's Veil", FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Morgens Crossing': [('Allsight', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Lividus', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Quietus', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Nevish Line': [('Blackcoat Way', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Mistle Shrine', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Scrying Belt', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Oarbreaker Isles': [('Integrum', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value), ('The Conclave', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Origin': [('Finis', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Teichotima', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Initium', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Reaching Trail': [('Brodytown', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Reprieve', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value)],
-    'Reavers Pass': [('Breakwater', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Scuttletown', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Keelhaul', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Red River': [('Judicium', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Penance', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Cannonsmoke', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Sableport': [('Barronhome', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Cinderwick', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ("Light's End", FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Shackled Chasm': [('Savages', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Silk Farms', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Speaking Woods': [('Sotto Bank', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Filament', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Tine', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Stema Landing': [('Alchimio Estate', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value), ('The Spearhead', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Stlican Shelf': [('Cavilltown', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Vulpine Watch', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Port of Rime', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Stonecradle': [('Fading Lights', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Buckler Sound', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Tempest Island': [("Liar's Heaven", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Rush', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Iris', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Terminus': [("Warlord's Stead", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Therizó', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'The Fingers': [("Headsman's Villa", FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value), ('The Old Captain', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'The Moors': [("Morrighan's Grave", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Ogmaran', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Umbral Wildwood': [("Hermit's Rest", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Thunderfoot', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Viper Pit': [('Earl Crowley', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Kirknell', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Weathered Expanse': [("Crow's Nest", FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Foxcatcher', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Weathering Halls', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-    'Westgate': [('Kingstone', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('The Gallows', FoxholeBuildings.STORAGE_DEPOT_NEUTRAL.value, FoxholeBuildings.STORAGE_DEPOT_WARDEN.value, FoxholeBuildings.STORAGE_DEPOT_COLONIAL.value), ('Longstone', FoxholeBuildings.SEAPORT_NEUTRAL.value, FoxholeBuildings.SEAPORT_WARDEN.value, FoxholeBuildings.SEAPORT_COLONIAL.value)],
-}
 
 ITEMS_WIKI_ENTRIES = [
     {
@@ -866,6 +775,7 @@ ITEMS_WIKI_ENTRIES = [
     },
 ]
 
+
 # Specific entries that should only be handled within the wiki command
 PLACEHOLDER_ENTRIES = [
     {
@@ -945,6 +855,7 @@ PLACEHOLDER_ENTRIES = [
     },
 ]
 
+
 FACILITY_MATERIAL_ENTRIES = [
     {
         'name': 'Diesel',
@@ -1018,27 +929,27 @@ FACILITY_MATERIAL_ENTRIES = [
     },
     {
         'name': 'Assembly Materials I',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_I-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_I',
         'keywords': 'amatsasmatsassemblymaterialsi1',
     },
     {
         'name': 'Assembly Materials II',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_II-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_II',
         'keywords': 'amatsasmatsassemblymaterialsii2',
     },
     {
         'name': 'Assembly Materials III',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_III-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_III',
         'keywords': 'amatsasmatsassemblymaterialsiii3',
     },
     {
         'name': 'Assembly Materials IV',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_IV-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_IV',
         'keywords': 'amatsasmatsassemblymaterialsiv4',
     },
     {
         'name': 'Assembly Materials V',
-        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials#Assembly_Materials_V-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Assembly_Materials_V',
         'keywords': 'amatsasmatsassemblymaterialsv5',
     },
     {
@@ -1062,6 +973,7 @@ FACILITY_MATERIAL_ENTRIES = [
         'keywords': 'navalturbinecomponents',
     },
 ]
+
 
 VEHICLES_WIKI_ENTRIES = [
     {
@@ -1781,6 +1693,7 @@ VEHICLES_WIKI_ENTRIES = [
     },
 ]
 
+
 STRUCTURES_WIKI_ENTRIES = [
     {
         'name': 'Border Base',
@@ -1943,9 +1856,19 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'coastalgun',
     },
     {
-        'name': 'Garrisoned House',
-        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House',
-        'keywords': 'ghousegarrisonedhouse',
+        'name': 'Garrisoned House (Tier 1)',
+        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House#Tier_1-0',
+        'keywords': 'ghousegarrisonedhousetier1',
+    },
+    {
+        'name': 'Garrisoned House (Tier 2)',
+        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House#Tier_2-0',
+        'keywords': 'ghousegarrisonedhousetier2',
+    },
+    {
+        'name': 'Garrisoned House (Tier 3)',
+        'url': 'https://foxhole.wiki.gg/wiki/Garrisoned_House#Tier_3-0',
+        'keywords': 'ghousegarrisonedhousetier3',
     },
     {
         'name': 'Observation Tower',
@@ -2623,6 +2546,7 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'rangefield',
     },
 ]
+
 
 ALL_WIKI_ENTRIES = ITEMS_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + STRUCTURES_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES + PLACEHOLDER_ENTRIES
 PRODUCTION_ENTRIES = ITEMS_WIKI_ENTRIES + FACILITY_MATERIAL_ENTRIES + VEHICLES_WIKI_ENTRIES

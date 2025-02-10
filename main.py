@@ -1,15 +1,16 @@
 import configparser
 import logging
 import os
-import pathlib
+import sqlite3
 
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
 from src.modules.config import ConfigViewMenu, ModuleConfig
+from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles
+from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -17,8 +18,7 @@ from src.modules.todolist import (
 )
 from src.modules.wiki import ModuleWiki
 from src.utils import (
-    MODULES_CSV_KEYS,
-    CsvHandler,
+    OISOL_HOME_PATH,
     DataFilesPath,
     repair_default_config_dict,
 )
@@ -34,20 +34,11 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
-        self.config_servers = {}
-
-    def load_configs(self) -> None:
-        oisol_server_home_path = os.path.join(pathlib.Path('/'), 'oisol')
-        for server_folder in os.listdir(oisol_server_home_path):
-            if not server_folder.isdigit():
-                continue
-            server_config = configparser.ConfigParser()
-            server_config.read(
-                os.path.join(oisol_server_home_path, server_folder, 'config.ini'),
-            )
-            self.config_servers[server_folder] = server_config
 
     async def on_ready(self) -> None:
+        # Ready the db
+        self._setup_oisol_db()
+
         # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
@@ -61,8 +52,11 @@ class Oisol(commands.Bot):
         except Exception:
             logging.exception('Could not sync tree properly')
 
-        self.load_configs()
         logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
+
+        # Tasks loading
+        await self.add_cog(StockpileTasks(self))
+        await self.add_cog(DatabaseCleaner(self))
 
     async def setup_hook(self) -> None:
         self.add_view(ConfigViewMenu())
@@ -71,24 +65,36 @@ class Oisol(commands.Bot):
         self.add_dynamic_items(TodolistButtonCheckmark)
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
-        oisol_server_home_path = os.path.join('/', 'oisol', str(guild.id))
+        logging.info(f'[JOIN] joined {guild.name} (id: {guild.id})')
 
-        # Create guild and guild/todolists directories if they do not exist
-        os.makedirs(os.path.join(oisol_server_home_path), exist_ok=True)
-        os.makedirs(os.path.join(oisol_server_home_path, 'todolists'), exist_ok=True)
-
-        # Create oisol/*.csv files
-        for datafile in [DataFilesPath.REGISTER, DataFilesPath.STOCKPILES]:
-            if not os.path.isfile(os.path.join(oisol_server_home_path, datafile.value)):
-                CsvHandler(MODULES_CSV_KEYS[datafile.name.lower()]).csv_try_create_file(
-                    os.path.join(oisol_server_home_path, datafile.value),
-                )
+        # Create guilds configs directory if it does not exist
+        os.makedirs(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value, exist_ok=True)
 
         # Create oisol/config.ini file with default config
-        if not os.path.isfile(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value)):
+        if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild.id)}.ini'):
             config = repair_default_config_dict()
-            with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+            with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
+
+    def _setup_oisol_db(self) -> None:
+        self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
+        self.cursor = self.connection.cursor()
+
+        # Available stockpiles per shard
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT)')
+
+        # Guilds stockpiles
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT)')
+
+        # Guilds register
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER)')
+
+        # Guilds todolists
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsAccess(GroupId INTEGER, TodolistId TEXT, DiscordId INTEGER, DiscordIdType TEXT)')
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER)')
+
+        # Interfaces references
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT)')
 
 
 if __name__ == '__main__':

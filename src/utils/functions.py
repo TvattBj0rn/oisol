@@ -1,10 +1,11 @@
 import configparser
-import os
+import operator
 from configparser import ConfigParser
 
 import discord
 
-from .oisol_enums import DataFilesPath, Faction, Language
+from .oisol_enums import DataFilesPath, Faction, Language, Shard
+from .resources import OISOL_HOME_PATH
 
 
 async def update_discord_interface(
@@ -13,10 +14,10 @@ async def update_discord_interface(
         embed: discord.Embed = None,
 ) -> None:
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.join('/', 'oisol', str(interaction.guild.id)), DataFilesPath.CONFIG.value))
+    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
 
     if config.has_option('stockpile', 'channel'):
-        channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
+        channel = interaction.guild.get_channel(config.getint('stockpile', 'channel'))
     else:
         # Edge case where oisol was not setup on guild but command /stockpile-create called
         # -> Case where the interface does not exist
@@ -53,6 +54,7 @@ def repair_default_config_dict(current_config: ConfigParser | None = None) -> Co
     section_name = 'default'
     final_config.add_section(section_name)
     final_config.set(section_name, 'language', Language.EN.name if not current_config or not current_config.has_option(section_name, 'language') else current_config.get(section_name, 'language'))
+    final_config.set(section_name, 'shard', Shard.ABLE.name if not current_config or not current_config.has_option(section_name, 'shard') else current_config.get(section_name, 'shard'))
 
     section_name = 'register'
     final_config.add_section(section_name)
@@ -77,3 +79,12 @@ def get_highest_res_img_link(img_path: str) -> str:
     :return: external link to the correct picture
     """
     return '/'.join(f'https://foxhole.wiki.gg{img_path}'.replace('/thumb', '').split('/')[:-1]) if '/thumb' in img_path else f'https://foxhole.wiki.gg{img_path}'
+
+
+def sort_nested_dicts_by_key(input_dict: dict) -> dict:
+    return {
+        k: sort_nested_dicts_by_key(v) if isinstance(v, dict) else v for k, v in sorted(
+            input_dict.items(),
+            key=operator.itemgetter(0),
+        )
+    }

@@ -1,1 +1,1 @@
-from .ModuleWiki import ModuleWiki
+from .module_wiki import ModuleWiki

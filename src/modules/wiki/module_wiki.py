@@ -12,10 +12,10 @@ from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
     NAMES_TO_ACRONYMS,
+    PRODUCTION_ENTRIES,
     RESOURCE_TO_CRATE,
     STRUCTURES_WIKI_ENTRIES,
     VEHICLES_WIKI_ENTRIES,
-    PRODUCTION_ENTRIES,
 )
 
 from .mpf_generation import generate_mpf_data
@@ -137,7 +137,7 @@ class ModuleWiki(commands.Cog):
             mpf_fields = []
 
             # Iterate over MPF slots (5 or 9)
-            for i in range(len(wiki_data['mpf_data'][list(wiki_data['mpf_data'].keys())[0]])):
+            for i in range(len(wiki_data['mpf_data'][next(iter(wiki_data['mpf_data']))])):
                 mpf_fields.append({
                     'name': f'{i + 1} {EMOJIS_FROM_DICT.get('Crate', 'Crate')}',
                     'value': '\n'.join(f'- x{f'{math.ceil(v[i] / RESOURCE_TO_CRATE.get(k, 1))} crates of '} {k} {EMOJIS_FROM_DICT.get(k, '')} *({v[i]})*' for k, v in wiki_data['mpf_data'].items()),
@@ -192,12 +192,6 @@ class ModuleWiki(commands.Cog):
             return
 
         entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
-        if (
-                entry_name.startswith(('Bunker Base', 'Safe House', 'Town Base', 'Medical Room'))
-                and entry_name.endswith('(Tier 1)')
-        ):
-            entry_name = entry_name.removesuffix(' (Tier 1)')
-
         scraped_health_data = scrap_health(entry_url, entry_name)
         if 'Name' not in scraped_health_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)

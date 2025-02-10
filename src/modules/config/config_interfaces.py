@@ -1,9 +1,8 @@
 import configparser
-import os
 
 import discord
 
-from src.utils import DataFilesPath, Language
+from src.utils import OISOL_HOME_PATH, DataFilesPath, Language
 
 
 class ConfigViewMenu(discord.ui.View):
@@ -13,9 +12,8 @@ class ConfigViewMenu(discord.ui.View):
         self.embed = discord.Embed(title='Configuration')
 
     async def update_config_embed(self, interaction: discord.Interaction) -> None:
-        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild_id))
         self.config_data = configparser.ConfigParser()
-        self.config_data.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
+        self.config_data.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
 
         self.embed.clear_fields()
         self.embed.add_field(
@@ -60,12 +58,11 @@ class SelectLanguage(discord.ui.Select):
         super().__init__(placeholder='Choose a language', options=options)
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        oisol_server_home_path = os.path.join('/', 'oisol', str(interaction.guild.id))
         config = configparser.ConfigParser()
-        config.read(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value))
-        config['default']['language'] = self.values[0]
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
+        config.set('default', 'language', self.values[0])
 
-        with open(os.path.join(oisol_server_home_path, DataFilesPath.CONFIG.value), 'w', newline='') as configfile:
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini', 'w', newline='') as configfile:
             config.write(configfile)
 
         await interaction.response.edit_message(content='> Language was correctly updated', delete_after=3, view=None)

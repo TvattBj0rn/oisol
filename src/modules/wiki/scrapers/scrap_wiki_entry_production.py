@@ -21,16 +21,8 @@ def scrap_production(url: str) -> dict:
     # Whole page soup data
     soup = BeautifulSoup(response.content, features='lxml')
 
-    # For future specific cases like, this can be reused
-    if '#Assembly_Materials' in url:
-        current_mat = url.split('#')[-1][:-2].replace('_', ' ')
-        for article_tag in soup.find_all('article'):
-            article_tag: Tag
-            if article_tag.has_attr('data-mw-tabber-title') and article_tag['data-mw-tabber-title'] != current_mat:
-                article_tag.decompose()
-
     # Find Production or Acquisition title and grab the next table (production table)
-    # "Aquisition" is used as is in the wiki, see SCmat page
+    # "Acquisition" is used as is in the wiki, see SCmat page
     production_wikitable = soup.find('h2', text=('Production', 'Aquisition', 'Acquisition')).find_next_sibling('table')
 
     wiki_response_dict: dict = {column_name.get_text(strip=True): [] for column_name in production_wikitable.find('tr').find_all('th')}
