@@ -181,6 +181,7 @@ EMOJIS_FROM_DICT = {
     'AP⧸RPG': '<:aprpg:1088829901341212693>',
     'BF5 White Ash Flask Grenade': '<:flask:1088831037766893669>',
     'Anti-Tank Sticky Bomb': '<:sticky:1088831015964909749>',
+    'B2 Varsi Anti-Tank Grenade': '<:varsi:1338643975984119890>',
     'Abisme AT-99': '<:landmine:1088831369762848850>',
     'MapIconTownBase1': '<:townbase_t1:1239654764896321647>',
     'MapIconTownBase2': '<:townbase_t2:1239654763709075591>',

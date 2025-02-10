@@ -15,7 +15,7 @@ from src.utils import (
     EmbedIds,
     Faction,
     repair_default_config_dict,
-    update_discord_interface, OISOL_HOME_PATH,
+    update_discord_interface, OISOL_HOME_PATH, Shard,
 )
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
@@ -105,11 +105,14 @@ class ModuleConfig(commands.Cog):
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild_id)}.ini')
         if not config.has_section('regiment'):
-            config['regiment'] = {}
+            config.add_section('regiment')
 
         # There should be only one item inside **kwargs when this method is called, so only the first item is retrieved
         param_name, param_value = next(iter(kwargs.items()))
-        config['regiment'][param_name] = param_value
+        if param_name == 'shard':
+            config.set('default', 'shard', param_value)
+        else:
+            config.set('regiment', param_name, param_value)
 
         # Write updated config to file
         with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild_id)}.ini', 'w', newline='') as configfile:
@@ -127,7 +130,13 @@ class ModuleConfig(commands.Cog):
         self._regiment_config_generic(interaction.guild_id, tag=tag)
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config-faction', description='Set the faction of the regiment group using the bot')
+    @app_commands.command(name='config-shard', description='Set the shard of the group')
+    async def config_shard(self, interaction: discord.Interaction, shard: Shard):
+        logging.info(f'[COMMAND] config-shard command by {interaction.user.name} on {interaction.guild.name}')
+        self._regiment_config_generic(interaction.guild_id, shard=shard.name)
+        await interaction.response.send_message('> Shard was updated', ephemeral=True, delete_after=5)
+
+    @app_commands.command(name='config-faction', description='Set the faction of the group using the bot')
     async def config_faction(self, interaction: discord.Interaction, faction: Faction) -> None:
         logging.info(f'[COMMAND] config-faction command by {interaction.user.name} on {interaction.guild.name}')
         self._regiment_config_generic(interaction.guild_id, faction=faction.name)
