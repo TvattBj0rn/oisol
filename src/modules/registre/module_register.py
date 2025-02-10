@@ -114,6 +114,8 @@ class ModuleRegister(commands.Cog):
                 config.getint('register', 'recruit_id') in [role.id for role in after.roles]
                 and config.getint('register', 'recruit_id') not in [role.id for role in before.roles]
         ):
+            if config.has_option('register', 'input'):
+                await after.edit(nick=safeguarded_nickname(f'{config.get('register', 'input', fallback='')} {after.display_name}'))
             self.bot.cursor.execute(
                 'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
                 (before.guild.id, int(time.time()), before.id),
