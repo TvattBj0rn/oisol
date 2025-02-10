@@ -60,12 +60,11 @@ class Language(Enum):
     ES = auto()
 
 
-class Modules(Enum):
-    CONFIG = auto()
-    REGISTER = auto()
-    STOCKPILE = auto()
-    TODOLIST = auto()
-    WIKI = auto()
+class InterfaceType(Enum):
+    REGISTER_VIEW = auto()
+    STOCKPILE_VIEW = auto()
+    TODOLIST_VIEW = auto()
+    FACILITY_VIEW = auto()
 
 
 class PriorityType(Enum):

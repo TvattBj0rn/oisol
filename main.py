@@ -89,6 +89,9 @@ class Oisol(commands.Bot):
         self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsAccess(GroupId INTEGER, TodolistId TEXT, DiscordId INTEGER, DiscordIdType TEXT)')
         self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER)')
 
+        # Interfaces references
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS AllInterfacesReferences(GroupId INTEGER, ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT)')
+
 
 if __name__ == '__main__':
     # Logging setup

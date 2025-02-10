@@ -8,7 +8,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import DiscordIdType
+from src.utils import DiscordIdType, InterfaceType
 
 from .todolist_view_menu import TodolistViewMenu
 
@@ -73,3 +73,9 @@ class ModuleTodolist(commands.Cog):
         todolist_view.refresh_view(title, str(interaction.guild_id), todolist_id)
 
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
+        interaction_response_message = await interaction.original_response()
+        self.bot.cursor.execute(
+            f'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType) VALUES (?, ?, ?, ?)',
+            (interaction.guild_id, interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name)
+        )
+        self.bot.connection.commit()
