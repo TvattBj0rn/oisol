@@ -110,11 +110,11 @@ class ModuleStockpiles(commands.Cog):
         for region, v in sorted_grouped_stockpiles.items():
             value_string = ''
             for subregion_type, vv in v.items():
-                value_string += f'__{subregion_type.split('_')[0]}__ ({FoxholeBuildings[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'].value})\n'
+                value_string += f'**{subregion_type.split('_')[0]}** ({FoxholeBuildings[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'].value})\n'
                 for name, code in vv.items():
                     value_string += f'{name} **|** {code}\n'
                 value_string += '\n'
-            embed_fields.append({'name': f'‎\n\n{region.upper()}', 'value': value_string, 'inline': True})
+            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
 
         return discord.Embed().from_dict(
             {
