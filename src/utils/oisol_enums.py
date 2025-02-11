@@ -161,23 +161,7 @@ class MapIcon(Enum):
     WEATHER_STATION = 83
     MORTAR_HOUSE = 84
 
-class MaterialsNames(EnumMeta):
-    CONSTRUCTION_MATERIALS = NameEmojiPair('Construction Materials', '<:cmat:1239353162616279122>')
-    EXPLOSIVE_POWDER = NameEmojiPair('Explosive Powder', '<:emat:1327687090590449818>')
-    HEAVY_EXPLOSIVE_POWDER = NameEmojiPair('Heavy Explosive Powder', '<:hemat:1327688754617647184>')
-    POWER = NameEmojiPair('MW of power', '<:mw_of_power:1327439074184794185>')
-    ASSEMBLY_MATERIAL_I = NameEmojiPair('Assembly Materials I', '<:asmat1:1239353117120659557>')
-    ASSEMBLY_MATERIAL_II = NameEmojiPair('Assembly Materials II', '<:asmat2:1239353144484302953>')
-    ASSEMBLY_MATERIAL_III = NameEmojiPair('Assembly Materials III', '<:asmat3:1239353124653760584>')
-    ASSEMBLY_MATERIALS_IV = NameEmojiPair('Assembly Materials IV', '<:asmat4:1239353135772995584>')
-    ASSEMBLY_MATERIAL_V = NameEmojiPair('Assembly Materials V', '<:asmat5:1239353106404474951>')
-    MM_250 = NameEmojiPair('250mm', '<:250mm:1239630880289329262>')
-    FLAME_AMMO = NameEmojiPair('Flame Ammo', '<:flame_ammo:1317941665016844392>')
-    SEA_MINE = NameEmojiPair('Sea Mine', '<:sea_mine:1244048778063773716>', ['E680-S Rudder Lock'])
-    INFANTRY_MINE = NameEmojiPair("Crow's Foot Mine")
-    TANK_MINE = NameEmojiPair('Abisme AT-99', '<:landmine:1088831369762848850>')
-    THERMAL_SHIELDING = NameEmojiPair('Thermal Shielding', '<:thermal_shielding:1251473216111640586>')
-
+class EntitiesNames(EnumMeta):
     def __getattribute__(cls, name):
         """
         Allows to use the value as the default class
@@ -190,8 +174,35 @@ class MaterialsNames(EnumMeta):
         return value
 
 
+class ResourcesNames(EntitiesNames):
+    CONSTRUCTION_MATERIALS = NameEmojiPair('Construction Materials', '<:cmat:1239353162616279122>')
+    EXPLOSIVE_POWDER = NameEmojiPair('Explosive Powder', '<:emat:1327687090590449818>')
+    HEAVY_EXPLOSIVE_POWDER = NameEmojiPair('Heavy Explosive Powder', '<:hemat:1327688754617647184>')
+    POWER = NameEmojiPair('MW of power', '<:mw_of_power:1327439074184794185>')
+    ASSEMBLY_MATERIAL_I = NameEmojiPair('Assembly Materials I', '<:asmat1:1239353117120659557>')
+    ASSEMBLY_MATERIAL_II = NameEmojiPair('Assembly Materials II', '<:asmat2:1239353144484302953>')
+    ASSEMBLY_MATERIAL_III = NameEmojiPair('Assembly Materials III', '<:asmat3:1239353124653760584>')
+    ASSEMBLY_MATERIALS_IV = NameEmojiPair('Assembly Materials IV', '<:asmat4:1239353135772995584>')
+    ASSEMBLY_MATERIAL_V = NameEmojiPair('Assembly Materials V', '<:asmat5:1239353106404474951>')
+    FLAME_AMMO = NameEmojiPair('Flame Ammo', '<:flame_ammo:1317941665016844392>')
+    SEA_MINE = NameEmojiPair('Sea Mine', '<:sea_mine:1244048778063773716>', ['E680-S Rudder Lock'])
+    INFANTRY_MINE = NameEmojiPair("Crow's Foot Mine")
+    TANK_MINE = NameEmojiPair('Abisme AT-99', '<:landmine:1088831369762848850>')
+    THERMAL_SHIELDING = NameEmojiPair('Thermal Shielding', '<:thermal_shielding:1251473216111640586>')
+
+class AmmunitionNames(EntitiesNames):
+    BUCKSHOT = NameEmojiPair('', '')
+    MM_44 = NameEmojiPair('', '')
+    MM_7_62 = NameEmojiPair('', '')
+    MM_7_92 = NameEmojiPair('', '')
+    MM_8 = NameEmojiPair('', '')
+    MM_9 = NameEmojiPair('', '')
+    MM_12_7 = NameEmojiPair('', '')
+    MM_250 = NameEmojiPair('250mm', '<:250mm:1239630880289329262>')
+
+
 if __name__ == '__main__':
-    print(type(MaterialsNames.CONSTRUCTION_MATERIALS))
+    print(ResourcesNames.CONSTRUCTION_MATERIALS.display_name)
     print(TimeDuration(minutes=30).time)
     # print(NameEmojiPair('Explosive Powder', 'test')['Explosive Powder'])
 
