@@ -1,4 +1,44 @@
-from enum import Enum, auto
+from dataclasses import dataclass
+from enum import Enum, auto, EnumMeta
+
+
+@dataclass
+class NameEmojiPair:
+    display_name: str
+    emoji: str | None = None
+    aliases: list[str] | None = None
+
+    def __post_init__(self) -> None:
+        """
+        Ensure proper data is displayed on the interfaces
+        """
+        if self.emoji is None:
+            self.emoji = self.display_name
+
+    def __getitem__(self, display_name: str) -> str:
+        """
+        Allows dict like access to retrieve the emoji from display name
+        :param display_name:
+        :return: emoji attribute if the given name has the same value as the display_name attribute, given_name otherwise
+        """
+        if display_name == self.display_name or (self.aliases is not None and display_name in self.aliases):
+            return self.emoji
+        return display_name
+
+
+@dataclass
+class TimeDuration:
+    """
+    Class to store time as seconds
+    """
+    seconds: int = 0
+    minutes: int = 0
+    hours: int = 0
+    days: int = 0
+    time : int = 0
+
+    def __post_init__(self):
+        self.time = self.seconds + self.minutes * 60 + self.hours * 3600 + self.days * 86400
 
 
 class DamageTypes(Enum):
@@ -20,9 +60,6 @@ class DamageTypes(Enum):
 
 
 class DataFilesPath(Enum):
-    REGISTER = 'register.csv'
-    STOCKPILES = 'stockpiles.csv'
-    CONFIG = 'config.ini'
     CONFIG_DIR = 'guilds_config_files'
 
 
@@ -54,10 +91,8 @@ class FoxholeBuildings(Enum):
 
 
 class Language(Enum):
-    FR = auto()
     EN = auto()
-    DE = auto()
-    ES = auto()
+    FR = auto()
 
 
 class InterfaceType(Enum):
@@ -125,3 +160,38 @@ class MapIcon(Enum):
     FACILITY_MINE_OIL_RIG = 75
     WEATHER_STATION = 83
     MORTAR_HOUSE = 84
+
+class MaterialsNames(EnumMeta):
+    CONSTRUCTION_MATERIALS = NameEmojiPair('Construction Materials', '<:cmat:1239353162616279122>')
+    EXPLOSIVE_POWDER = NameEmojiPair('Explosive Powder', '<:emat:1327687090590449818>')
+    HEAVY_EXPLOSIVE_POWDER = NameEmojiPair('Heavy Explosive Powder', '<:hemat:1327688754617647184>')
+    POWER = NameEmojiPair('MW of power', '<:mw_of_power:1327439074184794185>')
+    ASSEMBLY_MATERIAL_I = NameEmojiPair('Assembly Materials I', '<:asmat1:1239353117120659557>')
+    ASSEMBLY_MATERIAL_II = NameEmojiPair('Assembly Materials II', '<:asmat2:1239353144484302953>')
+    ASSEMBLY_MATERIAL_III = NameEmojiPair('Assembly Materials III', '<:asmat3:1239353124653760584>')
+    ASSEMBLY_MATERIALS_IV = NameEmojiPair('Assembly Materials IV', '<:asmat4:1239353135772995584>')
+    ASSEMBLY_MATERIAL_V = NameEmojiPair('Assembly Materials V', '<:asmat5:1239353106404474951>')
+    MM_250 = NameEmojiPair('250mm', '<:250mm:1239630880289329262>')
+    FLAME_AMMO = NameEmojiPair('Flame Ammo', '<:flame_ammo:1317941665016844392>')
+    SEA_MINE = NameEmojiPair('Sea Mine', '<:sea_mine:1244048778063773716>', ['E680-S Rudder Lock'])
+    INFANTRY_MINE = NameEmojiPair("Crow's Foot Mine")
+    TANK_MINE = NameEmojiPair('Abisme AT-99', '<:landmine:1088831369762848850>')
+    THERMAL_SHIELDING = NameEmojiPair('Thermal Shielding', '<:thermal_shielding:1251473216111640586>')
+
+    def __getattribute__(cls, name):
+        """
+        Allows to use the value as the default class
+        :param name: attribute to use
+        :return: value of name
+        """
+        value = super().__getattribute__(name)
+        if isinstance(value, cls):
+            value = value.value
+        return value
+
+
+if __name__ == '__main__':
+    print(type(MaterialsNames.CONSTRUCTION_MATERIALS))
+    print(TimeDuration(minutes=30).time)
+    # print(NameEmojiPair('Explosive Powder', 'test')['Explosive Powder'])
+
