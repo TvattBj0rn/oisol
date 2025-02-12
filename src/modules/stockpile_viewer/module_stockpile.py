@@ -266,7 +266,7 @@ class StockpileTasks(commands.Cog):
                     return
                 if last_war_start_time is not None:
                     self.bot.cursor.execute(
-                        f'DELETE FROM StockpilesZones WHERE ConquestStartTime == {last_war_start_time}',
+                        f"DELETE FROM StockpilesZones WHERE ConquestStartTime == {last_war_start_time} AND Shard == '{shard_api.shard_name}'",
                     )
                 self.bot.cursor.executemany(
                     'INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)',
