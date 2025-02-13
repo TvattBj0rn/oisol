@@ -212,7 +212,7 @@ class AmmunitionNames(EntitiesNames):
     MM_300 = NameEmojiPair('300mm', '<:300mm:1239625564428697640>')
 
 if __name__ == '__main__':
-    # print(ResourcesNames.CONSTRUCTION_MATERIALS)
+    print(ResourcesNames.CONSTRUCTION_MATERIALS)
     print(TimeDuration(minutes=30).time)
     # for k, v in AmmunitionNames.__dict__.items():
     #     if not (k.startswith('__') and k.endswith('__')):
