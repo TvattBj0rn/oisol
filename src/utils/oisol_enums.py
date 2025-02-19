@@ -54,8 +54,6 @@ class FoxholeBuildings(Enum):
 class Language(Enum):
     FR = auto()
     EN = auto()
-    DE = auto()
-    ES = auto()
 
 
 class InterfaceType(Enum):
