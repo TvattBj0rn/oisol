@@ -22,15 +22,15 @@ class DatabaseCleaner(commands.Cog):
         for table, column in InterfaceType[interface_type].value:
             self.bot.cursor.execute(f"DELETE FROM {table} WHERE {column} == '{interface_reference}'")
         self.bot.cursor.execute(
-            f'DELETE FROM AllInterfacesReferences WHERE ChannelId == {channel_id} AND MessageId == {message_id}'
+            f'DELETE FROM AllInterfacesReferences WHERE ChannelId == {channel_id} AND MessageId == {message_id}',
         )
         self.bot.connection.commit()
 
     @tasks.loop(hours=168)
-    async def remove_non_existing_interfaces(self):
+    async def remove_non_existing_interfaces(self) -> None:
         start_time = time.time()
         all_existing_interfaces = self.bot.cursor.execute(
-            f'SELECT ChannelId, MessageId, InterfaceType, InterfaceReference FROM AllInterfacesReferences',
+            'SELECT ChannelId, MessageId, InterfaceType, InterfaceReference FROM AllInterfacesReferences',
         ).fetchall()
         for channel_id, message_id, interface_type, interface_reference in all_existing_interfaces:
             channel = self.bot.get_channel(channel_id)
@@ -42,7 +42,7 @@ class DatabaseCleaner(commands.Cog):
             except discord.NotFound:
                 # Associated message was deleted
                 self._clear_entries(channel_id, message_id, interface_type, interface_reference)
-            except discord.Forbidden | discord.HTTPException:
+            except (discord.Forbidden, discord.HTTPException):
                 # Rights of the bot have been removed or fail on network part
                 continue
         logging.info(f'[TASK] remove_non_existing_interface task complete in {time.time() - start_time}s')

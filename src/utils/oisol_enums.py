@@ -1,3 +1,4 @@
+import typing
 from enum import Enum, auto
 
 
@@ -64,10 +65,10 @@ class InterfaceType(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value
     """
-    REGISTER_VIEW = []
-    STOCKPILE_VIEW = []
-    TODOLIST_VIEW = [('GroupsTodolistsAccess', 'TodolistId'), ('GroupsTodolistsTasks', 'TodolistId')]
-    FACILITY_VIEW = []
+    REGISTER_VIEW: typing.ClassVar = []
+    STOCKPILE_VIEW: typing.ClassVar = []
+    TODOLIST_VIEW: typing.ClassVar = [('GroupsTodolistsAccess', 'TodolistId'), ('GroupsTodolistsTasks', 'TodolistId')]
+    FACILITY_VIEW: typing.ClassVar = []
 
 
 class PriorityType(Enum):

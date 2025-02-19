@@ -10,8 +10,9 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.utils import (
+    OISOL_HOME_PATH,
     DataFilesPath,
-    safeguarded_nickname, OISOL_HOME_PATH,
+    safeguarded_nickname,
 )
 
 from .register_view_menu import RegisterViewMenu
@@ -30,7 +31,7 @@ class ModuleRegister(commands.Cog):
 
         # Retrieve config and channel ID if it exists, take the channel the command was executed from otherwise
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         if not config.has_section('register'):
             config.add_section('register')
         config.set('register', 'channel', str(interaction.channel_id))
@@ -43,7 +44,7 @@ class ModuleRegister(commands.Cog):
         # Update config
         sent_msg = await interaction.original_response()
         config.set('register', 'message_id', str(sent_msg.id))
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini', 'w', newline='') as configfile:
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
             config.write(configfile)
 
     def validate_all_members(self, members: list, server_id: int, recruit_id: int) -> list:
@@ -59,7 +60,7 @@ class ModuleRegister(commands.Cog):
 
     async def update_register(self, guild_id: int) -> None:
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild_id)}.ini')
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
 
         # Get group data from db and validate it
         all_members = self.validate_all_members(
@@ -99,7 +100,7 @@ class ModuleRegister(commands.Cog):
             return
 
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(before.guild.id)}.ini')
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{before.guild.id}.ini')
 
         # In some cases, there might be an update of any members roles before the init command is executed.
         # As such this ensures there are no errors on the bot side when this case happens.

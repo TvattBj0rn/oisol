@@ -1,4 +1,3 @@
-import configparser
 import logging
 import os
 import sqlite3
@@ -71,7 +70,7 @@ class Oisol(commands.Bot):
         os.makedirs(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value, exist_ok=True)
 
         # Create oisol/config.ini file with default config
-        if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild.id)}.ini'):
+        if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini'):
             config = repair_default_config_dict()
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)

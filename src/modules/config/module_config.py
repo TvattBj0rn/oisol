@@ -11,11 +11,13 @@ from discord.ext import commands
 
 from src.modules.stockpile_viewer import ModuleStockpiles
 from src.utils import (
+    OISOL_HOME_PATH,
     DataFilesPath,
     EmbedIds,
     Faction,
+    Shard,
     repair_default_config_dict,
-    update_discord_interface, OISOL_HOME_PATH, Shard,
+    update_discord_interface,
 )
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
@@ -31,20 +33,19 @@ class ModuleConfig(commands.Cog):
     @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')
     async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False) -> None:
         logging.info(f'[COMMAND] repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
-        server_home_path = OISOL_HOME_PATH / str(interaction.guild_id)
 
         # Create configs directory
         os.makedirs(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value, exist_ok=True)
 
         # Create oisol/config.ini file with default config
-        if not os.path.isfile(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini') or force_reset:
+        if not os.path.isfile(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini') or force_reset:
             config = repair_default_config_dict()
         else:
             current_config = configparser.ConfigParser()
-            current_config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
+            current_config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
             config = repair_default_config_dict(current_config)
 
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini', 'w', newline='') as configfile:
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
             config.write(configfile)
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
@@ -53,7 +54,7 @@ class ModuleConfig(commands.Cog):
         logging.info(f'[COMMAND] config-display command by {interaction.user.name} on {interaction.guild.name}')
 
         config = configparser.ConfigParser()
-        if not config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini'):
+        if not config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini'):
             await interaction.response.send_message(
                 '> The default config was never set',
                 ephemeral=True,
@@ -72,7 +73,7 @@ class ModuleConfig(commands.Cog):
             return
 
         config = configparser.ConfigParser()
-        if not config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini'):
+        if not config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini'):
             await interaction.response.send_message(
                 '> The default config was never set',
                 ephemeral=True,
@@ -103,7 +104,7 @@ class ModuleConfig(commands.Cog):
     def _regiment_config_generic(guild_id: int, **kwargs: str) -> None:
         # Init path to file / Config object
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild_id)}.ini')
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
         if not config.has_section('regiment'):
             config.add_section('regiment')
 
@@ -115,7 +116,7 @@ class ModuleConfig(commands.Cog):
             config.set('regiment', param_name, param_value)
 
         # Write updated config to file
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild_id)}.ini', 'w', newline='') as configfile:
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini', 'w', newline='') as configfile:
             config.write(configfile)
 
     @app_commands.command(name='config-name', description='Set the name of the group using the bot')
@@ -131,7 +132,7 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-shard', description='Set the shard of the group')
-    async def config_shard(self, interaction: discord.Interaction, shard: Shard):
+    async def config_shard(self, interaction: discord.Interaction, shard: Shard) -> None:
         logging.info(f'[COMMAND] config-shard command by {interaction.user.name} on {interaction.guild.name}')
         self._regiment_config_generic(interaction.guild_id, shard=shard.name)
         await interaction.response.send_message('> Shard was updated', ephemeral=True, delete_after=5)
@@ -142,7 +143,7 @@ class ModuleConfig(commands.Cog):
         self._regiment_config_generic(interaction.guild_id, faction=faction.name)
 
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         if config.has_option('stockpile', 'channel'):
             stockpile_interface_exists = False
             channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
