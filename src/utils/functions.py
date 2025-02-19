@@ -89,6 +89,7 @@ def sort_nested_dicts_by_key(input_dict: dict) -> dict:
         )
     }
 
+
 def get_emoji_by_name(emoji_list: list[discord.Emoji], emoji_name: str) -> str:
     """
     :param emoji_list: List of emojis to find the given emoji name in
