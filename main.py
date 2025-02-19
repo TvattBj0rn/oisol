@@ -33,6 +33,7 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
+        self.app_emojis = []
 
     async def on_ready(self) -> None:
         # Ready the db
@@ -44,6 +45,9 @@ class Oisol(commands.Bot):
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
         await self.add_cog(ModuleWiki(self))
+
+        # Sync app emojis
+        self.app_emojis = await self.fetch_application_emojis()
 
         try:
             synced = await self.tree.sync()

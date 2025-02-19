@@ -88,3 +88,14 @@ def sort_nested_dicts_by_key(input_dict: dict) -> dict:
             key=operator.itemgetter(0),
         )
     }
+
+def get_emoji_by_name(emoji_list: list[discord.Emoji], emoji_name: str) -> str:
+    """
+    :param emoji_list: List of emojis to find the given emoji name in
+    :param emoji_name: Emoji name to find
+    :return: Emoji in a discord readable format if found, default missing icon otherwise
+    """
+
+    if (emoji := next((emoji for emoji in emoji_list if emoji.name == emoji_name), None)) is not None:
+        return f'<:{emoji.name}:{emoji.id}>'
+    return '⊘'
