@@ -5,7 +5,7 @@ from configparser import ConfigParser
 import discord
 
 from .oisol_enums import DataFilesPath, Faction, Language, Shard
-from .resources import OISOL_HOME_PATH
+from .resources import OISOL_HOME_PATH, EMOJIS_FROM_DICT
 
 
 async def update_discord_interface(
@@ -94,9 +94,11 @@ def get_emoji_by_name(emoji_list: list[discord.Emoji], emoji_name: str) -> str:
     """
     :param emoji_list: List of emojis to find the given emoji name in
     :param emoji_name: Emoji name to find
-    :return: Emoji in a discord readable format if found, default missing icon otherwise
+    :return: Emoji in a discord readable format if found, default value otherwise
     """
 
-    if (emoji := next((emoji for emoji in emoji_list if emoji.name == emoji_name), None)) is not None:
+    emoji_custom_id = EMOJIS_FROM_DICT.get(emoji_name, emoji_name)
+
+    if (emoji := next((emoji for emoji in emoji_list if emoji.name == emoji_custom_id), None)) is not None:
         return f'<:{emoji.name}:{emoji.id}>'
-    return '⊘'
+    return emoji_name
