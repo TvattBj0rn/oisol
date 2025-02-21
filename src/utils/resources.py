@@ -1140,8 +1140,8 @@ VEHICLES_WIKI_ENTRIES = [
     },
     {
         'name': 'Balfour Falconer 250mm',
-        'url': 'https://foxhole.wiki.gg/wiki/Field_Mortar',
-        'keywords': 'falconerbarlfourfmpushgunwardenbaby250mmballista',
+        'url': 'https://foxhole.wiki.gg/wiki/Balfour_Falconer_250mm',
+        'keywords': 'falconerbalfourfmpushgunwarden250mm',
     },
     {
         'name': 'Balfour Rampart 68mm',
@@ -1803,9 +1803,9 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'transferresourcertsstation',
     },
     {
-        'name': 'Infantry Arms Factory',
-        'url': 'https://foxhole.wiki.gg/wiki/Infantry_Arms_Factory',
-        'keywords': 'infantryarmsfactory',
+        'name': 'Infantry Kit Factory',
+        'url': 'https://foxhole.wiki.gg/wiki/Infantry_Kit_Factory',
+        'keywords': 'infantryarmskitfactory',
     },
     {
         'name': 'Crate Transfer Station',
