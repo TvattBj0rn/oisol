@@ -36,12 +36,15 @@ class ModuleWiki(commands.Cog):
 
     @staticmethod
     def retrieve_facility_mats(resource_type: str, amount: str) -> str:
+        # Todo: really need to work on this, like by making this directly into the scraper
+        key_only = {
+            'LegendDefense',
+        }
+        if resource_type in key_only:
+            return EMOJIS_FROM_DICT.get(resource_type, resource_type)
         if resource_type not in EMOJIS_FROM_DICT:
             return f'{amount} **:** '
-
-        if resource_type in NAMES_TO_ACRONYMS:
-            return f'\n{EMOJIS_FROM_DICT[resource_type]} **|** {NAMES_TO_ACRONYMS[resource_type]} **-** {amount}'
-        return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
+        return f'\n- {f'{amount} **|** ' if amount != resource_type else ''}{resource_type}{f' ({EMOJIS_FROM_DICT[resource_type]})' if resource_type in EMOJIS_FROM_DICT else ''}'
 
     @staticmethod
     def generate_hmtk_embed(

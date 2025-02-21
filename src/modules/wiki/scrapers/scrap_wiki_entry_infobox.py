@@ -8,7 +8,10 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> t
     attr_dict = {}
     match attr_title:
         case 'Resistance(damage reduction)' | 'Resistance(damagereduction)':
-            attr_dict['type'] = f"\n{infobox_attribute_soup.select_one('div > a').get_text(strip=True)}"
+            if damage_type_link := infobox_attribute_soup.select_one('div > a').get_text(strip=True):
+                attr_dict['type'] = f"\n*{damage_type_link}*"
+            else: # This forces a value to 'type' and worst case nothing is displayed
+                attr_dict['type'] = f"\n*{infobox_attribute_soup.find(text=True, recursive=False)}*"
             for damage_reduction in infobox_attribute_soup.select('div > div'):
                 if resistance_type := damage_reduction.select_one('a').get('title', ''):
                     attr_dict[resistance_type] = reduction_percentage if (reduction_percentage := damage_reduction.get_text(strip=True)) else 'Immune'
@@ -20,23 +23,23 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> t
                 attr_dict[subsystem_icon_soup[subsystem_index]['alt'].strip()] = disable_chances[subsystem_index]
             return 'Subsystems disable chance', attr_dict
         case 'Cost':
-            if infobox_attribute_soup.select('p > span'):
-                for cost in infobox_attribute_soup.select('p > span'):
+            if vehicle_cost := infobox_attribute_soup.select('p > span'):
+                for cost in vehicle_cost:
                     attr_dict[cost.find('a')['title']] = cost.get_text(strip=True)
                 if infobox_attribute_soup.select('p > a'):
                     attr_dict['chassis'] = f"""\nChassis: {infobox_attribute_soup.select_one('p > a').get_text()}"""
                 return attr_title, attr_dict
-            for cost in infobox_attribute_soup.select('span'):
-                attr_dict[cost.find('a')['title']] = cost.get_text(strip=True)
+            for cost in infobox_attribute_soup.select('span > span'):
+                attr_dict[cost.select_one('a')['title']] = cost.parent.get_text(strip=True)
             return attr_title, attr_dict
-        case 'Intel Icon' | 'Intel Icon (enemy)' | 'Map Icon' | 'Map Icon (allied)':
-            return attr_title, {infobox_attribute_soup.select_one('a > img')['alt'].removesuffix('.png'): ''}
+        case 'IntelIcon':
+            return 'Intel Icon', {infobox_attribute_soup.select_one('a > img')['alt'].removesuffix('.png'): ''}
         case 'Construction Tool':
             if infobox_attribute_soup.select_one('span').get_text(strip=True) == 'pressE':
                 return attr_title, {'': 'press E'}
             return attr_title, {infobox_attribute_soup.select_one('span > a')['title']: ''}
-        case 'Repair Cost':
-            return attr_title, {'Basic Materials': infobox_attribute_soup.get_text(strip=True)}
+        case 'RepairCost':
+            return 'Repair Cost', {'Basic Materials': infobox_attribute_soup.get_text(strip=True)}
         case 'Fuel Capacity':
             attr_dict[''] = infobox_attribute_soup.select_one('a').get_text(strip=True)
             for fuel in infobox_attribute_soup.select('span'):
