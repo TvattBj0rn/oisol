@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import collections
 import logging
 import math
 import operator
 import random
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
@@ -23,10 +26,13 @@ from .scrapers.scrap_wiki_entry_health import scrap_health
 from .scrapers.scrap_wiki_entry_infobox import scrap_wiki
 from .scrapers.scrap_wiki_entry_production import scrap_production
 
+if TYPE_CHECKING:
+    from main import Oisol
+
 
 class ModuleWiki(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.oisol = bot
+    def __init__(self, bot: Oisol):
+        self.bot = bot
 
     @staticmethod
     def retrieve_facility_mats(resource_type: str, amount: str) -> str:
