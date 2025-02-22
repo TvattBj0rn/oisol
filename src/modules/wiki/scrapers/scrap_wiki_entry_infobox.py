@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils import Faction, get_highest_res_img_link
+from src.utils import Faction, get_highest_res_img_link, get_emoji_by_name
 
 
 def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> tuple:
@@ -41,9 +41,8 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> t
         case 'RepairCost':
             return 'Repair Cost', {'Basic Materials': infobox_attribute_soup.get_text(strip=True)}
         case 'Fuel Capacity':
-            attr_dict[''] = infobox_attribute_soup.select_one('a').get_text(strip=True)
-            for fuel in infobox_attribute_soup.select('span'):
-                attr_dict[fuel.find('a')['title']] = ''
+            attr_dict['capacity'] = infobox_attribute_soup.select_one('a').get_text(strip=True)
+            attr_dict['type'] = [fuel.find('a')['title'] for fuel in infobox_attribute_soup.select('span > span')]
             return attr_title, attr_dict
         case 'Ammo' | 'Ammunition':
             for ammo_type in infobox_attribute_soup.findChildren('a'):
@@ -68,6 +67,7 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
     data_dict = {
         'title': infobox_soup.find('h2', {'class': 'pi-item pi-item-spacing pi-title'}).get_text(),
         'img_url': get_highest_res_img_link(infobox_soup.select_one('a > img')['src']),
+        'attributes': {}
     }
 
     merged_class = infobox_soup['class']
@@ -80,7 +80,7 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
 
     for infobox_attribute in infobox_soup.select('section > div'):
         attribute_title, attribute_value = handle_specific_attribute(infobox_attribute.select_one('div[class^="pi-data-value pi-font"]'), infobox_attribute.select_one('h3').get_text(strip=True))
-        data_dict[attribute_title] = attribute_value
+        data_dict['attributes'][attribute_title] = attribute_value
 
     return data_dict
 
@@ -101,8 +101,8 @@ def scrap_wiki(url: str, name: str) -> dict:
     # Infobox handling within a function to allow for loop later on
     for infobox in soup.select('aside[class^="portable-infobox noexcerpt pi-background"]'):
         wiki_response_dict = generate_infobox_data(infobox)
-        if name in {wiki_response_dict['title'], f'{wiki_response_dict['title']} (Tier 1)', f'{wiki_response_dict['title']} (Battleship)'}:
-            wiki_response_dict['description'] = entry_desc
-            return wiki_response_dict
-
+        if name != wiki_response_dict['title']:
+            continue
+        wiki_response_dict['description'] = entry_desc
+        return wiki_response_dict
     return {}

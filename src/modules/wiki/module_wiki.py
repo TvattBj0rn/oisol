@@ -35,16 +35,18 @@ class ModuleWiki(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def retrieve_facility_mats(resource_type: str, amount: str) -> str:
+    def format_attributes(key: str, value: str | list) -> str:
         # Todo: really need to work on this, like by making this directly into the scraper
         key_only = {
             'LegendDefense',
         }
-        if resource_type in key_only:
-            return EMOJIS_FROM_DICT.get(resource_type, resource_type)
-        if resource_type not in EMOJIS_FROM_DICT:
-            return f'{amount} **:** '
-        return f'\n- {f'{amount} **|** ' if amount != resource_type else ''}{resource_type}{f' ({EMOJIS_FROM_DICT[resource_type]})' if resource_type in EMOJIS_FROM_DICT else ''}'
+        if isinstance(value, list):
+            return ', '.join(f'{fuel_type}{f' ({EMOJIS_FROM_DICT[fuel_type]})' if fuel_type in EMOJIS_FROM_DICT else ''}' for fuel_type in value)
+        if key in key_only:
+            return EMOJIS_FROM_DICT.get(key, key)
+        if key not in EMOJIS_FROM_DICT:
+            return f'{value} **:** '
+        return f'\n- {f'{value} **|** ' if value != key else ''}{key}{f' ({EMOJIS_FROM_DICT[key]})' if key in EMOJIS_FROM_DICT else ''}'
 
     @staticmethod
     def generate_hmtk_embed(
@@ -85,23 +87,21 @@ class ModuleWiki(commands.Cog):
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
         embed_fields = []
-        for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in {'description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color'}:
-                continue
+        for attribute_key, attribute_value in wiki_data['attributes'].items():
             if isinstance(attribute_value, str):
                 embed_fields.append({'name': attribute_key, 'value': attribute_value, 'inline': True})
             else:
                 attribute_string = ''
                 ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
                 for k, v in ordered_attribute_value.items():
-                    attribute_string += self.retrieve_facility_mats(k, v)
+                    attribute_string += self.format_attributes(k, v)
                 attribute_string = attribute_string.removesuffix(' **:** ')
                 embed_fields.append({'name': attribute_key, 'value': attribute_string, 'inline': True})
-        if 'Fuel Capacity' in wiki_data:
+        if (fuel_capacity := 'Fuel Capacity') in wiki_data:
             embed_fields.append(
                 {
-                    'name': 'Fuel Capacity',
-                    'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT))}",
+                    'name': fuel_capacity,
+                    'value': f"{wiki_data[fuel_capacity]['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data[fuel_capacity] if k in EMOJIS_FROM_DICT))}",
                     'inline': True,
                 },
             )
