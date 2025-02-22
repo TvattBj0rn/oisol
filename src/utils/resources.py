@@ -1594,7 +1594,7 @@ VEHICLES_WIKI_ENTRIES = [
         'keywords': 'resourcebmsbowheadship',
     },
     {
-        'name': 'Callahan (Battleship)',
+        'name': 'Callahan',
         'url': 'https://foxhole.wiki.gg/wiki/Callahan_(Battleship)',
         'keywords': 'callahanwardenbsbattleship',
     },
