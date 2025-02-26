@@ -36,13 +36,9 @@ class ModuleWiki(commands.Cog):
 
     @staticmethod
     def format_attributes(key: str, value: str | list) -> str:
-        # Todo: really need to work on this, like by making this directly into the scraper
-        key_only = {
-            'LegendDefense',
-        }
         if isinstance(value, list):
             return ', '.join(f'{fuel_type}{f' ({EMOJIS_FROM_DICT[fuel_type]})' if fuel_type in EMOJIS_FROM_DICT else ''}' for fuel_type in value)
-        if key in key_only:
+        if value == 'Intel Icon':
             return EMOJIS_FROM_DICT.get(key, key)
         if key not in EMOJIS_FROM_DICT:
             return f'{value} **:** '

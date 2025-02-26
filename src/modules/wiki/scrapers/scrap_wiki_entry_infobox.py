@@ -32,8 +32,8 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> t
             for cost in infobox_attribute_soup.select('span > span'):
                 attr_dict[cost.select_one('a')['title']] = cost.parent.get_text(strip=True)
             return attr_title, attr_dict
-        case 'IntelIcon':
-            return 'Intel Icon', {infobox_attribute_soup.select_one('a > img')['alt'].removesuffix('.png'): ''}
+        case 'IntelIcon' | 'MapIcon (allied)' | 'IntelIcon (enemy)':
+            return 'Intel Icon', {infobox_attribute_soup.select_one('a > img')['alt'].removesuffix('.png'): 'Intel Icon'}
         case 'Construction Tool':
             if infobox_attribute_soup.select_one('span').get_text(strip=True) == 'pressE':
                 return attr_title, {'': 'press E'}
