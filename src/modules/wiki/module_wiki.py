@@ -14,7 +14,6 @@ from discord.ext import commands
 from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
-    NAMES_TO_ACRONYMS,
     PRODUCTION_ENTRIES,
     RESOURCE_TO_CRATE,
     STRUCTURES_WIKI_ENTRIES,
@@ -133,15 +132,13 @@ class ModuleWiki(commands.Cog):
         })]
 
         if 'mpf_data' in wiki_data:
-            mpf_fields = []
-
             # Iterate over MPF slots (5 or 9)
-            for i in range(len(wiki_data['mpf_data'][next(iter(wiki_data['mpf_data']))])):
-                mpf_fields.append({
+            mpf_fields = [{
                     'name': f'{i + 1} {EMOJIS_FROM_DICT.get('Crate', 'Crate')}',
                     'value': '\n'.join(f'- x{f'{math.ceil(v[i] / RESOURCE_TO_CRATE.get(k, 1))} crates of '} {k} {EMOJIS_FROM_DICT.get(k, '')} *({v[i]})*' for k, v in wiki_data['mpf_data'].items()),
                     'inline': True,
-                })
+                } for i in range(len(wiki_data['mpf_data'][next(iter(wiki_data['mpf_data']))]))
+            ]
 
             generated_embeds.append(discord.Embed().from_dict({
                 'title': 'MPF Stats',

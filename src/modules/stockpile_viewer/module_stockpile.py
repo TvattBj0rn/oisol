@@ -231,14 +231,14 @@ class StockpileTasks(commands.Cog):
         elif region == 'DeadLandsHex':
             region = 'Deadlands'
         if ordered_items is not None:
-            for item in ordered_items:
-                single_region_stockpiles.append((
+            single_region_stockpiles.extend((
                     api_wrapper.shard_name,
                     war_data['warNumber'],
                     war_data['conquestStartTime'],
                     re.sub(r'(\w)([A-Z])', r'\1 \2', region.replace('Hex', '')),
                     *item,
-                ))
+                ) for item in ordered_items
+            )
         return single_region_stockpiles
 
     def _save_region_stockpiles(self, region_stockpiles: list[tuple]) -> None:

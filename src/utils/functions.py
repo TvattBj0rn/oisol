@@ -5,7 +5,7 @@ from configparser import ConfigParser
 import discord
 
 from .oisol_enums import DataFilesPath, Faction, Language, Shard
-from .resources import OISOL_HOME_PATH, EMOJIS_FROM_DICT
+from .resources import EMOJIS_FROM_DICT, OISOL_HOME_PATH
 
 
 async def update_discord_interface(

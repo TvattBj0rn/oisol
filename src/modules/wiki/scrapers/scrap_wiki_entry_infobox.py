@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from src.utils import Faction, get_highest_res_img_link, get_emoji_by_name
+from src.utils import Faction, get_highest_res_img_link
 
 
 def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> tuple:
@@ -9,9 +9,9 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> t
     match attr_title:
         case 'Resistance(damage reduction)' | 'Resistance(damagereduction)':
             if damage_type_link := infobox_attribute_soup.select_one('div > a').get_text(strip=True):
-                attr_dict['type'] = f"\n*{damage_type_link}*"
-            else: # This forces a value to 'type' and worst case nothing is displayed
-                attr_dict['type'] = f"\n*{infobox_attribute_soup.find(text=True, recursive=False)}*"
+                attr_dict['type'] = f'\n*{damage_type_link}*'
+            else:  # This forces a value to 'type' and worst case nothing is displayed
+                attr_dict['type'] = f'\n*{infobox_attribute_soup.find(text=True, recursive=False)}*'
             for damage_reduction in infobox_attribute_soup.select('div > div'):
                 if resistance_type := damage_reduction.select_one('a').get('title', ''):
                     attr_dict[resistance_type] = reduction_percentage if (reduction_percentage := damage_reduction.get_text(strip=True)) else 'Immune'
@@ -67,7 +67,7 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
     data_dict = {
         'title': infobox_soup.find('h2', {'class': 'pi-item pi-item-spacing pi-title'}).get_text(),
         'img_url': get_highest_res_img_link(infobox_soup.select_one('a > img')['src']),
-        'attributes': {}
+        'attributes': {},
     }
 
     merged_class = infobox_soup['class']

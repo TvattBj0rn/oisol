@@ -1,9 +1,9 @@
 import typing
-from enum import Enum, auto, EnumMeta
+from enum import Enum, EnumMeta, auto
 
 
 class EnumValue(EnumMeta):
-    def __getattribute__(cls, name):
+    def __getattribute__(cls, name: str):
         """
         Allows to use the value as the default class
         :param name: attribute to use
@@ -189,7 +189,7 @@ class FoxholeOfficialNames(EnumValue):
     VARSI = 'B2 Varsi Anti-Tank Grenade'
     FLASK = 'BF5 White Ash Flask Grenade'
     FLAMETHROWER_AMMO = 'Flamethrower Ammo'
-    MOLTEN_WIND_AMMO = "“Molten Wind” v.II Ammo"
+    MOLTEN_WIND_AMMO = '“Molten Wind” v.II Ammo'
     FLAME_AMMO = 'Flame Ammo'
     WILLOWS_BANE_AMMO = "Willow's Bane Ammo"
     HIGH_EXPLOSIVE_ROCKET = '3C-High Explosive Rocket'
