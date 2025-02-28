@@ -99,7 +99,9 @@ def scrap_wiki(url: str, name: str) -> dict:
     entry_desc = desc_soup.get_text() if desc_soup else ''
 
     # Infobox handling within a function to allow for loop later on
-    for infobox in soup.select('aside[class^="portable-infobox noexcerpt pi-background"]'):
+    for infobox in soup.select('aside'):
+        if not infobox.has_attr('class'):  # Asides without classes are ads
+            continue
         wiki_response_dict = generate_infobox_data(infobox)
         if name != wiki_response_dict['title']:
             continue
