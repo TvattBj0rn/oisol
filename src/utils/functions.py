@@ -5,7 +5,7 @@ from configparser import ConfigParser
 import discord
 
 from .oisol_enums import DataFilesPath, Faction, Language, Shard
-from .resources import OISOL_HOME_PATH
+from .resources import EMOJIS_FROM_DICT, OISOL_HOME_PATH
 
 
 async def update_discord_interface(
@@ -14,7 +14,7 @@ async def update_discord_interface(
         embed: discord.Embed = None,
 ) -> None:
     config = configparser.ConfigParser()
-    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
+    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
 
     if config.has_option('stockpile', 'channel'):
         channel = interaction.guild.get_channel(config.getint('stockpile', 'channel'))
@@ -88,3 +88,17 @@ def sort_nested_dicts_by_key(input_dict: dict) -> dict:
             key=operator.itemgetter(0),
         )
     }
+
+
+def get_emoji_by_name(emoji_list: list[discord.Emoji], emoji_name: str) -> str:
+    """
+    :param emoji_list: List of emojis to find the given emoji name in
+    :param emoji_name: Emoji name to find
+    :return: Emoji in a discord readable format if found, default value otherwise
+    """
+
+    emoji_custom_id = EMOJIS_FROM_DICT.get(emoji_name, emoji_name)
+
+    if (emoji := next((emoji for emoji in emoji_list if emoji.name == emoji_custom_id), None)) is not None:
+        return f'<:{emoji.name}:{emoji.id}>'
+    return emoji_name

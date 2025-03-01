@@ -14,7 +14,7 @@ def scrap_production(url: str) -> dict:
     """
 
     # Request to the given url, check if response is valid
-    response = requests.get(url)
+    response = requests.get(url, timeout=5)
     if not response:
         return {}
 

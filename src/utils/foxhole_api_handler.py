@@ -24,7 +24,7 @@ class FoxholeAPIWrapper:
         Returns data about the current state of the war. This data may update every 60 seconds.
         :return: json of the requested data if the response code was 200 else an empty dictionary.
         """
-        if (response := requests.get(f'{self.shard_endpoint}/worldconquest/war')).status_code == 200:
+        if (response := requests.get(f'{self.shard_endpoint}/worldconquest/war', timeout=5)).status_code == 200:
             return response.json()
         return {}
 
@@ -33,7 +33,7 @@ class FoxholeAPIWrapper:
         Returns a list of the active World Conquest map names.
         :return: list of world regions if the response code was 200, else an empty list.
         """
-        if (response := requests.get(f'{self.shard_endpoint}/worldconquest/maps')).status_code == 200:
+        if (response := requests.get(f'{self.shard_endpoint}/worldconquest/maps', timeout=5)).status_code == 200:
             return response.json()
         return []
 
@@ -47,6 +47,7 @@ class FoxholeAPIWrapper:
         return self._response_handler(
             requests.get(
                 f'{self.shard_endpoint}/worldconquest/warReport/{region}',
+                timeout=5,
                 headers={'If-None-Match': etag}),
             etag,
         )
@@ -61,6 +62,7 @@ class FoxholeAPIWrapper:
         return self._response_handler(
             requests.get(
                 f'{self.shard_endpoint}/worldconquest/maps/{region}/static',
+                timeout=5,
                 headers={'If-None-Match': etag}),
             etag,
         )
@@ -75,6 +77,7 @@ class FoxholeAPIWrapper:
         return self._response_handler(
             requests.get(
                 f'{self.shard_endpoint}/worldconquest/maps/{region}/dynamic/public',
+                timeout=5,
                 headers={'If-None-Match': etag}),
             etag,
         )

@@ -14,6 +14,7 @@ from discord import app_commands
 from discord.ext import commands, tasks
 
 from src.utils import (
+    OISOL_HOME_PATH,
     DataFilesPath,
     EmbedIds,
     Faction,
@@ -22,7 +23,7 @@ from src.utils import (
     MapIcon,
     Shard,
     sort_nested_dicts_by_key,
-    update_discord_interface, OISOL_HOME_PATH,
+    update_discord_interface,
 )
 
 if TYPE_CHECKING:
@@ -63,13 +64,13 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_view(self, interaction: discord.Interaction) -> None:
         logging.info(f'[COMMAND] stockpile-view command by {interaction.user.name} on {interaction.guild.name}')
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini')
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
 
         if not config.has_section('stockpile'):
             config.add_section('stockpile')
         config.set('stockpile', 'channel', str(interaction.channel_id))
 
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini', 'w', newline='') as configfile:
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
             config.write(configfile)
         await interaction.response.send_message(
             embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id),
@@ -102,7 +103,7 @@ class ModuleStockpiles(commands.Cog):
 
         # Get group faction
         config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild_id)}.ini')
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
         group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
         # Set stockpiles to discord fields format
@@ -142,7 +143,7 @@ class ModuleStockpiles(commands.Cog):
             return
 
         region, subregion = localisation.split(' | ')  # Only one '|' -> 2 splits
-        shard_name = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini', code)
+        shard_name = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', code)
         stockpile_type = self.bot.cursor.execute(
             'SELECT Type FROM StockpilesZones WHERE Shard == (?) AND Subregion == (?)',
             (shard_name, subregion),
@@ -200,7 +201,7 @@ class ModuleStockpiles(commands.Cog):
         :return: list of possibles autocompletion results using the current input
         """
         code = next((opt['value'] for opt in interaction.data['options'] if opt.get('name', '') == 'code'), '0')
-        current_shard = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(interaction.guild_id)}.ini', code)
+        current_shard = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', code)
         stockpiles = get_shard_stockpiles_subregions(self.bot, current_shard, code)
 
         if not current:
@@ -230,14 +231,14 @@ class StockpileTasks(commands.Cog):
         elif region == 'DeadLandsHex':
             region = 'Deadlands'
         if ordered_items is not None:
-            for item in ordered_items:
-                single_region_stockpiles.append((
+            single_region_stockpiles.extend((
                     api_wrapper.shard_name,
                     war_data['warNumber'],
                     war_data['conquestStartTime'],
                     re.sub(r'(\w)([A-Z])', r'\1 \2', region.replace('Hex', '')),
                     *item,
-                ))
+                ) for item in ordered_items
+            )
         return single_region_stockpiles
 
     def _save_region_stockpiles(self, region_stockpiles: list[tuple]) -> None:

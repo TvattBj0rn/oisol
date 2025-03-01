@@ -1,3 +1,5 @@
+import requests
+
 from src.modules.wiki.scrapers.scrap_wiki_entry_health import scrap_health
 from src.modules.wiki.scrapers.scrap_wiki_entry_infobox import scrap_wiki
 from src.modules.wiki.scrapers.scrap_wiki_entry_production import scrap_production
@@ -9,6 +11,7 @@ from src.utils import (
 )
 
 import pytest
+
 
 @pytest.mark.parametrize('entry', STRUCTURES_WIKI_ENTRIES)
 def test_health_command_structures_entries(entry):

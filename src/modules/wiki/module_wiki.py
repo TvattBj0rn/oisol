@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import collections
 import logging
 import math
 import operator
 import random
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
@@ -11,7 +14,6 @@ from discord.ext import commands
 from src.utils import (
     ALL_WIKI_ENTRIES,
     EMOJIS_FROM_DICT,
-    NAMES_TO_ACRONYMS,
     PRODUCTION_ENTRIES,
     RESOURCE_TO_CRATE,
     STRUCTURES_WIKI_ENTRIES,
@@ -23,33 +25,31 @@ from .scrapers.scrap_wiki_entry_health import scrap_health
 from .scrapers.scrap_wiki_entry_infobox import scrap_wiki
 from .scrapers.scrap_wiki_entry_production import scrap_production
 
+if TYPE_CHECKING:
+    from main import Oisol
+
 
 class ModuleWiki(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.oisol = bot
+    def __init__(self, bot: Oisol):
+        self.bot = bot
 
     @staticmethod
-    def retrieve_facility_mats(resource_type: str, amount: str) -> str:
-        if resource_type not in EMOJIS_FROM_DICT:
-            return f'{amount} **:** '
-
-        if resource_type in NAMES_TO_ACRONYMS:
-            return f'\n{EMOJIS_FROM_DICT[resource_type]} **|** {NAMES_TO_ACRONYMS[resource_type]} **-** {amount}'
-        return f'\n{EMOJIS_FROM_DICT[resource_type]} {amount}'
+    def format_attributes(key: str, value: str | list) -> str:
+        if isinstance(value, list):
+            return ', '.join(f'{fuel_type}{f' ({EMOJIS_FROM_DICT[fuel_type]})' if fuel_type in EMOJIS_FROM_DICT else ''}' for fuel_type in value)
+        if value == 'Intel Icon':
+            return EMOJIS_FROM_DICT.get(key, key)
+        if key not in EMOJIS_FROM_DICT:
+            return f'{value} **:** '
+        return f'\n- {f'{value} **|** ' if value != key else ''}{key}{f' ({EMOJIS_FROM_DICT[key]})' if key in EMOJIS_FROM_DICT else ''}'
 
     @staticmethod
     def generate_hmtk_embed(
             wiki_data: dict,
             url_health: str,
     ) -> discord.Embed:
-        # Embed description
-        embed_desc = ''
         # Display each tier health's when dict
-        if isinstance(wiki_data['HP'], dict):
-            for k, v in wiki_data['HP'].items():
-                embed_desc += f'{k}: {v} HP\n'
-        else:
-            embed_desc = f"{wiki_data['HP']} HP"
+        embed_desc = ''.join(f'{k}: {v} HP\n' for k, v in wiki_data['HP'].items()) if isinstance(wiki_data['HP'], dict) else f"{wiki_data['HP']} HP"
 
         if 'Class' in wiki_data:
             embed_desc += f"\n*Class: {wiki_data['Class']}*"
@@ -82,23 +82,21 @@ class ModuleWiki(commands.Cog):
 
     def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
         embed_fields = []
-        for attribute_key, attribute_value in wiki_data.items():
-            if attribute_key in {'description', 'url', 'title', 'img_url', 'Fuel Capacity', 'color'}:
-                continue
+        for attribute_key, attribute_value in wiki_data['attributes'].items():
             if isinstance(attribute_value, str):
                 embed_fields.append({'name': attribute_key, 'value': attribute_value, 'inline': True})
             else:
                 attribute_string = ''
                 ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
                 for k, v in ordered_attribute_value.items():
-                    attribute_string += self.retrieve_facility_mats(k, v)
+                    attribute_string += self.format_attributes(k, v)
                 attribute_string = attribute_string.removesuffix(' **:** ')
                 embed_fields.append({'name': attribute_key, 'value': attribute_string, 'inline': True})
-        if 'Fuel Capacity' in wiki_data:
+        if (fuel_capacity := 'Fuel Capacity') in wiki_data:
             embed_fields.append(
                 {
-                    'name': 'Fuel Capacity',
-                    'value': f"{wiki_data['Fuel Capacity']['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data['Fuel Capacity'] if k in EMOJIS_FROM_DICT))}",
+                    'name': fuel_capacity,
+                    'value': f"{wiki_data[fuel_capacity]['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data[fuel_capacity] if k in EMOJIS_FROM_DICT))}",
                     'inline': True,
                 },
             )
@@ -134,15 +132,13 @@ class ModuleWiki(commands.Cog):
         })]
 
         if 'mpf_data' in wiki_data:
-            mpf_fields = []
-
             # Iterate over MPF slots (5 or 9)
-            for i in range(len(wiki_data['mpf_data'][next(iter(wiki_data['mpf_data']))])):
-                mpf_fields.append({
+            mpf_fields = [{
                     'name': f'{i + 1} {EMOJIS_FROM_DICT.get('Crate', 'Crate')}',
                     'value': '\n'.join(f'- x{f'{math.ceil(v[i] / RESOURCE_TO_CRATE.get(k, 1))} crates of '} {k} {EMOJIS_FROM_DICT.get(k, '')} *({v[i]})*' for k, v in wiki_data['mpf_data'].items()),
                     'inline': True,
-                })
+                } for i in range(len(wiki_data['mpf_data'][next(iter(wiki_data['mpf_data']))]))
+            ]
 
             generated_embeds.append(discord.Embed().from_dict({
                 'title': 'MPF Stats',

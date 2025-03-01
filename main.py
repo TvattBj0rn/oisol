@@ -1,4 +1,3 @@
-import configparser
 import logging
 import os
 import sqlite3
@@ -34,6 +33,7 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
+        self.app_emojis = []
 
     async def on_ready(self) -> None:
         # Ready the db
@@ -45,6 +45,9 @@ class Oisol(commands.Bot):
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
         await self.add_cog(ModuleWiki(self))
+
+        # Sync app emojis
+        self.app_emojis = await self.fetch_application_emojis()
 
         try:
             synced = await self.tree.sync()
@@ -71,7 +74,7 @@ class Oisol(commands.Bot):
         os.makedirs(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value, exist_ok=True)
 
         # Create oisol/config.ini file with default config
-        if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{str(guild.id)}.ini'):
+        if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini'):
             config = repair_default_config_dict()
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
