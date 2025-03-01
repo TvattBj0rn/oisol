@@ -58,7 +58,7 @@ def scrap_health(url: str, name: str) -> dict:
     :return: dict of entry parameters
     """
     # Request to the given url, check if response is valid
-    response = requests.get(url)
+    response = requests.get(url, timeout=5)
     if not response:
         return {}
 
