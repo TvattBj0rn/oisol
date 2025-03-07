@@ -11,7 +11,7 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> t
             if damage_type_link := infobox_attribute_soup.select_one('div > a').get_text(strip=True):
                 attr_dict['type'] = f'\n*{damage_type_link}*'
             else:  # This forces a value to 'type' and worst case nothing is displayed
-                attr_dict['type'] = f'\n*{infobox_attribute_soup.find(text=True, recursive=False)}*'
+                attr_dict['type'] = f'\n*{infobox_attribute_soup.find(string=True, recursive=False)}*'
             for damage_reduction in infobox_attribute_soup.select('div > div'):
                 if resistance_type := damage_reduction.select_one('a').get('title', ''):
                     attr_dict[resistance_type] = reduction_percentage if (reduction_percentage := damage_reduction.get_text(strip=True)) else 'Immune'
@@ -45,7 +45,7 @@ def handle_specific_attribute(infobox_attribute_soup: Tag, attr_title: str) -> t
             attr_dict['type'] = [fuel.find('a')['title'] for fuel in infobox_attribute_soup.select('span > span')]
             return attr_title, attr_dict
         case 'Ammo' | 'Ammunition':
-            for ammo_type in infobox_attribute_soup.findChildren('a'):
+            for ammo_type in infobox_attribute_soup.find_all('a'):
                 if ammo_type_text := ammo_type.get_text(strip=True):  # There can be cases with empty text
                     attr_dict[ammo_type_text] = ammo_type_text
             return attr_title, attr_dict
