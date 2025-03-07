@@ -23,7 +23,8 @@ def get_entry_row(tbody: Tag, headers_indexes: list, name: str) -> Tag | None:
     :return: row object of the entry within the array if the entry is found else None
     """
     for tr in tbody.select('tr'):
-        if tr.findChild('th'):
+        # Skip first definition row
+        if tr.find('th', recursive=False):
             continue
         # It is assumed that Name will always be scrapped
         if tr.select('td')[headers_indexes.index('Name')].get_text(strip=True) in {name, name.removesuffix(' (Battleship)')}:
@@ -37,14 +38,14 @@ def extract_td_data(td: Tag) -> dict | str | tuple:
     :param td: specific column
     :return: formatted td value
     """
-    if (img_path := td.findChild('img')) and img_path.has_attr('src'):
-        return td.findChild('a').get_text(strip=True), get_highest_res_img_link(img_path['src'])
+    if (img_path := td.find('img')) and img_path.has_attr('src'):
+        return td.find('a').get_text(strip=True), get_highest_res_img_link(img_path['src'])
     # Case for vehicles
-    if len(td.findChildren('hr')) == 1:
+    if len(td.find_all('hr')) == 1:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'Disabled': hmtk[0], 'Kill': hmtk[1]}
     # Case for 3-typed structures
-    if len(td.findChildren('hr')) == 2:
+    if len(td.find_all('hr')) == 2:
         hmtk = td.get_text(strip=True, separator=' ').split()
         return {'S': hmtk[0], 'M': hmtk[1], 'L': hmtk[2]}
     return td.get_text(strip=True)
