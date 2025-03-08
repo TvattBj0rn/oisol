@@ -37,9 +37,12 @@ class OisolLogger(logging.Logger):
     def __init__(self, name: str):
         super().__init__(name)
         self.level = logging.DEBUG
+
         _stream_handler = logging.StreamHandler()
+        _stream_handler.setLevel(logging.DEBUG)
         _stream_handler.setFormatter(OisolFormatter())
         self.addHandler(_stream_handler)
+
         logging.addLevelName(21, 'COMMAND')
         logging.addLevelName(22, 'INTERFACE')
         logging.addLevelName(23, 'TASK')

@@ -29,7 +29,7 @@ class ConfigViewMenu(discord.ui.View):
         )
         self.embed.add_field(
             name='__Register__',
-            value=f'- **Recruit role**: {interaction.guild.get_role(recruit_id).mention if (recruit_id := self.config_data.getint('register', 'recruit_id', fallback=0)) else '`No recruit role set`'}\n'
+            value=f'- **Recruit role**: {interaction.guild.get_role(int(recruit_id)).mention if (recruit_id := self.config_data.get('register', 'recruit_id')) else '`No recruit role set`'}\n'
                   f'- **Recruit symbol**: `{self.config_data.get('register', 'input', fallback='No recruit symbol set')}`\n'
                   f'- **Promoted recruit symbol**: `{self.config_data.get('register', 'output', fallback='No symbol change for promoted recruits')}`\n'
                   f'- **Promotion gives regiment tag**: `{self.config_data.get('register', 'promoted_get_tag', fallback='False')}`',

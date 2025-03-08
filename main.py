@@ -18,6 +18,7 @@ from src.modules.wiki import ModuleWiki
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
+    OisolFormatter,
     OisolLogger,
     repair_default_config_dict,
 )
@@ -102,6 +103,5 @@ class Oisol(commands.Bot):
 
 
 if __name__ == '__main__':
-    # Bot Run
     load_dotenv()
-    Oisol().run(os.getenv('DISCORD_TOKEN'), reconnect=True, log_handler=None)
+    Oisol().run(os.getenv('DISCORD_TOKEN'), reconnect=True, log_formatter=OisolFormatter())
