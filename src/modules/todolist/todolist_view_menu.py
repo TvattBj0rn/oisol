@@ -10,7 +10,8 @@ from src.utils import (
     EMOTES_CUSTOM_ID,
     OISOL_HOME_PATH,
     TODOLIST_MAXIMUM_TASKS_ON_INTERFACE,
-    PriorityType, OisolLogger,
+    OisolLogger,
+    PriorityType,
 )
 
 

@@ -18,8 +18,8 @@ from src.modules.wiki import ModuleWiki
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
+    OisolLogger,
     repair_default_config_dict,
-    OisolLogger
 )
 
 

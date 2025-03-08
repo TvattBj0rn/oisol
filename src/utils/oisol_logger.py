@@ -1,5 +1,5 @@
 import logging
-
+from logging import LogRecord
 
 
 class OisolFormatter(logging.Formatter):
@@ -29,7 +29,7 @@ class OisolFormatter(logging.Formatter):
             logging.CRITICAL: f'{_colors.get('bold_red')}{_log_format}{_colors.get('reset')}',
         }
 
-    def format(self, record):
+    def format(self, record: LogRecord) -> str:
         return logging.Formatter(self.FORMATS.get(record.levelno), datefmt='%Y-%m-%d %H:%M:%S').format(record)
 
 
