@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import configparser
-import logging
 import time
 from typing import TYPE_CHECKING
 
@@ -27,7 +26,7 @@ class ModuleRegister(commands.Cog):
 
     @app_commands.command(name='register-view', description='Command to display the current list of recruit with the date the got the recruit role')
     async def register_view(self, interaction: discord.Interaction) -> None:
-        logging.info(f'[COMMAND] register-view command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'register-view command by {interaction.user.name} on {interaction.guild.name}')
 
         # Retrieve config and channel ID if it exists, take the channel the command was executed from otherwise
         config = configparser.ConfigParser()

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import time
 from typing import TYPE_CHECKING
 
@@ -45,4 +44,4 @@ class DatabaseCleaner(commands.Cog):
             except (discord.Forbidden, discord.HTTPException):
                 # Rights of the bot have been removed or fail on network part
                 continue
-        logging.info(f'[TASK] remove_non_existing_interface task complete in {time.time() - start_time}s')
+        self.bot.logger.task(f'[TASK] remove_non_existing_interface task complete in {time.time() - start_time}s')

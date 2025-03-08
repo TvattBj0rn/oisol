@@ -27,7 +27,10 @@ select = [
 ignore = [
     "E501", # Line-too-long
     "ANN204", # missing-return-type-special-method
+    "ANN002", # args typing
+    "ANN003", # kwargs typing
     "RUF001", # Unicode chars
+    "TRY400", # Exception instead of error
 ]
 
 [lint.flake8-quotes]
