@@ -64,17 +64,3 @@ class SelectLanguage(discord.ui.Select):
             config.write(configfile)
 
         await interaction.response.edit_message(content='> Language was correctly updated', delete_after=3, view=None)
-
-
-class SelectFactionView(discord.ui.View):
-    def __init__(self, *, timeout: float | None = None):
-        super().__init__(timeout=timeout)
-        self.add_item(SelectLanguage())
-
-
-class SelectFaction(discord.ui.Select):
-    def __init__(self):
-        options = [
-            discord.SelectOption(label='English', emoji='<:ukus:1205153501823377438>', value=Language.EN.name),
-        ]
-        super().__init__(placeholder='Choose a faction', options=options)
