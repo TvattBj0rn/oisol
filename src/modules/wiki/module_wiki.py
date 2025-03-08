@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import collections
-import logging
 import math
 import operator
 import random
@@ -151,12 +150,12 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        logging.info(f'[COMMAND] wiki command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
         if not search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki
             if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
-                logging.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
+                self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
 
         entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
@@ -165,7 +164,7 @@ class ModuleWiki(commands.Cog):
 
         if 'title' not in entry_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
-            logging.warning(f'Entry URL failing: {search_request, entry_name}')
+            self.bot.logger.warning(f'Entry URL failing: {search_request, entry_name}')
             return
 
         entry_embed = self.generate_wiki_embed(entry_data)
@@ -174,7 +173,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        logging.info(f'[COMMAND] health command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
 
         entry_searches = (
             next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == search_request), None),
@@ -184,26 +183,26 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki
             if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
-                logging.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
+                self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
 
         entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
         scraped_health_data = scrap_health(entry_url, entry_name)
         if 'Name' not in scraped_health_data:
             await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
-            logging.warning(f'Entry URL failing: {entry_url, entry_name}')
+            self.bot.logger.warning(f'Entry URL failing: {entry_url, entry_name}')
             return
 
         await interaction.response.send_message(embed=self.generate_hmtk_embed(scraped_health_data, entry_url), ephemeral=not visible)
 
     @app_commands.command(name='production', description='Get production costs, location & time from the wiki')
     async def get_item_production_parameters(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        logging.info(f'[COMMAND] production command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name}')
         if not search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki
             if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
-                logging.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
+                self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
 
         # Get costs info from the wiki

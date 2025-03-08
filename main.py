@@ -1,4 +1,3 @@
-import logging
 import os
 import sqlite3
 
@@ -20,6 +19,7 @@ from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     repair_default_config_dict,
+    OisolLogger
 )
 
 
@@ -34,6 +34,7 @@ class Oisol(commands.Bot):
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
         self.app_emojis = []
+        self.logger = OisolLogger('oisol')
 
     async def on_ready(self) -> None:
         # Ready the db
@@ -51,11 +52,11 @@ class Oisol(commands.Bot):
 
         try:
             synced = await self.tree.sync()
-            logging.info(f'Synced {len(synced)} command(s)')
+            self.logger.info(f'Synced {len(synced)} command(s)')
         except Exception:
-            logging.exception('Could not sync tree properly')
+            self.logger.error('Could not sync tree properly')
 
-        logging.info(f'Logged in as {self.user} (ID:{self.user.id})')
+        self.logger.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
         # Tasks loading
         await self.add_cog(StockpileTasks(self))
@@ -68,7 +69,7 @@ class Oisol(commands.Bot):
         self.add_dynamic_items(TodolistButtonCheckmark)
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
-        logging.info(f'[JOIN] joined {guild.name} (id: {guild.id})')
+        self.logger.join(f'joined {guild.name} (id: {guild.id})')
 
         # Create guilds configs directory if it does not exist
         os.makedirs(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value, exist_ok=True)
@@ -101,12 +102,6 @@ class Oisol(commands.Bot):
 
 
 if __name__ == '__main__':
-    # Logging setup
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
-    logging.getLogger().addHandler(handler)
-    logging.getLogger().setLevel(logging.INFO)
-
     # Bot Run
     load_dotenv()
     Oisol().run(os.getenv('DISCORD_TOKEN'), reconnect=True, log_handler=None)

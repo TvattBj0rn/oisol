@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import uuid
 from typing import TYPE_CHECKING
 
@@ -37,7 +36,7 @@ class ModuleTodolist(commands.Cog):
             member_5: discord.Member = None,
     ) -> None:
 
-        logging.info(f'[COMMAND] todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         todolist_id = uuid.uuid4().hex
         todolist_access_list = []
 

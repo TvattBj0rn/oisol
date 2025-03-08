@@ -1,4 +1,3 @@
-import logging
 import re
 import sqlite3
 import string
@@ -11,7 +10,7 @@ from src.utils import (
     EMOTES_CUSTOM_ID,
     OISOL_HOME_PATH,
     TODOLIST_MAXIMUM_TASKS_ON_INTERFACE,
-    PriorityType,
+    PriorityType, OisolLogger,
 )
 
 
@@ -93,6 +92,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         self.todolist_title = title
         self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
+        self.logger = OisolLogger('oisol')
 
     high_priority = discord.ui.TextInput(
         label=f'{PriorityType.HIGH.value} | High Priority',
@@ -114,7 +114,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
     )
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        logging.info(f'[INTERFACE] todolist tasks added by {interaction.user.name} on {interaction.guild.name}')
+        self.logger.interface(f'todolist tasks added by {interaction.user.name} on {interaction.guild.name}')
 
         # Get current tasks from db
         current_tasks = self.cursor.execute(
@@ -170,13 +170,14 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         self.emoji = list(EMOTES_CUSTOM_ID.keys())[list(EMOTES_CUSTOM_ID.values()).index(f'TodoButton{custom_id[-1]}')]
         self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
+        self.logger = OisolLogger('oisol')
 
     @classmethod
     async def from_custom_id(cls, _interaction: discord.Interaction, _item: discord.ui.Button, match: re.Match[str]) -> Self:
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        logging.info(f'[INTERFACE] todolist button checked by {interaction.user.name} on {interaction.guild.name}')
+        self.logger.interface(f'todolist button checked by {interaction.user.name} on {interaction.guild.name}')
         embed_uuid = interaction.message.embeds[0].footer.text
         title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         guild_id = str(interaction.guild_id)

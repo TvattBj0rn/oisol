@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import configparser
 import functools
-import logging
 import pathlib
 import random
 import re
@@ -62,7 +61,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-view', description='Get the new stockpile interface')
     async def stockpile_view(self, interaction: discord.Interaction) -> None:
-        logging.info(f'[COMMAND] stockpile-view command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'stockpile-view command by {interaction.user.name} on {interaction.guild.name}')
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
 
@@ -128,7 +127,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-create', description='Create a new stockpile')
     async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str) -> None:
-        logging.info(f'[COMMAND] stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
         # Case where a user entered an invalid sized code
         if len(code) != 6:
             await interaction.response.send_message('> The code must be a 6-digits code', ephemeral=True, delete_after=5)
@@ -165,7 +164,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-delete', description='Delete a specific stockpile using its code')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str) -> None:
-        logging.info(f'[COMMAND] stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
         self.bot.cursor.execute(
             f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code}',
         )
@@ -180,7 +179,7 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-clear', description='Clear all the stockpiles from the server interface')
     async def stockpile_clear(self, interaction: discord.Interaction) -> None:
-        logging.info(f'[COMMAND] stockpile-clear command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'stockpile-clear command by {interaction.user.name} on {interaction.guild.name}')
         self.bot.cursor.execute(
             f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id}',
         )
@@ -274,7 +273,7 @@ class StockpileTasks(commands.Cog):
                     latest_stockpiles,
                 )
                 self.bot.connection.commit()
-                logging.info(f'[TASK] Available stockpiles were updated for {shard_api.shard_name}')
+                self.bot.logger.task(f'Available stockpiles were updated for {shard_api.shard_name}')
 
     @tasks.loop(minutes=2)
     async def refresh_able_shard_stockpiles_subregions(self) -> None:
