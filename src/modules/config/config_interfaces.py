@@ -17,24 +17,22 @@ class ConfigViewMenu(discord.ui.View):
 
         self.embed.clear_fields()
         self.embed.add_field(
-            name='💬 | Language',
-            value=self.config_data['default']['language'],
-            inline=True,
+            name='__General config__',
+            value=f'- **Language**: `{self.config_data.get('default', 'language')}`\n'  # Language always default on english on server join and cannot be null
+                  f'- **Shard**: `{self.config_data.get('default', 'shard', fallback='ABLE')}`',
         )
         self.embed.add_field(
-            name='🚩 | Regiment',
-            value=f"Name: {self.config_data['regiment']['name']}\nTag: {self.config_data['regiment']['tag']}\nFaction: {self.config_data['regiment']['faction']}",
-            inline=True,
+            name='__Regiment__',
+            value=f'- **Name**: `{self.config_data.get('regiment', 'name', fallback='No name set')}`\n'
+                  f'- **Tag**: `{self.config_data.get('regiment', 'tag', fallback='No tag set')}`\n'
+                  f'- **Faction**: `{self.config_data.get('regiment', 'faction', fallback='NEUTRAL')}`',
         )
         self.embed.add_field(
-            name='📝 | Register',
-            value=f"Recruit symbol: {self.config_data['register']['input']}\nPromoted recruit symbol: {self.config_data['register']['output']}\nPromotion gives regiment tag: {self.config_data['register']['promoted_get_tag']}",
-            inline=True,
-        )
-        self.embed.add_field(
-            name='🪖 | Recruit role',
-            value=f'{interaction.guild.get_role(int(self.config_data["register"]["recruit_id"])).mention if self.config_data["register"]["recruit_id"] else "None"}\nTo update this role, use: </config-recruit:1261648113505140787>',
-            inline=True,
+            name='__Register__',
+            value=f'- **Recruit role**: {interaction.guild.get_role(recruit_id).mention if (recruit_id := self.config_data.getint('register', 'recruit_id', fallback=0)) else '`No recruit role set`'}\n'
+                  f'- **Recruit symbol**: `{self.config_data.get('register', 'input', fallback='No recruit symbol set')}`\n'
+                  f'- **Promoted recruit symbol**: `{self.config_data.get('register', 'output', fallback='No symbol change for promoted recruits')}`\n'
+                  f'- **Promotion gives regiment tag**: `{self.config_data.get('register', 'promoted_get_tag', fallback='False')}`',
         )
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='config:regiment', emoji='🔄')
