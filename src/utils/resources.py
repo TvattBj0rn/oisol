@@ -561,6 +561,11 @@ ITEMS_WIKI_ENTRIES = [
         'keywords': 'apantitankcolonialrpglauncheratbane',
     },
     {
+        'name': 'Carnyx Anti-Tank Rocket Launcher',
+        'url': 'https://foxhole.wiki.gg/wiki/Carnyx_Anti-Tank_Rocket_Launcher',
+        'keywords': 'apantitankwardenrpglauncheratcarnyx',
+    },
+    {
         'name': 'Bonesaw MK.3',
         'url': 'https://foxhole.wiki.gg/wiki/Bonesaw_MK.3',
         'keywords': 'arclauncherrpgwardenbonesaw',
@@ -769,6 +774,16 @@ ITEMS_WIKI_ENTRIES = [
         'name': 'Deployed Listening Kit',
         'url': 'https://foxhole.wiki.gg/wiki/Listening_Kit',
         'keywords': 'deployedlklisteningkit',
+    },
+    {
+        'name': 'Deployed Legion Vexillum',
+        'url': 'https://foxhole.wiki.gg/wiki/Legion_Vexillum',
+        'keywords': 'legionvexilumcolonialbanner',
+    },
+    {
+        'name': 'Deployed War Ensign',
+        'url': 'https://foxhole.wiki.gg/wiki/War_Ensign',
+        'keywords': 'warensignwardenbanner',
     },
     {
         'name': 'Tripod',
@@ -1142,6 +1157,11 @@ VEHICLES_WIKI_ENTRIES = [
         'name': 'Balfour Falconer 250mm',
         'url': 'https://foxhole.wiki.gg/wiki/Balfour_Falconer_250mm',
         'keywords': 'falconerbalfourfmpushgunwarden250mm',
+    },
+    {
+        'name': '30-250 “Tisiphone” Field Cannon',
+        'url': 'https://foxhole.wiki.gg/wiki/30-250_%E2%80%9CTisiphone%E2%80%9D_Field_Cannon',
+        'keywords': 'tisiphonefmpushguncolonial250mm',
     },
     {
         'name': 'Balfour Rampart 68mm',
