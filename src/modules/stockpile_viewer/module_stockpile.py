@@ -95,7 +95,7 @@ class ModuleStockpiles(commands.Cog):
                 grouped_stockpiles[stockpile[0]] = {}
             if f'{stockpile[1]}_{stockpile[4]}' not in grouped_stockpiles[stockpile[0]]:
                 grouped_stockpiles[stockpile[0]][f'{stockpile[1]}_{stockpile[4]}'] = {}
-            grouped_stockpiles[stockpile[0]][f'{stockpile[1]}_{stockpile[4]}'][stockpile[3]] = stockpile[2] if len(str_stockpile := str(stockpile[2])) == 6 else f'0{str_stockpile}'
+            grouped_stockpiles[stockpile[0]][f'{stockpile[1]}_{stockpile[4]}'][stockpile[3]] = f'{stockpile[2]:06d}'
 
         # Sort all keys in dict and subdicts by key
         sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
