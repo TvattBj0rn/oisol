@@ -5,6 +5,9 @@ on:
     types: [opened, synchronize]
     branches:
       - main
+  schedule:
+    # At 12:00 AM, only on Friday
+    - cron: "0 0 * * 5"
 
 jobs:
   build:
@@ -22,8 +25,9 @@ jobs:
       - name: Install dependencies
         run: |  
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install uv
+          uv pip install -r requirements.txt
       - name: Tests with pytest
         run: |  
-          pip install pytest pytest-xdist
+          uv pip install pytest pytest-xdist
           pytest -v -s -n auto
