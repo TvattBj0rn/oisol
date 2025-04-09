@@ -165,9 +165,20 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile-delete', description='Delete a specific stockpile using its code')
     async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
-        self.bot.cursor.execute(
-            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code}',
-        )
+
+        # Ensures the provided code is valid (only 6 digits)
+        if not stockpile_code.isdigit() or len(stockpile_code) != 6:
+            await interaction.response.send_message('> The stockpile code you provided is invalid.', ephemeral=True, delete_afer=5)
+            return
+
+        # Prepare delete
+        if not (deleted_stockpiles := self.bot.cursor.execute(
+            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code} RETURNING *',
+        ).fetchall()):
+            await interaction.response.send_message('> The stockpile code you provided does not exists.', ephemeral=True, delete_after=5)
+            return
+
+        # Actual delete from DB
         self.bot.connection.commit()
 
         await update_discord_interface(
@@ -175,7 +186,16 @@ class ModuleStockpiles(commands.Cog):
             EmbedIds.STOCKPILES_VIEW.value,
             embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id),
         )
-        await interaction.response.send_message(f'> The stockpile (code: {stockpile_code}) was properly removed', ephemeral=True, delete_after=5)
+
+        if len(deleted_stockpiles) == 1:
+            await interaction.response.send_message(f'> The stockpile (code: {stockpile_code}) was properly removed.', ephemeral=True, delete_after=5)
+        # This should cover the very unlikely case where a same group has multiple stockpiles with the same code (0.00000000010000020000%)
+        else:
+            self.bot.logger.warning(f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
+            await interaction.response.send_message(
+                f'The following stockpiles with code {stockpile_code} were deleted:\n{''.join(f'- {deleted_stockpile[4]}, {deleted_stockpile[2]} in {deleted_stockpile[1]}\n' for deleted_stockpile in deleted_stockpiles)}',
+                ephemeral=True  # No auto delete in case of a fuck-up
+            )
 
     @app_commands.command(name='stockpile-clear', description='Clear all the stockpiles from the server interface')
     async def stockpile_clear(self, interaction: discord.Interaction) -> None:
