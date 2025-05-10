@@ -1723,9 +1723,19 @@ STRUCTURES_WIKI_ENTRIES = [
         'keywords': 'borderbobbbbase',
     },
     {
-        'name': 'Relic Base',
+        'name': 'Relic Base (Small)',
         'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
-        'keywords': 'relicbase',
+        'keywords': 'relicbasesmall',
+    },
+    {
+        'name': 'Relic Base (Medium)',
+        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
+        'keywords': 'relicbasemedium',
+    },
+{
+        'name': 'Relic Base (Large)',
+        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
+        'keywords': 'relicbaselarge',
     },
     {
         'name': 'Town Base (Tier 1)',

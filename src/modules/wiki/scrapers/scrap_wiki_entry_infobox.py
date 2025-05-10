@@ -78,9 +78,16 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
     else:
         data_dict['color'] = Faction.NEUTRAL.value
 
-    for infobox_attribute in infobox_soup.select('section > div'):
-        attribute_title, attribute_value = handle_specific_attribute(infobox_attribute.select_one('div[class^="pi-data-value pi-font"]'), infobox_attribute.select_one('h3').get_text(strip=True))
+    for infobox_attribute in infobox_soup.select('section > div[class^="pi-item pi-data"]'):
+        attribute_title, attribute_value = handle_specific_attribute(
+            infobox_attribute.select_one('div[class^="pi-data-value pi-font"]'),
+            infobox_attribute.select_one('h3').get_text(strip=True),
+        )
         data_dict['attributes'][attribute_title] = attribute_value
+
+    # This handles Health / Resistance / Armor for vehicle that are under a specific Tag
+    for i in range(len(all_attributes := infobox_soup.select('section[class ^="pi-smart-group-head"] > h3') + infobox_soup.select('section[class ^="pi-smart-group-body"] > div')) // 2):
+        data_dict['attributes'][all_attributes[i].get_text(strip=True)] = all_attributes[i + len(all_attributes) // 2].get_text(strip=True)
 
     return data_dict
 
