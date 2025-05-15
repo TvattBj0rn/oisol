@@ -96,16 +96,17 @@ def scrap_health(url: str, name: str) -> dict:
             wiki_response_dict['img_url'] = extracted_data[1]
         else:
             wiki_response_dict[header_indexes[i]] = extracted_data
+    health_keyword = wiki_response_dict.get('HP', 'Health')
     # In case we are checking for a building but 2 values were retrieved in HP
     if (
             'Class' not in wiki_response_dict
-            and isinstance(wiki_response_dict['HP'], dict)
-            and len(wiki_response_dict['HP'].keys()) == 2
+            and isinstance(wiki_response_dict[health_keyword], dict)
+            and len(wiki_response_dict[health_keyword].keys()) == 2
     ):
-        wiki_response_dict['HP']['Health'] = wiki_response_dict['HP'].pop('Disabled')
-        wiki_response_dict['HP']['Entrenched'] = wiki_response_dict['HP'].pop('Kill')
+        wiki_response_dict[health_keyword]['Health'] = wiki_response_dict[health_keyword].pop('Disabled')
+        wiki_response_dict[health_keyword]['Entrenched'] = wiki_response_dict[health_keyword].pop('Kill')
 
-    final_response_dict = {k: wiki_response_dict.pop(k) for k in ['img_url', 'Icon', 'Name', 'Class', 'HP', 'Color'] if k in wiki_response_dict} | {'Damage': {}}
+    final_response_dict = {k: wiki_response_dict.pop(k) for k in ['img_url', 'Icon', 'Name', 'Class', 'HP', 'Health', 'Color'] if k in wiki_response_dict} | {'Damage': {}}
     for k, v in wiki_response_dict.items():
         if DAMAGE_TYPES_ATTRIBUTION[k] not in final_response_dict['Damage']:
             final_response_dict['Damage'][DAMAGE_TYPES_ATTRIBUTION[k]] = {k: v}
