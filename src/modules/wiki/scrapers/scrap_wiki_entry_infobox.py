@@ -79,6 +79,14 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
         data_dict['color'] = Faction.NEUTRAL.value
 
     for infobox_attribute in infobox_soup.select('section > div[class^="pi-item pi-data"]'):
+        # This was made at 1 am I know it looks bad
+        do_continue = False
+        for attribute_child in infobox_attribute.findChildren():
+            if attribute_child.name == 'center':
+                do_continue = True
+                break
+        if do_continue:
+            continue
         attribute_title, attribute_value = handle_specific_attribute(
             infobox_attribute.select_one('div[class^="pi-data-value pi-font"]'),
             infobox_attribute.select_one('h3').get_text(strip=True),
