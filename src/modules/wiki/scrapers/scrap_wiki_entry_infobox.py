@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup, Tag
 
@@ -102,13 +103,24 @@ def generate_infobox_data(infobox_soup: Tag) -> dict:
 
 def scrap_wiki(url: str, name: str) -> dict:
     # Request to the given url, check if response is valid
+    url += '?action=edit'
     response = requests.get(url, timeout=5)
     if not response:
         return {}
-
+    #todo: regex template: {{.+ Infobox[\s\S]*{{Quote
     # Whole page soup data
     soup = BeautifulSoup(response.content, features='lxml')
+    infobox_pattern = re.compile(r'({{.+ Infobox[\s\S]+){{Quote')
+    description_pattern = re.compile(r'{{Quote\|([\s\S]+)\|In-game description}}')
+    result_infobox = infobox_pattern.search(soup.select_one('textarea').get_text())
 
+    print(len(result_infobox.groups()), result_infobox.groups()[0].splitlines())
+
+    formatted_infobox = {
+        infobox_attribute
+        for infobox_attribute
+        in result_infobox.groups()[0].splitlines()[1:-1]
+    }
     # Description soup and retrieving (we make sure the description exists)
     desc_soup = soup.select_one('table > tbody > tr > td > i')
     entry_desc = desc_soup.get_text() if desc_soup else ''
