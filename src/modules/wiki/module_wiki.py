@@ -48,7 +48,7 @@ class ModuleWiki(commands.Cog):
             url_health: str,
     ) -> discord.Embed:
         # Display each tier health's when dict
-        embed_desc = ''.join(f'{k}: {v} HP\n' for k, v in wiki_data['HP'].items()) if isinstance(wiki_data['HP'], dict) else f"{wiki_data['HP']} HP"
+        embed_desc = ''.join(f'{k}: {v} Health\n' for k, v in wiki_data['Health'].items()) if isinstance(wiki_data['Health'], dict) else f"{wiki_data['Health']} Health"
 
         if 'Class' in wiki_data:
             embed_desc += f"\n*Class: {wiki_data['Class']}*"
