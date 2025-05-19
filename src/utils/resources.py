@@ -870,6 +870,31 @@ PLACEHOLDER_ENTRIES = [
         'url': 'https://foxhole.wiki.gg/wiki/Bicycle',
         'keywords': 'blumfieldcolonialwardenbicycle',
     },
+    {
+        'name': 'Armoured Fighting Tractor',
+        'url': 'https://foxhole.wiki.gg/wiki/Armoured_Fighting_Tractor',
+        'keywords': 'relicarmouredfightingvehicletractoramored',
+    },
+    {
+        'name': 'PL-1 “Phalanx”',
+        'url': 'https://foxhole.wiki.gg/wiki/Relic_Assault_Tank',
+        'keywords': 'tankassaultrelicvehiclephalanxpl1',
+    },
+    {
+        'name': 'Storm Tank',
+        'url': 'https://foxhole.wiki.gg/wiki/Storm_Tank',
+        'keywords': 'tankstormrelicvehicle',
+    },
+    {
+        'name': 'Staff Car',
+        'url': 'https://foxhole.wiki.gg/wiki/Staff_Car',
+        'keywords': 'carvehiclerelicstaff',
+    },
+    {
+        'name': 'Repurposed Truck',
+        'url': 'https://foxhole.wiki.gg/wiki/Repurposed_Truck',
+        'keywords': 'repurposedtruckrelicvehicle',
+    },
 ]
 
 
@@ -1687,32 +1712,7 @@ VEHICLES_WIKI_ENTRIES = [
         'name': 'Tempest Cannon RA-2',
         'url': 'https://foxhole.wiki.gg/wiki/Long-Range_Artillery_Car',
         'keywords': 'rscartillerycannoncarrangetempestlong',
-    },
-    {
-        'name': 'Armoured Fighting Tractor',
-        'url': 'https://foxhole.wiki.gg/wiki/Armoured_Fighting_Tractor',
-        'keywords': 'relicarmouredfightingvehicletractoramored',
-    },
-    {
-        'name': 'PL-1 “Phalanx”',
-        'url': 'https://foxhole.wiki.gg/wiki/Relic_Assault_Tank',
-        'keywords': 'tankassaultrelicvehiclephalanxpl1',
-    },
-    {
-        'name': 'Storm Tank',
-        'url': 'https://foxhole.wiki.gg/wiki/Storm_Tank',
-        'keywords': 'tankstormrelicvehicle',
-    },
-    {
-        'name': 'Staff Car',
-        'url': 'https://foxhole.wiki.gg/wiki/Staff_Car',
-        'keywords': 'carvehiclerelicstaff',
-    },
-    {
-        'name': 'Repurposed Truck',
-        'url': 'https://foxhole.wiki.gg/wiki/Repurposed_Truck',
-        'keywords': 'repurposedtruckrelicvehicle',
-    },
+    }
 ]
 
 
@@ -1732,7 +1732,7 @@ STRUCTURES_WIKI_ENTRIES = [
         'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
         'keywords': 'relicbasemedium',
     },
-{
+    {
         'name': 'Relic Base (Large)',
         'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
         'keywords': 'relicbaselarge',
@@ -1774,12 +1774,12 @@ STRUCTURES_WIKI_ENTRIES = [
     },
     {
         'name': 'Post Office (Tier 2)',
-        'url': 'https://foxhole.wiki.gg/wiki/Town_Base#Post_Office_(T1)-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Town_Base#Post_Office_(T2)-0',
         'keywords': 't2townbasepostoffice',
     },
     {
         'name': 'Post Office (Tier 3)',
-        'url': 'https://foxhole.wiki.gg/wiki/Town_Base#Post_Office_(T1)-0',
+        'url': 'https://foxhole.wiki.gg/wiki/Town_Base#Post_Office_(T3)-0',
         'keywords': 't3townbasepostoffice',
     },
     {
