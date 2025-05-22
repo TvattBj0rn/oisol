@@ -134,3 +134,17 @@ class MapIcon(Enum):
     FACILITY_MINE_OIL_RIG = 75
     WEATHER_STATION = 83
     MORTAR_HOUSE = 84
+
+
+class WikiTables(Enum):
+    ARMAMENT = 'armament'
+    DAMAGE_TYPES = 'damagetypes'
+    ICON_DATA = 'icondata'
+    ITEM_DATA = 'itemdata'
+    MAPS = 'maps'
+    PRODUCTION = 'production'
+    PRODUCTION_SHIPPABLE = 'productionshippable'
+    PRODUCTION_VEHICLE = 'productionvehicle'
+    STRUCTURES = 'structures'
+    VEHICLES = 'vehicles'
+    VEHICLE_CLASS = 'VehicleClass'
