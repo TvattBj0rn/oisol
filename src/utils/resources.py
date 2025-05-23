@@ -1,6 +1,6 @@
 import pathlib
 
-from .oisol_enums import DamageTypes
+from .oisol_enums import DamageTypes, WikiTables
 
 OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
 TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
@@ -110,6 +110,8 @@ EMOJIS_FROM_DICT = {
     'Explosive': '<:explosive:1239343451447758878>',
     'High Explosive': '<:high_explosive:1239343441025175583>',
     'Armour Piercing': '<:AP:1239343423807553547>',
+    'Fire': '<:fire_damage:1375524784036774120>',
+    'Poisonous Gas': '<:poisonous:1239343466128084992>',
     'Demolition': '<:demolition:1239343432367870035>',
     'Shrapnel': '<:shrapnel:1239343483286716417>',
     'Incendiary High Explosive': '<:incendiary_high_explosive:1317944748157173770>',
@@ -1269,6 +1271,7 @@ VEHICLES_WIKI_ENTRIES = [
         'name': '85K-a “Spatha”',
         'url': 'https://foxhole.wiki.gg/wiki/85K-a_%E2%80%9CSpatha%E2%80%9D',
         'keywords': 'tankcolonialspata85kaassaultspathaspahtaspatah',
+        'wiki_table': WikiTables.VEHICLES,
     },
     {
         'name': '85V-g “Talos”',
