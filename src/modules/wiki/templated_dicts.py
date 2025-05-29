@@ -1,20 +1,30 @@
-import abc
-
-from src.utils import EMOJIS_FROM_DICT
+from src.utils import EMOJIS_FROM_DICT, WikiTables
 from src.utils.oisol_enums import Faction
 
 
-class WikiTemplate(abc.ABC):
+class WikiTemplate:
     def __init__(self, data_dict: dict):
         self._raw_data = data_dict
+        self._categories_attributes = {}
 
-    @abc.abstractmethod
-    def _process_categories(self) -> list:
-        pass
-
-    @abc.abstractmethod
     def generate_embed_data(self) -> dict:
-        pass
+        print(self._raw_data)
+        return {
+            'title': self._raw_data.get('name'),
+            'description': '',
+            'color': Faction.COLONIAL.value if self._raw_data.get('faction') == 'Col'
+            else Faction.WARDEN.value if self._raw_data.get('faction') == 'War'
+            else Faction.NEUTRAL.value,
+            'thumbnail': {'url': self._raw_data.get('image_url')},
+            'fields': self._process_categories(),
+        }
+
+    def _process_categories(self) -> list[dict]:
+        filled_categories = []
+        for category_name, category_attributes in self._categories_attributes.items():
+            if len(filled_category_attributes := [attribute for attribute in category_attributes if attribute.get('value')]) > 0:
+                filled_categories += [{'name': category_name, 'value': ''}] + filled_category_attributes
+        return filled_categories
 
 
 class VehicleTemplate(WikiTemplate):
@@ -59,23 +69,14 @@ class VehicleTemplate(WikiTemplate):
             ],
         }
 
-    def _process_categories(self) -> list:
-        filled_categories = []
-        for category_name, category_attributes in self._categories_attributes.items():
-            category_attributes = [attribute for attribute in category_attributes if attribute.get('value')]
-            if len(category_attributes) > 0:
-                filled_categories += [{'name': category_name, 'value': ''}] + category_attributes
-        return filled_categories
 
-    def generate_embed_data(self) -> dict:
-        print(self._raw_data)
-        embeded_dict = {
-            'title': self._raw_data.get('name'),
-            'description': '',
-            'color': Faction.COLONIAL.value if self._raw_data.get('faction') == 'Col' else Faction.WARDEN.value if self._raw_data.get('faction') == 'War' else Faction.NEUTRAL.value,
-            'thumbnail': {'url': self._raw_data.get('image_url')},
-            'fields': self._process_categories(),
-        }
-        return embeded_dict
+class WikiTemplateFactory:
+    table_to_template_mapping = {
+        WikiTables.VEHICLES: VehicleTemplate
+    }
 
+    def __init__(self, data_dict: dict):
+        self._data_dict = data_dict
 
+    def get(self, table: WikiTables) -> WikiTemplate:
+        return self.table_to_template_mapping[table](self._data_dict)

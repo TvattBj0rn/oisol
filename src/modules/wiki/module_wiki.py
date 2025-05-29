@@ -21,7 +21,7 @@ from src.utils import (
 from .mpf_generation import generate_mpf_data
 from .scrapers.scrap_wiki_entry_health import scrap_health
 from .scrapers.scrap_wiki_entry_production import scrap_production
-from .templated_dicts import VehicleTemplate
+from .templated_dicts import  WikiTemplateFactory
 from .wiki_api_requester import get_entry_attributes
 
 if TYPE_CHECKING:
@@ -120,7 +120,8 @@ class ModuleWiki(commands.Cog):
         entry: dict = next((entry for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
 
         data_dict = await get_entry_attributes(entry['name'], entry['wiki_table'].value)
-        embeded_data = VehicleTemplate(data_dict).generate_embed_data()
+
+        embeded_data = WikiTemplateFactory(data_dict).get(entry['wiki_table']).generate_embed_data()
 
         await interaction.response.send_message(embed=discord.Embed().from_dict(embeded_data), ephemeral=not visible)
 
