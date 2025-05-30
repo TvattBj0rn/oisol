@@ -1,11 +1,54 @@
-from src.utils import EMOJIS_FROM_DICT, WikiTables
-from src.utils.oisol_enums import Faction
+from src.utils import EMOJIS_FROM_DICT, WikiTables, convert_time_to_readable_time, Faction
 
 
 class WikiTemplate:
     def __init__(self, data_dict: dict):
         self._raw_data = data_dict
         self._categories_attributes = {}
+
+    @staticmethod
+    def _create_formatted_attribute(name: str, value: str, inline: bool = True):
+        return {'name': name, 'value': value, 'inline': inline}
+
+    def _add_armor_attribute(self, inplace: bool = True):
+        return {
+            'name': f'Armor type: *{self._raw_data.get('armour type')}*',
+            'value': f'{''.join(f'- {attribute_name} ({EMOJIS_FROM_DICT.get(attribute_name)}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armour_attributes').items())}',
+            'inplace': inplace,
+        }
+
+    def _generate_armament_value(self, armament_id: int) -> str:
+        is_armament_valid = any((
+            main_name := self._raw_data.get(f'A{armament_id} ArmamentName'),
+            ammo_name := self._raw_data.get(f'A{armament_id} AmmoName'),
+            velocity_mod := self._raw_data.get(f'A{armament_id} VelocityMod'),
+            reload_time := self._raw_data.get(f'A{armament_id} ReloadTime'),
+            gun_range := self._raw_data.get(f'A{armament_id} RangeMax'),
+            effective_range := self._raw_data.get(f'A{armament_id} RangeEffective'),
+            retaliation_range := self._raw_data.get('retaliation range'),
+        ))
+        if not is_armament_valid:
+            return ''
+        return (
+            f'{main_name if main_name is not None else self._raw_data.get('name')}{f' ({EMOJIS_FROM_DICT.get(ammo_name)})' if ammo_name is not None else ''}\n'
+            + (f'- Velocity of {velocity_mod}%\n' if velocity_mod is not None else '')
+            + (f'- Reload time of {reload_time}s\n' if reload_time is not None else '')
+            + (f'- Range of {gun_range}m' if gun_range is not None else '')
+            + (f', effective range of {effective_range}m' if effective_range is not None else '')
+            + (f', retaliates up to {retaliation_range}m' if retaliation_range is not None else '')
+            + '\n'
+        )
+
+    def _process_categories(self) -> list[dict]:
+        """
+        This take all generated attributes and remove empty values one and add categories as section
+        :return: category attribute in list of dicts following discord embed fields specifications (name / value / inline as keys)
+        """
+        filled_categories = []
+        for category_name, category_attributes in self._categories_attributes.items():
+            if len(filled_category_attributes := [attribute for attribute in category_attributes if attribute.get('value')]) > 0:
+                filled_categories += [{'name': category_name, 'value': ''}] + filled_category_attributes
+        return filled_categories
 
     def generate_embed_data(self) -> dict:
         print(self._raw_data)
@@ -19,60 +62,76 @@ class WikiTemplate:
             'fields': self._process_categories(),
         }
 
-    def _process_categories(self) -> list[dict]:
-        filled_categories = []
-        for category_name, category_attributes in self._categories_attributes.items():
-            if len(filled_category_attributes := [attribute for attribute in category_attributes if attribute.get('value')]) > 0:
-                filled_categories += [{'name': category_name, 'value': ''}] + filled_category_attributes
-        return filled_categories
-
 
 class VehicleTemplate(WikiTemplate):
     def __init__(self, data_dict: dict):
         super().__init__(data_dict)
         self._categories_attributes = {
             'SURVIVABILITY': [
-                {'name': 'Health', 'value': f'{vic_hp} HP' if (vic_hp := self._raw_data.get('vehicle hp')) else '', 'inline': True},  # Health
-                {'name': 'Disable Threshold', 'value': f'{disable}%' if (disable := self._raw_data.get('disable')) else '', 'inline': True},  # Disable
-                {'name': 'Subsystems disable chance', 'value': f'{
+                self._create_formatted_attribute('Health', f'{vic_hp} HP' if (vic_hp := self._raw_data.get('vehicle hp')) else ''),
+                self._create_formatted_attribute('Disable threshold', f'{disable}%' if (disable := self._raw_data.get('disable')) else ''),
+                self._create_formatted_attribute('Subsystems disable chance', f'{
                 (f'- Tracks (<:tracked:1239349968767291454>): {tracks_chance}%\n' if (tracks_chance := self._raw_data.get('disable chance tracks')) else '') +
                 (f'- Fuel Tank (<:fuel_leak:1239349986471313499>): {fuel_chance}%\n' if (fuel_chance := self._raw_data.get('disable chance fueltank')) else '') +
                 (f'- Main Turret (<:turret:1239349978170921060>): {turret_1_chance}%\n' if (turret_1_chance := self._raw_data.get('disable chance turret')) else '') +
                 (f'- Secondary Turret (<:secondary_turret_cannon:1239616804184264818>): {turret_2_chance}%\n' if (turret_2_chance := self._raw_data.get('disable chance turret2')) else '')
-                }', 'inline': True},  # Subsystems disable chance
-                {'name': f'Armor type: *{self._raw_data.get('armour type')}*', 'value': f'{
-                ''.join(f'- {attribute_name} ({EMOJIS_FROM_DICT.get(attribute_name)}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armour_attributes').items())
-                }', 'inline': True}, # Vic Armor and damage reductions
-                {'name': 'Armor HP', 'value': f'{armor_hp} HP' if (armor_hp := self._raw_data.get('armour hp')) else '', 'inline': True} # Armor HP / Penetration chances
+                }'),
+                self._add_armor_attribute(),
+                self._create_formatted_attribute('Armor HP', f'{armor_hp} HP' if (armor_hp := self._raw_data.get('armour hp')) else ''),
             ],
             'MISC': [
-                {'name': 'Class', 'value': str(vic_type) if (vic_type := self._raw_data.get('vehicle type')) is not None else '', 'inline': True}, # Vic Class
-                {'name': 'Crew', 'value': str(crew) if (crew := self._raw_data.get('crew')) is not None else '', 'inline': True}, # Crew number
-                {'name': 'Passengers', 'value': str(passengers) if (passengers := self._raw_data.get('passengers')) is not None else '', 'inline': True}, # Passengers
-                {'name': 'Inventory slots', 'value': str(slots) if (slots := self._raw_data.get('slots')) is not None else '', 'inline': True}, # Inventory slots
+                self._create_formatted_attribute('Class', str(vic_type) if (vic_type := self._raw_data.get('vehicle type')) is not None else ''),
+                self._create_formatted_attribute('Crew', str(crew) if (crew := self._raw_data.get('crew')) is not None else ''),
+                self._create_formatted_attribute('Passengers', str(passengers) if (passengers := self._raw_data.get('passengers')) is not None else ''),
+                self._create_formatted_attribute('Inventory slots', str(slots) if (slots := self._raw_data.get('slots')) is not None else ''),
             ],
             'ENGINE': [
-                {'name': 'Fuel Capacity', 'value': f'{fuel_cap}{'U' if self._raw_data.get('fueltype') == 'Coal' else 'L'}{f', {f'Diesel ({EMOJIS_FROM_DICT.get('Diesel')}) / Petrol ({EMOJIS_FROM_DICT.get('Petrol')})' if (fuel_type := self._raw_data.get('fueltype')) is None else f'{fuel_type} ({EMOJIS_FROM_DICT.get(fuel_type)})'}'}' if (fuel_cap := self._raw_data.get('fuelcap')) is not None else '', 'inline': True}, # Fuel type + capacity
-                {'name': 'Speed', 'value': f'{
+                self._create_formatted_attribute('Fuel Capacity', f'{fuel_cap}{'U' if self._raw_data.get('fueltype') == 'Coal' else 'L'}{f', {f'Diesel ({EMOJIS_FROM_DICT.get('Diesel')}) / Petrol ({EMOJIS_FROM_DICT.get('Petrol')})' if (fuel_type := self._raw_data.get('fueltype')) is None else f'{fuel_type} ({EMOJIS_FROM_DICT.get(fuel_type)})'}'}' if (fuel_cap := self._raw_data.get('fuelcap')) is not None else ''),
+                self._create_formatted_attribute('Speed', f'{
                 f'{f'- On road: {speed} m/s\n' if (speed := self._raw_data.get('speed')) else ''}' +
                 f'{f'- On road (boost): {speed_boost} m/s\n' if (speed_boost := self._raw_data.get('boostspeed')) else ''}' +
                 f'{f'- Off road: {offspeed} m/s\n' if (offspeed := self._raw_data.get('offspeed')) else ''}' +
                 f'{f'- Off road (boost): {offspeed_boost} m/s\n' if (offspeed_boost := self._raw_data.get('boostspeed off')) else ''}' +
                 f'{f'- On water: {water} m/s\n' if (water := self._raw_data.get('waterspeed')) else ''}' +
                 f'{f'- On water (boost): {water_boost} m/s\n' if (water_boost := self._raw_data.get('boostspeed water')) else ''}'
-                }', 'inline': True}, # All speeds (Road / Offroad / Water / Boost)
+                }'),
             ],
             'ARMAMENT': [
-                {'name': '', 'value': f'{
-                ''.join(f'- {gun_attribute} ({EMOJIS_FROM_DICT.get(self._raw_data.get(f'A{i} AmmoName'))}), range of {self._raw_data.get(f'A{i} RangeMax')}m\n' for i in range(1, 5) if (gun_attribute := self._raw_data.get(f'A{i} ArmamentName')) is not None)
-                }', 'inplace': True} # All guns
+                self._create_formatted_attribute('', ''.join(self._generate_armament_value(i) for i in range(1, 5)))
+            ],
+        }
+
+
+class StructureTemplate(WikiTemplate):
+    def __init__(self, data_dict: dict):
+        super().__init__(data_dict)
+        self._categories_attributes = {
+            'SURVIVABILITY': [
+                self._create_formatted_attribute('Health', f'{f'{struct_hp} HP' if (struct_hp := self._raw_data.get('structure hp')) is not None else ''}{f'\nEntrenched: {entrenched_hp} HP' if (entrenched_hp := self._raw_data.get('structure hp entrenched')) is not None else ''}{
+                f'\nDecay start after: {convert_time_to_readable_time(float(decay_start))}' if (decay_start := self._raw_data.get('decay start')) is not None else ''}{
+                f'\nDecay duration: {convert_time_to_readable_time(float(decay_duration))}' if (decay_duration := self._raw_data.get('decay duration')) is not None else ''
+                }'),
+                self._create_formatted_attribute('Husk & Husk decay', f'{f'{husk_hp} HP' if (husk_hp := self._raw_data.get('husk hp')) is not None else ''}{
+                f'\nDecay start after: {convert_time_to_readable_time(float(husk_decay_start))}' if (husk_decay_start := self._raw_data.get('husk decay start')) is not None else ''}{
+                f'\nDecay duration: {convert_time_to_readable_time(float(husk_decay_duration))}' if (husk_decay_duration := self._raw_data.get('husk decay duration')) is not None else ''
+                }'),
+                self._add_armor_attribute(),
+            ],
+            'STRUCTURE SUPPORT': [
+                self._create_formatted_attribute('Intel range', f'{intel_range}m' if (intel_range := self._raw_data.get('intel range')) is not None else ''),
+                self._create_formatted_attribute('AI range', f'{ai_range}m' if (ai_range := self._raw_data.get('ai range')) is not None else ''),
+                self._create_formatted_attribute('Construction', f'x{build_amount} {build_material}{f' {EMOJIS_FROM_DICT.get(build_material, '')} '} using {built_with}{f' {EMOJIS_FROM_DICT.get(built_with, '')}'}' if any(((build_amount := self._raw_data.get('build amount')), (build_material := self._raw_data.get('build material')), (built_with := self._raw_data.get('built with')))) else '')
+            ],
+            'ARMAMENT': [
+                self._create_formatted_attribute('', self._generate_armament_value(1))
             ],
         }
 
 
 class WikiTemplateFactory:
     table_to_template_mapping = {
-        WikiTables.VEHICLES: VehicleTemplate
+        WikiTables.VEHICLES: VehicleTemplate,
+        WikiTables.STRUCTURES: StructureTemplate,
     }
 
     def __init__(self, data_dict: dict):

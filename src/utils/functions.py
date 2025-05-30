@@ -115,4 +115,4 @@ def convert_time_to_readable_time(value: float) -> str:
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
 
-    return f'{int(h)}:{int(m):02d}:{int(s):02d}'
+    return f'{int(h)}:{int(m):02d}:{int(s):02d}h'
