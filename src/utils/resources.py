@@ -101,6 +101,12 @@ RESOURCE_TO_CRATE = {
 
 
 EMOJIS_FROM_DICT = {
+    'Small Arms': '<:smallarms:1078407919172857976>',
+    'Heavy Arms': '<:heavyarms:1378408933907107881>',
+    'Heavy Ammunition': '<:heavyammunition:1378408946141892649>',
+    'Utility': '<:utility:1378408944547922071>',
+    'Medical': '<:medical:1378408943289630822>',
+    'Resource': '<:resource:1378408939682529371>',
     'Light Kinetic': '<:light_kinetic:1239343508725174355>',
     'Heavy Kinetic': '<:heavy_kinetic:1239343499787112490>',
     'Anti-Tank Kinetic': '<:AT_kinetic:1239343491138588722>',
