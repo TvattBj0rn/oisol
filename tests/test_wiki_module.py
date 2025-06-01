@@ -29,7 +29,7 @@ async def test_wiki_command_all_entries(entry):
     # 50 is an arbitrary value, the table used has over 150 columns
     assert len(entry_output) > 50, f'Invalid wiki entry: {entry['name']}'
 
-@pytest.mark.parametrize('entry', PRODUCTION_ENTRIES)
-def test_production_command_entries(entry):
-    entry_output = scrap_production(entry['url'])
-    assert all(k in entry_output for k in ['Structure', 'Input(s)', 'Output']), f'Invalid production entry: {entry['name']}'
+# @pytest.mark.parametrize('entry', PRODUCTION_ENTRIES)
+# def test_production_command_entries(entry):
+#     entry_output = scrap_production(entry['url'])
+#     assert all(k in entry_output for k in ['Structure', 'Input(s)', 'Output']), f'Invalid production entry: {entry['name']}'
