@@ -85,7 +85,7 @@ class ModuleRegister(commands.Cog):
         channel = guild.get_channel(config.getint('register', 'channel'))
         try:
             message = await channel.fetch_message(config.getint('register', 'message_id'))
-        except discord.NotFound:
+        except (discord.NotFound, AttributeError):
             return
 
         # Update existing register
