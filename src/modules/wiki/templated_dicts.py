@@ -65,7 +65,6 @@ class WikiTemplate:
         return filled_categories
 
     def generate_embed_data(self) -> dict:
-        print(self._raw_data)
         return {
             'title': self._raw_data.get('name'),
             'description': '',
