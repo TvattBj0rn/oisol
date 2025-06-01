@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import collections
 import math
 import operator
 import random
@@ -21,8 +20,9 @@ from src.utils import (
 
 from .mpf_generation import generate_mpf_data
 from .scrapers.scrap_wiki_entry_health import scrap_health
-from .scrapers.scrap_wiki_entry_infobox import scrap_wiki
 from .scrapers.scrap_wiki_entry_production import scrap_production
+from .templated_dicts import  WikiTemplateFactory
+from .wiki_api_requester import get_entry_attributes
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -31,16 +31,6 @@ if TYPE_CHECKING:
 class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-
-    @staticmethod
-    def format_attributes(key: str, value: str | list) -> str:
-        if isinstance(value, list):
-            return ', '.join(f'{fuel_type}{f' ({EMOJIS_FROM_DICT[fuel_type]})' if fuel_type in EMOJIS_FROM_DICT else ''}' for fuel_type in value)
-        if value == 'Intel Icon':
-            return EMOJIS_FROM_DICT.get(key, key)
-        if key not in EMOJIS_FROM_DICT:
-            return f'{value} **:** '
-        return f'\n- {f'{value} **|** ' if value != key else ''}{key}{f' ({EMOJIS_FROM_DICT[key]})' if key in EMOJIS_FROM_DICT else ''}'
 
     @staticmethod
     def generate_hmtk_embed(
@@ -76,37 +66,6 @@ class ModuleWiki(commands.Cog):
                 'color': wiki_data['Color'],
                 'thumbnail': {'url': wiki_data['img_url']},
                 'fields': fields,
-            },
-        )
-
-    def generate_wiki_embed(self, wiki_data: dict) -> discord.Embed:
-        embed_fields = []
-        for attribute_key, attribute_value in wiki_data['attributes'].items():
-            if isinstance(attribute_value, str):
-                embed_fields.append({'name': attribute_key, 'value': attribute_value, 'inline': True})
-            else:
-                attribute_string = ''
-                ordered_attribute_value = collections.OrderedDict(sorted(attribute_value.items()))
-                for k, v in ordered_attribute_value.items():
-                    attribute_string += self.format_attributes(k, v)
-                attribute_string = attribute_string.removesuffix(' **:** ')
-                embed_fields.append({'name': attribute_key, 'value': attribute_string, 'inline': True})
-        if (fuel_capacity := 'Fuel Capacity') in wiki_data:
-            embed_fields.append(
-                {
-                    'name': fuel_capacity,
-                    'value': f"{wiki_data[fuel_capacity]['']} {(' **|** '.join(EMOJIS_FROM_DICT[k] for k in wiki_data[fuel_capacity] if k in EMOJIS_FROM_DICT))}",
-                    'inline': True,
-                },
-            )
-        return discord.Embed().from_dict(
-            {
-                'title': wiki_data['title'],
-                'description': f"*{wiki_data['description']}*" if wiki_data['description'] else None,
-                'url': wiki_data['url'],
-                'color': wiki_data['color'],
-                'image': {'url': wiki_data['img_url']},
-                'fields': embed_fields,
             },
         )
 
@@ -153,23 +112,18 @@ class ModuleWiki(commands.Cog):
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
         if not search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
-            # In case the user provided an url that is not from the official wiki
+            # In case the user provided a url that is not from the official wiki
             if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
                 self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
 
-        entry_name = next((entry['name'] for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
-        entry_data = scrap_wiki(search_request, entry_name)
-        entry_data['url'] = search_request
+        entry: dict = next((entry for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
 
-        if 'title' not in entry_data:
-            await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
-            self.bot.logger.warning(f'Entry URL failing: {search_request, entry_name}')
-            return
+        data_dict = await get_entry_attributes(entry['name'], entry['wiki_table'].value)
 
-        entry_embed = self.generate_wiki_embed(entry_data)
+        embeded_data = WikiTemplateFactory(data_dict).get(entry['wiki_table']).generate_embed_data()
 
-        await interaction.response.send_message(embed=entry_embed, ephemeral=not visible)
+        await interaction.response.send_message(embed=discord.Embed().from_dict(embeded_data), ephemeral=not visible)
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
@@ -181,7 +135,7 @@ class ModuleWiki(commands.Cog):
         )
         if not any(entry_searches):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
-            # In case the user provided an url that is not from the official wiki
+            # In case the user provided a url that is not from the official wiki
             if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
                 self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
             return
@@ -198,6 +152,8 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='production', description='Get production costs, location & time from the wiki')
     async def get_item_production_parameters(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name}')
+        await interaction.response.send_message('> This command is currently being reworked and will not be available for some time', ephemeral=True)
+        return
         if not search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki

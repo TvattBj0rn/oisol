@@ -102,3 +102,17 @@ def get_emoji_by_name(emoji_list: list[discord.Emoji], emoji_name: str) -> str:
     if (emoji := next((emoji for emoji in emoji_list if emoji.name == emoji_custom_id), None)) is not None:
         return f'<:{emoji.name}:{emoji.id}>'
     return emoji_name
+
+
+def convert_time_to_readable_time(value: float) -> str:
+    """
+    Take a float time value and converts it to a readable format.
+    e.g -> 72.345 will return '72:20:42'
+    :param value: float time value to convert
+    :return: string readable time value
+    """
+    seconds = value * 3600
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+
+    return f'{int(h)}:{int(m):02d}:{int(s):02d}h'
