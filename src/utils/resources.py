@@ -100,6 +100,18 @@ RESOURCE_TO_CRATE = {
 }
 
 
+NUMBER_TO_EQUIPMENT_SLOT = {
+    '1': 'Primary Equipment',
+    '2': 'Secondary Equipment',
+    '3': 'Tertiary Equipment',
+    '4': 'Attachment',
+    '5': 'Headgear',
+    '6': 'Uniform',
+    '7': 'Extra Equipment',
+    '8': 'Large Item',
+}
+
+
 EMOJIS_FROM_DICT = {
     'Small Arms': '<:smallarms:1078407919172857976>',
     'Heavy Arms': '<:heavyarms:1378408933907107881>',
