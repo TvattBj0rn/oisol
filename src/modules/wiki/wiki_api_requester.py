@@ -40,6 +40,8 @@ async def get_entry_attributes(entry_name: str, entry_table: str) -> dict:
             group.create_task(fetch_response(f'https://foxhole.wiki.gg/api.php?action=cargoquery&format=json&tables=damagetypes&fields=name,{data_dict.get('armour type')}', 'armour_attributes', lambda x: {row['title']['name']: row['title'][data_dict['armour type']] for row in x['cargoquery']}, queue))
         if data_dict.get('map icon') is not None:
             group.create_task(fetch_response(f'https://foxhole.wiki.gg/api.php?action=query&titles=File:{data_dict.get('map icon')}&prop=imageinfo&iiprop=url&format=json', 'map_icon_url', lambda x: (page_dict := x['query']['pages'])[list(page_dict)[0]]['imageinfo'][0]['url'], queue))
+        if data_dict.get('ammo') is not None:
+            group.create_task(fetch_response(f'https://foxhole.wiki.gg/api.php?action=cargoquery&format=json&tables=itemdata&fields=damage,damage_rng,damage_type&where=name="{data_dict.get('ammo')}"','ammo_info', lambda x: x['cargoquery'][0]['title'], queue))
 
     while not queue.empty():
         data_dict |= await queue.get()
