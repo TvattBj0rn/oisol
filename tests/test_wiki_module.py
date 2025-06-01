@@ -23,7 +23,7 @@ def test_health_command_vehicles_entries(entry):
     assert 'Name' in entry_output, f'Invalid vehicle entry: {entry['name']}'
 
 
-@pytest.mark.parametrize('entry', VEHICLES_WIKI_ENTRIES)
+@pytest.mark.parametrize('entry', ALL_WIKI_ENTRIES)
 async def test_wiki_command_all_entries(entry):
     entry_output = await get_entry_attributes(entry_name=entry['name'], entry_table=entry['wiki_table'])
     # 50 is an arbitrary value, the table used has over 150 columns
