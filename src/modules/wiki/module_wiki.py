@@ -152,6 +152,8 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='production', description='Get production costs, location & time from the wiki')
     async def get_item_production_parameters(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name}')
+        await interaction.response.send_message('> This command is currently being reworked and will not be available for some time', ephemeral=True)
+        return
         if not search_request.startswith('https://foxhole.wiki.gg/wiki/'):
             await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
             # In case the user provided an url that is not from the official wiki
