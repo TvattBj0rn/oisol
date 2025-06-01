@@ -1,4 +1,18 @@
-from src.utils import EMOJIS_FROM_DICT, WikiTables, convert_time_to_readable_time, Faction
+from src.utils import EMOJIS_FROM_DICT, WikiTables, convert_time_to_readable_time, Faction, NUMBER_TO_EQUIPMENT_SLOT
+
+
+class Damage:
+    def __init__(self, raw_damage: str, damage_multiplier: str | None, damage_rng: str | None):
+        self._raw_damage = int(raw_damage)
+        self._damage_multiplier = float(damage_multiplier) if damage_multiplier is not None else 1.0
+        self._net_damage = int(self._raw_damage * self._damage_multiplier)
+        self._damage_rng = True if damage_rng == '1' else False
+        self._net_damage_rng = int(self._net_damage * 1.5)
+
+    def get(self) -> str:
+        if self._damage_rng:
+            return f'{self._net_damage}-{self._net_damage_rng}'
+        return f'{self._net_damage}'
 
 
 class WikiTemplate:
@@ -128,10 +142,52 @@ class StructureTemplate(WikiTemplate):
         }
 
 
+class ItemTemplate(WikiTemplate):
+    def __init__(self, data_dict: dict):
+        super().__init__(data_dict)
+
+        self._damage_range = lambda d, m: f'{int(d) * int(m)}-'
+        self._categories_attributes = {
+            'ITEM': [
+                self._create_formatted_attribute('Category', f'{f'{item_category}{f' ({category_emoji})' if (category_emoji := EMOJIS_FROM_DICT.get(item_category)) is not None else ''}'}' if (item_category := self._raw_data.get('category')) is not None else ''),
+                self._create_formatted_attribute('Class', f'{item_class}' if (item_class := self._raw_data.get('type')) is not None else ''),
+                self._create_formatted_attribute('Equipment slot', f'{NUMBER_TO_EQUIPMENT_SLOT.get(slot)}' if (slot := self._raw_data.get('slot')) is not None else ''),
+                self._create_formatted_attribute('Use', f'{uses}' if (uses := self._raw_data.get('uses')) is not None else ''),
+                self._create_formatted_attribute('Amount per crate', f'{crate_amount}' if (crate_amount := self._raw_data.get('crate amount')) is not None else '')
+            ],
+            'ARMAMENT': [
+                self._create_formatted_attribute('Firing mode', f'{firing_mode}' if (firing_mode := self._raw_data.get('firing mode')) is not None else ''),
+                self._create_formatted_attribute(
+                    'Damage',
+                    f'{
+                        f'{Damage(damage_info['damage'], self._raw_data.get('damage multiplier'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}'
+                        f'{f'\nSemi automatic mode: {Damage(damage_info['damage'], self._raw_data.get('damage multiplier2'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}' if self._raw_data.get('firing mode') == 'Auto / Semi' else ''}'
+                    }' if (damage_info := self._raw_data.get('ammo_info')) is not None else ''
+                ),
+                self._create_formatted_attribute(
+                    'Range',
+                    (f'- Effective range: {range_effective}m' if (range_effective := self._raw_data.get('range effective')) is not None else '')
+                    + (f'\n- Maximum range: {range_max}m' if (range_max := self._raw_data.get('range max')) is not None else '')
+                    + (f'\n- Effective range (semi automatic mode): {range_effective2}m' if (range_effective2 := self._raw_data.get('range effective2')) is not None else '')
+                    + (f'\n- Maximum range (semi automatic mode): {range_max2}m' if (range_max2 := self._raw_data.get('range max2')) is not None else '')
+                ),
+                self._create_formatted_attribute(
+                    'Ammunition',
+                    (f'Shoots {all_ammo}' if (all_ammo := ', '.join(f'{v}{f' ({EMOJIS_FROM_DICT.get(self._raw_data[k])})'}' for k in ['ammo', 'ammo2', 'ammo3', 'ammo4'] if (v := self._raw_data[k]) is not None)) else '')
+                    + (f'\n- Magazine size of {mag_size}' if (mag_size := self._raw_data.get('magazine')) is not None else '')
+                    + (f'\n- Reload time of {reload_time}s' if (reload_time := self._raw_data.get('reload')) is not None else '')
+                ),
+                self._create_formatted_attribute('Damage', f'{Damage(self._raw_data.get('damage'), self._raw_data.get('damage multiplier'), self._raw_data.get('damage rng')).get()} ({EMOJIS_FROM_DICT.get(self._raw_data.get('damage type'))})' if self._raw_data.get('damage') is not None else ''),
+            ],
+        }
+
+
+
 class WikiTemplateFactory:
     table_to_template_mapping = {
         WikiTables.VEHICLES: VehicleTemplate,
         WikiTables.STRUCTURES: StructureTemplate,
+        WikiTables.ITEM_DATA: ItemTemplate,
     }
 
     def __init__(self, data_dict: dict):
