@@ -18,6 +18,13 @@ if TYPE_CHECKING:
 class ModuleTodolist(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+        self.sql_tables = [
+            # Guilds todolists role and user interface access
+            'CREATE TABLE IF NOT EXISTS GroupsTodolistsAccess(GroupId INTEGER, TodolistId TEXT, DiscordId INTEGER, DiscordIdType TEXT);',
+
+            # Guilds todolists interface tasks
+            'CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);',
+        ]
 
     @app_commands.command(name='todolist-generate')
     async def todolist_generate(

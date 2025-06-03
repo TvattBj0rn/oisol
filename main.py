@@ -38,15 +38,15 @@ class Oisol(commands.Bot):
         self.logger = OisolLogger('oisol')
 
     async def on_ready(self) -> None:
-        # Ready the db
-        self._setup_oisol_db()
-
         # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
         await self.add_cog(ModuleWiki(self))
+
+        # Ready the db
+        self._setup_oisol_db()
 
         # Sync app emojis
         self.app_emojis = await self.fetch_application_emojis()
@@ -81,25 +81,15 @@ class Oisol(commands.Bot):
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 
-    def _setup_oisol_db(self) -> None:
+    def _setup_oisol_db(self):
+        create_tables_sql_script = ''.join(
+            # get all flattened lists of create table statements from currently loaded cogs with attr 'sql_tables'
+            ''.join(getattr(cog, 'sql_tables', '')) for cog in self.cogs.values()
+        ) + 'CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT);'
+
         self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
-
-        # Available stockpiles per shard
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT)')
-
-        # Guilds stockpiles
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT)')
-
-        # Guilds register
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER)')
-
-        # Guilds todolists
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsAccess(GroupId INTEGER, TodolistId TEXT, DiscordId INTEGER, DiscordIdType TEXT)')
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER)')
-
-        # Interfaces references
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT)')
+        self.cursor.executescript(create_tables_sql_script)
 
 
 if __name__ == '__main__':

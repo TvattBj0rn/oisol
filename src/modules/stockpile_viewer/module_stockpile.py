@@ -58,6 +58,13 @@ def get_current_shard(path: pathlib.Path, _code: str) -> str:
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+        self.sql_tables = [
+            # Available stockpiles per shard
+            'CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT);',
+
+            # Guilds stockpiles
+            'CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);',
+        ]
 
     @app_commands.command(name='stockpile-view', description='Get the new stockpile interface')
     async def stockpile_view(self, interaction: discord.Interaction) -> None:

@@ -23,6 +23,10 @@ if TYPE_CHECKING:
 class ModuleRegister(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+        self.sql_tables = [
+            # Guilds register
+            'CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);',
+        ]
 
     @app_commands.command(name='register-view', description='Command to display the current list of recruit with the date the got the recruit role')
     async def register_view(self, interaction: discord.Interaction) -> None:
