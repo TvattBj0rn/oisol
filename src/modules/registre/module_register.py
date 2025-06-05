@@ -62,6 +62,7 @@ class ModuleRegister(commands.Cog):
         return [t for t in members if t[2] in [m.id for m in guild.members] and guild.get_member(t[2]).get_role(recruit_id)]
 
     async def update_register(self, guild_id: int) -> None:
+        self.bot.logger.command(f'register interface was updated on guild {guild_id}')
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
 
