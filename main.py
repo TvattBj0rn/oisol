@@ -82,14 +82,20 @@ class Oisol(commands.Bot):
                 config.write(configfile)
 
     def _setup_oisol_db(self):
-        create_tables_sql_script = ''.join(
-            # get all flattened lists of create table statements from currently loaded cogs with attr 'sql_tables'
-            ''.join(getattr(cog, 'sql_tables', '')) for cog in self.cogs.values()
-        ) + 'CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT);'
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            conn.cursor().executescript(
+                '''
+                CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
+                CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, InterfaceId TEXT, DiscordId TEXT, DiscordIdType TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsStockpilesList(GroupId TEXT, InterfaceId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
+                CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
+                '''
+            )
 
         self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
-        self.cursor.executescript(create_tables_sql_script)
 
 
 if __name__ == '__main__':
