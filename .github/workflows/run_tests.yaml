@@ -25,5 +25,5 @@ jobs:
           pip install -r requirements.txt
       - name: Tests with pytest
         run: |  
-          pip install pytest pytest-xdist
+          pip install pytest pytest-xdist pytest-asyncio
           pytest -v -s -n auto
