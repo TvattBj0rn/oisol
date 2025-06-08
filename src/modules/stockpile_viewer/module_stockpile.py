@@ -4,25 +4,24 @@ import configparser
 import functools
 import pathlib
 import random
-import re
-from multiprocessing import Pool, cpu_count
+import sqlite3
 from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
-from discord.ext import commands, tasks
+from discord.ext import commands
 
+from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockpile_info
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     EmbedIds,
     Faction,
-    FoxholeAPIWrapper,
     FoxholeBuildings,
-    MapIcon,
     Shard,
     sort_nested_dicts_by_key,
-    update_discord_interface,
+    DiscordIdType,
+    InterfacesTypes,
 )
 
 if TYPE_CHECKING:
@@ -58,29 +57,6 @@ def get_current_shard(path: pathlib.Path, _code: str) -> str:
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.sql_tables = [
-            # Available stockpiles per shard
-            'CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT);',
-
-            # Guilds stockpiles
-            'CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);',
-        ]
-
-    @app_commands.command(name='stockpile-view', description='Get the new stockpile interface')
-    async def stockpile_view(self, interaction: discord.Interaction) -> None:
-        self.bot.logger.command(f'stockpile-view command by {interaction.user.name} on {interaction.guild.name}')
-        config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
-
-        if not config.has_section('stockpile'):
-            config.add_section('stockpile')
-        config.set('stockpile', 'channel', str(interaction.channel_id))
-
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
-            config.write(configfile)
-        await interaction.response.send_message(
-            embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id),
-        )
 
     @staticmethod
     def refresh_stockpile_interface(bot: Oisol, guild_id: int) -> discord.Embed:
@@ -132,8 +108,208 @@ class ModuleStockpiles(commands.Cog):
             },
         )
 
+    async def _refresh_interface(self, group_id: str | int, channel_id: str | int, message_id: str | int):
+        # Regenerate new embed skeleton
+        updated_interface_skeleton = get_stockpile_info(int(group_id), interface_id=int(message_id))
+
+        # Update existing interface
+        channel = self.bot.get_channel(int(channel_id))
+        message = await channel.fetch_message(int(message_id))
+        await message.edit(embed=discord.Embed().from_dict(updated_interface_skeleton))
+
+
+    @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
+    async def stockpile_interface_create(
+            self,
+            interaction: discord.Interaction,
+            name: str,
+            role_1: discord.Role = None,
+            role_2: discord.Role = None,
+            role_3: discord.Role = None,
+            role_4: discord.Role = None,
+            role_5: discord.Role = None,
+            member_1: discord.Member = None,
+            member_2: discord.Member = None,
+            member_3: discord.Member = None,
+            member_4: discord.Member = None,
+            member_5: discord.Member = None,
+    ):
+        self.bot.logger.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Send an empty stockpile interface
+        await interaction.response.send_message(
+            embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=name))
+        )
+        # Retrieve the interface message id
+        message_id = (await interaction.original_response()).id
+
+        access_list = []
+
+        # Get all non-nulls roles & access as permission list
+        if role_1:
+            access_list.append((interaction.guild_id, message_id, role_1.id, DiscordIdType.ROLE.name))
+        if role_2:
+            access_list.append((interaction.guild_id, message_id, role_2.id, DiscordIdType.ROLE.name))
+        if role_3:
+            access_list.append((interaction.guild_id, message_id, role_3.id, DiscordIdType.ROLE.name))
+        if role_4:
+            access_list.append((interaction.guild_id, message_id, role_4.id, DiscordIdType.ROLE.name))
+        if role_5:
+            access_list.append((interaction.guild_id, message_id, role_5.id, DiscordIdType.ROLE.name))
+        if member_1:
+            access_list.append((interaction.guild_id, message_id, member_1.id, DiscordIdType.USER.name))
+        if member_2:
+            access_list.append((interaction.guild_id, message_id, member_2.id, DiscordIdType.USER.name))
+        if member_3:
+            access_list.append((interaction.guild_id, message_id, member_3.id, DiscordIdType.USER.name))
+        if member_4:
+            access_list.append((interaction.guild_id, message_id, member_4.id, DiscordIdType.USER.name))
+        if member_5:
+            access_list.append((interaction.guild_id, message_id, member_5.id, DiscordIdType.USER.name))
+
+        # Add current roles & members access to db
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Only update the access db if specific permissions were given
+            if access_list:
+                cursor.executemany(
+                    'INSERT INTO GroupsInterfacesAccess (GroupId, InterfaceId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?)',
+                    access_list,
+                )
+            cursor.execute(
+                'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
+                (interaction.guild_id, interaction.channel_id, message_id, InterfacesTypes.STOCKPILE.value, None, name),
+            )
+            conn.commit()
+
+    @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
+    async def clear_interface(self, interaction: discord.Interaction, interface_name: str):
+        self.bot.logger.command(
+            f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
+        # Case where the user did not select the interface from the provided options
+        ids_list = interface_name.split('.')
+        if len(ids_list) != 3 or not all(ids.isdigit() for ids in ids_list):
+            await interaction.response.send_message(
+                '> The provided interface name is not correct',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+
+        # Ensure use is authorized to interact with interface
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            interface_permissions_raw = cursor.execute(
+                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
+            ).fetchall()
+            interface_permissions = list(sum(interface_permissions_raw, ()))
+            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
+                await interaction.response.send_message(
+                    '> You do not have permission to interact with this interface',
+                    ephemeral=True,
+                    delete_after=5,
+                )
+                return
+            cursor.execute(
+                f"DELETE FROM GroupsStockpilesList WHERE GroupId == {interaction.guild_id} AND InterfaceId == '{ids_list[2]}'",
+            )
+            conn.commit()
+
+        await self._refresh_interface(ids_list[0], ids_list[1], ids_list[2])
+
+        await interaction.response.send_message(
+            f'> The interface was properly cleared',
+            ephemeral=True,
+            delete_after=5,
+        )
+
+    @app_commands.command(name='stockpile-interface-clear-all', description='Clear all server stockpiles interfaces')
+    async def clear_all_interfaces(self, interaction: discord.Interaction):
+        self.bot.logger.command(
+            f'stockpile-interface-clear-all command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Ensure use is authorized to interact with interface
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            all_server_stockpiles_interfaces_raw = cursor.execute(
+                f"SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE GroupId == '{interaction.guild_id}' AND InterfaceType == '{InterfacesTypes.STOCKPILE.value}'",
+            ).fetchall()
+            cursor.executemany(
+                f"DELETE FROM GroupsStockpilesList WHERE GroupId == ? AND InterfaceId == ?",
+                [(group_id, message_id) for group_id, _, message_id in all_server_stockpiles_interfaces_raw], # channel id not required here
+            )
+            conn.commit()
+
+        # Refresh all interfaces (next: ensure perf is ok here)
+        for group_id, channel_id, message_id in all_server_stockpiles_interfaces_raw:
+            await self._refresh_interface(group_id, channel_id, message_id)
+
+        await interaction.response.send_message(
+            f'> All stockpiles interfaces were properly cleared',
+            ephemeral=True,
+            delete_after=5,
+        )
+
+    @app_commands.command(name='stockpile-interface-get', description='Get an existing interface')
+    async def stockpile_get_interface(self, interaction: discord.Interaction, interface_name: str):
+        self.bot.logger.command(f'stockpile-interface-get command by {interaction.user.name} on {interaction.guild.name}')
+        # Case where the user did not select the interface from the provided options
+        ids_list = interface_name.split('.')
+        if len(ids_list) != 3 or not all(ids.isdigit() for ids in ids_list):
+            await interaction.response.send_message(
+                '> The provided interface name is not correct',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            interface_permissions_raw = cursor.execute(
+                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
+            ).fetchall()
+            interface_permissions = list(sum(interface_permissions_raw, ()))
+            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
+                await interaction.response.send_message(
+                    '> You do not have permission to interact with this interface',
+                    ephemeral=True,
+                    delete_after=5,
+                )
+                return
+            before_interface = cursor.execute(
+                f"SELECT GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName FROM AllInterfacesReferences WHERE GroupId == '{interaction.guild_id}' AND MessageId == '{ids_list[2]}'",
+            ).fetchone()
+
+            # Send an empty stockpile interface
+            await interaction.response.send_message(
+                embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=before_interface[5]))
+            )
+            # Retrieve the interface message id
+            message_id = (await interaction.original_response()).id
+
+            cursor.execute(
+                f"UPDATE AllInterfacesReferences SET ChannelId = '{interaction.channel_id}', MessageId = '{message_id}' WHERE GroupId == '{interaction.guild_id}' AND MessageId == '{before_interface[2]}'",
+            )
+            cursor.execute(
+                f"UPDATE GroupsStockpilesList SET InterfaceId = '{message_id}' WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{before_interface[2]}'",
+            )
+            conn.commit()
+
+        # Delete existing interface
+        channel = self.bot.get_channel(int(before_interface[1]))
+        if channel is not None:
+            try:
+                message = await channel.fetch_message(int(before_interface[2]))
+                await message.delete()
+            except discord.NotFound:
+                pass
+
+        await self._refresh_interface(interaction.guild_id, interaction.channel_id, message_id)
+
+
+
     @app_commands.command(name='stockpile-create', description='Create a new stockpile')
-    async def stockpile_create(self, interaction: discord.Interaction, code: str, localisation: str, *, name: str) -> None:
+    async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str) -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
         # Case where a user entered an invalid sized code
         if len(code) != 6:
@@ -145,80 +321,138 @@ class ModuleStockpiles(commands.Cog):
             return
         # Case where a user did not select a provided localisation
         if ' | ' not in localisation or localisation.startswith(' | '):
-            await interaction.response.send_message('> The localisation you entered is incorrect, displayed localisations are clickable', ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                '> The localisation you entered is incorrect, displayed localisations are clickable',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        # Case where the user did not select the interface from the provided options
+        ids_list = interface_name.split('.')
+        if len(ids_list) != 3 or not all(ids.isdigit() for ids in ids_list):
+            await interaction.response.send_message(
+                '> The provided interface name is not correct',
+                ephemeral=True,
+                delete_after=5,
+            )
             return
 
         region, subregion = localisation.split(' | ')  # Only one '|' -> 2 splits
         shard_name = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', code)
-        stockpile_type = self.bot.cursor.execute(
-            'SELECT Type FROM StockpilesZones WHERE Shard == (?) AND Subregion == (?)',
-            (shard_name, subregion),
-        ).fetchone()[0]
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            # Retrieve zone entry with building type
+            cursor = conn.cursor()
+            interface_permissions_raw = cursor.execute(
+                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
+            ).fetchall()
+            interface_permissions = list(sum(interface_permissions_raw, ()))
+            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(
+                    str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
+                await interaction.response.send_message(
+                    '> You do not have permission to interact with this interface',
+                    ephemeral=True,
+                    delete_after=5,
+                )
+                return
+            stockpile_type = cursor.execute(
+                'SELECT Type FROM StockpilesZones WHERE Shard == (?) AND Subregion == (?)',
+                (shard_name, subregion),
+            ).fetchone()[0]
 
-        self.bot.cursor.execute(
-            'INSERT INTO GroupsStockpiles (GroupId, Region, Subregion, Code, Name, Type) VALUES (?, ?, ?, ?, ?, ?)',
-            (interaction.guild_id, region, subregion, code, name, stockpile_type),
-        )
-        self.bot.connection.commit()
+            # Ensure interface has capacity for a new stockpile
+            current_interface_stockpiles = cursor.execute(
+                f"SELECT COUNT(*) FROM GroupsStockpilesList WHERE InterfaceId == '{ids_list[2]}'"
+            ).fetchone()[0]
+            if current_interface_stockpiles >= 25:
+                await interaction.response.send_message(
+                    '> Interface has reached maximum stockpile capacity',
+                    ephemeral=True,
+                    delete_after=5,
+                )
+                return
 
-        await update_discord_interface(
-            interaction,
-            EmbedIds.STOCKPILES_VIEW.value,
-            embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id),
-        )
+            # Insert new stockpile to db
+            cursor.execute(
+                'INSERT INTO GroupsStockpilesList (GroupId, InterfaceId, Region, Subregion, Code, Name, Type) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                (interaction.guild_id, ids_list[2], region, subregion, code, stockpile_name, stockpile_type),
+            )
+            conn.commit()
 
-        await interaction.response.send_message('> Stockpile was properly generated', ephemeral=True, delete_after=5)
+        await self._refresh_interface(ids_list[0], ids_list[1], ids_list[2])
 
-    @app_commands.command(name='stockpile-delete', description='Delete a specific stockpile using its code')
-    async def stockpile_delete(self, interaction: discord.Interaction, stockpile_code: str) -> None:
+        await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
+
+    @app_commands.command(name='stockpile-delete', description='Delete an existing stockpile')
+    async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
-
-        # Ensures the provided code is valid (only 6 digits)
-        if not stockpile_code.isdigit() or len(stockpile_code) != 6:
-            await interaction.response.send_message('> The stockpile code you provided is invalid.', ephemeral=True, delete_afer=5)
+        # Case where a user entered an invalid sized code
+        if len(stockpile_code) != 6:
+            await interaction.response.send_message(
+                '> The code must be a 6-digits code',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        # Case where a user entered a code without digits only
+        if not stockpile_code.isdigit():
+            await interaction.response.send_message(
+                '> The code contains non digit characters',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        # Case where the user did not select the interface from the provided options
+        ids_list = interface_name.split('.')
+        if len(ids_list) != 3 or not all(ids.isdigit() for ids in ids_list):
+            await interaction.response.send_message(
+                '> The provided interface name is not correct',
+                ephemeral=True,
+                delete_after=5,
+            )
             return
 
-        # Prepare delete
-        if not (deleted_stockpiles := self.bot.cursor.execute(
-            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code} RETURNING *',
-        ).fetchall()):
-            await interaction.response.send_message('> The stockpile code you provided does not exists.', ephemeral=True, delete_after=5)
-            return
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            interface_permissions_raw = cursor.execute(
+                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
+            ).fetchall()
+            interface_permissions = list(sum(interface_permissions_raw, ()))
+            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(
+                    str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
+                await interaction.response.send_message(
+                    '> You do not have permission to interact with this interface',
+                    ephemeral=True,
+                    delete_after=5,
+                )
+                return
+            if not (deleted_stockpiles := cursor.execute(f'DELETE FROM GroupsStockpilesList WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code} RETURNING *').fetchall()):
+                await interaction.response.send_message(
+                    '> The stockpile code you provided does not exists.',
+                    ephemeral=True,
+                    delete_after=5,
+                )
+                return
+            conn.commit()
 
-        # Actual delete from DB
-        self.bot.connection.commit()
+        await self._refresh_interface(ids_list[0], ids_list[1], ids_list[2])
 
-        await update_discord_interface(
-            interaction,
-            EmbedIds.STOCKPILES_VIEW.value,
-            embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id),
-        )
-
+        # Expected outcome
         if len(deleted_stockpiles) == 1:
-            await interaction.response.send_message(f'> The stockpile (code: {stockpile_code}) was properly removed.', ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                f'> The stockpile (code: {stockpile_code}) was properly removed.',
+                ephemeral=True,
+                delete_after=5,
+            )
         # This should cover the very unlikely case where a same group has multiple stockpiles with the same code (0.00000000010000020000%)
         else:
-            self.bot.logger.warning(f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
+            self.bot.logger.warning(
+                f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
             await interaction.response.send_message(
                 f'The following stockpiles with code {stockpile_code} were deleted:\n{''.join(f'- {deleted_stockpile[4]}, {deleted_stockpile[2]} in {deleted_stockpile[1]}\n' for deleted_stockpile in deleted_stockpiles)}',
-                ephemeral=True  # No auto delete in case of a fuck-up
+                ephemeral=True,  # No auto delete in case of a fuck-up
             )
 
-    @app_commands.command(name='stockpile-clear', description='Clear all the stockpiles from the server interface')
-    async def stockpile_clear(self, interaction: discord.Interaction) -> None:
-        self.bot.logger.command(f'stockpile-clear command by {interaction.user.name} on {interaction.guild.name}')
-        self.bot.cursor.execute(
-            f'DELETE FROM GroupsStockpiles WHERE GroupId == {interaction.guild_id}',
-        )
-        self.bot.connection.commit()
-
-        await update_discord_interface(
-            interaction,
-            EmbedIds.STOCKPILES_VIEW.value,
-            embed=self.refresh_stockpile_interface(self.bot, interaction.guild_id),
-        )
-        await interaction.response.send_message('> The stockpile interface was properly cleared', ephemeral=True, delete_after=5)
-
+    # AUTOCOMPLETE METHODS
     @stockpile_create.autocomplete('localisation')
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
@@ -236,80 +470,28 @@ class ModuleStockpiles(commands.Cog):
         current_stockpiles = [stockpile for stockpile in stockpiles if current.lower() in stockpile.lower()][:25]
         return [app_commands.Choice(name=city, value=city) for city in current_stockpiles]
 
+    @stockpile_get_interface.autocomplete('interface_name')
+    @clear_interface.autocomplete('interface_name')
+    @stockpile_delete.autocomplete('interface_name')
+    @stockpile_create.autocomplete('interface_name')
+    async def interface_name_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+        """
+        :param interaction: current interaction object
+        :param current: current user input in command parameter
+        :return: list of interfaces names matching with current input
+        """
+        # Retrieve all server interfaces of type 'STOCKPILE_VIEW'
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            all_guild_stockpiles_interfaces = conn.cursor().execute(
+                f"SELECT ChannelId, MessageId, InterfaceName FROM AllInterfacesReferences WHERE InterfaceType == '{InterfacesTypes.STOCKPILE.value}'",
+            ).fetchall()
 
-class StockpileTasks(commands.Cog):
-    def __init__(self, bot: Oisol):
-        self.bot = bot
-        self.all_regions_stockpiles = []
-        # Start tasks
-        self.refresh_able_shard_stockpiles_subregions.start()
-        self.refresh_baker_shard_stockpiles_subregions.start()
-        self.refresh_charlie_shard_stockpiles_subregions.start()
+        # Sort by name in ascending order
+        all_guild_stockpiles_interfaces.sort(key=lambda tup: tup[2])
 
-    @staticmethod
-    def _prepare_region_data(api_wrapper: FoxholeAPIWrapper, war_data: dict, region: str) -> list[tuple]:
-        single_region_stockpiles = []
-        map_items = api_wrapper.get_region_specific_icons(region, [MapIcon.SEAPORT.value, MapIcon.STORAGE_DEPOT.value])
-        map_label = api_wrapper.get_region_specific_labels(region)
-        ordered_items = api_wrapper.get_subregion_from_map_items(map_items, map_label)
-        if region == 'MooringCountyHex':
-            region = 'TheMoors'
-        elif region == 'DeadLandsHex':
-            region = 'Deadlands'
-        if ordered_items is not None:
-            single_region_stockpiles.extend((
-                    api_wrapper.shard_name,
-                    war_data['warNumber'],
-                    war_data['conquestStartTime'],
-                    re.sub(r'(\w)([A-Z])', r'\1 \2', region.replace('Hex', '')),
-                    *item,
-                ) for item in ordered_items
-            )
-        return single_region_stockpiles
-
-    def _save_region_stockpiles(self, region_stockpiles: list[tuple]) -> None:
-        self.all_regions_stockpiles += region_stockpiles
-
-    def _get_latest_stockpiles_zones(self, api_wrapper: FoxholeAPIWrapper, war_data: dict) -> list:
-        region_list = api_wrapper.get_regions_list()
-        pool = Pool(processes=(cpu_count() - 1))
-        for region in region_list:
-            pool.apply_async(self._prepare_region_data, args=(api_wrapper, war_data, region), callback=self._save_region_stockpiles)
-        pool.close()
-        pool.join()
-        return self.all_regions_stockpiles
-
-    def _update_stockpile_subregions(self, shard_api: FoxholeAPIWrapper) -> None:
-        self.all_regions_stockpiles = []
-        if current_war_data := shard_api.get_current_war_state():
-            last_war_start_time = self.bot.cursor.execute(
-                f"SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == '{shard_api.shard_name}'",
-            ).fetchone()[0]
-            # If war has not started yet
-            if not current_war_data['conquestStartTime']:
-                return
-            if last_war_start_time is None or current_war_data['conquestStartTime'] > last_war_start_time:
-                if not (latest_stockpiles := self._get_latest_stockpiles_zones(shard_api, current_war_data)):
-                    return
-                if last_war_start_time is not None:
-                    self.bot.cursor.execute(
-                        f"DELETE FROM StockpilesZones WHERE ConquestStartTime == {last_war_start_time} AND Shard == '{shard_api.shard_name}'",
-                    )
-                self.bot.cursor.executemany(
-                    'INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)',
-                    latest_stockpiles,
-                )
-                self.bot.connection.commit()
-                self.bot.logger.task(f'Available stockpiles were updated for {shard_api.shard_name}')
-
-    @tasks.loop(minutes=2)
-    async def refresh_able_shard_stockpiles_subregions(self) -> None:
-        self._update_stockpile_subregions(FoxholeAPIWrapper())
-
-    @tasks.loop(minutes=2)
-    async def refresh_baker_shard_stockpiles_subregions(self) -> None:
-        self._update_stockpile_subregions(FoxholeAPIWrapper(shard=Shard.BAKER))
-
-    @tasks.loop(minutes=2)
-    async def refresh_charlie_shard_stockpiles_subregions(self) -> None:
-        self._update_stockpile_subregions(FoxholeAPIWrapper(shard=Shard.CHARLIE))
+        return [
+            app_commands.Choice(
+                name=interface_name,
+                value=f'{interaction.guild_id}.{channel_id}.{message_id}'
+            ) for channel_id, message_id, interface_name in all_guild_stockpiles_interfaces if current in interface_name
+        ]

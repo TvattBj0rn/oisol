@@ -18,13 +18,6 @@ if TYPE_CHECKING:
 class ModuleTodolist(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.sql_tables = [
-            # Guilds todolists role and user interface access
-            'CREATE TABLE IF NOT EXISTS GroupsTodolistsAccess(GroupId INTEGER, TodolistId TEXT, DiscordId INTEGER, DiscordIdType TEXT);',
-
-            # Guilds todolists interface tasks
-            'CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);',
-        ]
 
     @app_commands.command(name='todolist-generate')
     async def todolist_generate(
@@ -81,7 +74,7 @@ class ModuleTodolist(commands.Cog):
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
         interaction_response_message = await interaction.original_response()
         self.bot.cursor.execute(
-            'INSERT INTO AllInterfacesReferences (ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?)',
-            (interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
+            'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
+            (interaction.guild_id, interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
         )
         self.bot.connection.commit()

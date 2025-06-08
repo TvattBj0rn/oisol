@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
+from src.modules.stockpile_viewer import ModuleStockpiles
+from src.modules.stockpile_viewer import StockpileTasks
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -85,8 +86,8 @@ class Oisol(commands.Bot):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().executescript(
                 '''
-                CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
                 CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
+                CREATE TABLE IF NOT EXISTS AllInterfacesReferences(GroupId TEXT, ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
                 CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, InterfaceId TEXT, DiscordId TEXT, DiscordIdType TEXT);
                 CREATE TABLE IF NOT EXISTS GroupsStockpilesList(GroupId TEXT, InterfaceId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
                 CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
