@@ -69,7 +69,7 @@ class TodolistViewMenu(discord.ui.View):
 
         # Retrieve all permissions for the todolist
         todolist_permissions = self.cursor.execute(
-            f"SELECT DiscordId, DiscordIdType FROM GroupsTodolistsAccess WHERE GroupId == {interaction.guild_id} AND TodolistId == '{self.embed_uuid}'",
+            f"SELECT DiscordId, DiscordIdType FROM GroupsInterfacesAccess WHERE GroupId == {interaction.guild_id} AND InterfaceId == '{self.embed_uuid}'",
         ).fetchall()
 
         # Check whether the user id or its roles id are in todolist permissions
@@ -185,7 +185,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
 
         # Retrieve all permissions for the todolist
         todolist_permissions = self.cursor.execute(
-            f"SELECT DiscordId, DiscordIdType FROM GroupsTodolistsAccess WHERE GroupId == {interaction.guild_id} AND TodolistId == '{embed_uuid}'",
+            f"SELECT DiscordId, DiscordIdType FROM GroupsInterfacesAccess WHERE GroupId == {interaction.guild_id} AND InterfaceId == '{embed_uuid}'",
         ).fetchall()
 
         # Check whether the user id or its roles id are in todolist permissions
