@@ -1,5 +1,6 @@
 import configparser
 import sqlite3
+from datetime import datetime
 
 from src.utils import OISOL_HOME_PATH, DataFilesPath, sort_nested_dicts_by_key, FoxholeBuildings, Faction
 
@@ -69,6 +70,7 @@ def get_stockpile_info(guild_id: int, *, interface_name: str | None = None, inte
 
     group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
     stockpile_interface['color'] = Faction[group_faction].value
+    stockpile_interface['timestamp'] = str(datetime.now())
 
     # Body part
     if interface_id is not None:

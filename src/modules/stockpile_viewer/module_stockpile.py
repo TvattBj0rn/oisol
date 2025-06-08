@@ -134,19 +134,7 @@ class ModuleStockpiles(commands.Cog):
 
         # Ensure use is authorized to interact with interface
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            interface_permissions_raw = cursor.execute(
-                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
-            ).fetchall()
-            interface_permissions = list(sum(interface_permissions_raw, ()))
-            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
-                await interaction.response.send_message(
-                    '> You do not have permission to interact with this interface',
-                    ephemeral=True,
-                    delete_after=5,
-                )
-                return
-            cursor.execute(
+            conn.cursor().execute(
                 f"DELETE FROM GroupsStockpilesList WHERE GroupId == {interaction.guild_id} AND InterfaceId == '{ids_list[2]}'",
             )
             conn.commit()
@@ -211,17 +199,6 @@ class ModuleStockpiles(commands.Cog):
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
-            interface_permissions_raw = cursor.execute(
-                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
-            ).fetchall()
-            interface_permissions = list(sum(interface_permissions_raw, ()))
-            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
-                await interaction.response.send_message(
-                    '> You do not have permission to interact with this interface',
-                    ephemeral=True,
-                    delete_after=5,
-                )
-                return
             before_interface = cursor.execute(
                 f"SELECT GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName FROM AllInterfacesReferences WHERE GroupId == '{interaction.guild_id}' AND MessageId == '{ids_list[2]}'",
             ).fetchone()
@@ -293,18 +270,6 @@ class ModuleStockpiles(commands.Cog):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             # Retrieve zone entry with building type
             cursor = conn.cursor()
-            interface_permissions_raw = cursor.execute(
-                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
-            ).fetchall()
-            interface_permissions = list(sum(interface_permissions_raw, ()))
-            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(
-                    str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
-                await interaction.response.send_message(
-                    '> You do not have permission to interact with this interface',
-                    ephemeral=True,
-                    delete_after=5,
-                )
-                return
             stockpile_type = cursor.execute(
                 'SELECT Type FROM StockpilesZones WHERE Shard == (?) AND Subregion == (?)',
                 (shard_name, subregion),
@@ -369,18 +334,6 @@ class ModuleStockpiles(commands.Cog):
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
-            interface_permissions_raw = cursor.execute(
-                f"SELECT DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId == '{ids_list[2]}'",
-            ).fetchall()
-            interface_permissions = list(sum(interface_permissions_raw, ()))
-            if interface_permissions and str(interaction.user.id) not in interface_permissions and not any(
-                    str(user_role.id) in interface_permissions for user_role in interaction.user.roles):
-                await interaction.response.send_message(
-                    '> You do not have permission to interact with this interface',
-                    ephemeral=True,
-                    delete_after=5,
-                )
-                return
             if not (deleted_stockpiles := cursor.execute(f'DELETE FROM GroupsStockpilesList WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code} RETURNING *').fetchall()):
                 await interaction.response.send_message(
                     '> The stockpile code you provided does not exists.',
@@ -443,16 +396,39 @@ class ModuleStockpiles(commands.Cog):
         """
         # Retrieve all server interfaces of type 'STOCKPILE_VIEW'
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            all_guild_stockpiles_interfaces = conn.cursor().execute(
+            cursor = conn.cursor()
+
+            # Get all guild stockpile interfaces
+            all_guild_stockpiles_interfaces = cursor.execute(
                 f"SELECT ChannelId, MessageId, InterfaceName FROM AllInterfacesReferences WHERE InterfaceType == '{InterfacesTypes.STOCKPILE.value}'",
             ).fetchall()
+            # Cast id to str for better interaction
+            all_guild_stockpiles_interfaces = [
+                (str(channel_id), str(message_id), interface_name) for channel_id, message_id, interface_name in all_guild_stockpiles_interfaces
+            ]
+
+            # Get associated permissions
+            interfaces_id = [str(interface_id[1]) for interface_id in all_guild_stockpiles_interfaces]
+            all_guild_stockpiles_interfaces_permissions = cursor.execute(
+                f"SELECT InterfaceId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId IN ({','.join(interfaces_id)})"
+            ).fetchall()
+
+        user_access = [permission[0] for permission in all_guild_stockpiles_interfaces_permissions if str(interaction.user.id) in permission or any(str(user_role.id) in permission for user_role in interaction.user.roles)]
+
+        # Public interfaces
+        user_access += list(set(interface[1] for interface in all_guild_stockpiles_interfaces) - set(permission[0] for permission in all_guild_stockpiles_interfaces_permissions))
+
+        # Get only the interfaces the user has access to
+        all_guild_stockpiles_interfaces_updated = [
+            interface for interface in all_guild_stockpiles_interfaces if interface[1] in user_access
+        ]
 
         # Sort by name in ascending order
-        all_guild_stockpiles_interfaces.sort(key=lambda tup: tup[2])
+        all_guild_stockpiles_interfaces_updated.sort(key=lambda tup: tup[2])
 
         return [
             app_commands.Choice(
                 name=interface_name,
                 value=f'{interaction.guild_id}.{channel_id}.{message_id}'
-            ) for channel_id, message_id, interface_name in all_guild_stockpiles_interfaces if current in interface_name
+            ) for channel_id, message_id, interface_name in all_guild_stockpiles_interfaces_updated if current in interface_name
         ]
