@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
+from src.modules.stockpile_viewer import ModuleStockpiles
+from src.modules.stockpile_viewer import StockpileTasks
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -38,15 +39,15 @@ class Oisol(commands.Bot):
         self.logger = OisolLogger('oisol')
 
     async def on_ready(self) -> None:
-        # Ready the db
-        self._setup_oisol_db()
-
         # Modules loading
         await self.add_cog(ModuleConfig(self))
         await self.add_cog(ModuleStockpiles(self))
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
         await self.add_cog(ModuleWiki(self))
+
+        # Ready the db
+        self._setup_oisol_db()
 
         # Sync app emojis
         self.app_emojis = await self.fetch_application_emojis()
@@ -81,25 +82,33 @@ class Oisol(commands.Bot):
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 
-    def _setup_oisol_db(self) -> None:
+    def _setup_oisol_db(self):
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            conn.cursor().executescript(
+                '''
+                CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
+                CREATE TABLE IF NOT EXISTS AllInterfacesReferences(GroupId TEXT, ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, InterfaceId TEXT, DiscordId TEXT, DiscordIdType TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsStockpilesList(GroupId TEXT, InterfaceId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
+                CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
+                '''
+            )
+
         self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
 
-        # Available stockpiles per shard
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT)')
-
-        # Guilds stockpiles
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsStockpiles(GroupId INTEGER, Region TEXT, Subregion TEXT, Code INTEGER, Name TEXT, Type TEXT)')
-
-        # Guilds register
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER)')
-
-        # Guilds todolists
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsAccess(GroupId INTEGER, TodolistId TEXT, DiscordId INTEGER, DiscordIdType TEXT)')
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER)')
-
-        # Interfaces references
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS AllInterfacesReferences(ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT)')
+    async def refresh_interface(
+            self,
+            _group_id: str | int,
+            channel_id: str | int,
+            message_id: str | int,
+            embed: discord.Embed | None = None,
+    ):
+        # Update existing interface
+        channel = self.get_channel(int(channel_id))
+        message = await channel.fetch_message(int(message_id))
+        await message.edit(embed=embed)
 
 
 if __name__ == '__main__':

@@ -42,11 +42,6 @@ class DiscordIdType(Enum):
     ROLE = auto()
 
 
-class EmbedIds(Enum):
-    STOCKPILES_VIEW = 'Stockpiles Viewer'
-    REGISTER_VIEW = 'Register Viewer'
-
-
 class Faction(Enum):
     WARDEN = 0x245682
     COLONIAL = 0x516C4B
@@ -73,10 +68,18 @@ class InterfaceType(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value
     """
-    REGISTER_VIEW: typing.ClassVar = []
-    STOCKPILE_VIEW: typing.ClassVar = []
-    TODOLIST_VIEW: typing.ClassVar = [('GroupsTodolistsAccess', 'TodolistId'), ('GroupsTodolistsTasks', 'TodolistId')]
-    FACILITY_VIEW: typing.ClassVar = []
+    REGISTER_VIEW = []
+    STOCKPILE_VIEW = []
+    TODOLIST_VIEW = [('GroupsInterfacesAccess', 'InterfaceId'), ('GroupsTodolistsTasks', 'TodolistId')]
+    FACILITY_VIEW = []
+
+class InterfacesTypes(Enum):
+    """
+    Enum of possible interfaces types as name and list of associated table & column as value
+    """
+    REGISTER = 'REGISTER_VIEW'
+    STOCKPILE = 'STOCKPILE_VIEW'
+    TODOLIST = 'TODOLIST_VIEW'
 
 
 class PriorityType(Enum):

@@ -63,7 +63,7 @@ class ModuleTodolist(commands.Cog):
 
         if todolist_access_list:
             self.bot.cursor.executemany(
-                'INSERT INTO GroupsTodolistsAccess (GroupId, TodolistId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?)',
+                'INSERT INTO GroupsInterfacesAccess (GroupId, TodolistId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?)',
                 todolist_access_list,
             )
             self.bot.connection.commit()
@@ -74,7 +74,7 @@ class ModuleTodolist(commands.Cog):
         await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
         interaction_response_message = await interaction.original_response()
         self.bot.cursor.execute(
-            'INSERT INTO AllInterfacesReferences (ChannelId, MessageId, InterfaceType, InterfaceReference) VALUES (?, ?, ?, ?)',
-            (interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id),
+            'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
+            (interaction.guild_id, interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
         )
         self.bot.connection.commit()

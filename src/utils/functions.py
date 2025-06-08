@@ -2,35 +2,7 @@ import configparser
 import operator
 from configparser import ConfigParser
 
-import discord
-
-from .oisol_enums import DataFilesPath, Faction, Language, Shard
-from .resources import EMOJIS_FROM_DICT, OISOL_HOME_PATH
-
-
-async def update_discord_interface(
-        interaction: discord.Interaction,
-        message_id: str,
-        embed: discord.Embed = None,
-) -> None:
-    config = configparser.ConfigParser()
-    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
-
-    if config.has_option('stockpile', 'channel'):
-        channel = interaction.guild.get_channel(config.getint('stockpile', 'channel'))
-    else:
-        # Edge case where oisol was not setup on guild but command /stockpile-create called
-        # -> Case where the interface does not exist
-        return
-
-    async for message in channel.history():
-        if not message.embeds:
-            continue
-        message_embed = discord.Embed.to_dict(message.embeds[0])
-        if 'footer' in message_embed and message_embed['footer']['text'] == message_id:
-            await message.edit(embed=embed)
-            return
-    await channel.send(embed=embed)
+from .oisol_enums import Faction, Language, Shard
 
 
 def safeguarded_nickname(nickname: str) -> str:
@@ -88,20 +60,6 @@ def sort_nested_dicts_by_key(input_dict: dict) -> dict:
             key=operator.itemgetter(0),
         )
     }
-
-
-def get_emoji_by_name(emoji_list: list[discord.Emoji], emoji_name: str) -> str:
-    """
-    :param emoji_list: List of emojis to find the given emoji name in
-    :param emoji_name: Emoji name to find
-    :return: Emoji in a discord readable format if found, default value otherwise
-    """
-
-    emoji_custom_id = EMOJIS_FROM_DICT.get(emoji_name, emoji_name)
-
-    if (emoji := next((emoji for emoji in emoji_list if emoji.name == emoji_custom_id), None)) is not None:
-        return f'<:{emoji.name}:{emoji.id}>'
-    return emoji_name
 
 
 def convert_time_to_readable_time(value: float) -> str:

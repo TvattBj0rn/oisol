@@ -25,7 +25,7 @@ class DatabaseCleaner(commands.Cog):
         )
         self.bot.connection.commit()
 
-    @tasks.loop(hours=168)
+    @tasks.loop(hours=24)
     async def remove_non_existing_interfaces(self) -> None:
         start_time = time.time()
         all_existing_interfaces = self.bot.cursor.execute(
