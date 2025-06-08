@@ -15,11 +15,7 @@ from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockp
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    EmbedIds,
-    Faction,
-    FoxholeBuildings,
     Shard,
-    sort_nested_dicts_by_key,
     DiscordIdType,
     InterfacesTypes,
 )
@@ -57,66 +53,6 @@ def get_current_shard(path: pathlib.Path, _code: str) -> str:
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-
-    @staticmethod
-    def refresh_stockpile_interface(bot: Oisol, guild_id: int) -> discord.Embed:
-        """
-        This method is also used in the config module
-        :param bot: Oisol instance
-        :param guild_id: id of the guild the command is executed from
-        :return:
-        """
-        # Get group Stockpiles from db
-        guild_stockpiles = bot.cursor.execute(
-            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpiles WHERE GroupId == {guild_id}',
-        ).fetchall()
-
-        # Group stockpiles by regions
-        grouped_stockpiles = {}
-        for stockpile in guild_stockpiles:
-            if stockpile[0] not in grouped_stockpiles:
-                grouped_stockpiles[stockpile[0]] = {}
-            if f'{stockpile[1]}_{stockpile[4]}' not in grouped_stockpiles[stockpile[0]]:
-                grouped_stockpiles[stockpile[0]][f'{stockpile[1]}_{stockpile[4]}'] = {}
-            grouped_stockpiles[stockpile[0]][f'{stockpile[1]}_{stockpile[4]}'][stockpile[3]] = f'{stockpile[2]:06d}'
-
-        # Sort all keys in dict and subdicts by key
-        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
-
-        # Get group faction
-        config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
-        group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
-
-        # Set stockpiles to discord fields format
-        embed_fields = []
-        for region, v in sorted_grouped_stockpiles.items():
-            value_string = ''
-            for subregion_type, vv in v.items():
-                value_string += f'**{subregion_type.split('_')[0]}** ({FoxholeBuildings[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'].value})\n'
-                for name, code in vv.items():
-                    value_string += f'{name} **|** {code}\n'
-                value_string += '\n'
-            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
-
-        return discord.Embed().from_dict(
-            {
-                'title': 'Stockpiles | <:region:1130915923704946758>',
-                'color': Faction[group_faction].value,
-                'footer': {'text': EmbedIds.STOCKPILES_VIEW.value},
-                'fields': embed_fields,
-            },
-        )
-
-    async def _refresh_interface(self, group_id: str | int, channel_id: str | int, message_id: str | int):
-        # Regenerate new embed skeleton
-        updated_interface_skeleton = get_stockpile_info(int(group_id), interface_id=int(message_id))
-
-        # Update existing interface
-        channel = self.bot.get_channel(int(channel_id))
-        message = await channel.fetch_message(int(message_id))
-        await message.edit(embed=discord.Embed().from_dict(updated_interface_skeleton))
-
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
     async def stockpile_interface_create(
@@ -215,7 +151,12 @@ class ModuleStockpiles(commands.Cog):
             )
             conn.commit()
 
-        await self._refresh_interface(ids_list[0], ids_list[1], ids_list[2])
+        await self.bot.refresh_interface(
+            ids_list[0],
+            ids_list[1],
+            ids_list[2],
+            discord.Embed().from_dict(get_stockpile_info(int(ids_list[0]), interface_id=int(ids_list[2]))),
+        )
 
         await interaction.response.send_message(
             f'> The interface was properly cleared',
@@ -242,7 +183,12 @@ class ModuleStockpiles(commands.Cog):
 
         # Refresh all interfaces (next: ensure perf is ok here)
         for group_id, channel_id, message_id in all_server_stockpiles_interfaces_raw:
-            await self._refresh_interface(group_id, channel_id, message_id)
+            await self.bot.refresh_interface(
+                group_id,
+                channel_id,
+                message_id,
+                discord.Embed().from_dict(get_stockpile_info(int(group_id), interface_id=int(message_id))),
+            )
 
         await interaction.response.send_message(
             f'> All stockpiles interfaces were properly cleared',
@@ -304,7 +250,12 @@ class ModuleStockpiles(commands.Cog):
             except discord.NotFound:
                 pass
 
-        await self._refresh_interface(interaction.guild_id, interaction.channel_id, message_id)
+        await self.bot.refresh_interface(
+            interaction.guild_id,
+            interaction.channel_id,
+            message_id,
+            discord.Embed().from_dict(get_stockpile_info(int(interaction.guild_id), interface_id=int(message_id))),
+        )
 
 
 
@@ -378,7 +329,12 @@ class ModuleStockpiles(commands.Cog):
             )
             conn.commit()
 
-        await self._refresh_interface(ids_list[0], ids_list[1], ids_list[2])
+        await self.bot.refresh_interface(
+            ids_list[0],
+            ids_list[1],
+            ids_list[2],
+            discord.Embed().from_dict(get_stockpile_info(int(ids_list[0]), interface_id=int(ids_list[2]))),
+        )
 
         await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
 
@@ -434,7 +390,12 @@ class ModuleStockpiles(commands.Cog):
                 return
             conn.commit()
 
-        await self._refresh_interface(ids_list[0], ids_list[1], ids_list[2])
+        await self.bot.refresh_interface(
+            ids_list[0],
+            ids_list[1],
+            ids_list[2],
+            discord.Embed().from_dict(get_stockpile_info(int(ids_list[0]), interface_id=int(ids_list[2]))),
+        )
 
         # Expected outcome
         if len(deleted_stockpiles) == 1:

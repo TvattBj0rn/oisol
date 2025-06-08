@@ -98,6 +98,18 @@ class Oisol(commands.Bot):
         self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
         self.cursor = self.connection.cursor()
 
+    async def refresh_interface(
+            self,
+            _group_id: str | int,
+            channel_id: str | int,
+            message_id: str | int,
+            embed: discord.Embed | None = None,
+    ):
+        # Update existing interface
+        channel = self.get_channel(int(channel_id))
+        message = await channel.fetch_message(int(message_id))
+        await message.edit(embed=embed)
+
 
 if __name__ == '__main__':
     load_dotenv()

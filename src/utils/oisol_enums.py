@@ -42,11 +42,6 @@ class DiscordIdType(Enum):
     ROLE = auto()
 
 
-class EmbedIds(Enum):
-    STOCKPILES_VIEW = 'Stockpiles Viewer'
-    REGISTER_VIEW = 'Register Viewer'
-
-
 class Faction(Enum):
     WARDEN = 0x245682
     COLONIAL = 0x516C4B

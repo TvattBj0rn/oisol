@@ -2,22 +2,21 @@ from __future__ import annotations
 
 import configparser
 import os
+import sqlite3
 from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.stockpile_viewer import ModuleStockpiles
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    EmbedIds,
     Faction,
     Shard,
-    repair_default_config_dict,
-    update_discord_interface,
+    repair_default_config_dict, InterfacesTypes,
 )
+from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockpile_info
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
 
@@ -142,21 +141,16 @@ class ModuleConfig(commands.Cog):
         self.bot.logger.command(f'config-faction command by {interaction.user.name} on {interaction.guild.name}')
         self._regiment_config_generic(interaction.guild_id, faction=faction.name)
 
-        config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
-        if config.has_option('stockpile', 'channel'):
-            stockpile_interface_exists = False
-            channel = interaction.guild.get_channel(int(config['stockpile']['channel']))
-            async for message in channel.history():
-                if not message.embeds:
-                    continue
-                message_embed = discord.Embed.to_dict(message.embeds[0])
-                if 'footer' in message_embed and message_embed['footer']['text'] == EmbedIds.STOCKPILES_VIEW.value:
-                    stockpile_interface_exists = True
-            if stockpile_interface_exists:
-                await update_discord_interface(
-                    interaction,
-                    EmbedIds.STOCKPILES_VIEW.value,
-                    embed=ModuleStockpiles.refresh_stockpile_interface(self.bot, interaction.guild_id),
-                )
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            stockpile_interfaces = conn.cursor().execute(
+                f"SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE GroupId == '{interaction.guild_id}' AND InterfaceType == '{InterfacesTypes.STOCKPILE.value}'",
+            ).fetchall()
+        for group_id, channel_id, message_id in stockpile_interfaces:
+            await self.bot.refresh_interface(
+                group_id,
+                channel_id,
+                message_id,
+                discord.Embed().from_dict(get_stockpile_info(int(group_id), interface_id=int(message_id))),
+            )
+
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
