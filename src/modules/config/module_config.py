@@ -87,7 +87,7 @@ class ModuleConfig(commands.Cog):
         if promotion_gives_symbol is not None:
             config.set('register', 'promoted_get_tag', str(promotion_gives_symbol))
 
-        with open(self.bot.home_path / str(interaction.guild_id) / DataFilesPath.CONFIG.value, 'w', newline='') as configfile:
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
             config.write(configfile)
         await interaction.response.send_message('> The register config was updated', ephemeral=True, delete_after=5)
 
