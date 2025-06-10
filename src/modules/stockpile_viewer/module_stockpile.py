@@ -400,7 +400,7 @@ class ModuleStockpiles(commands.Cog):
 
             # Get all guild stockpile interfaces
             all_guild_stockpiles_interfaces = cursor.execute(
-                f"SELECT ChannelId, MessageId, InterfaceName FROM AllInterfacesReferences WHERE InterfaceType == '{InterfacesTypes.STOCKPILE.value}'",
+                f"SELECT ChannelId, MessageId, InterfaceName FROM AllInterfacesReferences WHERE InterfaceType == '{InterfacesTypes.STOCKPILE.value}' AND GroupId == '{interaction.guild_id}'",
             ).fetchall()
             # Cast id to str for better interaction
             all_guild_stockpiles_interfaces = [
