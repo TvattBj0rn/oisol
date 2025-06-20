@@ -275,18 +275,6 @@ class ModuleStockpiles(commands.Cog):
                 (shard_name, subregion),
             ).fetchone()[0]
 
-            # Ensure interface has capacity for a new stockpile
-            current_interface_stockpiles = cursor.execute(
-                f"SELECT COUNT(*) FROM GroupsStockpilesList WHERE InterfaceId == '{ids_list[2]}'"
-            ).fetchone()[0]
-            if current_interface_stockpiles >= 25:
-                await interaction.response.send_message(
-                    '> Interface has reached maximum stockpile capacity',
-                    ephemeral=True,
-                    delete_after=5,
-                )
-                return
-
             # Insert new stockpile to db
             cursor.execute(
                 'INSERT INTO GroupsStockpilesList (GroupId, InterfaceId, Region, Subregion, Code, Name, Type) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -334,7 +322,7 @@ class ModuleStockpiles(commands.Cog):
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
-            if not (deleted_stockpiles := cursor.execute(f'DELETE FROM GroupsStockpilesList WHERE GroupId == {interaction.guild_id} AND Code == {stockpile_code} RETURNING *').fetchall()):
+            if not (deleted_stockpiles := cursor.execute(f"DELETE FROM GroupsStockpilesList WHERE GroupId == {interaction.guild_id} AND Code == '{stockpile_code}' RETURNING *").fetchall()):
                 await interaction.response.send_message(
                     '> The stockpile code you provided does not exists.',
                     ephemeral=True,
