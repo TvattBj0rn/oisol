@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING
 
 import discord
@@ -20,7 +21,7 @@ ALPHABET_CONVERTOR = {
 class ModuleTranslation(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.lt_api = LibreTranslateAPI('http://127.0.0.1:5000')
+        self.lt_api = LibreTranslateAPI(os.getenv('LIBRETRANSLATE_API_IP'))
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
