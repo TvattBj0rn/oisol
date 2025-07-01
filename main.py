@@ -15,6 +15,7 @@ from src.modules.todolist import (
     TodolistButtonCheckmark,
     TodolistViewMenu,
 )
+from src.modules.translation import ModuleTranslation
 from src.modules.wiki import ModuleWiki
 from src.utils import (
     OISOL_HOME_PATH,
@@ -44,6 +45,7 @@ class Oisol(commands.Bot):
         await self.add_cog(ModuleStockpiles(self))
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
+        await self.add_cog(ModuleTranslation(self))
         await self.add_cog(ModuleWiki(self))
 
         # Ready the db
