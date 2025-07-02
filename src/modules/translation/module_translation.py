@@ -32,7 +32,6 @@ class ModuleTranslation(commands.Cog):
         target_language = TERRITORY_LANGUAGES.get(str(interaction.locale).split('-')[0].lower())[0]
         try:
             translated_source = self.lt_api.translate(message.content, source_language, target_language)
+            await interaction.response.send_message(translated_source, ephemeral=True)
         except Exception:
             await interaction.response.send_message('> This translation is not supported', ephemeral=True)
-
-        await interaction.response.send_message(translated_source, ephemeral=True)
