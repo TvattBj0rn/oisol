@@ -4,32 +4,35 @@ import os
 from typing import TYPE_CHECKING
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 from libretranslatepy import LibreTranslateAPI
 
+from src.utils.languages_per_country import TERRITORY_LANGUAGES
 
 if TYPE_CHECKING:
     from main import Oisol
-
-ALPHABET_CONVERTOR = {
-    '🇦': 'a', '🇧': 'b', '🇨': 'c', '🇩': 'd', '🇪': 'e', '🇫': 'f', '🇬': 'g', '🇭': 'h', '🇮': 'i', '🇯': 'j', '🇰': 'k',
-    '🇱': 'l', '🇲': 'm', '🇳': 'n','🇴': 'o', '🇵': 'p', '🇶': 'q', '🇷': 'r', '🇸': 's', '🇹': 't', '🇺': 'u', '🇻': 'v',
-    '🇼': 'w', '🇽': 'x','🇾': 'y', '🇿': 'z',
-}
 
 
 class ModuleTranslation(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
         self.lt_api = LibreTranslateAPI(os.getenv('LIBRETRANSLATE_API_IP'))
+        self.bot.tree.add_command(
+            app_commands.ContextMenu(
+                name='Translate',
+                callback=self.translate_to_user_language
+            )
+        )
 
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
-        target_language_code = ''.join(ALPHABET_CONVERTOR.get(c, '') for c in reaction.emoji)
-        all_available_languages = (language['code'] for language in self.lt_api.languages())
+    async def translate_to_user_language(self, interaction: discord.Interaction, message: discord.Message):
+        self.bot.logger.command(f'translate command by {interaction.user.name} on {interaction.guild.name}')
 
-        if target_language_code in all_available_languages:
-            self.bot.logger.command(f'translation reaction by {user.name} on {reaction.message.guild.name}')
-            source_language = self.lt_api.detect(reaction.message.content)[0]['language']
-            translated_source = self.lt_api.translate(reaction.message.content, source_language, target_language_code)
-            await reaction.message.channel.send(translated_source, silent=True, reference=reaction.message)
+        source_language = self.lt_api.detect(message.content)[0]['language']
+        target_language = TERRITORY_LANGUAGES.get(str(interaction.locale).split('-')[0].lower())[0]
+        try:
+            translated_source = self.lt_api.translate(message.content, source_language, target_language)
+        except Exception:
+            await interaction.response.send_message('> This translation is not supported', ephemeral=True)
+
+        await interaction.response.send_message(translated_source, ephemeral=True)
