@@ -35,7 +35,7 @@ jobs:
 
       - name: Run asynchronous tests
         run: |  
-          uv run pytest -v -s -n auto tests/test_async_wiki_module.py
+          uv run pytest -v -s tests/test_async_wiki_module.py
 
       - name: Run synchronous tests
         run: |
