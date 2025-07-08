@@ -33,10 +33,10 @@ jobs:
         run: |
           uv sync --all-groups
 
-      - name: Run asynchronous tests
-        run: |  
-          uv run pytest -v -s tests/test_async_wiki_module.py
-
       - name: Run synchronous tests
         run: |
           uv run pytest -v -s -n auto tests/test_wiki_module.py
+
+      - name: Run asynchronous tests
+        run: |  
+          uv run pytest -v -s tests/test_async_wiki_module.py
