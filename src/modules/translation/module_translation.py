@@ -25,7 +25,7 @@ class ModuleTranslation(commands.Cog):
             ),
         )
 
-    async def translate_to_user_language(self, interaction: discord.Interaction, message: discord.Message):
+    async def translate_to_user_language(self, interaction: discord.Interaction, message: discord.Message) -> None:
         self.bot.logger.command(f'translate command by {interaction.user.name} on {interaction.guild.name}')
 
         source_language = self.lt_api.detect(message.content)[0]['language']

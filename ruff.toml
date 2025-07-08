@@ -31,7 +31,9 @@ ignore = [
     "ANN003", # kwargs typing
     "RUF001", # Unicode chars
     "TRY400", # Exception instead of error
+    "RUF012", # mutable-class-default
 ]
 
 [lint.flake8-quotes]
 inline-quotes = "single"
+multiline-quotes = "single"

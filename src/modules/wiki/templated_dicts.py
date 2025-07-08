@@ -1,4 +1,10 @@
-from src.utils import EMOJIS_FROM_DICT, WikiTables, convert_time_to_readable_time, Faction, NUMBER_TO_EQUIPMENT_SLOT
+from src.utils import (
+    EMOJIS_FROM_DICT,
+    NUMBER_TO_EQUIPMENT_SLOT,
+    Faction,
+    WikiTables,
+    convert_time_to_readable_time,
+)
 
 
 class Damage:
@@ -6,7 +12,7 @@ class Damage:
         self._raw_damage = int(raw_damage)
         self._damage_multiplier = float(damage_multiplier) if damage_multiplier is not None else 1.0
         self._net_damage = int(self._raw_damage * self._damage_multiplier)
-        self._damage_rng = True if damage_rng == '1' else False
+        self._damage_rng = damage_rng == '1'
         self._net_damage_rng = int(self._net_damage * 1.5)
 
     def get(self) -> str:
@@ -21,10 +27,10 @@ class WikiTemplate:
         self._categories_attributes = {}
 
     @staticmethod
-    def _create_formatted_attribute(name: str, value: str, inline: bool = True):
+    def _create_formatted_attribute(name: str, value: str, inline: bool = True) -> dict:
         return {'name': name, 'value': value, 'inline': inline}
 
-    def _add_armor_attribute(self, inplace: bool = True):
+    def _add_armor_attribute(self, inplace: bool = True) -> dict:
         return {
             'name': f'Armor type: *{self._raw_data.get('armour type')}*',
             'value': f'{''.join(f'- {attribute_name} ({EMOJIS_FROM_DICT.get(attribute_name)}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armour_attributes').items())}',

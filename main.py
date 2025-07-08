@@ -8,8 +8,7 @@ from dotenv import load_dotenv
 from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles
-from src.modules.stockpile_viewer import StockpileTasks
+from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -84,7 +83,7 @@ class Oisol(commands.Bot):
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 
-    def _setup_oisol_db(self):
+    def _setup_oisol_db(self) -> None:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().executescript(
                 '''
@@ -106,7 +105,7 @@ class Oisol(commands.Bot):
             channel_id: str | int,
             message_id: str | int,
             embed: discord.Embed | None = None,
-    ):
+    ) -> None:
         # Update existing interface
         channel = self.get_channel(int(channel_id))
         message = await channel.fetch_message(int(message_id))

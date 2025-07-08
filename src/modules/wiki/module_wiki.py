@@ -21,7 +21,7 @@ from src.utils import (
 from .mpf_generation import generate_mpf_data
 from .scrapers.scrap_wiki_entry_health import scrap_health
 from .scrapers.scrap_wiki_entry_production import scrap_production
-from .templated_dicts import  WikiTemplateFactory
+from .templated_dicts import WikiTemplateFactory
 from .wiki_api_requester import get_entry_attributes
 
 if TYPE_CHECKING:

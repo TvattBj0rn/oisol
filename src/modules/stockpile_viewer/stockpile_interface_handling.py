@@ -2,7 +2,13 @@ import configparser
 import sqlite3
 from datetime import datetime
 
-from src.utils import OISOL_HOME_PATH, DataFilesPath, sort_nested_dicts_by_key, FoxholeBuildings, Faction
+from src.utils import (
+    OISOL_HOME_PATH,
+    DataFilesPath,
+    Faction,
+    FoxholeBuildings,
+    sort_nested_dicts_by_key,
+)
 
 
 def get_stockpiles_list(guild_id: int, interface_id: int, group_faction: str) -> list:

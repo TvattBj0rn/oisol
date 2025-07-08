@@ -9,14 +9,15 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockpile_info
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     Faction,
+    InterfacesTypes,
     Shard,
-    repair_default_config_dict, InterfacesTypes,
+    repair_default_config_dict,
 )
-from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockpile_info
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
 
