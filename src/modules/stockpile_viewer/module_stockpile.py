@@ -74,7 +74,7 @@ class ModuleStockpiles(commands.Cog):
 
         # Send an empty stockpile interface
         await interaction.response.send_message(
-            embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=name))
+            embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=name)),
         )
         # Retrieve the interface message id
         message_id = (await interaction.original_response()).id
@@ -205,7 +205,7 @@ class ModuleStockpiles(commands.Cog):
 
             # Send an empty stockpile interface
             await interaction.response.send_message(
-                embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=before_interface[5]))
+                embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=before_interface[5])),
             )
             # Retrieve the interface message id
             message_id = (await interaction.original_response()).id
@@ -398,7 +398,7 @@ class ModuleStockpiles(commands.Cog):
             # Get associated permissions
             interfaces_id = [str(interface_id[1]) for interface_id in all_guild_stockpiles_interfaces]
             all_guild_stockpiles_interfaces_permissions = cursor.execute(
-                f"SELECT InterfaceId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId IN ({','.join(interfaces_id)})"
+                f"SELECT InterfaceId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId IN ({','.join(interfaces_id)})",
             ).fetchall()
 
         user_access = [permission[0] for permission in all_guild_stockpiles_interfaces_permissions if str(interaction.user.id) in permission or any(str(user_role.id) in permission for user_role in interaction.user.roles)]
@@ -417,6 +417,6 @@ class ModuleStockpiles(commands.Cog):
         return [
             app_commands.Choice(
                 name=interface_name,
-                value=f'{interaction.guild_id}.{channel_id}.{message_id}'
+                value=f'{interaction.guild_id}.{channel_id}.{message_id}',
             ) for channel_id, message_id, interface_name in all_guild_stockpiles_interfaces_updated if current in interface_name
         ]

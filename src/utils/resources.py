@@ -2022,7 +2022,7 @@ VEHICLES_WIKI_ENTRIES = [
         'url': 'https://foxhole.wiki.gg/wiki/Long-Range_Artillery_Car',
         'keywords': 'rscartillerycannoncarrangetempestlong',
         'wiki_table': WikiTables.VEHICLES,
-    }
+    },
 ]
 
 

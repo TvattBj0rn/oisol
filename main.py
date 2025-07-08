@@ -94,7 +94,7 @@ class Oisol(commands.Bot):
                 CREATE TABLE IF NOT EXISTS GroupsStockpilesList(GroupId TEXT, InterfaceId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
                 CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
                 CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
-                '''
+                ''',
             )
 
         self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')

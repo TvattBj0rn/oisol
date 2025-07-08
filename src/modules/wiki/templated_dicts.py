@@ -110,7 +110,7 @@ class VehicleTemplate(WikiTemplate):
                 }'),
             ],
             'ARMAMENT': [
-                self._create_formatted_attribute('', ''.join(self._generate_armament_value(i) for i in range(1, 5)))
+                self._create_formatted_attribute('', ''.join(self._generate_armament_value(i) for i in range(1, 5))),
             ],
         }
 
@@ -133,10 +133,10 @@ class StructureTemplate(WikiTemplate):
             'STRUCTURE SUPPORT': [
                 self._create_formatted_attribute('Intel range', f'{intel_range}m' if (intel_range := self._raw_data.get('intel range')) is not None else ''),
                 self._create_formatted_attribute('AI range', f'{ai_range}m' if (ai_range := self._raw_data.get('ai range')) is not None else ''),
-                self._create_formatted_attribute('Construction', f'x{build_amount} {build_material}{f' {EMOJIS_FROM_DICT.get(build_material, '')} '} using {built_with}{f' {EMOJIS_FROM_DICT.get(built_with, '')}'}' if any(((build_amount := self._raw_data.get('build amount')), (build_material := self._raw_data.get('build material')), (built_with := self._raw_data.get('built with')))) else '')
+                self._create_formatted_attribute('Construction', f'x{build_amount} {build_material}{f' {EMOJIS_FROM_DICT.get(build_material, '')} '} using {built_with}{f' {EMOJIS_FROM_DICT.get(built_with, '')}'}' if any(((build_amount := self._raw_data.get('build amount')), (build_material := self._raw_data.get('build material')), (built_with := self._raw_data.get('built with')))) else ''),
             ],
             'ARMAMENT': [
-                self._create_formatted_attribute('', self._generate_armament_value(1))
+                self._create_formatted_attribute('', self._generate_armament_value(1)),
             ],
         }
 
@@ -152,7 +152,7 @@ class ItemTemplate(WikiTemplate):
                 self._create_formatted_attribute('Class', f'{item_class}' if (item_class := self._raw_data.get('type')) is not None else ''),
                 self._create_formatted_attribute('Equipment slot', f'{NUMBER_TO_EQUIPMENT_SLOT.get(slot)}' if (slot := self._raw_data.get('slot')) is not None else ''),
                 self._create_formatted_attribute('Use', f'{uses}' if (uses := self._raw_data.get('uses')) is not None else ''),
-                self._create_formatted_attribute('Amount per crate', f'{crate_amount}' if (crate_amount := self._raw_data.get('crate amount')) is not None else '')
+                self._create_formatted_attribute('Amount per crate', f'{crate_amount}' if (crate_amount := self._raw_data.get('crate amount')) is not None else ''),
             ],
             'ARMAMENT': [
                 self._create_formatted_attribute('Firing mode', f'{firing_mode}' if (firing_mode := self._raw_data.get('firing mode')) is not None else ''),
@@ -161,20 +161,20 @@ class ItemTemplate(WikiTemplate):
                     f'{
                         f'{Damage(damage_info['damage'], self._raw_data.get('damage multiplier'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}'
                         f'{f'\nSemi automatic mode: {Damage(damage_info['damage'], self._raw_data.get('damage multiplier2'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}' if self._raw_data.get('firing mode') == 'Auto / Semi' else ''}'
-                    }' if (damage_info := self._raw_data.get('ammo_info')) is not None else ''
+                    }' if (damage_info := self._raw_data.get('ammo_info')) is not None else '',
                 ),
                 self._create_formatted_attribute(
                     'Range',
                     (f'- Effective range: {range_effective}m' if (range_effective := self._raw_data.get('range effective')) is not None else '')
                     + (f'\n- Maximum range: {range_max}m' if (range_max := self._raw_data.get('range max')) is not None else '')
                     + (f'\n- Effective range (semi automatic mode): {range_effective2}m' if (range_effective2 := self._raw_data.get('range effective2')) is not None else '')
-                    + (f'\n- Maximum range (semi automatic mode): {range_max2}m' if (range_max2 := self._raw_data.get('range max2')) is not None else '')
+                    + (f'\n- Maximum range (semi automatic mode): {range_max2}m' if (range_max2 := self._raw_data.get('range max2')) is not None else ''),
                 ),
                 self._create_formatted_attribute(
                     'Ammunition',
                     (f'Shoots {all_ammo}' if (all_ammo := ', '.join(f'{v}{f' ({EMOJIS_FROM_DICT.get(self._raw_data[k])})'}' for k in ['ammo', 'ammo2', 'ammo3', 'ammo4'] if (v := self._raw_data[k]) is not None)) else '')
                     + (f'\n- Magazine size of {mag_size}' if (mag_size := self._raw_data.get('magazine')) is not None else '')
-                    + (f'\n- Reload time of {reload_time}s' if (reload_time := self._raw_data.get('reload')) is not None else '')
+                    + (f'\n- Reload time of {reload_time}s' if (reload_time := self._raw_data.get('reload')) is not None else ''),
                 ),
                 self._create_formatted_attribute('Damage', f'{Damage(self._raw_data.get('damage'), self._raw_data.get('damage multiplier'), self._raw_data.get('damage rng')).get()} ({EMOJIS_FROM_DICT.get(self._raw_data.get('damage type'))})' if self._raw_data.get('damage') is not None else ''),
             ],

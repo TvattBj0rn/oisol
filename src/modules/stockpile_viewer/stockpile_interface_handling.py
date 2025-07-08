@@ -16,7 +16,7 @@ def get_stockpiles_list(guild_id: int, interface_id: int, group_faction: str) ->
     with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
         cursor = conn.cursor()
         guild_stockpiles = cursor.execute(
-            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpilesList WHERE GroupId == {guild_id} AND InterfaceId == {interface_id}'
+            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpilesList WHERE GroupId == {guild_id} AND InterfaceId == {interface_id}',
         ).fetchall()
 
     # Group stockpiles by regions

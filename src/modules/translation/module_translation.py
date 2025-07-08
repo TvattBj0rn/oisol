@@ -21,8 +21,8 @@ class ModuleTranslation(commands.Cog):
         self.bot.tree.add_command(
             app_commands.ContextMenu(
                 name='Translate',
-                callback=self.translate_to_user_language
-            )
+                callback=self.translate_to_user_language,
+            ),
         )
 
     async def translate_to_user_language(self, interaction: discord.Interaction, message: discord.Message):
