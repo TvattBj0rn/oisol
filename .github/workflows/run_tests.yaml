@@ -14,20 +14,29 @@ jobs:
         python-version: ["3.12"]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version-file: "pyproject.toml"
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+
       - name: Verify uv installation
         run: |
-          echo "Checking uv version:"
+          echo "Installed uv version:"
           uv --version
-      - name: Install project dependencies group
+
+      - name: Install project requirements & dependencies
         run: |
           uv sync --all-groups
-      - name: Tests with pytest
+
+      - name: Run asynchronous tests
         run: |  
-          pytest -v -s -n auto
+          uv run pytest -v -s -n auto tests/test_async_wiki_module.py
+
+      - name: Run synchronous tests
+        run: |
+          uv run pytest -v -s -n auto tests/test_wiki_module.py
