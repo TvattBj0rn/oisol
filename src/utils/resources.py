@@ -69,8 +69,6 @@ DAMAGE_TYPES_ATTRIBUTION = {
 }
 
 
-
-
 NAMES_TO_ACRONYMS = {
     'Assembly Materials I': 'Asmats I',
     'Assembly Materials II': 'Asmats II',

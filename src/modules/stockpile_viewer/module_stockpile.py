@@ -165,7 +165,7 @@ class ModuleStockpiles(commands.Cog):
             ).fetchall()
             cursor.executemany(
                 'DELETE FROM GroupsStockpilesList WHERE GroupId == ? AND InterfaceId == ?',
-                [(group_id, message_id) for group_id, _, message_id in all_server_stockpiles_interfaces_raw], # channel id not required here
+                [(group_id, message_id) for group_id, _, message_id in all_server_stockpiles_interfaces_raw],  # channel id not required here
             )
             conn.commit()
 
@@ -233,8 +233,6 @@ class ModuleStockpiles(commands.Cog):
             message_id,
             discord.Embed().from_dict(get_stockpile_info(int(interaction.guild_id), interface_id=int(message_id))),
         )
-
-
 
     @app_commands.command(name='stockpile-create', description='Create a new stockpile')
     async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str) -> None:
@@ -404,7 +402,7 @@ class ModuleStockpiles(commands.Cog):
         user_access = [permission[0] for permission in all_guild_stockpiles_interfaces_permissions if str(interaction.user.id) in permission or any(str(user_role.id) in permission for user_role in interaction.user.roles)]
 
         # Public interfaces
-        user_access += list(set(interface[1] for interface in all_guild_stockpiles_interfaces) - set(permission[0] for permission in all_guild_stockpiles_interfaces_permissions))
+        user_access += list({interface[1] for interface in all_guild_stockpiles_interfaces} - {permission[0] for permission in all_guild_stockpiles_interfaces_permissions})
 
         # Get only the interfaces the user has access to
         all_guild_stockpiles_interfaces_updated = [

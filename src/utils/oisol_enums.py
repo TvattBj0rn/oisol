@@ -72,6 +72,7 @@ class InterfaceType(Enum):
     TODOLIST_VIEW = [('GroupsInterfacesAccess', 'InterfaceId'), ('GroupsTodolistsTasks', 'TodolistId')]
     FACILITY_VIEW = []
 
+
 class InterfacesTypes(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value

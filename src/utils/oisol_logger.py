@@ -5,7 +5,7 @@ from logging import LogRecord
 class OisolFormatter(logging.Formatter):
     def __init__(self):
         super().__init__()
-        _colors = {
+        colors = {
             'red': '\x1b[31;20m',
             'bold_red': '\x1b[31;1m',
             'green': '\x1b[32;1m',
@@ -16,17 +16,17 @@ class OisolFormatter(logging.Formatter):
             'grey': '\x1b[38;20m',
             'reset': '\x1b[0m',
         }
-        _log_format = '[%(asctime)s] [%(levelname)s] %(message)s'
+        log_format = '[%(asctime)s] [%(levelname)s] %(message)s'
         self.FORMATS = {
-            logging.DEBUG: f'{_colors.get('grey')}{_log_format}{_colors.get('reset')}',
-            logging.INFO: f'{_colors.get('grey')}{_log_format}{_colors.get('reset')}',
-            21: f'{_colors.get('blue')}{_log_format}{_colors.get('reset')}',
-            22: f'{_colors.get('cyan')}{_log_format}{_colors.get('reset')}',
-            23: f'{_colors.get('purple')}{_log_format}{_colors.get('reset')}',
-            24: f'{_colors.get('green')}{_log_format}{_colors.get('reset')}',
-            logging.WARNING: f'{_colors.get('yellow')}{_log_format}{_colors.get('reset')}',
-            logging.ERROR: f'{_colors.get('red')}{_log_format}{_colors.get('reset')}',
-            logging.CRITICAL: f'{_colors.get('bold_red')}{_log_format}{_colors.get('reset')}',
+            logging.DEBUG: f'{colors.get('grey')}{log_format}{colors.get('reset')}',
+            logging.INFO: f'{colors.get('grey')}{log_format}{colors.get('reset')}',
+            21: f'{colors.get('blue')}{log_format}{colors.get('reset')}',
+            22: f'{colors.get('cyan')}{log_format}{colors.get('reset')}',
+            23: f'{colors.get('purple')}{log_format}{colors.get('reset')}',
+            24: f'{colors.get('green')}{log_format}{colors.get('reset')}',
+            logging.WARNING: f'{colors.get('yellow')}{log_format}{colors.get('reset')}',
+            logging.ERROR: f'{colors.get('red')}{log_format}{colors.get('reset')}',
+            logging.CRITICAL: f'{colors.get('bold_red')}{log_format}{colors.get('reset')}',
         }
 
     def format(self, record: LogRecord) -> str:
@@ -38,10 +38,10 @@ class OisolLogger(logging.Logger):
         super().__init__(name)
         self.level = logging.DEBUG
 
-        _stream_handler = logging.StreamHandler()
-        _stream_handler.setLevel(logging.DEBUG)
-        _stream_handler.setFormatter(OisolFormatter())
-        self.addHandler(_stream_handler)
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.DEBUG)
+        stream_handler.setFormatter(OisolFormatter())
+        self.addHandler(stream_handler)
 
         logging.addLevelName(21, 'COMMAND')
         logging.addLevelName(22, 'INTERFACE')

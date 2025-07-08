@@ -67,7 +67,7 @@ class WikiTemplate:
         filled_categories = []
         for category_name, category_attributes in self._categories_attributes.items():
             if len(filled_category_attributes := [attribute for attribute in category_attributes if attribute.get('value')]) > 0:
-                filled_categories += [{'name': category_name, 'value': ''}] + filled_category_attributes
+                filled_categories += [{'name': category_name, 'value': ''}, *filled_category_attributes]
         return filled_categories
 
     def generate_embed_data(self) -> dict:
@@ -185,7 +185,6 @@ class ItemTemplate(WikiTemplate):
                 self._create_formatted_attribute('Damage', f'{Damage(self._raw_data.get('damage'), self._raw_data.get('damage multiplier'), self._raw_data.get('damage rng')).get()} ({EMOJIS_FROM_DICT.get(self._raw_data.get('damage type'))})' if self._raw_data.get('damage') is not None else ''),
             ],
         }
-
 
 
 class WikiTemplateFactory:
