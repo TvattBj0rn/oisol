@@ -2,6 +2,23 @@
 name = "oisol"
 dynamic = ["version"]
 requires-python = ">= 3.12"
+dependencies = [
+  "aiohttp",
+  "beautifulsoup4",
+  "discord.py==2.5.0",
+  "libretranslatepy",
+  "lxml",
+  "python-dotenv",
+  "requests",
+]
+
+[dependency-groups]
+qa = [
+  "pytest",
+  "pytest-xdist",
+  "pytest-asyncio",
+  "ruff"
+]
 
 [tool.pytest.ini_options]
 pythonpath = [
