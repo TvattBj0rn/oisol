@@ -2,7 +2,13 @@ import configparser
 import sqlite3
 from datetime import datetime
 
-from src.utils import OISOL_HOME_PATH, DataFilesPath, sort_nested_dicts_by_key, FoxholeBuildings, Faction
+from src.utils import (
+    OISOL_HOME_PATH,
+    DataFilesPath,
+    Faction,
+    FoxholeBuildings,
+    sort_nested_dicts_by_key,
+)
 
 
 def get_stockpiles_list(guild_id: int, interface_id: int, group_faction: str) -> list:
@@ -16,7 +22,7 @@ def get_stockpiles_list(guild_id: int, interface_id: int, group_faction: str) ->
     with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
         cursor = conn.cursor()
         guild_stockpiles = cursor.execute(
-            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpilesList WHERE GroupId == {guild_id} AND InterfaceId == {interface_id}'
+            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpilesList WHERE GroupId == {guild_id} AND InterfaceId == {interface_id}',
         ).fetchall()
 
     # Group stockpiles by regions
@@ -62,7 +68,6 @@ def get_stockpile_info(guild_id: int, *, interface_name: str | None = None, inte
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             stockpile_interface['title'] = f'<:region:1130915923704946758> | Stockpiles | {cursor.execute(f'SELECT InterfaceName FROM AllInterfacesReferences WHERE MessageId == {interface_id}').fetchone()[0]}'
-
 
     # Get group faction
     config = configparser.ConfigParser()

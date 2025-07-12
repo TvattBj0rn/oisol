@@ -15,9 +15,9 @@ from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockp
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    Shard,
     DiscordIdType,
     InterfacesTypes,
+    Shard,
 )
 
 if TYPE_CHECKING:
@@ -69,12 +69,12 @@ class ModuleStockpiles(commands.Cog):
             member_3: discord.Member = None,
             member_4: discord.Member = None,
             member_5: discord.Member = None,
-    ):
+    ) -> None:
         self.bot.logger.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
 
         # Send an empty stockpile interface
         await interaction.response.send_message(
-            embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=name))
+            embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=name)),
         )
         # Retrieve the interface message id
         message_id = (await interaction.original_response()).id
@@ -119,7 +119,7 @@ class ModuleStockpiles(commands.Cog):
             conn.commit()
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
-    async def clear_interface(self, interaction: discord.Interaction, interface_name: str):
+    async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(
             f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
         # Case where the user did not select the interface from the provided options
@@ -147,13 +147,13 @@ class ModuleStockpiles(commands.Cog):
         )
 
         await interaction.response.send_message(
-            f'> The interface was properly cleared',
+            '> The interface was properly cleared',
             ephemeral=True,
             delete_after=5,
         )
 
     @app_commands.command(name='stockpile-interface-clear-all', description='Clear all server stockpiles interfaces')
-    async def clear_all_interfaces(self, interaction: discord.Interaction):
+    async def clear_all_interfaces(self, interaction: discord.Interaction) -> None:
         self.bot.logger.command(
             f'stockpile-interface-clear-all command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -164,8 +164,8 @@ class ModuleStockpiles(commands.Cog):
                 f"SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE GroupId == '{interaction.guild_id}' AND InterfaceType == '{InterfacesTypes.STOCKPILE.value}'",
             ).fetchall()
             cursor.executemany(
-                f"DELETE FROM GroupsStockpilesList WHERE GroupId == ? AND InterfaceId == ?",
-                [(group_id, message_id) for group_id, _, message_id in all_server_stockpiles_interfaces_raw], # channel id not required here
+                'DELETE FROM GroupsStockpilesList WHERE GroupId == ? AND InterfaceId == ?',
+                [(group_id, message_id) for group_id, _, message_id in all_server_stockpiles_interfaces_raw],  # channel id not required here
             )
             conn.commit()
 
@@ -179,13 +179,13 @@ class ModuleStockpiles(commands.Cog):
             )
 
         await interaction.response.send_message(
-            f'> All stockpiles interfaces were properly cleared',
+            '> All stockpiles interfaces were properly cleared',
             ephemeral=True,
             delete_after=5,
         )
 
     @app_commands.command(name='stockpile-interface-get', description='Get an existing interface')
-    async def stockpile_get_interface(self, interaction: discord.Interaction, interface_name: str):
+    async def stockpile_get_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(f'stockpile-interface-get command by {interaction.user.name} on {interaction.guild.name}')
         # Case where the user did not select the interface from the provided options
         ids_list = interface_name.split('.')
@@ -205,7 +205,7 @@ class ModuleStockpiles(commands.Cog):
 
             # Send an empty stockpile interface
             await interaction.response.send_message(
-                embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=before_interface[5]))
+                embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, interface_name=before_interface[5])),
             )
             # Retrieve the interface message id
             message_id = (await interaction.original_response()).id
@@ -233,8 +233,6 @@ class ModuleStockpiles(commands.Cog):
             message_id,
             discord.Embed().from_dict(get_stockpile_info(int(interaction.guild_id), interface_id=int(message_id))),
         )
-
-
 
     @app_commands.command(name='stockpile-create', description='Create a new stockpile')
     async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str) -> None:
@@ -398,13 +396,13 @@ class ModuleStockpiles(commands.Cog):
             # Get associated permissions
             interfaces_id = [str(interface_id[1]) for interface_id in all_guild_stockpiles_interfaces]
             all_guild_stockpiles_interfaces_permissions = cursor.execute(
-                f"SELECT InterfaceId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId IN ({','.join(interfaces_id)})"
+                f"SELECT InterfaceId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == '{interaction.guild_id}' AND InterfaceId IN ({','.join(interfaces_id)})",
             ).fetchall()
 
         user_access = [permission[0] for permission in all_guild_stockpiles_interfaces_permissions if str(interaction.user.id) in permission or any(str(user_role.id) in permission for user_role in interaction.user.roles)]
 
         # Public interfaces
-        user_access += list(set(interface[1] for interface in all_guild_stockpiles_interfaces) - set(permission[0] for permission in all_guild_stockpiles_interfaces_permissions))
+        user_access += list({interface[1] for interface in all_guild_stockpiles_interfaces} - {permission[0] for permission in all_guild_stockpiles_interfaces_permissions})
 
         # Get only the interfaces the user has access to
         all_guild_stockpiles_interfaces_updated = [
@@ -417,6 +415,6 @@ class ModuleStockpiles(commands.Cog):
         return [
             app_commands.Choice(
                 name=interface_name,
-                value=f'{interaction.guild_id}.{channel_id}.{message_id}'
+                value=f'{interaction.guild_id}.{channel_id}.{message_id}',
             ) for channel_id, message_id, interface_name in all_guild_stockpiles_interfaces_updated if current in interface_name
         ]

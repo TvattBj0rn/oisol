@@ -1,4 +1,3 @@
-import typing
 from enum import Enum, EnumMeta, auto
 
 
@@ -72,6 +71,7 @@ class InterfaceType(Enum):
     STOCKPILE_VIEW = []
     TODOLIST_VIEW = [('GroupsInterfacesAccess', 'InterfaceId'), ('GroupsTodolistsTasks', 'TodolistId')]
     FACILITY_VIEW = []
+
 
 class InterfacesTypes(Enum):
     """

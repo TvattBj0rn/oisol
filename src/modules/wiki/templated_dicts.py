@@ -1,4 +1,10 @@
-from src.utils import EMOJIS_FROM_DICT, WikiTables, convert_time_to_readable_time, Faction, NUMBER_TO_EQUIPMENT_SLOT
+from src.utils import (
+    EMOJIS_FROM_DICT,
+    NUMBER_TO_EQUIPMENT_SLOT,
+    Faction,
+    WikiTables,
+    convert_time_to_readable_time,
+)
 
 
 class Damage:
@@ -6,7 +12,7 @@ class Damage:
         self._raw_damage = int(raw_damage)
         self._damage_multiplier = float(damage_multiplier) if damage_multiplier is not None else 1.0
         self._net_damage = int(self._raw_damage * self._damage_multiplier)
-        self._damage_rng = True if damage_rng == '1' else False
+        self._damage_rng = damage_rng == '1'
         self._net_damage_rng = int(self._net_damage * 1.5)
 
     def get(self) -> str:
@@ -21,10 +27,10 @@ class WikiTemplate:
         self._categories_attributes = {}
 
     @staticmethod
-    def _create_formatted_attribute(name: str, value: str, inline: bool = True):
+    def _create_formatted_attribute(name: str, value: str, inline: bool = True) -> dict:
         return {'name': name, 'value': value, 'inline': inline}
 
-    def _add_armor_attribute(self, inplace: bool = True):
+    def _add_armor_attribute(self, inplace: bool = True) -> dict:
         return {
             'name': f'Armor type: *{self._raw_data.get('armour type')}*',
             'value': f'{''.join(f'- {attribute_name} ({EMOJIS_FROM_DICT.get(attribute_name)}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armour_attributes').items())}',
@@ -61,7 +67,7 @@ class WikiTemplate:
         filled_categories = []
         for category_name, category_attributes in self._categories_attributes.items():
             if len(filled_category_attributes := [attribute for attribute in category_attributes if attribute.get('value')]) > 0:
-                filled_categories += [{'name': category_name, 'value': ''}] + filled_category_attributes
+                filled_categories += [{'name': category_name, 'value': ''}, *filled_category_attributes]
         return filled_categories
 
     def generate_embed_data(self) -> dict:
@@ -110,7 +116,7 @@ class VehicleTemplate(WikiTemplate):
                 }'),
             ],
             'ARMAMENT': [
-                self._create_formatted_attribute('', ''.join(self._generate_armament_value(i) for i in range(1, 5)))
+                self._create_formatted_attribute('', ''.join(self._generate_armament_value(i) for i in range(1, 5))),
             ],
         }
 
@@ -133,10 +139,10 @@ class StructureTemplate(WikiTemplate):
             'STRUCTURE SUPPORT': [
                 self._create_formatted_attribute('Intel range', f'{intel_range}m' if (intel_range := self._raw_data.get('intel range')) is not None else ''),
                 self._create_formatted_attribute('AI range', f'{ai_range}m' if (ai_range := self._raw_data.get('ai range')) is not None else ''),
-                self._create_formatted_attribute('Construction', f'x{build_amount} {build_material}{f' {EMOJIS_FROM_DICT.get(build_material, '')} '} using {built_with}{f' {EMOJIS_FROM_DICT.get(built_with, '')}'}' if any(((build_amount := self._raw_data.get('build amount')), (build_material := self._raw_data.get('build material')), (built_with := self._raw_data.get('built with')))) else '')
+                self._create_formatted_attribute('Construction', f'x{build_amount} {build_material}{f' {EMOJIS_FROM_DICT.get(build_material, '')} '} using {built_with}{f' {EMOJIS_FROM_DICT.get(built_with, '')}'}' if any(((build_amount := self._raw_data.get('build amount')), (build_material := self._raw_data.get('build material')), (built_with := self._raw_data.get('built with')))) else ''),
             ],
             'ARMAMENT': [
-                self._create_formatted_attribute('', self._generate_armament_value(1))
+                self._create_formatted_attribute('', self._generate_armament_value(1)),
             ],
         }
 
@@ -152,7 +158,7 @@ class ItemTemplate(WikiTemplate):
                 self._create_formatted_attribute('Class', f'{item_class}' if (item_class := self._raw_data.get('type')) is not None else ''),
                 self._create_formatted_attribute('Equipment slot', f'{NUMBER_TO_EQUIPMENT_SLOT.get(slot)}' if (slot := self._raw_data.get('slot')) is not None else ''),
                 self._create_formatted_attribute('Use', f'{uses}' if (uses := self._raw_data.get('uses')) is not None else ''),
-                self._create_formatted_attribute('Amount per crate', f'{crate_amount}' if (crate_amount := self._raw_data.get('crate amount')) is not None else '')
+                self._create_formatted_attribute('Amount per crate', f'{crate_amount}' if (crate_amount := self._raw_data.get('crate amount')) is not None else ''),
             ],
             'ARMAMENT': [
                 self._create_formatted_attribute('Firing mode', f'{firing_mode}' if (firing_mode := self._raw_data.get('firing mode')) is not None else ''),
@@ -161,25 +167,24 @@ class ItemTemplate(WikiTemplate):
                     f'{
                         f'{Damage(damage_info['damage'], self._raw_data.get('damage multiplier'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}'
                         f'{f'\nSemi automatic mode: {Damage(damage_info['damage'], self._raw_data.get('damage multiplier2'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}' if self._raw_data.get('firing mode') == 'Auto / Semi' else ''}'
-                    }' if (damage_info := self._raw_data.get('ammo_info')) is not None else ''
+                    }' if (damage_info := self._raw_data.get('ammo_info')) is not None else '',
                 ),
                 self._create_formatted_attribute(
                     'Range',
                     (f'- Effective range: {range_effective}m' if (range_effective := self._raw_data.get('range effective')) is not None else '')
                     + (f'\n- Maximum range: {range_max}m' if (range_max := self._raw_data.get('range max')) is not None else '')
                     + (f'\n- Effective range (semi automatic mode): {range_effective2}m' if (range_effective2 := self._raw_data.get('range effective2')) is not None else '')
-                    + (f'\n- Maximum range (semi automatic mode): {range_max2}m' if (range_max2 := self._raw_data.get('range max2')) is not None else '')
+                    + (f'\n- Maximum range (semi automatic mode): {range_max2}m' if (range_max2 := self._raw_data.get('range max2')) is not None else ''),
                 ),
                 self._create_formatted_attribute(
                     'Ammunition',
                     (f'Shoots {all_ammo}' if (all_ammo := ', '.join(f'{v}{f' ({EMOJIS_FROM_DICT.get(self._raw_data[k])})'}' for k in ['ammo', 'ammo2', 'ammo3', 'ammo4'] if (v := self._raw_data[k]) is not None)) else '')
                     + (f'\n- Magazine size of {mag_size}' if (mag_size := self._raw_data.get('magazine')) is not None else '')
-                    + (f'\n- Reload time of {reload_time}s' if (reload_time := self._raw_data.get('reload')) is not None else '')
+                    + (f'\n- Reload time of {reload_time}s' if (reload_time := self._raw_data.get('reload')) is not None else ''),
                 ),
                 self._create_formatted_attribute('Damage', f'{Damage(self._raw_data.get('damage'), self._raw_data.get('damage multiplier'), self._raw_data.get('damage rng')).get()} ({EMOJIS_FROM_DICT.get(self._raw_data.get('damage type'))})' if self._raw_data.get('damage') is not None else ''),
             ],
         }
-
 
 
 class WikiTemplateFactory:
