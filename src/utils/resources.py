@@ -2344,9 +2344,21 @@ STRUCTURES_WIKI_ENTRIES = [
         'wiki_table': WikiTables.STRUCTURES,
     },
     {
-        'name': 'Howitzer Garrison',
-        'url': 'https://foxhole.wiki.gg/wiki/Howitzer_Garrison',
-        'keywords': 'bunkerhowieshowitzerconcretegarrison',
+        'name': 'Artillery Garrison (Tier 1)',
+        'url': 'https://foxhole.wiki.gg/wiki/Artillery_Garrison#Tier_2-0',
+        'keywords': 'bunkerhowieshowitzergarrisonartillery',
+        'wiki_table': WikiTables.STRUCTURES,
+    },
+    {
+        'name': 'Artillery Garrison (Tier 2)',
+        'url': 'https://foxhole.wiki.gg/wiki/Artillery_Garrison#Tier_2-0',
+        'keywords': 'bunkerhowieshowitzergarrisonartillery',
+        'wiki_table': WikiTables.STRUCTURES,
+    },
+    {
+        'name': 'Artillery Garrison (Tier 3)',
+        'url': 'https://foxhole.wiki.gg/wiki/Artillery_Garrison#Tier_3-0',
+        'keywords': 'bunkerhowieshowitzerconcretegarrisonartillery',
         'wiki_table': WikiTables.STRUCTURES,
     },
     {
@@ -3022,9 +3034,9 @@ STRUCTURES_WIKI_ENTRIES = [
         'wiki_table': WikiTables.STRUCTURES,
     },
     {
-        'name': 'Fuel Silo',
-        'url': 'https://foxhole.wiki.gg/wiki/Fuel_Silo',
-        'keywords': 'fuelsilo',
+        'name': 'Liquid Silo',
+        'url': 'https://foxhole.wiki.gg/wiki/Liquid_Silo',
+        'keywords': 'fuelliquidsilo',
         'wiki_table': WikiTables.STRUCTURES,
     },
     {
