@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import configparser
+import sqlite3
 import time
 from typing import TYPE_CHECKING
 
@@ -62,22 +63,24 @@ class ModuleRegister(commands.Cog):
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
 
-        # Get group data from db and validate it
-        all_members = self.validate_all_members(
-            self.bot.cursor.execute(
-                f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}',
-            ).fetchall(),
-            guild_id,
-            config.getint('register', 'recruit_id'),
-        )
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Get group data from db and validate it
+            all_members = self.validate_all_members(
+                cursor.execute(
+                    f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}',
+                ).fetchall(),
+                guild_id,
+                config.getint('register', 'recruit_id'),
+            )
 
-        # Update register data
-        self.bot.cursor.execute(f'DELETE FROM GroupsRegister WHERE GroupId == {guild_id}')
-        self.bot.cursor.executemany(
-            'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
-            all_members,
-        )
-        self.bot.connection.commit()
+            # Update register data
+            cursor.execute(f'DELETE FROM GroupsRegister WHERE GroupId == {guild_id}')
+            cursor.executemany(
+                'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
+                all_members,
+            )
+            conn.commit()
 
         if not config.has_option('register', 'channel'):
             return
@@ -117,11 +120,12 @@ class ModuleRegister(commands.Cog):
         ):
             if config.has_option('register', 'input'):
                 await after.edit(nick=safeguarded_nickname(f'{config.get('register', 'input', fallback='')} {after.display_name}'))
-            self.bot.cursor.execute(
-                'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
-                (before.guild.id, int(time.time()), before.id),
-            )
-            self.bot.connection.commit()
+            with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+                conn.cursor().execute(
+                    'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
+                    (before.guild.id, int(time.time()), before.id),
+                )
+                conn.commit()
             await self.update_register(before.guild.id)
 
         # Member is now a promoted recruit
@@ -139,9 +143,9 @@ class ModuleRegister(commands.Cog):
                 member_name = f'[{config.get('regiment', 'tag')}] {member_name}'
 
             await after.edit(nick=safeguarded_nickname(member_name))
-
-            self.bot.cursor.execute(
-                f'DELETE FROM GroupsRegister WHERE GroupId == {before.guild.id} AND MemberId == {before.id}',
-            )
-            self.bot.connection.commit()
+            with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+                conn.cursor().execute(
+                    f'DELETE FROM GroupsRegister WHERE GroupId == {before.guild.id} AND MemberId == {before.id}',
+                )
+                conn.commit()
             await self.update_register(before.guild.id)

@@ -83,7 +83,8 @@ class Oisol(commands.Bot):
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 
-    def _setup_oisol_db(self) -> None:
+    @staticmethod
+    def _setup_oisol_db() -> None:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().executescript(
                 '''
@@ -95,9 +96,6 @@ class Oisol(commands.Bot):
                 CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
                 ''',
             )
-
-        self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
-        self.cursor = self.connection.cursor()
 
     async def refresh_interface(
             self,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sqlite3
 import uuid
 from typing import TYPE_CHECKING
 
@@ -7,7 +8,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import DiscordIdType, InterfaceType
+from src.utils import OISOL_HOME_PATH, DiscordIdType, InterfaceType
 
 from .todolist_view_menu import TodolistViewMenu
 
@@ -61,20 +62,22 @@ class ModuleTodolist(commands.Cog):
         if member_5:
             todolist_access_list.append((interaction.guild_id, todolist_id, member_5.id, DiscordIdType.USER.name))
 
-        if todolist_access_list:
-            self.bot.cursor.executemany(
-                'INSERT INTO GroupsInterfacesAccess (GroupId, TodolistId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?)',
-                todolist_access_list,
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            if todolist_access_list:
+                cursor.executemany(
+                    'INSERT INTO GroupsInterfacesAccess (GroupId, TodolistId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?)',
+                    todolist_access_list,
+                )
+                conn.commit()
+
+            todolist_view = TodolistViewMenu()
+            todolist_view.refresh_view(title, str(interaction.guild_id), todolist_id)
+
+            await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
+            interaction_response_message = await interaction.original_response()
+            cursor.execute(
+                'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
+                (interaction.guild_id, interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
             )
-            self.bot.connection.commit()
-
-        todolist_view = TodolistViewMenu()
-        todolist_view.refresh_view(title, str(interaction.guild_id), todolist_id)
-
-        await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
-        interaction_response_message = await interaction.original_response()
-        self.bot.cursor.execute(
-            'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
-            (interaction.guild_id, interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
-        )
-        self.bot.connection.commit()
+            conn.commit()
