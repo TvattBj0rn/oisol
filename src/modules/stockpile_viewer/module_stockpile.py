@@ -25,16 +25,17 @@ if TYPE_CHECKING:
 
 
 @functools.lru_cache
-def get_shard_stockpiles_subregions(bot: Oisol, shard_name: str, _code: str) -> list[str]:
+def get_shard_stockpiles_subregions(shard_name: str, _code: str) -> list[str]:
     """
-    :param bot: Oisol instance
     :param shard_name: Shard to pull the data from, either ABLE, BAKER or CHARLIE
     :param _code: Arbitrary value to detect new command run (new code means new stock means need to rerun the full func)
     :return: List of all available stockpiles in a given shard
     """
-    stockpiles_subregions = bot.cursor.execute(
-        f"SELECT Region, Subregion FROM StockpilesZones WHERE Shard == '{shard_name}'",
-    ).fetchall()
+
+    with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+        stockpiles_subregions = conn.cursor().execute(
+            f"SELECT Region, Subregion FROM StockpilesZones WHERE Shard == '{shard_name}'",
+        ).fetchall()
     return [' | '.join(subregion) for subregion in stockpiles_subregions]
 
 
@@ -362,7 +363,7 @@ class ModuleStockpiles(commands.Cog):
         """
         code = next((opt['value'] for opt in interaction.data['options'] if opt.get('name', '') == 'code'), '0')
         current_shard = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', code)
-        stockpiles = get_shard_stockpiles_subregions(self.bot, current_shard, code)
+        stockpiles = get_shard_stockpiles_subregions(current_shard, code)
 
         if not current:
             return [app_commands.Choice(name=city, value=city) for city in random.choices(stockpiles, k=10)]
