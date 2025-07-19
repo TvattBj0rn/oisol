@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands, tasks
 
-from src.utils import InterfaceType, OISOL_HOME_PATH
+from src.utils import OISOL_HOME_PATH, InterfaceType
 
 if TYPE_CHECKING:
     from main import Oisol

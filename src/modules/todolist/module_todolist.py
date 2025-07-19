@@ -8,7 +8,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import DiscordIdType, InterfaceType, OISOL_HOME_PATH
+from src.utils import OISOL_HOME_PATH, DiscordIdType, InterfaceType
 
 from .todolist_view_menu import TodolistViewMenu
 

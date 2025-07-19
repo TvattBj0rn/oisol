@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from discord.ext import commands, tasks
 
-from src.utils import FoxholeAPIWrapper, MapIcon, Shard, OISOL_HOME_PATH
+from src.utils import OISOL_HOME_PATH, FoxholeAPIWrapper, MapIcon, Shard
 
 if TYPE_CHECKING:
     from main import Oisol
