@@ -61,6 +61,7 @@ class ModuleStockpiles(commands.Cog):
             self,
             interaction: discord.Interaction,
             name: str,
+            is_multiserver: bool = False,
             role_1: discord.Role = None,
             role_2: discord.Role = None,
             role_3: discord.Role = None,
@@ -73,12 +74,13 @@ class ModuleStockpiles(commands.Cog):
             member_5: discord.Member = None,
     ) -> None:
         self.bot.logger.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
+        await interaction.response.defer()
 
         # Create interface association id
         association_id = uuid.uuid4().hex
 
         # Send an empty stockpile interface
-        await interaction.response.send_message(
+        await interaction.followup.send(
             embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, association_id, interface_name=name)),
         )
         # Retrieve the interface message id
@@ -128,6 +130,38 @@ class ModuleStockpiles(commands.Cog):
                 (association_id, interaction.guild_id, interaction.channel_id, message_id, InterfacesTypes.STOCKPILE.value, None, name),
             )
             conn.commit()
+        if is_multiserver:
+            await interaction.followup.send(f'> The id of your interface is: `{association_id}`, use it to connect to this interface from another server', ephemeral=True)
+
+    @app_commands.command(name='stockpile-interface-join', description='Join an existing stockpile interface shared between multiple servers')
+    async def multiserver_join_interface(self, interaction: discord.Interaction, interface_id: str) -> None:
+        self.bot.logger.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
+        await interaction.response.defer()
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            query_response = conn.cursor().execute(
+                'SELECT AssociationId, InterfaceName FROM AllInterfacesReferences WHERE AssociationId == ?',
+                (interface_id,)
+            ).fetchone()
+
+        if all(query_response):
+            # Send an empty stockpile interface
+            await interaction.followup.send(embed=discord.Embed().from_dict(
+                get_stockpile_info(
+                    interaction.guild_id, query_response[0], interface_name=query_response[1]
+                )
+            ))
+            # Retrieve the interface message id
+            message_id = (await interaction.original_response()).id
+            await self.bot.refresh_interface(
+                interaction.guild_id,
+                interaction.channel_id,
+                message_id,
+                discord.Embed().from_dict(
+                    get_stockpile_info(interaction.guild_id, query_response[0], message_id=message_id, interface_name=query_response[1])),
+            )
+        else:
+            await interaction.followup.send('> The provided interface id is invalid', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:

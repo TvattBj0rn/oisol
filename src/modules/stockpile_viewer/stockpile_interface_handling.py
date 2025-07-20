@@ -67,8 +67,11 @@ def get_stockpile_info(guild_id: int, association_id: str, *, interface_name: st
         stockpile_interface['title'] = f'<:region:1130915923704946758> | Stockpiles | {interface_name}'
     else:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            stockpile_interface['title'] = f'<:region:1130915923704946758> | Stockpiles | {cursor.execute(f'SELECT InterfaceName FROM AllInterfacesReferences WHERE MessageId == ?', (message_id,)).fetchone()[0]}'
+            interface_name = conn.cursor().execute(
+                f'SELECT InterfaceName FROM AllInterfacesReferences WHERE MessageId == ?',
+                (message_id,)
+            ).fetchone()[0]
+            stockpile_interface['title'] = f'<:region:1130915923704946758> | Stockpiles | {interface_name}'
 
     # Get group faction
     config = configparser.ConfigParser()
