@@ -139,29 +139,39 @@ class ModuleStockpiles(commands.Cog):
         await interaction.response.defer()
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            query_response = conn.cursor().execute(
+            cursor = conn.cursor()
+            query_response = cursor.execute(
                 'SELECT AssociationId, InterfaceName FROM AllInterfacesReferences WHERE AssociationId == ?',
                 (interface_id,)
             ).fetchone()
 
-        if all(query_response):
-            # Send an empty stockpile interface
-            await interaction.followup.send(embed=discord.Embed().from_dict(
-                get_stockpile_info(
-                    interaction.guild_id, query_response[0], interface_name=query_response[1]
+            if all(query_response):
+                # Send an empty stockpile interface
+                await interaction.followup.send(embed=discord.Embed().from_dict(
+                    get_stockpile_info(
+                        interaction.guild_id, query_response[0], interface_name=query_response[1]
+                    )
+                ))
+                # Retrieve the interface message id
+                message_id = (await interaction.original_response()).id
+
+                # Add joined interface to existing interfaces
+                cursor.execute(
+                    'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    (query_response[0], interaction.guild_id, interaction.channel_id, message_id, InterfacesTypes.STOCKPILE.value, None, query_response[1]),
                 )
-            ))
-            # Retrieve the interface message id
-            message_id = (await interaction.original_response()).id
-            await self.bot.refresh_interface(
-                interaction.guild_id,
-                interaction.channel_id,
-                message_id,
-                discord.Embed().from_dict(
-                    get_stockpile_info(interaction.guild_id, query_response[0], message_id=message_id, interface_name=query_response[1])),
-            )
-        else:
-            await interaction.followup.send('> The provided interface id is invalid', ephemeral=True, delete_after=5)
+                conn.commit()
+
+                # Update the interface
+                await self.bot.refresh_interface(
+                    interaction.guild_id,
+                    interaction.channel_id,
+                    message_id,
+                    discord.Embed().from_dict(
+                        get_stockpile_info(interaction.guild_id, query_response[0], message_id=message_id, interface_name=query_response[1])),
+                )
+            else:
+                await interaction.followup.send('> The provided interface id is invalid', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
@@ -306,7 +316,7 @@ class ModuleStockpiles(commands.Cog):
     async def update_all_associated_stockpiles(self, association_id: str) -> None:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             all_interfaces_to_update = conn.cursor().execute(
-                f"SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE AssociationId == ?",
+                f'SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE AssociationId == ?',
                 (association_id,)
             ).fetchall()
 
