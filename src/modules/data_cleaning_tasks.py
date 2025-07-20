@@ -21,9 +21,13 @@ class DatabaseCleaner(commands.Cog):
     @staticmethod
     def _clear_entries(conn_cursor: tuple[sqlite3.Connection, sqlite3.Cursor], channel_id: int, message_id: int, interface_type: str, interface_reference: str) -> None:
         for table, column in InterfaceType[interface_type].value:
-            conn_cursor[1].execute(f"DELETE FROM {table} WHERE {column} == '{interface_reference}'")
+            conn_cursor[1].execute(
+                'DELETE FROM ? WHERE ? == ?',
+                (table, column, interface_reference)
+            )
         conn_cursor[1].execute(
-            f'DELETE FROM AllInterfacesReferences WHERE ChannelId == {channel_id} AND MessageId == {message_id}',
+            'DELETE FROM AllInterfacesReferences WHERE ChannelId == ? AND MessageId == ?',
+            (channel_id, message_id)
         )
 
         conn_cursor[0].commit()
@@ -37,15 +41,15 @@ class DatabaseCleaner(commands.Cog):
                 'SELECT ChannelId, MessageId, InterfaceType, InterfaceReference FROM AllInterfacesReferences',
             ).fetchall()
             for channel_id, message_id, interface_type, interface_reference in all_existing_interfaces:
-                channel = self.bot.get_channel(channel_id)
+                channel = self.bot.get_channel(int(channel_id))
                 if channel is None:
-                    self._clear_entries((conn, cursor), channel_id, message_id, interface_type, interface_reference)
+                    self._clear_entries((conn, cursor), int(channel_id), int(message_id), interface_type, interface_reference)
                     continue
                 try:
-                    await channel.fetch_message(message_id)
+                    await channel.fetch_message(int(message_id))
                 except discord.NotFound:
                     # Associated message was deleted
-                    self._clear_entries((conn, cursor), channel_id, message_id, interface_type, interface_reference)
+                    self._clear_entries((conn, cursor), int(channel_id), int(message_id), interface_type, interface_reference)
                 except (discord.Forbidden, discord.HTTPException):
                     # Rights of the bot have been removed or fail on network part
                     continue

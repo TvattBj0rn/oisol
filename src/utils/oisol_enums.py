@@ -67,16 +67,17 @@ class InterfaceType(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value
     """
+    MULTISERVER_STOCKPILE_VIEW = []
     REGISTER_VIEW = []
     STOCKPILE_VIEW = []
     TODOLIST_VIEW = [('GroupsInterfacesAccess', 'InterfaceId'), ('GroupsTodolistsTasks', 'TodolistId')]
-    FACILITY_VIEW = []
 
 
 class InterfacesTypes(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value
     """
+    MULTISERVER_STOCKPILE = 'MULTISERVER_STOCKPILE_VIEW'
     REGISTER = 'REGISTER_VIEW'
     STOCKPILE = 'STOCKPILE_VIEW'
     TODOLIST = 'TODOLIST_VIEW'

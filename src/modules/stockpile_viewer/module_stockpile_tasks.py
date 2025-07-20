@@ -66,7 +66,8 @@ class StockpileTasks(commands.Cog):
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
                 cursor = conn.cursor()
                 last_war_start_time = cursor.execute(
-                    f"SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == '{shard_api.shard_name}'",
+                    'SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == ?',
+                    (shard_api.shard_name,)
                 ).fetchone()[0]
                 # If war has not started yet
                 if not current_war_data['conquestStartTime']:
@@ -77,7 +78,8 @@ class StockpileTasks(commands.Cog):
                         return
                     if last_war_start_time is not None:
                         cursor.execute(
-                            f"DELETE FROM StockpilesZones WHERE ConquestStartTime == {last_war_start_time} AND Shard == '{shard_api.shard_name}'",
+                            'DELETE FROM StockpilesZones WHERE ConquestStartTime == ? AND Shard == ?',
+                            (last_war_start_time, shard_api.shard_name)
                         )
                     cursor.executemany(
                         'INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)',

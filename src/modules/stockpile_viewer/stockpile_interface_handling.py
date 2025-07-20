@@ -11,18 +11,18 @@ from src.utils import (
 )
 
 
-def get_stockpiles_list(guild_id: int, interface_id: int, group_faction: str) -> list:
+def get_stockpiles_list(association_id: str, message_id: int, group_faction: str) -> list:
     """
-    :param guild_id: discord id
-    :param interface_id: interface message id
+    :param association_id: interface group id
+    :param message_id: interface message id
     :param group_faction: faction of the discord
-    :return:
+    :return: list of fields used for discord.Embed creation
     """
     # Retrieve data from db
     with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-        cursor = conn.cursor()
-        guild_stockpiles = cursor.execute(
-            f'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpilesList WHERE GroupId == {guild_id} AND InterfaceId == {interface_id}',
+        guild_stockpiles = conn.cursor().execute(
+            'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpilesList WHERE AssociationId == ?',
+            (association_id,)
         ).fetchall()
 
     # Group stockpiles by regions
@@ -51,12 +51,13 @@ def get_stockpiles_list(guild_id: int, interface_id: int, group_faction: str) ->
     return embed_fields
 
 
-def get_stockpile_info(guild_id: int, *, interface_name: str | None = None, interface_id: int | None = None) -> dict:
+def get_stockpile_info(guild_id: int, association_id: str, *, interface_name: str | None = None, message_id: int | None = None) -> dict:
     """
     Retrieve information as embed format
+    :param association_id: id of the interface group
     :param interface_name: name displayed on the interface
     :param guild_id: id of the discord
-    :param interface_id: id of the interface (message id)
+    :param message_id: id of the interface (message id)
     :return: formatted information as dict following embed format
     """
     stockpile_interface = {}
@@ -67,7 +68,7 @@ def get_stockpile_info(guild_id: int, *, interface_name: str | None = None, inte
     else:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
-            stockpile_interface['title'] = f'<:region:1130915923704946758> | Stockpiles | {cursor.execute(f'SELECT InterfaceName FROM AllInterfacesReferences WHERE MessageId == {interface_id}').fetchone()[0]}'
+            stockpile_interface['title'] = f'<:region:1130915923704946758> | Stockpiles | {cursor.execute(f'SELECT InterfaceName FROM AllInterfacesReferences WHERE MessageId == ?', (message_id,)).fetchone()[0]}'
 
     # Get group faction
     config = configparser.ConfigParser()
@@ -78,7 +79,7 @@ def get_stockpile_info(guild_id: int, *, interface_name: str | None = None, inte
     stockpile_interface['timestamp'] = str(datetime.now())
 
     # Body part
-    if interface_id is not None:
-        stockpile_interface['fields'] = get_stockpiles_list(guild_id, interface_id, group_faction)
+    if message_id is not None:
+        stockpile_interface['fields'] = get_stockpiles_list(association_id, message_id, group_faction)
 
     return stockpile_interface
