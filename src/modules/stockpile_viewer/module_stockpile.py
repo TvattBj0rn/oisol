@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import base64
 import configparser
 import functools
 import pathlib
 import random
 import sqlite3
 import uuid
+import zlib
 from typing import TYPE_CHECKING
 
 import discord
@@ -18,7 +20,7 @@ from src.utils import (
     DataFilesPath,
     DiscordIdType,
     InterfacesTypes,
-    Shard,
+    Shard, AesGcm,
 )
 
 if TYPE_CHECKING:
@@ -55,6 +57,7 @@ def get_current_shard(path: pathlib.Path, _code: str) -> str:
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+        self.oes = AesGcm()
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
     async def stockpile_interface_create(
@@ -136,7 +139,7 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile-interface-join', description='Join an existing stockpile interface shared between multiple servers')
     async def multiserver_join_interface(self, interaction: discord.Interaction, interface_id: str) -> None:
         self.bot.logger.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -147,18 +150,16 @@ class ModuleStockpiles(commands.Cog):
 
             if all(query_response):
                 # Send an empty stockpile interface
-                await interaction.followup.send(embed=discord.Embed().from_dict(
+                msg = await interaction.channel.send(embed=discord.Embed().from_dict(
                     get_stockpile_info(
                         interaction.guild_id, query_response[0], interface_name=query_response[1]
                     )
                 ))
-                # Retrieve the interface message id
-                message_id = (await interaction.original_response()).id
 
                 # Add joined interface to existing interfaces
                 cursor.execute(
                     'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    (query_response[0], interaction.guild_id, interaction.channel_id, message_id, InterfacesTypes.STOCKPILE.value, None, query_response[1]),
+                    (query_response[0], interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.STOCKPILE.value, None, query_response[1]),
                 )
                 conn.commit()
 
@@ -166,17 +167,22 @@ class ModuleStockpiles(commands.Cog):
                 await self.bot.refresh_interface(
                     interaction.guild_id,
                     interaction.channel_id,
-                    message_id,
+                    msg.id,
                     discord.Embed().from_dict(
-                        get_stockpile_info(interaction.guild_id, query_response[0], message_id=message_id, interface_name=query_response[1])),
+                        get_stockpile_info(interaction.guild_id, query_response[0], message_id=msg.id, interface_name=query_response[1])),
                 )
+                await interaction.followup.send('> The interface was successfully joined', ephemeral=True)
             else:
-                await interaction.followup.send('> The provided interface id is invalid', ephemeral=True, delete_after=5)
+                await interaction.followup.send('> The provided interface id is invalid', ephemeral=True)
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(
             f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Convert interface_name from ciphertext to a readable text
+        interface_name = self.oes.decipher_process(interface_name)
+
         # Case where the user did not select the interface from the provided options
         ids_list = interface_name.split('.')
         if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
@@ -222,6 +228,10 @@ class ModuleStockpiles(commands.Cog):
                 delete_after=5,
             )
             return
+
+        # Convert interface_name from ciphertext to a readable text
+        interface_name = self.oes.decipher_process(interface_name)
+
         # Case where the user did not select the interface from the provided options
         ids_list = interface_name.split('.')
         if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
@@ -271,6 +281,10 @@ class ModuleStockpiles(commands.Cog):
                 delete_after=5,
             )
             return
+
+        # Convert interface_name from ciphertext to a readable text
+        interface_name = self.oes.decipher_process(interface_name)
+
         # Case where the user did not select the interface from the provided options
         ids_list = interface_name.split('.')
         if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
@@ -384,9 +398,12 @@ class ModuleStockpiles(commands.Cog):
 
         # Sort by name in ascending order
         all_guild_stockpiles_interfaces_updated.sort(key=lambda tup: tup[2])
+
         return [
             app_commands.Choice(
                 name=interface_name,
-                value=f'{interaction.guild_id}.{channel_id}.{message_id}.{association_id}',
-            ) for channel_id, message_id, interface_name, association_id in all_guild_stockpiles_interfaces_updated if current in interface_name
+                value=self.oes.encipher_process(f'{interaction.guild_id}.{channel_id}.{message_id}.{association_id}'),
+            )
+            for channel_id, message_id, interface_name, association_id in all_guild_stockpiles_interfaces_updated
+            if current in interface_name
         ]
