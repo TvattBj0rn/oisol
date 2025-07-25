@@ -12,7 +12,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .core_stockpile import StockpileCore
 from .stockpile_interface_handling import get_stockpile_info
 from src.utils import (
     OISOL_HOME_PATH,
@@ -57,7 +56,6 @@ class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
         self.oes = AesGcm()
-        self.core = StockpileCore()
 
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
@@ -184,7 +182,7 @@ class ModuleStockpiles(commands.Cog):
         ids_str = self.oes.decipher_process(interface_name)
         ids_list = ids_str.split('.')
 
-        if (error_msg := self.core.validate_stockpile_ids(ids_list)) is not None:
+        if (error_msg := self._validate_stockpile_ids(ids_list)) is not None:
             await interaction.response.send_message(
                 error_msg,
                 ephemeral=True,
@@ -217,9 +215,9 @@ class ModuleStockpiles(commands.Cog):
         ids_list = ids_str.split('.')
 
         if any(validations := (
-                self.core.validate_stockpile_code(code),
-                self.core.validate_stockpile_localisation(localisation),
-                self.core.validate_stockpile_ids(ids_list),
+                self._validate_stockpile_code(code),
+                self._validate_stockpile_localisation(localisation),
+                self._validate_stockpile_ids(ids_list),
         )):
             await interaction.response.send_message(
                 next(v for v in validations if v is not None),
@@ -256,9 +254,9 @@ class ModuleStockpiles(commands.Cog):
         ids_str = self.oes.decipher_process(interface_name)
         ids_list = ids_str.split('.')
 
-        if any((validations :=
-            self.core.validate_stockpile_code(stockpile_code),
-            self.core.validate_stockpile_ids(ids_list),
+        if any(validations := (
+            self._validate_stockpile_code(stockpile_code),
+            self._validate_stockpile_ids(ids_list),
         )):
             await interaction.response.send_message(
                 next(v for v in validations if v is not None),
@@ -370,7 +368,6 @@ class ModuleStockpiles(commands.Cog):
         # Sort by name in ascending order
         all_guild_stockpiles_interfaces_updated.sort(key=lambda tup: tup[2])
 
-
         return [
             app_commands.Choice(
                 name=interface_name,
@@ -379,3 +376,30 @@ class ModuleStockpiles(commands.Cog):
             for channel_id, message_id, interface_name, association_id in all_guild_stockpiles_interfaces_updated
             if current in interface_name
         ]
+
+    # VALIDATORS METHODS
+    @staticmethod
+    def _validate_stockpile_code(code: str) -> str | None:
+        # Case where a user entered an invalid sized code
+        if len(code) != 6:
+            return '> The code must be a 6-digits code'
+
+        # Case where a user entered a code without digits only
+        if not code.isdigit():
+            return '> The code contains non digit characters'
+
+        return None
+
+    @staticmethod
+    def _validate_stockpile_localisation(localisation: str) -> str | None:
+        # Case where a user did not select a provided localisation
+        if ' | ' not in localisation or localisation.startswith(' | '):
+            return '> The localisation you entered is incorrect, displayed localisations are clickable'
+        return None
+
+    @staticmethod
+    def _validate_stockpile_ids(ids_list: list[str]) -> str | None:
+        # Case where the user did not select the interface from the provided options
+        if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
+            return '> The provided interface name is not correct'
+        return None
