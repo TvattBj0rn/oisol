@@ -180,8 +180,6 @@ class ModuleStockpiles(commands.Cog):
         if member_5:
             raw_access_list.append((member_5.id, DiscordIdType.USER.name))
 
-
-
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             query_response = cursor.execute(
