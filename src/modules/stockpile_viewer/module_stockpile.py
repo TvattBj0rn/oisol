@@ -1,20 +1,19 @@
 from __future__ import annotations
 
-import base64
 import configparser
 import functools
 import pathlib
 import random
 import sqlite3
 import uuid
-import zlib
 from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockpile_info
+from .core_stockpile import StockpileCore
+from .stockpile_interface_handling import get_stockpile_info
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
@@ -58,6 +57,8 @@ class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
         self.oes = AesGcm()
+        self.core = StockpileCore()
+
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
     async def stockpile_interface_create(
@@ -149,7 +150,7 @@ class ModuleStockpiles(commands.Cog):
             ).fetchone()
 
             if all(query_response):
-                # Send an empty stockpile interface
+                # Send an empty stockpile interface as a separate message to hide association id on discord clients
                 msg = await interaction.channel.send(embed=discord.Embed().from_dict(
                     get_stockpile_info(
                         interaction.guild_id, query_response[0], interface_name=query_response[1]
@@ -177,17 +178,15 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
-        self.bot.logger.command(
-            f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name from ciphertext to a readable text
-        interface_name = self.oes.decipher_process(interface_name)
+        ids_str = self.oes.decipher_process(interface_name)
+        ids_list = ids_str.split('.')
 
-        # Case where the user did not select the interface from the provided options
-        ids_list = interface_name.split('.')
-        if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
+        if (error_msg := self.core.validate_stockpile_ids(ids_list)) is not None:
             await interaction.response.send_message(
-                '> The provided interface name is not correct',
+                error_msg,
                 ephemeral=True,
                 delete_after=5,
             )
@@ -212,33 +211,20 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile-create', description='Create a new stockpile')
     async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str) -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
-        # Case where a user entered an invalid sized code
-        if len(code) != 6:
-            await interaction.response.send_message('> The code must be a 6-digits code', ephemeral=True, delete_after=5)
-            return
-        # Case where a user entered a code without digits only
-        if not code.isdigit():
-            await interaction.response.send_message('> The code contains non digit characters', ephemeral=True, delete_after=5)
-            return
-        # Case where a user did not select a provided localisation
-        if ' | ' not in localisation or localisation.startswith(' | '):
-            await interaction.response.send_message(
-                '> The localisation you entered is incorrect, displayed localisations are clickable',
-                ephemeral=True,
-                delete_after=5,
-            )
-            return
 
         # Convert interface_name from ciphertext to a readable text
-        interface_name = self.oes.decipher_process(interface_name)
+        ids_str = self.oes.decipher_process(interface_name)
+        ids_list = ids_str.split('.')
 
-        # Case where the user did not select the interface from the provided options
-        ids_list = interface_name.split('.')
-        if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
+        if any(validations := (
+                self.core.validate_stockpile_code(code),
+                self.core.validate_stockpile_localisation(localisation),
+                self.core.validate_stockpile_ids(ids_list),
+        )):
             await interaction.response.send_message(
-                '> The provided interface name is not correct',
+                next(v for v in validations if v is not None),
                 ephemeral=True,
-                delete_after=5,
+                delete_after=5
             )
             return
 
@@ -265,33 +251,19 @@ class ModuleStockpiles(commands.Cog):
     @app_commands.command(name='stockpile-delete', description='Delete an existing stockpile')
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
-        # Case where a user entered an invalid sized code
-        if len(stockpile_code) != 6:
-            await interaction.response.send_message(
-                '> The code must be a 6-digits code',
-                ephemeral=True,
-                delete_after=5,
-            )
-            return
-        # Case where a user entered a code without digits only
-        if not stockpile_code.isdigit():
-            await interaction.response.send_message(
-                '> The code contains non digit characters',
-                ephemeral=True,
-                delete_after=5,
-            )
-            return
 
         # Convert interface_name from ciphertext to a readable text
-        interface_name = self.oes.decipher_process(interface_name)
+        ids_str = self.oes.decipher_process(interface_name)
+        ids_list = ids_str.split('.')
 
-        # Case where the user did not select the interface from the provided options
-        ids_list = interface_name.split('.')
-        if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
+        if any((validations :=
+            self.core.validate_stockpile_code(stockpile_code),
+            self.core.validate_stockpile_ids(ids_list),
+        )):
             await interaction.response.send_message(
-                '> The provided interface name is not correct',
+                next(v for v in validations if v is not None),
                 ephemeral=True,
-                delete_after=5,
+                delete_after=5
             )
             return
 
@@ -318,10 +290,9 @@ class ModuleStockpiles(commands.Cog):
                 ephemeral=True,
                 delete_after=5,
             )
-        # This should cover the very unlikely case where a same group has multiple stockpiles with the same code (0.00000000010000020000%)
+        # This should cover the very unlikely case where a same group has multiple stockpiles with the same code
         else:
-            self.bot.logger.warning(
-                f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
+            self.bot.logger.warning(f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
             await interaction.response.send_message(
                 f'The following stockpiles with code {stockpile_code} were deleted:\n{''.join(f'- {deleted_stockpile[4]}, {deleted_stockpile[2]} in {deleted_stockpile[1]}\n' for deleted_stockpile in deleted_stockpiles)}',
                 ephemeral=True,  # No auto delete in case of a fuck-up
@@ -398,6 +369,7 @@ class ModuleStockpiles(commands.Cog):
 
         # Sort by name in ascending order
         all_guild_stockpiles_interfaces_updated.sort(key=lambda tup: tup[2])
+
 
         return [
             app_commands.Choice(
