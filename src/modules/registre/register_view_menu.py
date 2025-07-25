@@ -8,9 +8,6 @@ from src.utils import OISOL_HOME_PATH
 class RegisterViewMenu(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-        # Not clean because this means two connection to the same db but this will have to do for now
-        self.connection = sqlite3.connect(OISOL_HOME_PATH / 'oisol.db')
-        self.cursor = self.connection.cursor()
         self.embeds = []
         self.register_members = []
         self.current_page_index = 0
@@ -18,10 +15,11 @@ class RegisterViewMenu(discord.ui.View):
     def refresh_register_embed(self, guild_id: int) -> None:
         self.current_page_index = 0
 
-        self.register_members = self.cursor.execute(
-            'SELECT MemberId, RegistrationDate FROM GroupsRegister WHERE GroupId == ?',
-            (guild_id,)
-        ).fetchall()
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            self.register_members = conn.cursor().execute(
+                'SELECT MemberId, RegistrationDate FROM GroupsRegister WHERE GroupId == ?',
+                (guild_id,)
+            ).fetchall()
         self._generate_embeds()
 
     def _generate_embeds(self) -> None:
