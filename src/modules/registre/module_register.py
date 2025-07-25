@@ -147,7 +147,7 @@ class ModuleRegister(commands.Cog):
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
                 conn.cursor().execute(
                     'DELETE FROM GroupsRegister WHERE GroupId == ? AND MemberId == ?',
-                    (before.guild.id, before.id)
+                    (before.guild.id, before.id),
                 )
                 conn.commit()
             await self.update_register(before.guild.id)

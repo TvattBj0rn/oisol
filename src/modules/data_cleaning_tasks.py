@@ -23,11 +23,11 @@ class DatabaseCleaner(commands.Cog):
         for table, column in InterfaceType[interface_type].value:
             conn_cursor[1].execute(
                 'DELETE FROM ? WHERE ? == ?',
-                (table, column, interface_reference)
+                (table, column, interface_reference),
             )
         conn_cursor[1].execute(
             'DELETE FROM AllInterfacesReferences WHERE ChannelId == ? AND MessageId == ?',
-            (channel_id, message_id)
+            (channel_id, message_id),
         )
 
         conn_cursor[0].commit()

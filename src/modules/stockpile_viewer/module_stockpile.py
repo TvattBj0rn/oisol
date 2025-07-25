@@ -12,14 +12,16 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .stockpile_interface_handling import get_stockpile_info
 from src.utils import (
     OISOL_HOME_PATH,
+    AesGcm,
     DataFilesPath,
     DiscordIdType,
     InterfacesTypes,
-    Shard, AesGcm,
+    Shard,
 )
+
+from .stockpile_interface_handling import get_stockpile_info
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -144,15 +146,15 @@ class ModuleStockpiles(commands.Cog):
             cursor = conn.cursor()
             query_response = cursor.execute(
                 'SELECT AssociationId, InterfaceName FROM AllInterfacesReferences WHERE AssociationId == ?',
-                (interface_id,)
+                (interface_id,),
             ).fetchone()
 
             if all(query_response):
                 # Send an empty stockpile interface as a separate message to hide association id on discord clients
                 msg = await interaction.channel.send(embed=discord.Embed().from_dict(
                     get_stockpile_info(
-                        interaction.guild_id, query_response[0], interface_name=query_response[1]
-                    )
+                        interaction.guild_id, query_response[0], interface_name=query_response[1],
+                    ),
                 ))
 
                 # Add joined interface to existing interfaces
@@ -194,7 +196,7 @@ class ModuleStockpiles(commands.Cog):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().execute(
                 'DELETE FROM GroupsStockpilesList WHERE AssociationId == ?',
-                (ids_list[3],)
+                (ids_list[3],),
             )
             conn.commit()
 
@@ -222,7 +224,7 @@ class ModuleStockpiles(commands.Cog):
             await interaction.response.send_message(
                 next(v for v in validations if v is not None),
                 ephemeral=True,
-                delete_after=5
+                delete_after=5,
             )
             return
 
@@ -261,14 +263,14 @@ class ModuleStockpiles(commands.Cog):
             await interaction.response.send_message(
                 next(v for v in validations if v is not None),
                 ephemeral=True,
-                delete_after=5
+                delete_after=5,
             )
             return
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             if not (deleted_stockpiles := cursor.execute(
-                    f'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? RETURNING *',
+                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? RETURNING *',
                     (ids_list[3], stockpile_code),
             ).fetchall()):
                 await interaction.response.send_message(
@@ -299,8 +301,8 @@ class ModuleStockpiles(commands.Cog):
     async def update_all_associated_stockpiles(self, association_id: str) -> None:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             all_interfaces_to_update = conn.cursor().execute(
-                f'SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE AssociationId == ?',
-                (association_id,)
+                'SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE AssociationId == ?',
+                (association_id,),
             ).fetchall()
 
         for group_id, channel_id, message_id in all_interfaces_to_update:
@@ -345,14 +347,14 @@ class ModuleStockpiles(commands.Cog):
             # Get all guild stockpile interfaces
             all_guild_stockpiles_interfaces = cursor.execute(
                 'SELECT ChannelId, MessageId, InterfaceName, AssociationId FROM AllInterfacesReferences WHERE InterfaceType IN (?, ?) AND GroupId == ?',
-                (InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value, str(interaction.guild_id))
+                (InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value, str(interaction.guild_id)),
             ).fetchall()
 
             # Get associated permissions
             interfaces_id = [interface_id[1] for interface_id in all_guild_stockpiles_interfaces]
             all_guild_stockpiles_interfaces_permissions = cursor.execute(
                 'SELECT MessageId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == ? AND MessageId IN (?)',
-                (interaction.guild_id, ','.join(interfaces_id))
+                (interaction.guild_id, ','.join(interfaces_id)),
             ).fetchall()
 
         user_access = [permission[0] for permission in all_guild_stockpiles_interfaces_permissions if str(interaction.user.id) in permission or any(str(user_role.id) in permission for user_role in interaction.user.roles)]

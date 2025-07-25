@@ -46,7 +46,7 @@ class TodolistViewMenu(discord.ui.View):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             current_tasks = conn.cursor().execute(
                 'SELECT TaskContent, TaskPriority FROM GroupsTodolistsTasks WHERE GroupId == ? AND TodolistId == ?',
-                (self.guild_id, self.embed_uuid)
+                (self.guild_id, self.embed_uuid),
             ).fetchall()
 
         # Sort tasks by priority
@@ -71,7 +71,7 @@ class TodolistViewMenu(discord.ui.View):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             todolist_permissions = conn.cursor().execute(
                 'SELECT DiscordId, DiscordIdType FROM GroupsInterfacesAccess WHERE GroupId == ? AND MessageId == ?',
-                (interaction.guild_id, self.embed_uuid)
+                (interaction.guild_id, self.embed_uuid),
             ).fetchall()
 
         # Check whether the user id or its roles id are in todolist permissions
@@ -122,7 +122,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
             # Get current tasks from db
             current_tasks = cursor.execute(
                 'SELECT GroupId, TodolistId, TaskContent, TaskPriority, LastUpdated FROM GroupsTodolistsTasks WHERE GroupId == ? AND TodolistId == ?',
-                (interaction.guild_id, self.embed_uuid)
+                (interaction.guild_id, self.embed_uuid),
             ).fetchall()
             if len(current_tasks) >= TODOLIST_MAXIMUM_TASKS_ON_INTERFACE:
                 await interaction.response.send_message('> The todolist is at full capacity', ephemeral=True)
@@ -141,8 +141,8 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
                 rejected_new_tasks = user_new_tasks[available_task_slots:]
             cursor.execute(
                 'DELETE FROM GroupsTodolistsTasks WHERE GroupId == ? AND TodolistId == ?',
-                (interaction.guild_id, self.embed_uuid)
-            ),
+                (interaction.guild_id, self.embed_uuid),
+            )
             cursor.executemany(
                 'INSERT INTO GroupsTodolistsTasks (GroupId, TodolistId, TaskContent, TaskPriority, LastUpdated) VALUES (?, ?, ?, ?, ?)',
                 possible_new_tasks,
@@ -208,7 +208,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             current_time = int(time.time())
             current_tasks = cursor.execute(
                 'SELECT GroupId, TodolistId, TaskContent, TaskPriority, LastUpdated FROM GroupsTodolistsTasks WHERE GroupId == ? AND TodolistId == ?',
-                (interaction.guild_id, embed_uuid)
+                (interaction.guild_id, embed_uuid),
             ).fetchall()
             current_tasks = [
                 *[(task[0], task[1], task[2], task[3], current_time) for task in current_tasks if task[3] == PriorityType.HIGH.name],

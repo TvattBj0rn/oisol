@@ -18,7 +18,7 @@ class RegisterViewMenu(discord.ui.View):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             self.register_members = conn.cursor().execute(
                 'SELECT MemberId, RegistrationDate FROM GroupsRegister WHERE GroupId == ?',
-                (guild_id,)
+                (guild_id,),
             ).fetchall()
         self._generate_embeds()
 
