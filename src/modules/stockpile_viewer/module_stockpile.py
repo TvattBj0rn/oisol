@@ -138,9 +138,49 @@ class ModuleStockpiles(commands.Cog):
             await interaction.followup.send(f'> The id of your interface is: `{association_id}`, use it to connect to this interface from another server', ephemeral=True)
 
     @app_commands.command(name='stockpile-interface-join', description='Join an existing stockpile interface shared between multiple servers')
-    async def multiserver_join_interface(self, interaction: discord.Interaction, interface_id: str) -> None:
+    async def multiserver_join_interface(
+            self,
+            interaction: discord.Interaction,
+            interface_id: str,
+            role_1: discord.Role = None,
+            role_2: discord.Role = None,
+            role_3: discord.Role = None,
+            role_4: discord.Role = None,
+            role_5: discord.Role = None,
+            member_1: discord.Member = None,
+            member_2: discord.Member = None,
+            member_3: discord.Member = None,
+            member_4: discord.Member = None,
+            member_5: discord.Member = None,
+    ) -> None:
         self.bot.logger.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
+
+        raw_access_list = []
+
+        # Get all non-nulls roles & access as permission list
+        if role_1:
+            raw_access_list.append((role_1.id, DiscordIdType.ROLE.name))
+        if role_2:
+            raw_access_list.append((role_2.id, DiscordIdType.ROLE.name))
+        if role_3:
+            raw_access_list.append((role_3.id, DiscordIdType.ROLE.name))
+        if role_4:
+            raw_access_list.append((role_4.id, DiscordIdType.ROLE.name))
+        if role_5:
+            raw_access_list.append((role_5.id, DiscordIdType.ROLE.name))
+        if member_1:
+            raw_access_list.append((member_1.id, DiscordIdType.USER.name))
+        if member_2:
+            raw_access_list.append((member_2.id, DiscordIdType.USER.name))
+        if member_3:
+            raw_access_list.append((member_3.id, DiscordIdType.USER.name))
+        if member_4:
+            raw_access_list.append((member_4.id, DiscordIdType.USER.name))
+        if member_5:
+            raw_access_list.append((member_5.id, DiscordIdType.USER.name))
+
+
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -156,6 +196,19 @@ class ModuleStockpiles(commands.Cog):
                         interaction.guild_id, query_response[0], interface_name=query_response[1],
                     ),
                 ))
+
+                # Create a list ready to be put in the db
+                db_access_list = [
+                    (interaction.guild_id, interaction.channel_id, msg.id, discord_id, discord_id_type)
+                    for discord_id, discord_id_type in raw_access_list
+                ]
+
+                # Only update the access db if specific permissions were given
+                if db_access_list:
+                    cursor.executemany(
+                        'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
+                        db_access_list,
+                    )
 
                 # Add joined interface to existing interfaces
                 cursor.execute(
@@ -347,16 +400,17 @@ class ModuleStockpiles(commands.Cog):
             # Get all guild stockpile interfaces
             all_guild_stockpiles_interfaces = cursor.execute(
                 'SELECT ChannelId, MessageId, InterfaceName, AssociationId FROM AllInterfacesReferences WHERE InterfaceType IN (?, ?) AND GroupId == ?',
-                (InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value, str(interaction.guild_id)),
+                (InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value, interaction.guild_id),
             ).fetchall()
 
             # Get associated permissions
             interfaces_id = [interface_id[1] for interface_id in all_guild_stockpiles_interfaces]
             all_guild_stockpiles_interfaces_permissions = cursor.execute(
-                'SELECT MessageId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == ? AND MessageId IN (?)',
-                (interaction.guild_id, ','.join(interfaces_id)),
+                f'SELECT MessageId, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == ? AND MessageId IN ({', '.join('?' * len(interfaces_id))})',
+                (interaction.guild_id, *interfaces_id),
             ).fetchall()
 
+        # Get server interfaces the user has access to
         user_access = [permission[0] for permission in all_guild_stockpiles_interfaces_permissions if str(interaction.user.id) in permission or any(str(user_role.id) in permission for user_role in interaction.user.roles)]
 
         # Public interfaces
