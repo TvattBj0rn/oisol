@@ -68,14 +68,15 @@ class ModuleRegister(commands.Cog):
             # Get group data from db and validate it
             all_members = self.validate_all_members(
                 cursor.execute(
-                    f'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == {guild_id}',
+                    'SELECT GroupId, RegistrationDate, MemberId FROM GroupsRegister WHERE GroupId == ?',
+                    (guild_id,),
                 ).fetchall(),
                 guild_id,
                 config.getint('register', 'recruit_id'),
             )
 
             # Update register data
-            cursor.execute(f'DELETE FROM GroupsRegister WHERE GroupId == {guild_id}')
+            cursor.execute('DELETE FROM GroupsRegister WHERE GroupId == ?', (guild_id,))
             cursor.executemany(
                 'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
                 all_members,
@@ -145,7 +146,8 @@ class ModuleRegister(commands.Cog):
             await after.edit(nick=safeguarded_nickname(member_name))
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
                 conn.cursor().execute(
-                    f'DELETE FROM GroupsRegister WHERE GroupId == {before.guild.id} AND MemberId == {before.id}',
+                    'DELETE FROM GroupsRegister WHERE GroupId == ? AND MemberId == ?',
+                    (before.guild.id, before.id)
                 )
                 conn.commit()
             await self.update_register(before.guild.id)
