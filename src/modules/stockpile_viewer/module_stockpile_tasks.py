@@ -67,7 +67,7 @@ class StockpileTasks(commands.Cog):
                 cursor = conn.cursor()
                 last_war_start_time = cursor.execute(
                     'SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == ?',
-                    (shard_api.shard_name,)
+                    (shard_api.shard_name,),
                 ).fetchone()[0]
                 # If war has not started yet
                 if not current_war_data['conquestStartTime']:
@@ -79,7 +79,7 @@ class StockpileTasks(commands.Cog):
                     if last_war_start_time is not None:
                         cursor.execute(
                             'DELETE FROM StockpilesZones WHERE ConquestStartTime == ? AND Shard == ?',
-                            (last_war_start_time, shard_api.shard_name)
+                            (last_war_start_time, shard_api.shard_name),
                         )
                     cursor.executemany(
                         'INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)',

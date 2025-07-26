@@ -145,7 +145,7 @@ class ModuleConfig(commands.Cog):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             stockpile_interfaces = conn.cursor().execute(
                 'SELECT GroupId, ChannelId, MessageId, AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND InterfaceType == ?',
-                (interaction.guild_id, InterfacesTypes.STOCKPILE.value)
+                (interaction.guild_id, InterfacesTypes.STOCKPILE.value),
             ).fetchall()
         for group_id, channel_id, message_id, association_id in stockpile_interfaces:
             await self.bot.refresh_interface(

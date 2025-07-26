@@ -6,6 +6,7 @@ dependencies = [
   "aiohttp",
   "beautifulsoup4",
   "discord.py==2.5.0",
+  "cryptography",
   "libretranslatepy",
   "lxml",
   "python-dotenv",

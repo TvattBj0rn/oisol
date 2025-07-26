@@ -1,9 +1,9 @@
 import base64
+import os
 import zlib
 
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-import os
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
 class AesGcm:
@@ -16,7 +16,7 @@ class AesGcm:
         cipher_encryptor = Cipher(
             algorithms.AES(self._key),
             modes.GCM(self._iv),
-            backend=default_backend()
+            backend=default_backend(),
         ).encryptor()
 
         ciphertext = base64.b64encode(cipher_encryptor.update(plain_text) + cipher_encryptor.finalize()).decode()
@@ -29,7 +29,7 @@ class AesGcm:
         cipher_decryptor = Cipher(
             algorithms.AES(self._key),
             modes.GCM(self._iv, tag),
-            backend=default_backend()
+            backend=default_backend(),
         ).decryptor()
 
         return cipher_decryptor.update(ciphertext) + cipher_decryptor.finalize()

@@ -22,7 +22,7 @@ def get_stockpiles_list(association_id: str, message_id: int, group_faction: str
     with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
         guild_stockpiles = conn.cursor().execute(
             'SELECT Region, Subregion, Code, Name, Type FROM GroupsStockpilesList WHERE AssociationId == ?',
-            (association_id,)
+            (association_id,),
         ).fetchall()
 
     # Group stockpiles by regions
@@ -68,8 +68,8 @@ def get_stockpile_info(guild_id: int, association_id: str, *, interface_name: st
     else:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             interface_name = conn.cursor().execute(
-                f'SELECT InterfaceName FROM AllInterfacesReferences WHERE MessageId == ?',
-                (message_id,)
+                'SELECT InterfaceName FROM AllInterfacesReferences WHERE MessageId == ?',
+                (message_id,),
             ).fetchone()[0]
             stockpile_interface['title'] = f'<:region:1130915923704946758> | Stockpiles | {interface_name}'
 
