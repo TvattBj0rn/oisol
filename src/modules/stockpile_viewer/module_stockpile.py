@@ -411,16 +411,16 @@ class ModuleStockpiles(commands.Cog):
             )
             conn.commit()
 
-            if do_interface_update:
-                # Update the interface
-                await self.bot.refresh_interface(
+        if do_interface_update:
+            # Update the interface
+            await self.bot.refresh_interface(
+                interaction.guild_id,
+                interaction.channel_id,
+                msg.id,
+                discord.Embed().from_dict(get_stockpile_info(
                     interaction.guild_id,
-                    interaction.channel_id,
-                    msg.id,
-                    discord.Embed().from_dict(get_stockpile_info(
-                        interaction.guild_id,
-                        association_id,
-                        message_id=msg.id,
-                        interface_name=interface_name,
-                    )),
-                )
+                    association_id,
+                    message_id=msg.id,
+                    interface_name=interface_name,
+                )),
+            )
