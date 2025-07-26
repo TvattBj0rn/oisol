@@ -79,35 +79,19 @@ class ModuleStockpiles(commands.Cog):
             member_5: discord.Member = None,
     ) -> None:
         self.bot.logger.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
 
         # Create interface association id
         association_id = uuid.uuid4().hex
 
-        # Send an empty stockpile interface
-        await interaction.followup.send(
-            embed=discord.Embed().from_dict(get_stockpile_info(interaction.guild_id, association_id, interface_name=name)),
+        await self._create_stockpile_interface(
+            interaction,
+            association_id,
+            name,
+            locals(),
         )
-        # Retrieve the interface message id
-        message_id = (await interaction.original_response()).id
 
-        # Add current roles & members access to db
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            # Only update the access db if specific permissions were given
-            if any(raw_access_list := self._generate_access_list(**locals())):
-                cursor.executemany(
-                    'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
-                    [
-                        (interaction.guild_id, interaction.channel_id, message_id, discord_id, discord_id_type)
-                        for discord_id, discord_id_type in raw_access_list
-                    ],
-                )
-            cursor.execute(
-                'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (association_id, interaction.guild_id, interaction.channel_id, message_id, InterfacesTypes.STOCKPILE.value, None, name),
-            )
-            conn.commit()
+        await interaction.followup.send('> The interface was properly created', ephemeral=True)
         if is_multiserver:
             await interaction.followup.send(f'> The id of your interface is: `{association_id}`, use it to connect to this interface from another server', ephemeral=True)
 
@@ -137,42 +121,19 @@ class ModuleStockpiles(commands.Cog):
                 (interface_id,),
             ).fetchone()
 
-            if all(query_response):
-                # Send an empty stockpile interface as a separate message to hide association id on discord clients
-                msg = await interaction.channel.send(embed=discord.Embed().from_dict(
-                    get_stockpile_info(
-                        interaction.guild_id, query_response[0], interface_name=query_response[1],
-                    ),
-                ))
-
-                # Only update the access db if specific permissions were given
-                if any(raw_access_list := self._generate_access_list(**locals())):
-                    cursor.executemany(
-                        'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
-                        [
-                            (interaction.guild_id, interaction.channel_id, msg.id, discord_id, discord_id_type)
-                            for discord_id, discord_id_type in raw_access_list
-                        ],
-                    )
-
-                # Add joined interface to existing interfaces
-                cursor.execute(
-                    'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    (query_response[0], interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.STOCKPILE.value, None, query_response[1]),
-                )
-                conn.commit()
-
-                # Update the interface
-                await self.bot.refresh_interface(
-                    interaction.guild_id,
-                    interaction.channel_id,
-                    msg.id,
-                    discord.Embed().from_dict(
-                        get_stockpile_info(interaction.guild_id, query_response[0], message_id=msg.id, interface_name=query_response[1])),
-                )
-                await interaction.followup.send('> The interface was successfully joined', ephemeral=True)
-            else:
+            if not all(query_response):
                 await interaction.followup.send('> The provided interface id is invalid', ephemeral=True)
+                return
+
+            await self._create_stockpile_interface(
+                interaction,
+                query_response[0],
+                query_response[1],
+                locals(),
+                do_interface_update=True
+            )
+
+            await interaction.followup.send('> The interface was successfully joined', ephemeral=True)
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
@@ -416,3 +377,51 @@ class ModuleStockpiles(commands.Cog):
             # Make sure we use appropriate non-null parameters
             if k.startswith(('role_', 'member_')) and v is not None
         ]
+
+    async def _create_stockpile_interface(
+            self,
+            interaction: discord.Interaction,
+            association_id: str,
+            interface_name: str,
+            permissions: dict,
+            do_interface_update: bool = False,
+    ) -> None:
+        # Send an empty stockpile interface as a separate message to hide association id on discord clients
+        msg = await interaction.channel.send(embed=discord.Embed().from_dict(
+            get_stockpile_info(
+                interaction.guild_id, association_id, interface_name=interface_name,
+            ),
+        ))
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Only update the access db if specific permissions were given
+            if any(raw_access_list := self._generate_access_list(**permissions)):
+                cursor.executemany(
+                    'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
+                    [
+                        (interaction.guild_id, interaction.channel_id, msg.id, discord_id, discord_id_type)
+                        for discord_id, discord_id_type in raw_access_list
+                    ],
+                )
+
+            # Add joined interface to existing interfaces
+            cursor.execute(
+                'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                (association_id, interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.STOCKPILE.value,None, interface_name)
+            )
+            conn.commit()
+
+            if do_interface_update:
+                # Update the interface
+                await self.bot.refresh_interface(
+                    interaction.guild_id,
+                    interaction.channel_id,
+                    msg.id,
+                    discord.Embed().from_dict(get_stockpile_info(
+                        interaction.guild_id,
+                        association_id,
+                        message_id=msg.id,
+                        interface_name=interface_name
+                    )),
+                )
