@@ -90,29 +90,14 @@ class ModuleStockpiles(commands.Cog):
         # Retrieve the interface message id
         message_id = (await interaction.original_response()).id
 
-        raw_access_list = []
-
         # Get all non-nulls roles & access as permission list
-        if role_1:
-            raw_access_list.append((role_1.id, DiscordIdType.ROLE.name))
-        if role_2:
-            raw_access_list.append((role_2.id, DiscordIdType.ROLE.name))
-        if role_3:
-            raw_access_list.append((role_3.id, DiscordIdType.ROLE.name))
-        if role_4:
-            raw_access_list.append((role_4.id, DiscordIdType.ROLE.name))
-        if role_5:
-            raw_access_list.append((role_5.id, DiscordIdType.ROLE.name))
-        if member_1:
-            raw_access_list.append((member_1.id, DiscordIdType.USER.name))
-        if member_2:
-            raw_access_list.append((member_2.id, DiscordIdType.USER.name))
-        if member_3:
-            raw_access_list.append((member_3.id, DiscordIdType.USER.name))
-        if member_4:
-            raw_access_list.append((member_4.id, DiscordIdType.USER.name))
-        if member_5:
-            raw_access_list.append((member_5.id, DiscordIdType.USER.name))
+        raw_access_list = (
+            # Tuple of either member.id or role.id and discord id type
+            (v.id, DiscordIdType.ROLE.name if k.startswith('role_') else DiscordIdType.USER.name)
+            for k, v in locals().items()
+            # Make sure we use appropriate non-null parameters
+            if k.startswith(('role_', 'member_')) and v is not None
+        )
 
         # Add current roles & members access to db
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -153,29 +138,14 @@ class ModuleStockpiles(commands.Cog):
         self.bot.logger.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
 
-        raw_access_list = []
-
         # Get all non-nulls roles & access as permission list
-        if role_1:
-            raw_access_list.append((role_1.id, DiscordIdType.ROLE.name))
-        if role_2:
-            raw_access_list.append((role_2.id, DiscordIdType.ROLE.name))
-        if role_3:
-            raw_access_list.append((role_3.id, DiscordIdType.ROLE.name))
-        if role_4:
-            raw_access_list.append((role_4.id, DiscordIdType.ROLE.name))
-        if role_5:
-            raw_access_list.append((role_5.id, DiscordIdType.ROLE.name))
-        if member_1:
-            raw_access_list.append((member_1.id, DiscordIdType.USER.name))
-        if member_2:
-            raw_access_list.append((member_2.id, DiscordIdType.USER.name))
-        if member_3:
-            raw_access_list.append((member_3.id, DiscordIdType.USER.name))
-        if member_4:
-            raw_access_list.append((member_4.id, DiscordIdType.USER.name))
-        if member_5:
-            raw_access_list.append((member_5.id, DiscordIdType.USER.name))
+        raw_access_list = (
+            # Tuple of either member.id or role.id and discord id type
+            (v.id, DiscordIdType.ROLE.name if k.startswith('role_') else DiscordIdType.USER.name)
+            for k, v in locals().items()
+            # Make sure we use appropriate non-null parameters
+            if k.startswith(('role_', 'member_')) and v is not None
+        )
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
