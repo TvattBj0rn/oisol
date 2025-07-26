@@ -6,7 +6,6 @@ import pathlib
 import random
 import sqlite3
 import uuid
-from collections.abc import Generator
 from typing import TYPE_CHECKING
 
 import discord
@@ -130,7 +129,7 @@ class ModuleStockpiles(commands.Cog):
                 query_response[0],
                 query_response[1],
                 locals(),
-                do_interface_update=True
+                do_interface_update=True,
             )
 
             await interaction.followup.send('> The interface was successfully joined', ephemeral=True)
@@ -408,7 +407,7 @@ class ModuleStockpiles(commands.Cog):
             # Add joined interface to existing interfaces
             cursor.execute(
                 'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (association_id, interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.STOCKPILE.value,None, interface_name)
+                (association_id, interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.STOCKPILE.value,None, interface_name),
             )
             conn.commit()
 
@@ -422,6 +421,6 @@ class ModuleStockpiles(commands.Cog):
                         interaction.guild_id,
                         association_id,
                         message_id=msg.id,
-                        interface_name=interface_name
+                        interface_name=interface_name,
                     )),
                 )
