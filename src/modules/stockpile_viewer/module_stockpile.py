@@ -114,20 +114,17 @@ class ModuleStockpiles(commands.Cog):
         if member_5:
             raw_access_list.append((member_5.id, DiscordIdType.USER.name))
 
-        # Create a list ready to be put in the db
-        db_access_list = [
-            (interaction.guild_id, interaction.channel_id, message_id, discord_id, discord_id_type)
-            for discord_id, discord_id_type in raw_access_list
-        ]
-
         # Add current roles & members access to db
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             # Only update the access db if specific permissions were given
-            if db_access_list:
+            if raw_access_list:
                 cursor.executemany(
                     'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
-                    db_access_list,
+                    [
+                        (interaction.guild_id, interaction.channel_id, message_id, discord_id, discord_id_type)
+                        for discord_id, discord_id_type in raw_access_list
+                    ],
                 )
             cursor.execute(
                 'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -195,17 +192,14 @@ class ModuleStockpiles(commands.Cog):
                     ),
                 ))
 
-                # Create a list ready to be put in the db
-                db_access_list = [
-                    (interaction.guild_id, interaction.channel_id, msg.id, discord_id, discord_id_type)
-                    for discord_id, discord_id_type in raw_access_list
-                ]
-
                 # Only update the access db if specific permissions were given
-                if db_access_list:
+                if raw_access_list:
                     cursor.executemany(
                         'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
-                        db_access_list,
+                        [
+                            (interaction.guild_id, interaction.channel_id, msg.id, discord_id, discord_id_type)
+                            for discord_id, discord_id_type in raw_access_list
+                        ],
                     )
 
                 # Add joined interface to existing interfaces
