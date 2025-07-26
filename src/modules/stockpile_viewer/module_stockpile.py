@@ -6,6 +6,7 @@ import pathlib
 import random
 import sqlite3
 import uuid
+from collections.abc import Generator
 from typing import TYPE_CHECKING
 
 import discord
@@ -90,20 +91,11 @@ class ModuleStockpiles(commands.Cog):
         # Retrieve the interface message id
         message_id = (await interaction.original_response()).id
 
-        # Get all non-nulls roles & access as permission list
-        raw_access_list = (
-            # Tuple of either member.id or role.id and discord id type
-            (v.id, DiscordIdType.ROLE.name if k.startswith('role_') else DiscordIdType.USER.name)
-            for k, v in locals().items()
-            # Make sure we use appropriate non-null parameters
-            if k.startswith(('role_', 'member_')) and v is not None
-        )
-
         # Add current roles & members access to db
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             # Only update the access db if specific permissions were given
-            if raw_access_list:
+            if any(raw_access_list := self._generate_access_list(**locals())):
                 cursor.executemany(
                     'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
                     [
@@ -138,15 +130,6 @@ class ModuleStockpiles(commands.Cog):
         self.bot.logger.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
 
-        # Get all non-nulls roles & access as permission list
-        raw_access_list = (
-            # Tuple of either member.id or role.id and discord id type
-            (v.id, DiscordIdType.ROLE.name if k.startswith('role_') else DiscordIdType.USER.name)
-            for k, v in locals().items()
-            # Make sure we use appropriate non-null parameters
-            if k.startswith(('role_', 'member_')) and v is not None
-        )
-
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             query_response = cursor.execute(
@@ -163,7 +146,7 @@ class ModuleStockpiles(commands.Cog):
                 ))
 
                 # Only update the access db if specific permissions were given
-                if raw_access_list:
+                if any(raw_access_list := self._generate_access_list(**locals())):
                     cursor.executemany(
                         'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
                         [
@@ -395,7 +378,6 @@ class ModuleStockpiles(commands.Cog):
             if current in interface_name
         ]
 
-    # VALIDATORS METHODS
     @staticmethod
     def _validate_stockpile_code(code: str) -> str | None:
         # Case where a user entered an invalid sized code
@@ -421,3 +403,16 @@ class ModuleStockpiles(commands.Cog):
         if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
             return '> The provided interface name is not correct'
         return None
+
+    @staticmethod
+    def _generate_access_list(**kwargs) -> list:
+        """
+        Get all non-nulls roles & access as permission list
+        """
+        return [
+            # Tuple of either member.id or role.id and discord id type
+            (v.id, DiscordIdType.ROLE.name if k.startswith('role_') else DiscordIdType.USER.name)
+            for k, v in kwargs.items()
+            # Make sure we use appropriate non-null parameters
+            if k.startswith(('role_', 'member_')) and v is not None
+        ]
