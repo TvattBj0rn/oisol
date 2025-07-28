@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
+from src.modules.stockpile_viewer import ModuleStockpiles, TaskUpdateAvailableStockpiles
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -62,7 +62,7 @@ class Oisol(commands.Bot):
         self.logger.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
         # Tasks loading
-        await self.add_cog(StockpileTasks(self))
+        await self.add_cog(TaskUpdateAvailableStockpiles(self))
         await self.add_cog(DatabaseCleaner(self))
 
     async def setup_hook(self) -> None:

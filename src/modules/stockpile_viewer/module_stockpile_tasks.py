@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from main import Oisol
 
 
-class StockpileTasks(commands.Cog):
+class TaskUpdateAvailableStockpiles(commands.Cog):
     """
     This class handles the database of available stockpiles for each shard. It does not depend on any of the guild the
     bot is a member of. When a new war start on a shard, the bot update the db's rows with the associated shard.
