@@ -19,7 +19,13 @@ class DatabaseCleaner(commands.Cog):
         self.remove_non_existing_interfaces.start()
 
     @staticmethod
-    def _clear_entries(conn_cursor: tuple[sqlite3.Connection, sqlite3.Cursor], channel_id: int, message_id: int, interface_type: str, interface_reference: str) -> None:
+    def _clear_entries(
+            conn_cursor: tuple[sqlite3.Connection, sqlite3.Cursor],
+            channel_id: int,
+            message_id: int,
+            interface_type: str,
+            interface_reference: str,
+    ) -> None:
         for table, column in InterfaceType[interface_type].value:
             conn_cursor[1].execute(
                 'DELETE FROM ? WHERE ? == ?',
