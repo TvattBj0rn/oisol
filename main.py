@@ -92,7 +92,7 @@ class Oisol(commands.Bot):
                 CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, ChannelId, MessageId TEXT, DiscordId TEXT, DiscordIdType TEXT);
                 CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
                 CREATE TABLE IF NOT EXISTS GroupsStockpilesList(AssociationId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
-                CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
+                CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(AssociationId TEXT, GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
                 CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
                 ''',
             )
