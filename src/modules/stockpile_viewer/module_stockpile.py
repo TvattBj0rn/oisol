@@ -340,6 +340,11 @@ class ModuleStockpiles(commands.Cog):
 
     @staticmethod
     def _validate_stockpile_code(code: str) -> str | None:
+        """
+        Ensure the validity of a Foxhole stockpile code by checking its length and its content (all digits is expected).
+        :param code: The code to test
+        :return: None if valid, the error message to send back to the user otherwise.
+        """
         # Case where a user entered an invalid sized code
         if len(code) != 6:
             return '> The code must be a 6-digits code'
@@ -352,6 +357,11 @@ class ModuleStockpiles(commands.Cog):
 
     @staticmethod
     def _validate_stockpile_localisation(localisation: str) -> str | None:
+        """
+        Ensure the validity of a stockpile localization by checking if it is splittable.
+        :param localisation: The localization to test.
+        :return: None if valid, the error message to send back to the user otherwise.
+        """
         # Case where a user did not select a provided localisation
         if ' | ' not in localisation or localisation.startswith(' | '):
             return '> The localisation you entered is incorrect, displayed localisations are clickable'
@@ -359,6 +369,11 @@ class ModuleStockpiles(commands.Cog):
 
     @staticmethod
     def _validate_stockpile_ids(ids_list: list[str]) -> str | None:
+        """
+        Ensure ids list validity by checking the length of the list and validate all element are str typed digits.
+        :param ids_list:
+        :return: None if valid, the error message to send back to the user otherwise.
+        """
         # Case where the user did not select the interface from the provided options
         if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
             return '> The provided interface name is not correct'
