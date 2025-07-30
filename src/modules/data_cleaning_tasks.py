@@ -28,9 +28,10 @@ class DatabaseCleaner(commands.Cog):
     ) -> None:
         for table, column in InterfaceType[interface_type].value:
             conn_cursor[1].execute(
-                'DELETE FROM ? WHERE ? == ?',
-                (table, column, interface_reference),
+                f'DELETE FROM {table} WHERE ? == ?',
+                (column, interface_reference),
             )
+
         conn_cursor[1].execute(
             'DELETE FROM AllInterfacesReferences WHERE ChannelId == ? AND MessageId == ?',
             (channel_id, message_id),
