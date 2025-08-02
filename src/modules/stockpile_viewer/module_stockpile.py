@@ -54,6 +54,22 @@ def get_current_shard(path: pathlib.Path, _code: str) -> str:
     return config.get('default', 'shard', fallback=Shard.ABLE.name)
 
 
+async def update_all_associated_stockpiles(bot: Oisol, association_id: str) -> None:
+    with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+        all_interfaces_to_update = conn.cursor().execute(
+            'SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE AssociationId == ?',
+            (association_id,),
+        ).fetchall()
+
+    for group_id, channel_id, message_id in all_interfaces_to_update:
+        await bot.refresh_interface(
+            group_id,
+            channel_id,
+            message_id,
+            discord.Embed().from_dict(get_stockpile_info(int(group_id), association_id, message_id=int(message_id))),
+        )
+
+
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
@@ -158,7 +174,7 @@ class ModuleStockpiles(commands.Cog):
             )
             conn.commit()
 
-        await self.update_all_associated_stockpiles(ids_list[3])
+        await update_all_associated_stockpiles(self.bot, ids_list[3])
 
         await interaction.response.send_message(
             '> The interface was properly cleared',
@@ -203,7 +219,7 @@ class ModuleStockpiles(commands.Cog):
             )
             conn.commit()
 
-        await self.update_all_associated_stockpiles(ids_list[3])
+        await update_all_associated_stockpiles(self.bot, ids_list[3])
         await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='stockpile-delete', description='Delete an existing stockpile')
@@ -239,7 +255,7 @@ class ModuleStockpiles(commands.Cog):
                 return
             conn.commit()
 
-        await self.update_all_associated_stockpiles(ids_list[3])
+        await update_all_associated_stockpiles(self.bot, ids_list[3])
 
         # Expected outcome
         if len(deleted_stockpiles) == 1:
@@ -256,20 +272,7 @@ class ModuleStockpiles(commands.Cog):
                 ephemeral=True,  # No auto delete in case of a fuck-up
             )
 
-    async def update_all_associated_stockpiles(self, association_id: str) -> None:
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            all_interfaces_to_update = conn.cursor().execute(
-                'SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE AssociationId == ?',
-                (association_id,),
-            ).fetchall()
 
-        for group_id, channel_id, message_id in all_interfaces_to_update:
-            await self.bot.refresh_interface(
-                group_id,
-                channel_id,
-                message_id,
-                discord.Embed().from_dict(get_stockpile_info(int(group_id), association_id, message_id=int(message_id))),
-            )
 
     # AUTOCOMPLETE METHODS
     @stockpile_create.autocomplete('localisation')
