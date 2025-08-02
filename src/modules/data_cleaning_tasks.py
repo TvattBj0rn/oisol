@@ -58,4 +58,4 @@ class DatabaseCleaner(commands.Cog):
                 except (discord.Forbidden, discord.HTTPException):
                     # Rights of the bot have been removed or fail on network part
                     continue
-        self.bot.logger.task(f'[TASK] remove_non_existing_interface task complete in {time.time() - start_time}s')
+        self.bot.logger.task(f'remove_non_existing_interface task complete in {time.time() - start_time}s')
