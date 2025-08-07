@@ -61,6 +61,9 @@ class Oisol(commands.Bot):
 
         self.logger.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
+        # Display current guilds with the format: - Name (id)
+        self.logger.info(f'Guilds joined ({len(self.guilds)}):\n{'\n'.join(f'- {guild.name} ({guild.id})' for guild in self.guilds)}')
+
         # Tasks loading
         await self.add_cog(TaskUpdateAvailableStockpiles(self))
         await self.add_cog(DatabaseCleaner(self))
