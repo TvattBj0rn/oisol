@@ -2033,19 +2033,19 @@ STRUCTURES_WIKI_ENTRIES = [
     },
     {
         'name': 'Relic Base (Small)',
-        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
+        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base#Small-0',
         'keywords': 'relicbasesmall',
         'wiki_table': WikiTables.STRUCTURES,
     },
     {
         'name': 'Relic Base (Medium)',
-        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
+        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base#Medium-0',
         'keywords': 'relicbasemedium',
         'wiki_table': WikiTables.STRUCTURES,
     },
     {
         'name': 'Relic Base (Large)',
-        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base',
+        'url': 'https://foxhole.wiki.gg/wiki/Relic_Base#Large-0',
         'keywords': 'relicbaselarge',
         'wiki_table': WikiTables.STRUCTURES,
     },
