@@ -14,6 +14,10 @@ class EnumValue(EnumMeta):
         return value
 
 
+class CacheKeys(EnumValue):
+    WORLD_SPAWNS_STATUS = 'world_spawn_status'
+
+
 class DamageTypes(EnumValue):
     LIGHT_KINETIC = 'Light Kinetic'
     HEAVY_KINETIC = 'Heavy Kinetic'
@@ -128,6 +132,8 @@ class MapIcon(Enum):
     COASTAL_GUN = 53
     SOUL_FACTORY = 54
     TOWN_BASE_1 = 56
+    TOWN_BASE_2 = 57 # For the town bases, the integer refers to the tier of the town base, not its type
+    TOWN_BASE_3 = 58
     STORM_CANON = 59
     INTEL_CENTER = 60
     COAL_FIELD = 61
