@@ -136,6 +136,7 @@ EMOJIS_FROM_DICT = {
     'Flamethrower Ammo': '<:flamethrower_ammo:1317941667386490992>',
     'Flame Ammo': '<:flame_ammo:1317941665016844392>',
     'Shrapnel Mortar Shell': '<:shrapnel_mortar:1317941666019152012>',
+    'Incendiary Mortar Shell': '<:incendiary_mortar_shell:1405661957847121920>',
     'Tracks': '<:tracked:1239349968767291454>',
     'Fuel Tank': '<:fuel_leak:1239349986471313499>',
     'Turret': '<:turret:1239349978170921060>',
