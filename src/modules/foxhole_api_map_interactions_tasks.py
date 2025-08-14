@@ -65,7 +65,7 @@ class WorldSpawnsStatus(commands.Cog):
         :param new_data: global list of regions lists of subregions tuples
         :param shard_name: name of the shard to update the cache to
         """
-        self.bot.cache[shard_name] = dict(subregion for region in new_data for subregion in region)
+        self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][shard_name] = dict(subregion for region in new_data for subregion in region)
 
     async def _update_shard_world_spawn_cache(self, shard_api: FoxholeAsyncAPIWrapper):
         async with aiohttp.ClientSession() as session:

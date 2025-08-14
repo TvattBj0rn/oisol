@@ -160,9 +160,9 @@ class WikiTables(Enum):
     VEHICLE_CLASS = 'VehicleClass'
 
 class WorldSpawnTypes(Enum):
-    RELIC_SMALL = auto()
-    RELIC_MEDIUM = auto()
-    RELIC_LARGE = auto()
-    TOWN_BASE_POST_OFFICE = auto()
-    TOWN_BASE_SCHOOL = auto()
-    TOWN_BASE_CENTER = auto()
+    RELIC_SMALL = 'Relic Base (Small)'
+    RELIC_MEDIUM = 'Relic Base (Medium)'
+    RELIC_LARGE = 'Relic Base (Large)'
+    TOWN_BASE_POST_OFFICE = 'Post Office'
+    TOWN_BASE_SCHOOL = 'School'
+    TOWN_BASE_CENTER = 'Town Center'

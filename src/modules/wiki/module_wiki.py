@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import configparser
 import math
 import operator
 import random
@@ -15,7 +16,7 @@ from src.utils import (
     PRODUCTION_ENTRIES,
     RESOURCE_TO_CRATE,
     STRUCTURES_WIKI_ENTRIES,
-    VEHICLES_WIKI_ENTRIES,
+    VEHICLES_WIKI_ENTRIES, REGION_WIKI_ENTRIES, REGIONS_TYPES, OISOL_HOME_PATH, DataFilesPath, CacheKeys,
 )
 
 from .mpf_generation import generate_mpf_data
@@ -125,26 +126,60 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=discord.Embed().from_dict(embeded_data), ephemeral=not visible)
 
+    async def _return_unexpected_error(self, interaction: discord.Interaction, entry_error: str):
+        await interaction.response.send_message(
+            '> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !',
+            ephemeral=True)
+        self.bot.logger.warning(f'Entry URL failing: {entry_error}')
+
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
 
-        entry_searches = (
-            next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == search_request), None),
-            next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == search_request), None),
-        )
-        if not any(entry_searches):
-            await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
-            # In case the user provided a url that is not from the official wiki
-            if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
-                self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
-            return
+        if search_request in REGIONS_TYPES:
+            config = configparser.ConfigParser()
+            config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
+            guild_shard = config.get('default', 'shard', fallback='ABLE')
 
-        entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
-        scraped_health_data = scrap_health(entry_url, entry_name)
+            town_tier_mapping = {
+                'TOWN_BASE_1': ' (Tier 1)',
+                'TOWN_BASE_2': ' (Tier 2)',
+                'TOWN_BASE_3': ' (Tier 3)',
+            }
+
+            tier_level = self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][guild_shard][search_request]
+            base_type = REGIONS_TYPES[search_request].value
+            subregion_entry = None
+
+            for entry in STRUCTURES_WIKI_ENTRIES:
+                if entry['name'] == f'{base_type}{town_tier_mapping.get(tier_level, '')}':
+                    subregion_entry = entry
+                    break
+            if subregion_entry is None:
+                await self._return_unexpected_error(interaction, search_request)
+                return
+
+            entry_url, entry_name = 'https://foxhole.wiki.gg/wiki/Structure_Health', subregion_entry['name']
+            scraped_health_data = scrap_health(entry_url, entry_name)
+            if 'Name' in scraped_health_data:
+                scraped_health_data['Name'] = f'{search_request} | {entry_name}'
+        else:
+            entry_searches = (
+                next((('https://foxhole.wiki.gg/wiki/Structure_Health', entry['name']) for entry in STRUCTURES_WIKI_ENTRIES if entry['url'] == search_request), None),
+                next((('https://foxhole.wiki.gg/wiki/Vehicle_Health', entry['name']) for entry in VEHICLES_WIKI_ENTRIES if entry['url'] == search_request), None),
+            )
+            if not any(entry_searches):
+                await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
+                # In case the user provided a url that is not from the official wiki
+                if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
+                    self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
+                return
+
+            entry_url, entry_name = entry_searches[0] if entry_searches[0] is not None else entry_searches[1]
+
+            scraped_health_data = scrap_health(entry_url, entry_name)
         if 'Name' not in scraped_health_data:
-            await interaction.response.send_message('> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !', ephemeral=True)
-            self.bot.logger.warning(f'Entry URL failing: {entry_url, entry_name}')
+            await self._return_unexpected_error(interaction, f'{entry_url, entry_name}')
             return
 
         await interaction.response.send_message(embed=self.generate_hmtk_embed(scraped_health_data, entry_url), ephemeral=not visible)
@@ -218,7 +253,7 @@ class ModuleWiki(commands.Cog):
     # used in health command
     @entities_health.autocomplete('search_request')
     async def structures_vehicles_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
-        choice_list = self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES, current)
+        choice_list = self.generic_autocomplete(STRUCTURES_WIKI_ENTRIES + VEHICLES_WIKI_ENTRIES + REGION_WIKI_ENTRIES, current)
         return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
 
     # used in production command
