@@ -158,3 +158,11 @@ class WikiTables(Enum):
     STRUCTURES = 'structures'
     VEHICLES = 'vehicles'
     VEHICLE_CLASS = 'VehicleClass'
+
+class WorldSpawnTypes(Enum):
+    RELIC_SMALL = auto()
+    RELIC_MEDIUM = auto()
+    RELIC_LARGE = auto()
+    TOWN_BASE_POST_OFFICE = auto()
+    TOWN_BASE_SCHOOL = auto()
+    TOWN_BASE_CENTER = auto()
