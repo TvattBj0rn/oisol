@@ -14,6 +14,10 @@ class EnumValue(EnumMeta):
         return value
 
 
+class CacheKeys(EnumValue):
+    WORLD_SPAWNS_STATUS = 'world_spawn_status'
+
+
 class DamageTypes(EnumValue):
     LIGHT_KINETIC = 'Light Kinetic'
     HEAVY_KINETIC = 'Heavy Kinetic'
@@ -128,6 +132,8 @@ class MapIcon(Enum):
     COASTAL_GUN = 53
     SOUL_FACTORY = 54
     TOWN_BASE_1 = 56
+    TOWN_BASE_2 = 57 # For the town bases, the integer refers to the tier of the town base, not its type
+    TOWN_BASE_3 = 58
     STORM_CANON = 59
     INTEL_CENTER = 60
     COAL_FIELD = 61
@@ -152,3 +158,11 @@ class WikiTables(Enum):
     STRUCTURES = 'structures'
     VEHICLES = 'vehicles'
     VEHICLE_CLASS = 'VehicleClass'
+
+class WorldSpawnTypes(Enum):
+    RELIC_SMALL = 'Relic Base (Small)'
+    RELIC_MEDIUM = 'Relic Base (Medium)'
+    RELIC_LARGE = 'Relic Base (Large)'
+    TOWN_BASE_POST_OFFICE = 'Post Office'
+    TOWN_BASE_SCHOOL = 'School'
+    TOWN_BASE_CENTER = 'Town Center'
