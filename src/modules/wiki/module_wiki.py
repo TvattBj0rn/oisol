@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import configparser
-import math
 import operator
 import random
 from typing import TYPE_CHECKING
@@ -11,18 +10,10 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.utils import (
-    ALL_WIKI_ENTRIES,
-    EMOJIS_FROM_DICT,
-    PRODUCTION_ENTRIES,
-    RESOURCE_TO_CRATE,
-    STRUCTURES_WIKI_ENTRIES,
-    VEHICLES_WIKI_ENTRIES, REGION_WIKI_ENTRIES, REGIONS_TYPES, OISOL_HOME_PATH, DataFilesPath, CacheKeys, WikiTables,
+    ALL_WIKI_ENTRIES, REGIONS_TYPES, OISOL_HOME_PATH, DataFilesPath, CacheKeys, WikiTables
 )
 from .health_embed_template import HealthEntryEngine
 
-from .mpf_generation import generate_mpf_data
-from .scrapers.scrap_wiki_entry_health import scrap_health
-from .scrapers.scrap_wiki_entry_production import scrap_production
 from .wiki_embeds_templates import WikiTemplateFactory
 from .wiki_api_requester import get_entry_attributes
 from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
