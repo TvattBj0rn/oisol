@@ -6,11 +6,9 @@ from itertools import compress
 
 
 class FoxholeWikiAPIWrapper:
-    def __init__(self, associated_tables: list, **kwargs):
+    def __init__(self, **kwargs):
         self.__entry_point = 'https://foxhole.wiki.gg/api.php?'
-        self.__context_tables = associated_tables
         self.__session = aiohttp.ClientSession(**kwargs)
-
 
     async def __aenter__(self):
         return self
@@ -110,16 +108,18 @@ class FoxholeWikiAPIWrapper:
             # In case of error during the request, None will be returned but will fall back to False anyway
             return bool(response['cargoquery'])
 
-    async def find_table_from_value_name(self, value_name: str) -> str | None:
+    async def find_table_from_value_name(self, value_name: str, context_tables: list) -> str | None:
         """
         Find a full name in the context tables, it is assumed all context tables have a "name" field
         :param value_name: name to find in tables
+        :param context_tables: tables to search in
         :return: table where value_name was found, None otherwise
         """
-        async with aiohttp.ClientSession() as session: # Create a new session for the gather to prevent closing the main one
-            mask = await asyncio.gather(*(self.is_name_in_table(session, table, value_name) for table in self.__context_tables))
 
-        return next(compress(self.__context_tables, mask), None)
+        async with aiohttp.ClientSession() as session: # Create a new session for the gather to prevent closing the main one
+            mask = await asyncio.gather(*(self.is_name_in_table(session, table, value_name) for table in context_tables))
+
+        return next(compress(context_tables, mask), None)
 
     async def retrieve_image_url_from_name(self, session: ClientSession, image_file_name: str) -> str | None:
         """
@@ -193,24 +193,3 @@ class FoxholeWikiAPIWrapper:
         row_data['damages'] = available_damages
 
         return row_data
-
-
-async def main():
-    async with FoxholeWikiAPIWrapper(['maps', 'structures', 'vehicles']) as wrapper:
-        # Auto complete
-        user_search_request = next(iter(await wrapper.wiki_search_request('svh')))
-
-        # Table to call
-        health_table = await wrapper.find_table_from_value_name(user_search_request)
-
-        if health_table == 'maps':
-            user_search_request = next(iter(await wrapper.wiki_search_request('kirknell', do_resolve_redirect=False)))
-            health_table = 'structures'
-            # Convert to building -> struct
-
-        res_vics = await wrapper.retrieve_row_data_from_table(['image', 'type', 'vehicle_hp', 'armour_type'], 'vehicles', '85V-g “Talos”')
-        res_strucs = await wrapper.retrieve_row_data_from_table(['image', 'type', 'structure_hp', 'structure_hp_entrenched', 'armour_type'], 'structures', '50-500 “Thunderbolt” Cannon')
-
-    print(res_vics, res_strucs)
-
-asyncio.run(main())
