@@ -9,13 +9,9 @@ WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,from=uv,source=/uv,target=/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project
+    uv pip install .
 
 # Copy the project into the image
 ADD . /app
-
-# Sync the project
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked
 
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]
