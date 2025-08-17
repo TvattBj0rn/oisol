@@ -110,7 +110,8 @@ class HealthEntryEngine:
 
     def __process_all_damages(self) -> None:
         """
-        main engine method
+        Main engine method, that compute all possible damages depending on the case and generates the strings for the
+        embed.
         """
         for category_name, category_damages in self.__game_damages.items():
             category_field = {'name': f'{category_name.upper()}{f' ({emoji})' if (emoji := EMOJIS_FROM_DICT.get(category_name, '')) else ''}', 'value': ''}
@@ -127,12 +128,12 @@ class HealthEntryEngine:
                 # Case where the amount to destroy is too much
                 if number_to_kill > 500:
                     break
+
                 number_to_kill_special = self.__compute_damage(self.__special_hp, damage_value, armor_damage_reduction)
 
                 if damage_dict['damage rng'] == '1':
                     damage_value_rng = damage_value * 1.5
                     number_to_kill_max = self.__compute_damage(self.__hp, damage_value_rng, armor_damage_reduction)
-
                     number_to_kill_special_max = self.__compute_damage(self.__special_hp, damage_value_rng, armor_damage_reduction)
 
                     string_res = self.__format_results(
@@ -144,6 +145,8 @@ class HealthEntryEngine:
                     )
                 else:
                     string_res = self.__format_results(damage_dict['name'], number_to_kill, number_to_kill_special)
+
+                # Manual separators for better readability
                 category_field['value'] += f'{string_res}{'\n' if i and not i % 3 else '   '}'
 
             # No need to add empty titles with no related damages
