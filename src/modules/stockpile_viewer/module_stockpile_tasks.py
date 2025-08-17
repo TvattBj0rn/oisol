@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from main import Oisol
 
 
-class StockpileTasks(commands.Cog):
+class TaskUpdateAvailableStockpiles(commands.Cog):
     """
     This class handles the database of available stockpiles for each shard. It does not depend on any of the guild the
     bot is a member of. When a new war start on a shard, the bot update the db's rows with the associated shard.
@@ -62,29 +62,32 @@ class StockpileTasks(commands.Cog):
 
     def _update_stockpile_subregions(self, shard_api: FoxholeAPIWrapper) -> None:
         self.all_regions_stockpiles = []
-        if current_war_data := shard_api.get_current_war_state():
-            with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-                cursor = conn.cursor()
-                last_war_start_time = cursor.execute(
-                    f"SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == '{shard_api.shard_name}'",
-                ).fetchone()[0]
-                # If war has not started yet
-                if not current_war_data['conquestStartTime']:
+        if not (current_war_data := shard_api.get_current_war_state()):
+            return
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            last_war_start_time = cursor.execute(
+                'SELECT MAX(ConquestStartTime) FROM StockpilesZones WHERE Shard == ?',
+                (shard_api.shard_name,),
+            ).fetchone()[0]
+            # If war has not started yet
+            if not current_war_data['conquestStartTime']:
+                return
+            # New war has started
+            if last_war_start_time is None or current_war_data['conquestStartTime'] > last_war_start_time:
+                if not (latest_stockpiles := self._get_latest_stockpiles_zones(shard_api, current_war_data)):
                     return
-                # New war has started
-                if last_war_start_time is None or current_war_data['conquestStartTime'] > last_war_start_time:
-                    if not (latest_stockpiles := self._get_latest_stockpiles_zones(shard_api, current_war_data)):
-                        return
-                    if last_war_start_time is not None:
-                        cursor.execute(
-                            f"DELETE FROM StockpilesZones WHERE ConquestStartTime == {last_war_start_time} AND Shard == '{shard_api.shard_name}'",
-                        )
-                    cursor.executemany(
-                        'INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)',
-                        latest_stockpiles,
+                if last_war_start_time is not None:
+                    cursor.execute(
+                        'DELETE FROM StockpilesZones WHERE ConquestStartTime == ? AND Shard == ?',
+                        (last_war_start_time, shard_api.shard_name),
                     )
-                    conn.commit()
-                    self.bot.logger.task(f'Available stockpiles were updated for {shard_api.shard_name}')
+                cursor.executemany(
+                    'INSERT INTO StockpilesZones (Shard, WarNumber, ConquestStartTime, Region, Subregion, Type) VALUES (?, ?, ?, ?, ?, ?)',
+                    latest_stockpiles,
+                )
+                conn.commit()
+                self.bot.logger.task(f'Available stockpiles were updated for {shard_api.shard_name}')
 
     @tasks.loop(minutes=2)
     async def refresh_able_shard_stockpiles_subregions(self) -> None:
