@@ -87,7 +87,7 @@ class FoxholeWikiAPIWrapper:
 
         if response is None:
             return None
-
+        print(response)
         return list(response['cargofields'])
 
     async def is_name_in_table(self, session: ClientSession, table: str, name: str) -> bool:
@@ -106,7 +106,7 @@ class FoxholeWikiAPIWrapper:
             response = await self.__response_handler(async_response)
 
             # In case of error during the request, None will be returned but will fall back to False anyway
-            return bool(response['cargoquery'])
+            return bool(response.get('cargoquery', False))
 
     async def find_table_from_value_name(self, value_name: str, context_tables: list) -> str | None:
         """
@@ -181,15 +181,22 @@ class FoxholeWikiAPIWrapper:
             async_vehicle_data = await session.get(
                 f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where=name="{target_name}"')
             row_data = (await self.__response_handler(async_vehicle_data))['cargoquery'][0]['title']
+
             # tasks that can be run independently at once, format -> [(foo, args)],
             # result of gather is a list of each method result, following the call order
-            image_url, armor_attributes, available_damages = await asyncio.gather(*(foo(*args) for foo, *args in [
-                (self.retrieve_image_url_from_name, session, row_data['image']),
-                (self.retrieve_armor_attributes, session, row_data['armour type']),
-                (self.retrieve_damage_emitters, session)
-            ]))
-        row_data['image_url'] = image_url
-        row_data['armor_attributes'] = armor_attributes
-        row_data['damages'] = available_damages
+            tasks_stack = []
+            if 'image' in row_data:
+                tasks_stack.append((self.retrieve_image_url_from_name, session, row_data['image']))
+            if 'armour type' in row_data:
+                tasks_stack.append((self.retrieve_armor_attributes, session, row_data['armour type']))
+            tasks_stack.append((self.retrieve_damage_emitters, session))
+
+            res = await asyncio.gather(*(foo(*args) for foo, *args in tasks_stack))
+
+        row_data['image_url'] = res[0]
+        row_data['damages'] = res[-1]
+
+        if len(res) == 3:
+            row_data['armor_attributes'] = res[1]
 
         return row_data

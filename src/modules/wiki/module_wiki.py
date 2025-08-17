@@ -1,21 +1,16 @@
 from __future__ import annotations
 
 import configparser
-import operator
-import random
 from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import (
-    ALL_WIKI_ENTRIES, REGIONS_TYPES, OISOL_HOME_PATH, DataFilesPath, CacheKeys, WikiTables
-)
+from src.utils import REGIONS_TYPES, OISOL_HOME_PATH, DataFilesPath, CacheKeys, WikiTables
 from .health_embed_template import HealthEntryEngine
 
 from .wiki_embeds_templates import WikiTemplateFactory
-from .wiki_api_requester import get_entry_attributes
 from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
 
 if TYPE_CHECKING:
@@ -29,26 +24,19 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
-        if not search_request.startswith('https://foxhole.wiki.gg/wiki/'):
-            await interaction.response.send_message('> The request you made was incorrect', ephemeral=True)
-            # In case the user provided a url that is not from the official wiki
-            if search_request.startswith(('https://', 'http://')) and not search_request.startswith('https://foxhole.wiki.gg'):
-                self.bot.logger.warning(f'{interaction.user.name} provided a suspicious URL in {interaction.guild.name} ({search_request})')
-            return
 
-        entry: dict = next((entry for entry in ALL_WIKI_ENTRIES if entry['url'] == search_request), '')
+        wiki_name, _ = search_request.split('__')
+        async with FoxholeWikiAPIWrapper() as wrapper:
+            # search request, but redirect are resolved
+            resolved_search_request = next(iter(await wrapper.wiki_search_request(wiki_name)))
 
-        data_dict = await get_entry_attributes(entry['name'], entry['wiki_table'].value)
+            table_name = await wrapper.find_table_from_value_name(resolved_search_request, [WikiTables.MAPS.value, WikiTables.VEHICLES.value, WikiTables.STRUCTURES.value, WikiTables.ITEM_DATA.value])
+            target_fields = await wrapper.fetch_cargo_table_fields(table_name)
+            data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, resolved_search_request)
 
-        embeded_data = WikiTemplateFactory(data_dict).get(entry['wiki_table']).generate_embed_data()
+        embeded_data = WikiTemplateFactory(data_dict).get(WikiTables(table_name)).generate_embed_data()
 
         await interaction.response.send_message(embed=discord.Embed().from_dict(embeded_data), ephemeral=not visible)
-
-    async def _return_unexpected_error(self, interaction: discord.Interaction, entry_error: str):
-        await interaction.response.send_message(
-            '> Unexpected error, most likely due to a url change not yet implemented on the bot side. Please report this error to @vaskbjorn !',
-            ephemeral=True)
-        self.bot.logger.warning(f'Entry URL failing: {entry_error}')
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
@@ -60,6 +48,9 @@ class ModuleWiki(commands.Cog):
             WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction']
         }
 
+        # Retrieve the wiki name from the wiki_name__user_input
+        search_request, _ =  search_request.split('__')
+
         async with FoxholeWikiAPIWrapper() as wrapper:
             # search request, but redirect are resolved
             resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)))
@@ -70,9 +61,9 @@ class ModuleWiki(commands.Cog):
 
             # In case the user requested something that cannot be processed as a "health" entity
             if health_table is None or (health_table_redirect is not None and health_table is not None and health_table == WikiTables.MAPS.value):
-                print(health_table, health_table_redirect)
                 await interaction.response.send_message('> This entry is not a vehicle or a structure', ephemeral=True, delete_after=5)
                 return
+
             elif health_table == WikiTables.MAPS.value:
                 # Get the discord's server current shard
                 config = configparser.ConfigParser()
@@ -103,44 +94,8 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
-    @staticmethod
-    def generic_autocomplete(entries: list, current: str) -> list:
-        """
-        Method to generate search suggestions to the user
-        :param entries: List of wiki entries to use (differing between health and wiki)
-        :param current: Current input given by the user
-        :return: List of the best suggestions for the user
-        """
-        # Default search values, before any input in the search bar
-        if not current:
-            return [(wiki_entry['name'], wiki_entry['url']) for wiki_entry in random.choices(entries, k=5)]
-
-        # Tokenize user input
-        current = current.strip().lower().split()
-
-        # Get number of matched keywords for each entry
-        search_results = []
-        for wiki_entry in entries:
-            search_value = 0
-            for kw in current:
-                if kw in wiki_entry['keywords']:
-                    search_value += 1
-            # We only want entries related to the search, 0 means nothing matched for a specific entry
-            if search_value:
-                search_results.append((wiki_entry['name'], wiki_entry['url'], search_value))
-
-        # Sort by descending order to get searches with more value first
-        search_results = sorted(search_results, key=operator.itemgetter(2), reverse=True)[:25]
-
-        return [(entry_result[0], entry_result[1]) for entry_result in search_results]
-
-    # used in wiki commands
-    @wiki.autocomplete('search_request')
-    async def all_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
-        choice_list = self.generic_autocomplete(ALL_WIKI_ENTRIES, current)
-        return [app_commands.Choice(name=entry[0], value=entry[1]) for entry in choice_list]
-
     # used in health command
+    @wiki.autocomplete('search_request')
     @entities_health.autocomplete('search_request')
     async def structures_vehicles_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         if not current:
@@ -149,4 +104,4 @@ class ModuleWiki(commands.Cog):
         async with FoxholeWikiAPIWrapper() as wrapper:
             search_results_redirect = await wrapper.wiki_search_request(current, do_resolve_redirect=False)
 
-        return [app_commands.Choice(name=result, value=result) for result in list(search_results_redirect)]
+        return [app_commands.Choice(name=result, value=f'{result}__{current}') for result in list(search_results_redirect)]
