@@ -18,24 +18,6 @@ class CacheKeys(EnumValue):
     WORLD_SPAWNS_STATUS = 'world_spawn_status'
 
 
-class DamageTypes(EnumValue):
-    LIGHT_KINETIC = 'Light Kinetic'
-    HEAVY_KINETIC = 'Heavy Kinetic'
-    ANTI_TANK_KINETIC = 'Anti-Tank Kinetic'
-    ANTI_TANK_KINETIC_STRUCTURE = 'Anti-Tank Kinetic Structure'
-    SHRAPNEL = 'Shrapnel'
-    FLARE = 'Flare'
-    POISONOUS_GAS = 'Poisonous Gas'
-    EXPLOSIVE = 'Explosive'
-    HIGH_EXPLOSIVE = 'High Explosive'
-    DEMOLITION = 'Demolition'
-    ARMOUR_PIERCING = 'Armour Piercing'
-    ANTI_TANK_EXPLOSIVE = 'Anti-Tank Explosive'
-    INCENDIARY = 'Incendiary'
-    INCENDIARY_HIGH_EXPLOSIVE = 'Incendiary High Explosive'
-    MELEE = 'Melee'
-
-
 class DataFilesPath(Enum):
     CONFIG_DIR = 'guilds_config_files'
 

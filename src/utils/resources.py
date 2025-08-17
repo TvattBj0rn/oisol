@@ -1,102 +1,10 @@
 import pathlib
 
 from . import WorldSpawnTypes
-from .oisol_enums import DamageTypes, WikiTables
+
 
 OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
 TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
-
-
-DAMAGE_TYPES_ATTRIBUTION = {
-    '.44': DamageTypes.LIGHT_KINETIC,
-    '7.62mm': DamageTypes.LIGHT_KINETIC,
-    '7.92mm': DamageTypes.LIGHT_KINETIC,
-    '8mm': DamageTypes.LIGHT_KINETIC,
-    '9mm': DamageTypes.LIGHT_KINETIC,
-    'A3 Harpa Fragmentation Grenade': DamageTypes.LIGHT_KINETIC,
-    'Buckshot': DamageTypes.LIGHT_KINETIC,
-    "Crow's Foot Mine": DamageTypes.LIGHT_KINETIC,
-    '12.7mm': DamageTypes.HEAVY_KINETIC,
-    '20mm': DamageTypes.ANTI_TANK_KINETIC,
-    'Garrisoned House': DamageTypes.ANTI_TANK_KINETIC_STRUCTURE,
-    'Safe House': DamageTypes.ANTI_TANK_KINETIC_STRUCTURE,
-    'Town Base': DamageTypes.ANTI_TANK_KINETIC_STRUCTURE,
-    'Relic Base': DamageTypes.ANTI_TANK_KINETIC_STRUCTURE,
-    'Anti-Tank Pillbox': DamageTypes.ANTI_TANK_KINETIC_STRUCTURE,
-    'Bomastone Grenade': DamageTypes.SHRAPNEL,
-    'Shrapnel Mortar Shell': DamageTypes.SHRAPNEL,
-    'Flare Mortar Shell': DamageTypes.FLARE,
-    'Green Ash Grenade': DamageTypes.POISONOUS_GAS,
-    '30mm': DamageTypes.EXPLOSIVE,
-    '40mm': DamageTypes.EXPLOSIVE,
-    '75mm': DamageTypes.EXPLOSIVE,
-    'Mammon 91-b': DamageTypes.EXPLOSIVE,
-    'RPG': DamageTypes.EXPLOSIVE,
-    'Tremola Grenade GPb-1': DamageTypes.EXPLOSIVE,
-    '120mm': DamageTypes.HIGH_EXPLOSIVE,
-    '150mm': DamageTypes.HIGH_EXPLOSIVE,
-    '300mm': DamageTypes.HIGH_EXPLOSIVE,
-    'E680-S Rudder Lock': DamageTypes.HIGH_EXPLOSIVE,
-    'Sea Mine': DamageTypes.HIGH_EXPLOSIVE,  # Alias of E680-S Rudder Lock
-    'Model-7 “Evie”': DamageTypes.HIGH_EXPLOSIVE,
-    'Depth Charge': DamageTypes.HIGH_EXPLOSIVE,  # Alias of Model-7 “Evie”
-    'Moray Torpedo': DamageTypes.HIGH_EXPLOSIVE,
-    'Torpedo': DamageTypes.HIGH_EXPLOSIVE,  # Alias of Moray Torpedo
-    'Mortar Shell': DamageTypes.HIGH_EXPLOSIVE,
-    '250mm': DamageTypes.DEMOLITION,
-    'Alligator Charge': DamageTypes.DEMOLITION,
-    'Havoc Charge': DamageTypes.DEMOLITION,
-    "Hydra's Whisper": DamageTypes.DEMOLITION,
-    '68mm': DamageTypes.ARMOUR_PIERCING,
-    '94.5mm': DamageTypes.ARMOUR_PIERCING,
-    'AP⧸RPG': DamageTypes.ARMOUR_PIERCING,
-    'ARC⧸RPG': DamageTypes.ARMOUR_PIERCING,
-    'Ignifist 30': DamageTypes.ARMOUR_PIERCING,
-    'Abisme AT-99': DamageTypes.ANTI_TANK_EXPLOSIVE,
-    'Anti-Tank Sticky Bomb': DamageTypes.ANTI_TANK_EXPLOSIVE,
-    'B2 Varsi Anti-Tank Grenade': DamageTypes.ANTI_TANK_EXPLOSIVE,
-    'BF5 White Ash Flask Grenade': DamageTypes.ANTI_TANK_EXPLOSIVE,
-    'Flamethrower Ammo': DamageTypes.INCENDIARY,  # Alias of Willow's Bane Ammo & “Molten Wind” v.II Ammo
-    '“Molten Wind” v.II Ammo': DamageTypes.INCENDIARY,
-    'Flame Ammo': DamageTypes.INCENDIARY,
-    "Willow's Bane Ammo": DamageTypes.INCENDIARY,
-    '3C-High Explosive Rocket': DamageTypes.INCENDIARY_HIGH_EXPLOSIVE,
-    '4C-Fire Rocket': DamageTypes.INCENDIARY_HIGH_EXPLOSIVE,
-    'Incendiary Mortar Shell': DamageTypes.INCENDIARY_HIGH_EXPLOSIVE,
-    'Buckhorn CCQ-18': DamageTypes.MELEE,
-    'Eleos Infantry Dagger': DamageTypes.MELEE,
-    'Falias Raiding Club': DamageTypes.MELEE,
-    'Fists': DamageTypes.MELEE,
-}
-
-
-NAMES_TO_ACRONYMS = {
-    'Assembly Materials I': 'Asmats I',
-    'Assembly Materials II': 'Asmats II',
-    'Assembly Materials III': 'Asmats III',
-    'Assembly Materials IV': 'Asmats IV',
-    'Assembly Materials V': 'Asmats V',
-    'Construction Materials': 'Cmats',
-    'Processed Construction Materials': 'PCmats',
-    'Steel Construction Materials': 'SCmats',
-    'Unstable Substances': 'Unstable Subs.',
-    'Rare Alloys': 'Rare Alloys',
-    'Thermal Shielding': 'Thermal Shield.',
-    'Naval Hull Segments': 'Naval Hull Seg.',
-    'Naval Shell Plating': 'Naval Shell Plat.',
-    'Naval Turbine Components': 'Naval Turbine Comp.',
-    'A0E-9 Rocket Warhead': 'Rocket Warhead',
-    'A0E-9 Rocket Body': 'Rocket Body',
-    'A0E-9 Rocket Booster': 'Rocket Booster',
-}
-
-
-RESOURCE_TO_CRATE = {
-    'Refined Materials': 20,
-    'Basic Materials': 100,
-    'Explosive Powder': 40,
-    'Heavy Explosive Powder': 30,
-}
 
 
 NUMBER_TO_EQUIPMENT_SLOT = {
@@ -292,6 +200,7 @@ EMOTES_CUSTOM_ID = {
     '🇾': 'TodoButtonY',
     '🇿': 'TodoButtonZ',
 }
+
 
 REGIONS_TYPES = {
     # The Fingers
