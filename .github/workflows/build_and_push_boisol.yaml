@@ -2,11 +2,11 @@ name: Build and push Docker image for ARM
 
 on:
   push:
-    branches: [ main, boisol ]
+    branches: [ boisol ]
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  IMAGE_NAME: tvattbj0rn/oisol
+  IMAGE_NAME: tvattbj0rn/boisol
   IMAGE_TAG: latest
 
 jobs:
