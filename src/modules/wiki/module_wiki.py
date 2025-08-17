@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 import configparser
-from typing import TYPE_CHECKING
+from itertools import compress
+from typing import TYPE_CHECKING, final
 
 import discord
 from discord import app_commands
@@ -25,10 +27,9 @@ class ModuleWiki(commands.Cog):
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
 
-        wiki_name, _ = search_request.split('__')
         async with FoxholeWikiAPIWrapper() as wrapper:
             # search request, but redirect are resolved
-            resolved_search_request = next(iter(await wrapper.wiki_search_request(wiki_name)))
+            resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)), search_request)
 
             table_name = await wrapper.find_table_from_value_name(resolved_search_request, [WikiTables.MAPS.value, WikiTables.VEHICLES.value, WikiTables.STRUCTURES.value, WikiTables.ITEM_DATA.value])
             target_fields = await wrapper.fetch_cargo_table_fields(table_name)
@@ -48,12 +49,9 @@ class ModuleWiki(commands.Cog):
             WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction']
         }
 
-        # Retrieve the wiki name from the wiki_name__user_input
-        search_request, _ =  search_request.split('__')
-
         async with FoxholeWikiAPIWrapper() as wrapper:
             # search request, but redirect are resolved
-            resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)))
+            resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)), search_request)
 
             # Get the table to request, depending on the user request
             health_table = await wrapper.find_table_from_value_name(resolved_search_request, [WikiTables.MAPS.value, WikiTables.STRUCTURES.value, WikiTables.VEHICLES.value])
@@ -94,7 +92,6 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
-    # used in health command
     @wiki.autocomplete('search_request')
     @entities_health.autocomplete('search_request')
     async def structures_vehicles_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
@@ -103,5 +100,31 @@ class ModuleWiki(commands.Cog):
 
         async with FoxholeWikiAPIWrapper() as wrapper:
             search_results_redirect = await wrapper.wiki_search_request(current, do_resolve_redirect=False)
+            mask = await asyncio.gather(*(wrapper.is_page_wiki_page(wrapper.get_active_session(), table) for table in list(search_results_redirect)))
 
-        return [app_commands.Choice(name=result, value=f'{result}__{current}') for result in list(search_results_redirect)]
+
+        search_results_redirect = compress(list(search_results_redirect), mask)
+
+        tier_iterable = ['(Tier 1)', '(Tier 2)', '(Tier 3)']
+        manual_corrections = {
+            'Safe House': tier_iterable,
+            'Town Center': tier_iterable,
+            'Post Office': tier_iterable,
+            'School': tier_iterable,
+            'Bunker Base': tier_iterable,
+            'Garrisoned House': [
+                '- Small (Tier 1)', '- Medium (Tier 1)', '- Large (Tier 1)',
+                '- Small (Tier 2)', '- Medium (Tier 2)', '- Large (Tier 2)',
+                '- Small (Tier 3)', '- Medium (Tier 3)', '- Large (Tier 3)',
+            ],
+        }
+
+        final_search_list = []
+
+        for entry in search_results_redirect:
+            if entry in manual_corrections:
+                final_search_list.extend(f'{entry} {correction}' for correction in manual_corrections[entry])
+            else:
+                final_search_list.append(entry)
+
+        return [app_commands.Choice(name=result, value=result) for result in final_search_list]

@@ -87,7 +87,6 @@ class FoxholeWikiAPIWrapper:
 
         if response is None:
             return None
-        print(response)
         return list(response['cargofields'])
 
     async def is_name_in_table(self, session: ClientSession, table: str, name: str) -> bool:
@@ -108,12 +107,12 @@ class FoxholeWikiAPIWrapper:
             # In case of error during the request, None will be returned but will fall back to False anyway
             return bool(response.get('cargoquery', False))
 
-    async def is_page_disambiguation_page(self, session: ClientSession, page_name: str) -> bool:
+    async def is_page_wiki_page(self, session: ClientSession, page_name: str) -> bool:
         """
         Use the API to parse a page and retrieve its category to determine its status
         :param session: session to use
         :param page_name: page to parse
-        :return: If page is a list of ambiguate pages (True) or a direct wiki page (False)
+        :return: If page is a list of ambiguate pages (False) or a direct wiki page (True)
         """
         async with session.get(
             f'https://foxhole.wiki.gg/api.php?action=parse&page={page_name}&format=json&prop=categories&redirects=true',
@@ -122,8 +121,8 @@ class FoxholeWikiAPIWrapper:
             response = await self.__response_handler(async_response)
             for category in response['parse']['categories']:
                 if category['*'] == 'Disambiguation_pages':
-                    return True
-            return False
+                    return False
+            return True
 
 
     async def find_table_from_value_name(self, value_name: str, context_tables: list) -> str | None:
