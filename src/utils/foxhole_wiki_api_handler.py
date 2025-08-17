@@ -108,6 +108,24 @@ class FoxholeWikiAPIWrapper:
             # In case of error during the request, None will be returned but will fall back to False anyway
             return bool(response.get('cargoquery', False))
 
+    async def is_page_disambiguation_page(self, session: ClientSession, page_name: str) -> bool:
+        """
+        Use the API to parse a page and retrieve its category to determine its status
+        :param session: session to use
+        :param page_name: page to parse
+        :return: If page is a list of ambiguate pages (True) or a direct wiki page (False)
+        """
+        async with session.get(
+            f'https://foxhole.wiki.gg/api.php?action=parse&page={page_name}&format=json&prop=categories&redirects=true',
+            timeout=5,
+        ) as async_response:
+            response = await self.__response_handler(async_response)
+            for category in response['parse']['categories']:
+                if category['*'] == 'Disambiguation_pages':
+                    return True
+            return False
+
+
     async def find_table_from_value_name(self, value_name: str, context_tables: list) -> str | None:
         """
         Find a full name in the context tables, it is assumed all context tables have a "name" field
