@@ -2,12 +2,14 @@ import base64
 import os
 import zlib
 
+import dotenv
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
 class AesGcm:
     def __init__(self):
+        dotenv.load_dotenv()
         self._iv = os.urandom(12)
         self._key = os.getenv('ENCRYPTION_KEY').encode()
         self._ciphers = {}
