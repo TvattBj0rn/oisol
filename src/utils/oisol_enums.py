@@ -141,6 +141,7 @@ class WikiTables(Enum):
     VEHICLES = 'vehicles'
     VEHICLE_CLASS = 'VehicleClass'
 
+
 class WorldSpawnTypes(Enum):
     RELIC_SMALL = 'Relic Base (Small)'
     RELIC_MEDIUM = 'Relic Base (Medium)'

@@ -2,7 +2,6 @@ import pathlib
 
 from . import WorldSpawnTypes
 
-
 OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
 TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
 
