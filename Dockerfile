@@ -1,18 +1,21 @@
-FROM ghcr.io/astral-sh/uv:0.1.37 AS uv
+# Install uv
+FROM python:3.12-slim
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-FROM python:3.12-slim AS python
-
+# Change the working directory to the `app` directory
 WORKDIR /app
-COPY . /app
 
-ENV VIRTUAL_ENV=/opt/venv
-RUN  \
-    # we use a cache --mount to reuse the uv cache across builds
-    --mount=type=cache,target=/root/.cache/uv \
-    # we use a bind --mount to use the uv binary from the uv stage
-    --mount=type=bind,from=uv,source=/uv,target=/uv \
-    # we use a bind --mount to use the pyproject.toml from the host instead of adding a COPY layer
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    /uv venv /opt/venv && /uv pip install .
+    uv sync --locked --no-install-project
+
+# Copy the project into the image
+ADD . /app
+
+# Sync the project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
 
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]
