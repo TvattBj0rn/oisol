@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import aiohttp
 import asyncio
-
 from typing import TYPE_CHECKING
 
+import aiohttp
 from discord.ext import commands, tasks
 
-from src.utils import Shard, CacheKeys, MapIcon
+from src.utils import CacheKeys, MapIcon, Shard
 from src.utils.foxhole_api_handler import FoxholeAsyncAPIWrapper
 
 if TYPE_CHECKING:
@@ -28,7 +27,7 @@ class WorldSpawnsStatus(commands.Cog):
         for shard_name in [
             Shard.ABLE.name,
             Shard.BAKER.name,
-            Shard.CHARLIE.name
+            Shard.CHARLIE.name,
         ]:
             if shard_name not in self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS]:
                 self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][shard_name] = {}
@@ -67,7 +66,7 @@ class WorldSpawnsStatus(commands.Cog):
         """
         self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][shard_name] = dict(subregion for region in new_data for subregion in region)
 
-    async def _update_shard_world_spawn_cache(self, shard_api: FoxholeAsyncAPIWrapper):
+    async def _update_shard_world_spawn_cache(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
         async with aiohttp.ClientSession() as session:
             available_regions_list = await shard_api.get_regions_list(session)
             res = await asyncio.gather(*(self._get_region_world_spawn_status(session, shard_api, region) for region in available_regions_list))
@@ -80,18 +79,18 @@ class WorldSpawnsStatus(commands.Cog):
 
 
     @tasks.loop(minutes=2)
-    async def update_able_world_spawn_cache(self):
+    async def update_able_world_spawn_cache(self) -> None:
         await self._update_shard_world_spawn_cache(FoxholeAsyncAPIWrapper())
 
     @tasks.loop(minutes=2)
-    async def update_baker_world_spawn_cache(self):
+    async def update_baker_world_spawn_cache(self) -> None:
         await self._update_shard_world_spawn_cache(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
 
     @tasks.loop(minutes=2)
-    async def update_charlie_world_spawn_cache(self):
+    async def update_charlie_world_spawn_cache(self) -> None:
         await self._update_shard_world_spawn_cache(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
 
     @tasks.loop(hours=24)
-    async def cog_activation_report(self):
+    async def cog_activation_report(self) -> None:
         self.bot.logger.task(f'The world_spawn_status cache was updated {len(self.tasks_status_tracker)} times: {self.tasks_status_tracker} in the last 24 hours')
         self.tasks_status_tracker.clear()

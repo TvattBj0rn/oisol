@@ -207,7 +207,7 @@ EMOJIS_FROM_DICT = {
     'Mortar Shell': '<:mortar_shell:1240724693728755864>',
     'Alligator Charge': '<:satchel:1240724690054545479>',
     "Hydra's Whisper": '<:hydras_whisper:1240724688523628565>',
-    "Hydra&#039;s Whisper": '<:hydras_whisper:1240724688523628565>',
+    'Hydra&#039;s Whisper': '<:hydras_whisper:1240724688523628565>',
     'Shatter Missile': '<:shatter_missile:1406304254867669084>',
     'Mammon 91-b': '<:mamon:1088827447128109146>',
     'Ignifist 30': '<:ignifist:1088829111859949619>',

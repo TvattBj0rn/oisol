@@ -1,7 +1,6 @@
 import math
-import time
 
-from src.utils import WikiTables, Faction, EMOJIS_FROM_DICT
+from src.utils import EMOJIS_FROM_DICT, Faction, WikiTables
 
 
 class HealthEntryEngine:
@@ -53,7 +52,7 @@ class HealthEntryEngine:
 
         return sorted_damages
 
-    def __prepare_embed(self):
+    def __prepare_embed(self) -> None:
         """
         Format attributes to discord embed format
         """
@@ -68,10 +67,9 @@ class HealthEntryEngine:
         Public entry point for the engine
         :return: dict ready to be used as a discord embed
         """
-        start_time = time.time()
         self.__prepare_embed()
         self.__process_all_damages()
-        print(time.time() - start_time)
+
         return self.__embed
 
     def __format_results(
@@ -80,7 +78,7 @@ class HealthEntryEngine:
             main_value: int,
             special_value: int,
             main_value_rng: int | None = None,
-            special_value_rng: int | None = None
+            special_value_rng: int | None = None,
     ) -> str:
         """
         Convert computed results to a string to add to the discord embed
@@ -110,7 +108,7 @@ class HealthEntryEngine:
             return damage_result + f'{main_value} **|** {special_value}'
         return damage_result + f'{main_value}-{main_value_rng} **|** {special_value}-{special_value_rng}'
 
-    def __process_all_damages(self):
+    def __process_all_damages(self) -> None:
         """
         main engine method
         """
@@ -142,7 +140,7 @@ class HealthEntryEngine:
                         number_to_kill,
                         number_to_kill_special,
                         number_to_kill_max,
-                        number_to_kill_special_max
+                        number_to_kill_special_max,
                     )
                 else:
                     string_res = self.__format_results(damage_dict['name'], number_to_kill, number_to_kill_special)

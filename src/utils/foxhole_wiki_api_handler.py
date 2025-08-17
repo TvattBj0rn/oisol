@@ -1,8 +1,8 @@
 import asyncio
+from itertools import compress
 
 import aiohttp
-from aiohttp import ClientSession, ClientResponse
-from itertools import compress
+from aiohttp import ClientResponse, ClientSession
 
 
 class FoxholeWikiAPIWrapper:
@@ -55,7 +55,7 @@ class FoxholeWikiAPIWrapper:
                 return None
 
             # The output is as expected, return a dict where k is the entry's full name, and v its wiki page url
-            return dict(zip(response[1], response[-1]))
+            return dict(zip(response[1], response[-1], strict=True))
 
     async def fetch_cargo_tables(self) -> list | None:
         """

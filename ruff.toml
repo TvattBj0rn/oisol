@@ -26,14 +26,18 @@ select = [
 ]
 ignore = [
     "E501", # Line-too-long
-    "ANN204", # missing-return-type-special-method
-    "ANN002", # args typing
-    "ANN003", # kwargs typing
+    "ANN204", # Missing-return-type-special-method
+    "ANN002", # Args typing
+    "ANN003", # Kwargs typing
     "RUF001", # Unicode chars
     "TRY400", # Exception instead of error
-    "RUF012", # mutable-class-default
+    "RUF012", # Mutable-class-default
+    "W191", # Indentation contains tabs
 ]
 
 [lint.flake8-quotes]
 inline-quotes = "single"
 multiline-quotes = "single"
+
+[format]
+indent-style="tab"

@@ -1,5 +1,5 @@
 import requests
-from aiohttp import ClientSession, ClientResponse
+from aiohttp import ClientResponse, ClientSession
 
 from src.utils import MapIcon, Shard
 

@@ -3,17 +3,23 @@ from __future__ import annotations
 import asyncio
 import configparser
 from itertools import compress
-from typing import TYPE_CHECKING, final
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import REGIONS_TYPES, OISOL_HOME_PATH, DataFilesPath, CacheKeys, WikiTables
-from .health_embed_template import HealthEntryEngine
+from src.utils import (
+    OISOL_HOME_PATH,
+    REGIONS_TYPES,
+    CacheKeys,
+    DataFilesPath,
+    WikiTables,
+)
 
-from .wiki_embeds_templates import WikiTemplateFactory
 from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
+from .health_embed_template import HealthEntryEngine
+from .wiki_embeds_templates import WikiTemplateFactory
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -46,7 +52,7 @@ class ModuleWiki(commands.Cog):
         # Fields required for health process for the two available tables
         table_fields = {
             WikiTables.STRUCTURES.value: ['image', 'type', 'structure_hp', 'structure_hp_entrenched', 'armour_type', 'faction'],
-            WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction']
+            WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction'],
         }
 
         async with FoxholeWikiAPIWrapper() as wrapper:
@@ -62,7 +68,7 @@ class ModuleWiki(commands.Cog):
                 await interaction.response.send_message('> This entry is not a vehicle or a structure', ephemeral=True, delete_after=5)
                 return
 
-            elif health_table == WikiTables.MAPS.value:
+            if health_table == WikiTables.MAPS.value:
                 # Get the discord's server current shard
                 config = configparser.ConfigParser()
                 config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')

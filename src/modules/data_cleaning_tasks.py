@@ -9,8 +9,17 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands, tasks
 
-from src.modules.stockpile_viewer.module_stockpile import update_all_associated_stockpiles
-from src.utils import OISOL_HOME_PATH, InterfaceType, FoxholeAPIWrapper, Shard, InterfacesTypes, DataFilesPath
+from src.modules.stockpile_viewer.module_stockpile import (
+    update_all_associated_stockpiles,
+)
+from src.utils import (
+    OISOL_HOME_PATH,
+    DataFilesPath,
+    FoxholeAPIWrapper,
+    InterfacesTypes,
+    InterfaceType,
+    Shard,
+)
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -115,13 +124,13 @@ class DatabaseCleaner(commands.Cog):
         self.bot.logger.task(f'Stockpile interfaces were cleared for shard {shard_api.shard_name}')
 
     @tasks.loop(hours=1)
-    async def clear_stockpiles_able(self):
+    async def clear_stockpiles_able(self) -> None:
         await self._clear_stockpiles_new_war(FoxholeAPIWrapper())
 
     @tasks.loop(hours=1)
-    async def clear_stockpiles_baker(self):
+    async def clear_stockpiles_baker(self) -> None:
         await self._clear_stockpiles_new_war(FoxholeAPIWrapper(shard=Shard.BAKER))
 
     @tasks.loop(hours=1)
-    async def clear_stockpiles_charlie(self):
+    async def clear_stockpiles_charlie(self) -> None:
         await self._clear_stockpiles_new_war(FoxholeAPIWrapper(shard=Shard.CHARLIE))
