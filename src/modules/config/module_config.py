@@ -144,14 +144,15 @@ class ModuleConfig(commands.Cog):
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             stockpile_interfaces = conn.cursor().execute(
-                f"SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE GroupId == '{interaction.guild_id}' AND InterfaceType == '{InterfacesTypes.STOCKPILE.value}'",
+                'SELECT GroupId, ChannelId, MessageId, AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND InterfaceType == ?',
+                (interaction.guild_id, InterfacesTypes.STOCKPILE.value),
             ).fetchall()
-        for group_id, channel_id, message_id in stockpile_interfaces:
+        for group_id, channel_id, message_id, association_id in stockpile_interfaces:
             await self.bot.refresh_interface(
                 group_id,
                 channel_id,
                 message_id,
-                discord.Embed().from_dict(get_stockpile_info(int(group_id), interface_id=int(message_id))),
+                discord.Embed().from_dict(get_stockpile_info(int(group_id), association_id, message_id=int(message_id))),
             )
 
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)

@@ -4,10 +4,9 @@ dynamic = ["version"]
 requires-python = ">= 3.12"
 dependencies = [
   "aiohttp",
-  "beautifulsoup4",
   "discord.py==2.5.0",
+  "cryptography",
   "libretranslatepy",
-  "lxml",
   "python-dotenv",
   "requests",
 ]

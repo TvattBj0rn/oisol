@@ -14,22 +14,8 @@ class EnumValue(EnumMeta):
         return value
 
 
-class DamageTypes(EnumValue):
-    LIGHT_KINETIC = 'Light Kinetic'
-    HEAVY_KINETIC = 'Heavy Kinetic'
-    ANTI_TANK_KINETIC = 'Anti-Tank Kinetic'
-    ANTI_TANK_KINETIC_STRUCTURE = 'Anti-Tank Kinetic Structure'
-    SHRAPNEL = 'Shrapnel'
-    FLARE = 'Flare'
-    POISONOUS_GAS = 'Poisonous Gas'
-    EXPLOSIVE = 'Explosive'
-    HIGH_EXPLOSIVE = 'High Explosive'
-    DEMOLITION = 'Demolition'
-    ARMOUR_PIERCING = 'Armour Piercing'
-    ANTI_TANK_EXPLOSIVE = 'Anti-Tank Explosive'
-    INCENDIARY = 'Incendiary'
-    INCENDIARY_HIGH_EXPLOSIVE = 'Incendiary High Explosive'
-    MELEE = 'Melee'
+class CacheKeys(EnumValue):
+    WORLD_SPAWNS_STATUS = 'world_spawn_status'
 
 
 class DataFilesPath(Enum):
@@ -67,16 +53,17 @@ class InterfaceType(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value
     """
+    MULTISERVER_STOCKPILE_VIEW = []
     REGISTER_VIEW = []
     STOCKPILE_VIEW = []
     TODOLIST_VIEW = [('GroupsInterfacesAccess', 'InterfaceId'), ('GroupsTodolistsTasks', 'TodolistId')]
-    FACILITY_VIEW = []
 
 
 class InterfacesTypes(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value
     """
+    MULTISERVER_STOCKPILE = 'MULTISERVER_STOCKPILE_VIEW'
     REGISTER = 'REGISTER_VIEW'
     STOCKPILE = 'STOCKPILE_VIEW'
     TODOLIST = 'TODOLIST_VIEW'
@@ -127,6 +114,8 @@ class MapIcon(Enum):
     COASTAL_GUN = 53
     SOUL_FACTORY = 54
     TOWN_BASE_1 = 56
+    TOWN_BASE_2 = 57 # For the town bases, the integer refers to the tier of the town base, not its type
+    TOWN_BASE_3 = 58
     STORM_CANON = 59
     INTEL_CENTER = 60
     COAL_FIELD = 61
@@ -151,3 +140,12 @@ class WikiTables(Enum):
     STRUCTURES = 'structures'
     VEHICLES = 'vehicles'
     VEHICLE_CLASS = 'VehicleClass'
+
+
+class WorldSpawnTypes(Enum):
+    RELIC_SMALL = 'Relic Base (Small)'
+    RELIC_MEDIUM = 'Relic Base (Medium)'
+    RELIC_LARGE = 'Relic Base (Large)'
+    TOWN_BASE_POST_OFFICE = 'Post Office'
+    TOWN_BASE_SCHOOL = 'School'
+    TOWN_BASE_CENTER = 'Town Center'

@@ -7,8 +7,9 @@ from dotenv import load_dotenv
 
 from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
+from src.modules.foxhole_api_map_interactions_tasks import WorldSpawnsStatus
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles, StockpileTasks
+from src.modules.stockpile_viewer import ModuleStockpiles, TaskUpdateAvailableStockpiles
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -27,6 +28,7 @@ from src.utils import (
 
 class Oisol(commands.Bot):
     def __init__(self):
+        # Discord default config
         intents = discord.Intents.default()
         intents.message_content = True
         intents.members = True
@@ -35,8 +37,15 @@ class Oisol(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
         )
+
+        # Custom bot emojis not relying on dedicated discord servers
         self.app_emojis = []
+
+        # Custom logger with colors for tasks, commands, buttons interactions, joins, ...
         self.logger = OisolLogger('oisol')
+
+        # Cache for non-persistent data (e.g. world spawns status such as town bases levels)
+        self.cache = {}
 
     async def on_ready(self) -> None:
         # Modules loading
@@ -61,9 +70,13 @@ class Oisol(commands.Bot):
 
         self.logger.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
+        # Display current guilds with the format: - Name (id)
+        self.logger.info(f'Guilds joined ({len(self.guilds)}):\n{'\n'.join(f'- {guild.name} ({guild.id})' for guild in self.guilds)}')
+
         # Tasks loading
-        await self.add_cog(StockpileTasks(self))
         await self.add_cog(DatabaseCleaner(self))
+        await self.add_cog(TaskUpdateAvailableStockpiles(self))
+        await self.add_cog(WorldSpawnsStatus(self))
 
     async def setup_hook(self) -> None:
         self.add_view(ConfigViewMenu())
@@ -88,12 +101,12 @@ class Oisol(commands.Bot):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().executescript(
                 '''
-                CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
-                CREATE TABLE IF NOT EXISTS AllInterfacesReferences(GroupId TEXT, ChannelId INTEGER, MessageId INTEGER, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
-                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, InterfaceId TEXT, DiscordId TEXT, DiscordIdType TEXT);
-                CREATE TABLE IF NOT EXISTS GroupsStockpilesList(GroupId TEXT, InterfaceId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
-                CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
+                CREATE TABLE IF NOT EXISTS AllInterfacesReferences(AssociationId TEXT, GroupId TEXT, ChannelId TEXT, MessageId TEXT, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, ChannelId, MessageId TEXT, DiscordId TEXT, DiscordIdType TEXT);
                 CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
+                CREATE TABLE IF NOT EXISTS GroupsStockpilesList(AssociationId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(AssociationId TEXT, GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
+                CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
                 ''',
             )
 
