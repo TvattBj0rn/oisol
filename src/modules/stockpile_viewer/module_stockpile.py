@@ -73,6 +73,50 @@ class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
 
+    @commands.Cog.listener(name='on_raw_message_delete')
+    async def delete_listener(self, payload: discord.RawMessageDeleteEvent) -> None:
+        # Convert interface_name to a readable text
+        ids_list = [str(payload.guild_id), str(payload.channel_id), str(payload.message_id)]
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            potential_association_id_as_list = conn.cursor().execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (ids_list[0], ids_list[1], ids_list[2]),
+            ).fetchall()
+
+        if not potential_association_id_as_list:
+            return
+
+        # Add association id to the list to simulate an interaction parameter
+        ids_list += potential_association_id_as_list[0]
+        if self._validate_stockpile_ids(ids_list) is not None:
+            return
+
+        # Log only once it is certain the target message is a stockpile interface
+        self.bot.logger.task(f'stockpile-interface-delete event triggered')
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+
+            # Delete embed's message from db
+            cursor.execute(
+                'DELETE FROM AllInterfacesReferences WHERE AssociationId == ? AND GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (ids_list[3], ids_list[0], ids_list[1], ids_list[2]),
+            )
+
+            # Check if another group was using the stockpiles
+            potential_groups = cursor.execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE AssociationId == ?',
+                (ids_list[3],),
+            ).fetchall()
+            if not potential_groups:
+                # No other group was using the stockpiles, delete them from db too
+                cursor.execute(
+                    'DELETE FROM AllInterfacesReferences WHERE AssociationId == ?',
+                    (ids_list[3],),
+                )
+
+            conn.commit()
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
     async def stockpile_interface_create(
@@ -104,7 +148,7 @@ class ModuleStockpiles(commands.Cog):
             locals(),
         )
 
-        await interaction.followup.send('> The interface was properly created', ephemeral=True, delete_after=5)
+        await interaction.followup.send('> The interface was properly created', ephemeral=True)
         if is_multiserver:
             await interaction.followup.send(f'> The id of your interface is: `{association_id}`, use it to connect to this interface from another server', ephemeral=True)
 
@@ -163,7 +207,6 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
-        # Ensure use is authorized to interact with interface
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().execute(
                 'DELETE FROM GroupsStockpilesList WHERE AssociationId == ?',
