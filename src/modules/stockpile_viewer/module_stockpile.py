@@ -93,7 +93,7 @@ class ModuleStockpiles(commands.Cog):
             return
 
         # Log only once it is certain the target message is a stockpile interface
-        self.bot.logger.task(f'stockpile-interface-delete event triggered')
+        self.bot.logger.task('stockpile-interface-delete event triggered')
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
