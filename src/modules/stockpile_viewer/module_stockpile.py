@@ -14,7 +14,6 @@ from discord.ext import commands
 
 from src.utils import (
     OISOL_HOME_PATH,
-    AesGcm,
     DataFilesPath,
     DiscordIdType,
     InterfacesTypes,
@@ -73,7 +72,6 @@ async def update_all_associated_stockpiles(bot: Oisol, association_id: str) -> N
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.oes = AesGcm()
 
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
@@ -154,9 +152,8 @@ class ModuleStockpiles(commands.Cog):
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
 
-        # Convert interface_name from ciphertext to a readable text
-        ids_str = self.oes.decipher_process(interface_name)
-        ids_list = ids_str.split('.')
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
 
         if (error_msg := self._validate_stockpile_ids(ids_list)) is not None:
             await interaction.response.send_message(
@@ -186,9 +183,8 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str) -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
 
-        # Convert interface_name from ciphertext to a readable text
-        ids_str = self.oes.decipher_process(interface_name)
-        ids_list = ids_str.split('.')
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
 
         if any(validations := (
                 self._validate_stockpile_code(code),
@@ -226,9 +222,8 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
 
-        # Convert interface_name from ciphertext to a readable text
-        ids_str = self.oes.decipher_process(interface_name)
-        ids_list = ids_str.split('.')
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
 
         if any(validations := (
             self._validate_stockpile_code(stockpile_code),
@@ -335,7 +330,7 @@ class ModuleStockpiles(commands.Cog):
         return [
             app_commands.Choice(
                 name=interface_name,
-                value=self.oes.encipher_process(f'{interaction.guild_id}.{channel_id}.{message_id}.{association_id}'),
+                value=f'{interaction.guild_id}.{channel_id}.{message_id}.{association_id}',
             )
             for channel_id, message_id, interface_name, association_id in all_guild_stockpiles_interfaces_updated
             if current in interface_name
