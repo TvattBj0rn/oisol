@@ -114,7 +114,8 @@ class ModuleWiki(commands.Cog):
         # Get valid entries from the mask
         search_results_redirect = compress(list(search_results_redirect), mask)
 
-        # Manual corrections to add all types of a specific entry
+        # Manual corrections to add all types of a specific entry,
+        # Replace k by k: k + vv for vv in v
         tier_iterable = ['(Tier 1)', '(Tier 2)', '(Tier 3)']
         manual_corrections = {
             'Safe House': tier_iterable,
