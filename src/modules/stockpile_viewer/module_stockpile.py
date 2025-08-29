@@ -80,8 +80,8 @@ class ModuleStockpiles(commands.Cog):
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             potential_association_id_as_list = conn.cursor().execute(
-                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
-                (ids_list[0], ids_list[1], ids_list[2]),
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType IN (?, ?)',
+                (ids_list[0], ids_list[1], ids_list[2], InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value),
             ).fetchall()
 
         if not potential_association_id_as_list:
