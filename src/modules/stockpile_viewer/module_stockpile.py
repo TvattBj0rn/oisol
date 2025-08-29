@@ -104,7 +104,7 @@ class ModuleStockpiles(commands.Cog):
             locals(),
         )
 
-        await interaction.followup.send('> The interface was properly created', ephemeral=True)
+        await interaction.followup.send('> The interface was properly created', ephemeral=True, delete_after=5)
         if is_multiserver:
             await interaction.followup.send(f'> The id of your interface is: `{association_id}`, use it to connect to this interface from another server', ephemeral=True)
 
