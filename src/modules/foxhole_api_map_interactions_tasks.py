@@ -92,5 +92,5 @@ class WorldSpawnsStatus(commands.Cog):
 
     @tasks.loop(hours=24)
     async def cog_activation_report(self) -> None:
-        self.bot.logger.task(f'The world_spawn_status cache was updated {len(self.tasks_status_tracker)} times: {self.tasks_status_tracker} in the last 24 hours')
+        self.bot.logger.task(f'The world_spawn_status cache was updated {len(self.tasks_status_tracker)} times in the last 24 hours')
         self.tasks_status_tracker.clear()
