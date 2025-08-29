@@ -403,6 +403,15 @@ class ModuleStockpiles(commands.Cog):
             permissions: dict,
             do_interface_update: bool = False,
     ) -> None:
+        """
+        Create a new stockpile in the db and send back an empty embed (do_interface_update False) or an embed with the
+        existing data (do_interface_update True)
+        :param interaction: discord interaction
+        :param association_id: stockpile group id
+        :param interface_name: interface name
+        :param permissions: users / roles authorized on this interface
+        :param do_interface_update: whether to refresh the empty embed with existing data (for /stockpile-interface-join cases)
+        """
         # Send an empty stockpile interface as a separate message to hide association id on discord clients
         msg = await interaction.channel.send(embed=discord.Embed().from_dict(
             get_stockpile_info(
