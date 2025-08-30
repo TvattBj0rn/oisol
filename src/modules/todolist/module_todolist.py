@@ -40,44 +40,50 @@ class ModuleTodolist(commands.Cog):
         self.bot.logger.command(f'todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         todolist_id = uuid.uuid4().hex
         todolist_access_list = []
+        await interaction.response.defer(ephemeral=True)
+
+        # Create temporary placeholder
+        msg = await interaction.channel.send(embed=discord.Embed().from_dict({'title': title}))
 
         if role_1:
-            todolist_access_list.append((interaction.guild_id, todolist_id, role_1.id, DiscordIdType.ROLE.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), role_1.id, DiscordIdType.ROLE.name))
         if role_2:
-            todolist_access_list.append((interaction.guild_id, todolist_id, role_2.id, DiscordIdType.ROLE.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), role_2.id, DiscordIdType.ROLE.name))
         if role_3:
-            todolist_access_list.append((interaction.guild_id, todolist_id, role_3.id, DiscordIdType.ROLE.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), role_3.id, DiscordIdType.ROLE.name))
         if role_4:
-            todolist_access_list.append((interaction.guild_id, todolist_id, role_4.id, DiscordIdType.ROLE.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), role_4.id, DiscordIdType.ROLE.name))
         if role_5:
-            todolist_access_list.append((interaction.guild_id, todolist_id, role_5.id, DiscordIdType.ROLE.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), role_5.id, DiscordIdType.ROLE.name))
         if member_1:
-            todolist_access_list.append((interaction.guild_id, todolist_id, member_1.id, DiscordIdType.USER.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), member_1.id, DiscordIdType.USER.name))
         if member_2:
-            todolist_access_list.append((interaction.guild_id, todolist_id, member_2.id, DiscordIdType.USER.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), member_2.id, DiscordIdType.USER.name))
         if member_3:
-            todolist_access_list.append((interaction.guild_id, todolist_id, member_3.id, DiscordIdType.USER.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), member_3.id, DiscordIdType.USER.name))
         if member_4:
-            todolist_access_list.append((interaction.guild_id, todolist_id, member_4.id, DiscordIdType.USER.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), member_4.id, DiscordIdType.USER.name))
         if member_5:
-            todolist_access_list.append((interaction.guild_id, todolist_id, member_5.id, DiscordIdType.USER.name))
+            todolist_access_list.append((interaction.guild_id, str(msg.channel.id), str(msg.id), member_5.id, DiscordIdType.USER.name))
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             if todolist_access_list:
                 cursor.executemany(
-                    'INSERT INTO GroupsInterfacesAccess (GroupId, TodolistId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?)',
+                    'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
                     todolist_access_list,
                 )
                 conn.commit()
 
             todolist_view = TodolistViewMenu()
-            todolist_view.refresh_view(title, str(interaction.guild_id), todolist_id)
-
-            await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
-            interaction_response_message = await interaction.original_response()
+            todolist_view.refresh_view(title, msg, todolist_id)
+            await msg.edit(view=todolist_view, embed=todolist_view.embed)
+            # await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
+            # interaction_response_message = await interaction.original_response()
             cursor.execute(
                 'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
-                (interaction.guild_id, interaction.channel_id, interaction_response_message.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
+                (interaction.guild_id, interaction.channel_id, msg.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
             )
             conn.commit()
+
+        await interaction.followup.send('> The todolist was properly created', ephemeral=True)
