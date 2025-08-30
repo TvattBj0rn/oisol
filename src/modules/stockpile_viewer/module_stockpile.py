@@ -192,6 +192,22 @@ class ModuleStockpiles(commands.Cog):
 
             await interaction.followup.send('> The interface was successfully joined', ephemeral=True)
 
+    @app_commands.command(name='stockpile-interface-get-pass', description='Get a password for a multiserver interface')
+    async def get_interface_pass(self, interaction: discord.Interaction, interface_name: str) -> None:
+        self.bot.logger.command(f'stockpile-interface-get-pass command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
+        if (error_msg := self._validate_stockpile_ids(ids_list)) is not None:
+            await interaction.response.send_message(
+                error_msg,
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        await interaction.response.send_message(f'> The password of the selected interface is `{ids_list[-1]}`', ephemeral=True)
+
+
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
@@ -333,6 +349,7 @@ class ModuleStockpiles(commands.Cog):
     @clear_interface.autocomplete('interface_name')
     @stockpile_delete.autocomplete('interface_name')
     @stockpile_create.autocomplete('interface_name')
+    @get_interface_pass.autocomplete('interface_name')
     async def interface_name_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
         :param interaction: current interaction object
