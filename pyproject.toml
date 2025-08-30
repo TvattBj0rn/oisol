@@ -4,8 +4,7 @@ dynamic = ["version"]
 requires-python = ">= 3.12"
 dependencies = [
   "aiohttp",
-  "discord.py==2.5.0",
-  "cryptography",
+  "discord.py==2.5.2",
   "libretranslatepy",
   "python-dotenv",
   "requests",
