@@ -23,9 +23,9 @@ class TodolistViewMenu(discord.ui.View):
         self.title = ''
         self.embed = None
 
-    def refresh_view(self, todolist_title: str, guild_id: str, embed_uuid: str) -> None:
+    def refresh_view(self, todolist_title: str, message: discord.Message, embed_uuid: str) -> None:
         self.title = todolist_title
-        self.guild_id = guild_id
+        self.guild_id = str(message.guild.id)
         self.embed_uuid = embed_uuid
 
         # Clear buttons and update embed
@@ -71,11 +71,11 @@ class TodolistViewMenu(discord.ui.View):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             todolist_permissions = conn.cursor().execute(
                 'SELECT DiscordId, DiscordIdType FROM GroupsInterfacesAccess WHERE GroupId == ? AND MessageId == ?',
-                (interaction.guild_id, self.embed_uuid),
+                (interaction.guild_id, interaction.message.id),
             ).fetchall()
 
         # Check whether the user id or its roles id are in todolist permissions
-        can_access = bool(next((permission for permission in todolist_permissions if interaction.user.id == permission[0] or permission[0] in [role.id for role in interaction.user.roles]), False)) or not todolist_permissions
+        can_access = bool(next((permission for permission in todolist_permissions if str(interaction.user.id) == permission[0] or permission[0] in [str(role.id) for role in interaction.user.roles]), False)) or not todolist_permissions
 
         if not can_access:
             await interaction.response.send_message(
@@ -151,7 +151,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
 
         # Recreate the view with the updated tasks
         updated_todolist_view = TodolistViewMenu()
-        updated_todolist_view.refresh_view(self.todolist_title, str(interaction.guild_id), self.embed_uuid)
+        updated_todolist_view.refresh_view(self.todolist_title, interaction.message, self.embed_uuid)
 
         # Defer is needed to edit the todolist & send potential message of bypassed tasks
         await interaction.response.defer()
@@ -192,11 +192,12 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             # Retrieve all permissions for the todolist
             todolist_permissions = cursor.execute(
                 'SELECT DiscordId, DiscordIdType FROM GroupsInterfacesAccess WHERE GroupId == ? AND MessageId == ?',
-                (interaction.guild_id, embed_uuid),
+                (interaction.guild_id, interaction.message.id),
             ).fetchall()
 
             # Check whether the user id or its roles id are in todolist permissions
-            can_access = bool(next((permission for permission in todolist_permissions if interaction.user.id == permission[0] or permission[0] in [role.id for role in interaction.user.roles]), False)) or not todolist_permissions
+            can_access = bool(next((permission for permission in todolist_permissions if str(interaction.user.id) == permission[0] or permission[0] in [str(role.id) for role in interaction.user.roles]), False)) or not todolist_permissions
+
             if not can_access:
                 await interaction.response.send_message(
                     '> You do not have the permission to click on this button',
@@ -228,5 +229,5 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             conn.commit()
 
         updated_todolist_view = TodolistViewMenu()
-        updated_todolist_view.refresh_view(title, guild_id, embed_uuid)
+        updated_todolist_view.refresh_view(title, interaction.message, embed_uuid)
         await interaction.response.edit_message(view=updated_todolist_view, embed=updated_todolist_view.embed)
