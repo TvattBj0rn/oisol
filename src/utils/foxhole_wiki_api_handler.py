@@ -99,7 +99,7 @@ class FoxholeWikiAPIWrapper:
         :return: a boolean indicating if the name was found in the table
         """
         async with session.get(
-            f'{self.__entry_point}action=cargoquery&format=json&tables={table}&fields=name&where=name="{name}"',
+            f'{self.__entry_point}action=cargoquery&format=json&tables={table}&fields=name&where=_PageName="{name}" or name="{name}"',
             timeout=5,
         ) as async_response:
             response = await self.__response_handler(async_response)
@@ -196,7 +196,7 @@ class FoxholeWikiAPIWrapper:
         """
         async with aiohttp.ClientSession() as session:
             async_vehicle_data = await session.get(
-                f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where=name="{target_name}"')
+                f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where=_PageName="{target_name}" or name="{target_name}"')
             row_data = (await self.__response_handler(async_vehicle_data))['cargoquery'][0]['title']
 
             # tasks that can be run independently at once, format -> [(foo, args)],

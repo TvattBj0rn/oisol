@@ -14,7 +14,6 @@ from discord.ext import commands
 
 from src.utils import (
     OISOL_HOME_PATH,
-    AesGcm,
     DataFilesPath,
     DiscordIdType,
     InterfacesTypes,
@@ -73,8 +72,51 @@ async def update_all_associated_stockpiles(bot: Oisol, association_id: str) -> N
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.oes = AesGcm()
 
+    @commands.Cog.listener(name='on_raw_message_delete')
+    async def delete_listener(self, payload: discord.RawMessageDeleteEvent) -> None:
+        # Convert interface_name to a readable text
+        ids_list = [str(payload.guild_id), str(payload.channel_id), str(payload.message_id)]
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            potential_association_id_as_list = conn.cursor().execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType IN (?, ?)',
+                (ids_list[0], ids_list[1], ids_list[2], InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value),
+            ).fetchall()
+
+        if not potential_association_id_as_list:
+            return
+
+        # Add association id to the list to simulate an interaction parameter
+        ids_list += potential_association_id_as_list[0]
+        if self._validate_stockpile_ids(ids_list) is not None:
+            return
+
+        # Log only once it is certain the target message is a stockpile interface
+        self.bot.logger.task('stockpile-interface-delete event triggered')
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+
+            # Delete embed's message from db
+            cursor.execute(
+                'DELETE FROM AllInterfacesReferences WHERE AssociationId == ? AND GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (ids_list[3], ids_list[0], ids_list[1], ids_list[2]),
+            )
+
+            # Check if another group was using the stockpiles
+            potential_groups = cursor.execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE AssociationId == ?',
+                (ids_list[3],),
+            ).fetchall()
+            if not potential_groups:
+                # No other group was using the stockpiles, delete them from db too
+                cursor.execute(
+                    'DELETE FROM AllInterfacesReferences WHERE AssociationId == ?',
+                    (ids_list[3],),
+                )
+
+            conn.commit()
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
     async def stockpile_interface_create(
@@ -154,9 +196,8 @@ class ModuleStockpiles(commands.Cog):
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
 
-        # Convert interface_name from ciphertext to a readable text
-        ids_str = self.oes.decipher_process(interface_name)
-        ids_list = ids_str.split('.')
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
 
         if (error_msg := self._validate_stockpile_ids(ids_list)) is not None:
             await interaction.response.send_message(
@@ -166,7 +207,6 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
-        # Ensure use is authorized to interact with interface
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().execute(
                 'DELETE FROM GroupsStockpilesList WHERE AssociationId == ?',
@@ -186,9 +226,8 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str) -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
 
-        # Convert interface_name from ciphertext to a readable text
-        ids_str = self.oes.decipher_process(interface_name)
-        ids_list = ids_str.split('.')
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
 
         if any(validations := (
                 self._validate_stockpile_code(code),
@@ -226,9 +265,8 @@ class ModuleStockpiles(commands.Cog):
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
 
-        # Convert interface_name from ciphertext to a readable text
-        ids_str = self.oes.decipher_process(interface_name)
-        ids_list = ids_str.split('.')
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
 
         if any(validations := (
             self._validate_stockpile_code(stockpile_code),
@@ -335,7 +373,7 @@ class ModuleStockpiles(commands.Cog):
         return [
             app_commands.Choice(
                 name=interface_name,
-                value=self.oes.encipher_process(f'{interaction.guild_id}.{channel_id}.{message_id}.{association_id}'),
+                value=f'{interaction.guild_id}.{channel_id}.{message_id}.{association_id}',
             )
             for channel_id, message_id, interface_name, association_id in all_guild_stockpiles_interfaces_updated
             if current in interface_name
@@ -403,6 +441,15 @@ class ModuleStockpiles(commands.Cog):
             permissions: dict,
             do_interface_update: bool = False,
     ) -> None:
+        """
+        Create a new stockpile in the db and send back an empty embed (do_interface_update False) or an embed with the
+        existing data (do_interface_update True)
+        :param interaction: discord interaction
+        :param association_id: stockpile group id
+        :param interface_name: interface name
+        :param permissions: users / roles authorized on this interface
+        :param do_interface_update: whether to refresh the empty embed with existing data (for /stockpile-interface-join cases)
+        """
         # Send an empty stockpile interface as a separate message to hide association id on discord clients
         msg = await interaction.channel.send(embed=discord.Embed().from_dict(
             get_stockpile_info(

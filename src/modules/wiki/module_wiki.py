@@ -105,12 +105,17 @@ class ModuleWiki(commands.Cog):
             current = 'foxhole' # when user input is empty, search for a default value foxhole
 
         async with FoxholeWikiAPIWrapper() as wrapper:
+            # Get raw search results
             search_results_redirect = await wrapper.wiki_search_request(current, do_resolve_redirect=False)
+
+            # Create a mask of valid entries from raw results (not a page but a redirect are ignored for example)
             mask = await asyncio.gather(*(wrapper.is_page_wiki_page(wrapper.get_active_session(), table) for table in list(search_results_redirect)))
 
-
+        # Get valid entries from the mask
         search_results_redirect = compress(list(search_results_redirect), mask)
 
+        # Manual corrections to add all types of a specific entry,
+        # Replace k by k: k + vv for vv in v
         tier_iterable = ['(Tier 1)', '(Tier 2)', '(Tier 3)']
         manual_corrections = {
             'Safe House': tier_iterable,
