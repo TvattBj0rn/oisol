@@ -132,9 +132,21 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-shard', description='Set the shard of the group')
-    async def config_shard(self, interaction: discord.Interaction, shard: Shard) -> None:
+    async def config_shard(self, interaction: discord.Interaction, shard_name: str) -> None:
         self.bot.logger.command(f'config-shard command by {interaction.user.name} on {interaction.guild.name}')
-        self._regiment_config_generic(interaction.guild_id, shard=shard.name)
+
+        # Case where the user still manually input the shard name, ensure conformity with bot's set
+        shard_name = shard_name.upper()
+
+        if shard_name not in self.bot.connected_shards:
+            await interaction.response.send_message(
+                '> The provided shard does not exist or is currently not live',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+
+        self._regiment_config_generic(interaction.guild_id, shard=shard_name)
         await interaction.response.send_message('> Shard was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(name='config-faction', description='Set the faction of the group using the bot')
@@ -156,3 +168,7 @@ class ModuleConfig(commands.Cog):
             )
 
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
+
+    @config_shard.autocomplete('shard_name')
+    async def available_shard_autocomplete(self, _interaction: discord.Interaction, _current: str) -> list[app_commands.Choice]:
+        return [app_commands.Choice(name=shard_name, value=shard_name) for shard_name in self.bot.connected_shards]
