@@ -25,7 +25,8 @@ from src.utils import (
     DataFilesPath,
     OisolFormatter,
     OisolLogger,
-    repair_default_config_dict, Shard,
+    Shard,
+    repair_default_config_dict,
 )
 
 
@@ -129,11 +130,11 @@ class Oisol(commands.Bot):
         async with session.get(shard.value) as response:
             # Shards that are not live will specifically return the 503 code
             if response.status == 503:
-                return None
+                return
 
         # Shard is live
         self.connected_shards.add(shard.name)
-        return None
+        return
 
     async def _fetch_available_shards(self) -> None:
         """
