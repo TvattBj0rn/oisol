@@ -33,9 +33,13 @@ class WorldSpawnsStatus(commands.Cog):
                 self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][shard_name] = {}
 
         # Start tasks
-        self.update_able_world_spawn_cache.start()
-        self.update_baker_world_spawn_cache.start()
-        self.update_charlie_world_spawn_cache.start()
+        if Shard.ABLE.name in self.bot.connected_shards:
+            self.update_able_world_spawn_cache.start()
+        if Shard.BAKER.name in self.bot.connected_shards:
+            self.update_baker_world_spawn_cache.start()
+        if Shard.CHARLIE.name in self.bot.connected_shards:
+            self.update_charlie_world_spawn_cache.start()
+
         self.cog_activation_report.start()
 
     @staticmethod

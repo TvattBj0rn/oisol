@@ -23,9 +23,12 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
         self.all_regions_stockpiles = []
 
         # Start tasks
-        self.refresh_able_shard_stockpiles_subregions.start()
-        self.refresh_baker_shard_stockpiles_subregions.start()
-        self.refresh_charlie_shard_stockpiles_subregions.start()
+        if Shard.ABLE.name in self.bot.connected_shards:
+            self.refresh_able_shard_stockpiles_subregions.start()
+        if Shard.BAKER.name in self.bot.connected_shards:
+            self.refresh_baker_shard_stockpiles_subregions.start()
+        if Shard.CHARLIE.name in self.bot.connected_shards:
+            self.refresh_charlie_shard_stockpiles_subregions.start()
 
     @staticmethod
     def _prepare_region_data(api_wrapper: FoxholeAPIWrapper, war_data: dict, region: str) -> list[tuple]:

@@ -32,9 +32,12 @@ class DatabaseCleaner(commands.Cog):
         self.remove_non_existing_interfaces.start()
 
         # Clear existing stockpiles at war's end
-        self.clear_stockpiles_able.start()
-        self.clear_stockpiles_baker.start()
-        self.clear_stockpiles_charlie.start()
+        if Shard.ABLE.name in self.bot.connected_shards:
+            self.clear_stockpiles_able.start()
+        if Shard.BAKER.name in self.bot.connected_shards:
+            self.clear_stockpiles_baker.start()
+        if Shard.CHARLIE.name in self.bot.connected_shards:
+            self.clear_stockpiles_charlie.start()
 
     @staticmethod
     def _clear_entries(

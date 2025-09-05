@@ -1,7 +1,10 @@
+import asyncio
 import os
 import sqlite3
 
+import aiohttp
 import discord
+from aiohttp import ClientSession
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -22,7 +25,7 @@ from src.utils import (
     DataFilesPath,
     OisolFormatter,
     OisolLogger,
-    repair_default_config_dict,
+    repair_default_config_dict, Shard,
 )
 
 
@@ -47,6 +50,10 @@ class Oisol(commands.Bot):
         # Cache for non-persistent data (e.g. world spawns status such as town bases levels)
         self.cache = {}
 
+        # Set of shards name, containing the shards that are currently live
+        self.connected_shards = set()
+
+
     async def on_ready(self) -> None:
         # Modules loading
         await self.add_cog(ModuleConfig(self))
@@ -55,6 +62,8 @@ class Oisol(commands.Bot):
         await self.add_cog(ModuleTodolist(self))
         await self.add_cog(ModuleTranslation(self))
         await self.add_cog(ModuleWiki(self))
+
+        await self._fetch_available_shards()
 
         # Ready the db
         self._setup_oisol_db()
@@ -109,6 +118,30 @@ class Oisol(commands.Bot):
                 CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
                 ''',
             )
+
+    async def _test_potential_shard(self, session: ClientSession, shard: Shard) -> None:
+        """
+        Method that will try to get the default shard api/ url, if the return code is 503, the shard is not live else
+        the shard is added to the bot's set of available shards
+        :param session: Current session
+        :param shard: Shard object to test
+        """
+        async with session.get(shard.value) as response:
+            # Shards that are not live will specifically return the 503 code
+            if response.status == 503:
+                return None
+
+        # Shard is live
+        self.connected_shards.add(shard.name)
+        return None
+
+    async def _fetch_available_shards(self) -> None:
+        """
+        Method that will call the method for each shard value concurrently
+        """
+        async with aiohttp.ClientSession() as session:
+            tasks = [self._test_potential_shard(session, shard) for shard in Shard]
+            await asyncio.gather(*tasks)
 
     async def refresh_interface(
             self,
