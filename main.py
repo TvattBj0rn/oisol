@@ -144,18 +144,6 @@ class Oisol(commands.Bot):
             tasks = [self._test_potential_shard(session, shard) for shard in Shard]
             await asyncio.gather(*tasks)
 
-    async def refresh_interface(
-            self,
-            _group_id: str | int,
-            channel_id: str | int,
-            message_id: str | int,
-            embed: discord.Embed | None = None,
-    ) -> None:
-        # Update existing interface
-        channel = self.get_channel(int(channel_id))
-        message = await channel.fetch_message(int(message_id))
-        await message.edit(embed=embed)
-
 
 if __name__ == '__main__':
     load_dotenv()

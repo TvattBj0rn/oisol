@@ -17,6 +17,7 @@ from src.utils import (
     InterfacesTypes,
     Shard,
     repair_default_config_dict,
+    refresh_interface,
 )
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
@@ -160,8 +161,8 @@ class ModuleConfig(commands.Cog):
                 (interaction.guild_id, InterfacesTypes.STOCKPILE.value),
             ).fetchall()
         for group_id, channel_id, message_id, association_id in stockpile_interfaces:
-            await self.bot.refresh_interface(
-                group_id,
+            await refresh_interface(
+                self.bot,
                 channel_id,
                 message_id,
                 discord.Embed().from_dict(get_stockpile_info(int(group_id), association_id, message_id=int(message_id))),
