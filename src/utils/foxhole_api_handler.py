@@ -1,6 +1,10 @@
+import asyncio
+import itertools
+
+import aiohttp
 from aiohttp import ClientResponse, ClientSession
 
-from src.utils import MapIcon, Shard
+from src.utils import Faction, MapIcon, Shard
 
 
 class FoxholeAsyncAPIWrapper:
@@ -140,3 +144,33 @@ class FoxholeAsyncAPIWrapper:
                     closest_y = comparison_y
             res.append((closest_label, MapIcon(map_item['iconType']).name))
         return res
+
+    @staticmethod
+    def extract_map_flags(flag: int) -> tuple[bool, bool, bool, bool]:
+        """
+        Extract boolean values from bit mask flag value
+        :param flag: flag to extract values from
+        :return: IsVictoryBase, IsBuildSite, IsScorched, IsTownClaimed
+        """
+        return bool(flag & 0x01), bool(flag & 0x04), bool(flag & 0x10), bool(flag & 0x20)
+
+    async def get_current_factions_control(self) -> dict[str, int]:
+        """
+        Get each faction total number of victory points
+        :return: output dict keys: Required, WARDEN, COLONIAL
+        """
+        async with aiohttp.ClientSession() as session:
+            current_war_state, regions_list = await asyncio.gather(*[foo(session) for foo in [self.get_current_war_state, self.get_regions_list]])
+            all_map_town_bases = await asyncio.gather(*[self.get_region_specific_icons(session, region, [MapIcon.TOWN_BASE_1.value, MapIcon.TOWN_BASE_2.value, MapIcon.TOWN_BASE_3.value]) for region in regions_list])
+
+        # Flatten all town bases into a single list
+        all_map_town_bases = list(itertools.chain.from_iterable(region for region in all_map_town_bases))
+
+        # Keep only items that are victory points
+        all_map_town_bases = [town_base for town_base in all_map_town_bases if self.extract_map_flags(town_base['flags'])[0]]
+
+        return {
+            'Required': current_war_state['requiredVictoryTowns'],
+            Faction.WARDEN.name: sum(1 for town_base in all_map_town_bases if town_base['teamId'] == f'{Faction.WARDEN.name}S'),
+            Faction.COLONIAL.name: sum(1 for town_base in all_map_town_bases if town_base['teamId'] == f'{Faction.COLONIAL.name}S'),
+        }
