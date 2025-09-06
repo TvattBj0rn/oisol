@@ -149,6 +149,7 @@ class FoxholeAsyncAPIWrapper:
     def extract_map_flags(flag: int) -> tuple[bool, bool, bool, bool]:
         """
         Extract boolean values from bit mask flag value
+        from: https://github.com/clapfoot/warapi?tab=readme-ov-file#map-flags
         :param flag: flag to extract values from
         :return: IsVictoryBase, IsBuildSite, IsScorched, IsTownClaimed
         """
