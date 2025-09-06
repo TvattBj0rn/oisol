@@ -134,7 +134,6 @@ class Oisol(commands.Bot):
 
         # Shard is live
         self.connected_shards.add(shard.name)
-        return
 
     async def _fetch_available_shards(self) -> None:
         """
