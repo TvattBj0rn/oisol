@@ -15,9 +15,8 @@ from src.utils import (
     DataFilesPath,
     Faction,
     InterfacesTypes,
-    Shard,
-    repair_default_config_dict,
     refresh_interface,
+    repair_default_config_dict,
 )
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView

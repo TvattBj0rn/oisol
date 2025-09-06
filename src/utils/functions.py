@@ -5,9 +5,7 @@ import operator
 from configparser import ConfigParser
 from typing import TYPE_CHECKING
 
-import aiohttp
 import discord
-from aiohttp import ClientSession
 
 if TYPE_CHECKING:
     from main import Oisol
