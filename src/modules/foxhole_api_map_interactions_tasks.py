@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 
 
 class WorldSpawnsStatus(commands.Cog):
+    """
+    This task update the bot's cache for each shard for the tier status of all map subregions, later used for the health
+    command of specific subregions
+    """
     def __init__(self, bot: Oisol):
         self.bot = bot
 
