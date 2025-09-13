@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import configparser
+import time
 from itertools import compress
 from typing import TYPE_CHECKING
 
@@ -28,10 +29,13 @@ if TYPE_CHECKING:
 class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+        self._autocomplete_cache = {}
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
+
+        self._autocomplete_cache.pop(interaction.user.id, None)
 
         async with FoxholeWikiAPIWrapper() as wrapper:
             # search request, but redirect are resolved
@@ -48,6 +52,8 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
+
+        self._autocomplete_cache.pop(interaction.user.id, None)
 
         # Fields required for health process for the two available tables
         table_fields = {
@@ -112,7 +118,7 @@ class ModuleWiki(commands.Cog):
             search_results = await wrapper.wiki_search_request(current, do_resolve_redirect=False)
 
             # Create a mask of valid entries from raw results (not a page but a redirect are ignored for example)
-            mask = await asyncio.gather(*(wrapper.is_page_wiki_page(wrapper.get_active_session(), table) for table in list(search_results)))
+            mask = await wrapper.is_page_wiki_page(wrapper.get_active_session(), list(search_results))
 
         # Get valid entries from the mask
         search_results_redirect = compress(list(search_results), mask)
