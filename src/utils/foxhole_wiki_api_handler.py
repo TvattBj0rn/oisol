@@ -127,11 +127,7 @@ class FoxholeWikiAPIWrapper:
             title = redirections.get(page['title'], page['title'])
 
             # Create mask by checking if a page has a version related description
-            masked_pages_names[masked_pages_names.index(title)] = (
-                True
-                if 'pageprops' in page and page['pageprops']['description'].startswith('This article is considered accurate for the current version')
-                else False
-            )
+            masked_pages_names[masked_pages_names.index(title)] = bool('pageprops' in page and page['pageprops']['description'].startswith('This article is considered accurate for the current version'))
         return masked_pages_names
 
     async def find_table_from_value_name(self, value_name: str, context_tables: list) -> str | None:
