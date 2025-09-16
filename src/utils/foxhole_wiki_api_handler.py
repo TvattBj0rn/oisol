@@ -1,7 +1,9 @@
 import asyncio
+import os
 from itertools import compress
 
 import aiohttp
+import dotenv
 from aiohttp import ClientResponse, ClientSession
 
 
@@ -9,6 +11,26 @@ class FoxholeWikiAPIWrapper:
     def __init__(self, **kwargs):
         self.__entry_point = 'https://foxhole.wiki.gg/api.php?'
         self.__session = aiohttp.ClientSession(**kwargs)
+
+    async def log_bot(self) -> None:
+        dotenv.load_dotenv()
+        login_token_async_response = await self.__session.get(
+            f'{self.__entry_point}action=query&meta=tokens&type=login&format=json',
+            timeout=5,
+        )
+        login_token_response = await self.__response_handler(login_token_async_response)
+        login_async_response = await self.__session.post(
+            self.__entry_point,
+            timeout=5,
+            data={
+                'action': 'login',
+                'lgname': os.getenv('FOXHOLE_WIKI_USERNAME'),
+                'lgpassword': os.getenv('FOXHOLE_WIKI_PASSWORD'),
+                'lgtoken': login_token_response['query']['tokens']['logintoken'],
+                'format': 'json',
+            },
+        )
+        await self.__response_handler(login_async_response)
 
     async def __aenter__(self):
         return self
@@ -107,23 +129,28 @@ class FoxholeWikiAPIWrapper:
             # In case of error during the request, None will be returned but will fall back to False anyway
             return bool(response.get('cargoquery', False))
 
-    async def is_page_wiki_page(self, session: ClientSession, page_name: str) -> bool:
+    async def is_page_wiki_page(self, session: ClientSession, pages_names: list) -> list[bool]:
         """
         Use the API to parse a page and retrieve its category to determine its status
         :param session: session to use
-        :param page_name: page to parse
+        :param pages_names: pages to parse
         :return: If page is a list of ambiguate pages (False) or a direct wiki page (True)
         """
-        async with session.get(
-            f'https://foxhole.wiki.gg/api.php?action=parse&page={page_name}&format=json&prop=categories&redirects=true',
-            timeout=5,
-        ) as async_response:
-            response = await self.__response_handler(async_response)
-            for category in response['parse']['categories']:
-                if category['*'] == 'Disambiguation_pages':
-                    return False
-            return True
+        masked_pages_names = pages_names.copy()
 
+        async with session.get(f'https://foxhole.wiki.gg/api.php?action=query&titles={'|'.join(pages_names)}&format=json&prop=pageprops&redirects=True') as async_response:
+            response = await self.__response_handler(async_response)
+
+        # Create dict of potential redirections, to get the reverse available
+        redirections = {redirection['to']: redirection['from'] for redirection in response['query']['redirects']} if 'redirects' in response['query'] else {}
+
+        for page in response['query']['pages'].values():
+            # Check for reverse redirection
+            title = redirections.get(page['title'], page['title'])
+
+            # Create mask by checking if a page has a version related description
+            masked_pages_names[masked_pages_names.index(title)] = bool('pageprops' in page and page['pageprops']['description'].startswith('This article is considered accurate for the current version'))
+        return masked_pages_names
 
     async def find_table_from_value_name(self, value_name: str, context_tables: list) -> str | None:
         """

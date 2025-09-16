@@ -18,6 +18,7 @@ from src.utils import (
     DiscordIdType,
     InterfacesTypes,
     Shard,
+    refresh_interface,
 )
 
 from .stockpile_interface_handling import get_stockpile_info
@@ -61,8 +62,8 @@ async def update_all_associated_stockpiles(bot: Oisol, association_id: str) -> N
         ).fetchall()
 
     for group_id, channel_id, message_id in all_interfaces_to_update:
-        await bot.refresh_interface(
-            group_id,
+        await refresh_interface(
+            bot,
             channel_id,
             message_id,
             discord.Embed().from_dict(get_stockpile_info(int(group_id), association_id, message_id=int(message_id))),
@@ -495,8 +496,8 @@ class ModuleStockpiles(commands.Cog):
 
         if do_interface_update:
             # Update the interface
-            await self.bot.refresh_interface(
-                interaction.guild_id,
+            await refresh_interface(
+                self.bot,
                 interaction.channel_id,
                 msg.id,
                 discord.Embed().from_dict(get_stockpile_info(

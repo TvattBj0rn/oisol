@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import asyncio
 import re
 import sqlite3
-from multiprocessing import Pool, cpu_count
 from typing import TYPE_CHECKING
 
+import aiohttp
 from discord.ext import commands, tasks
 
-from src.utils import OISOL_HOME_PATH, FoxholeAPIWrapper, MapIcon, Shard
+from src.utils import OISOL_HOME_PATH, FoxholeAsyncAPIWrapper, MapIcon, Shard
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -23,16 +24,24 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
         self.all_regions_stockpiles = []
 
         # Start tasks
-        self.refresh_able_shard_stockpiles_subregions.start()
-        self.refresh_baker_shard_stockpiles_subregions.start()
-        self.refresh_charlie_shard_stockpiles_subregions.start()
+        if Shard.ABLE.name in self.bot.connected_shards:
+            self.refresh_able_shard_stockpiles_subregions.start()
+        if Shard.BAKER.name in self.bot.connected_shards:
+            self.refresh_baker_shard_stockpiles_subregions.start()
+        if Shard.CHARLIE.name in self.bot.connected_shards:
+            self.refresh_charlie_shard_stockpiles_subregions.start()
 
     @staticmethod
-    def _prepare_region_data(api_wrapper: FoxholeAPIWrapper, war_data: dict, region: str) -> list[tuple]:
+    async def _prepare_region_data(session: aiohttp.ClientSession, api_wrapper: FoxholeAsyncAPIWrapper, war_data: dict, region: str) -> list[tuple]:
         single_region_stockpiles = []
-        map_items = api_wrapper.get_region_specific_icons(region, [MapIcon.SEAPORT.value, MapIcon.STORAGE_DEPOT.value])
-        map_label = api_wrapper.get_region_specific_labels(region)
-        ordered_items = api_wrapper.get_subregion_from_map_items(map_items, map_label)
+
+        map_tasks_array = {
+            api_wrapper.get_region_specific_icons: [session, region, [MapIcon.SEAPORT.value, MapIcon.STORAGE_DEPOT.value]],
+            api_wrapper.get_region_specific_labels: [session, region],
+        }
+        map_items, map_labels = await asyncio.gather(*[foo(*args) for foo, args in map_tasks_array.items()])
+        ordered_items = api_wrapper.get_subregion_from_map_items(map_items, map_labels)
+
         if region == 'MooringCountyHex':
             region = 'TheMoors'
         elif region == 'DeadLandsHex':
@@ -51,18 +60,21 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
     def _save_region_stockpiles(self, region_stockpiles: list[tuple]) -> None:
         self.all_regions_stockpiles += region_stockpiles
 
-    def _get_latest_stockpiles_zones(self, api_wrapper: FoxholeAPIWrapper, war_data: dict) -> list:
-        region_list = api_wrapper.get_regions_list()
-        pool = Pool(processes=(cpu_count() - 1))
-        for region in region_list:
-            pool.apply_async(self._prepare_region_data, args=(api_wrapper, war_data, region), callback=self._save_region_stockpiles)
-        pool.close()
-        pool.join()
-        return self.all_regions_stockpiles
+    async def _get_latest_stockpiles_zones(self, session: aiohttp.ClientSession, api_wrapper: FoxholeAsyncAPIWrapper, war_data: dict) -> list:
+        # Retrieve shard's list of active regions
+        region_list = await api_wrapper.get_regions_list(session)
 
-    def _update_stockpile_subregions(self, shard_api: FoxholeAPIWrapper) -> None:
+        # Retrieve region stockpiles with format: tuple[shard, war_number, war_start_time, region, subregion, type[Seaport, Storage Depot]]
+        result = await asyncio.gather(*[self._prepare_region_data(session, api_wrapper, war_data, region) for region in region_list])
+
+        # Return flattened version from list of lists len 1 of tuple to list of tuples
+        return [stockpile_list_info[0] for stockpile_list_info in result]
+
+    async def _update_stockpile_subregions(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
         self.all_regions_stockpiles = []
-        if not (current_war_data := shard_api.get_current_war_state()):
+        session = aiohttp.ClientSession()
+
+        if not (current_war_data := await shard_api.get_current_war_state(session)):
             return
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -75,7 +87,7 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
                 return
             # New war has started
             if last_war_start_time is None or current_war_data['conquestStartTime'] > last_war_start_time:
-                if not (latest_stockpiles := self._get_latest_stockpiles_zones(shard_api, current_war_data)):
+                if not (latest_stockpiles := await self._get_latest_stockpiles_zones(session, shard_api, current_war_data)):
                     return
                 if last_war_start_time is not None:
                     cursor.execute(
@@ -88,15 +100,16 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
                 )
                 conn.commit()
                 self.bot.logger.task(f'Available stockpiles were updated for {shard_api.shard_name}')
+        await session.close()
 
     @tasks.loop(minutes=2)
     async def refresh_able_shard_stockpiles_subregions(self) -> None:
-        self._update_stockpile_subregions(FoxholeAPIWrapper())
+        await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper())
 
     @tasks.loop(minutes=2)
     async def refresh_baker_shard_stockpiles_subregions(self) -> None:
-        self._update_stockpile_subregions(FoxholeAPIWrapper(shard=Shard.BAKER))
+        await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
 
     @tasks.loop(minutes=2)
     async def refresh_charlie_shard_stockpiles_subregions(self) -> None:
-        self._update_stockpile_subregions(FoxholeAPIWrapper(shard=Shard.CHARLIE))
+        await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))

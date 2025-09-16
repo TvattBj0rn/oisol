@@ -6,6 +6,7 @@ import sqlite3
 import time
 from typing import TYPE_CHECKING
 
+import aiohttp
 import discord
 from discord.ext import commands, tasks
 
@@ -15,7 +16,7 @@ from src.modules.stockpile_viewer.module_stockpile import (
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    FoxholeAPIWrapper,
+    FoxholeAsyncAPIWrapper,
     InterfacesTypes,
     InterfaceType,
     Shard,
@@ -32,9 +33,12 @@ class DatabaseCleaner(commands.Cog):
         self.remove_non_existing_interfaces.start()
 
         # Clear existing stockpiles at war's end
-        self.clear_stockpiles_able.start()
-        self.clear_stockpiles_baker.start()
-        self.clear_stockpiles_charlie.start()
+        if Shard.ABLE.name in self.bot.connected_shards:
+            self.clear_stockpiles_able.start()
+        if Shard.BAKER.name in self.bot.connected_shards:
+            self.clear_stockpiles_baker.start()
+        if Shard.CHARLIE.name in self.bot.connected_shards:
+            self.clear_stockpiles_charlie.start()
 
     @staticmethod
     def _clear_entries(
@@ -79,8 +83,9 @@ class DatabaseCleaner(commands.Cog):
         self.bot.logger.task(f'remove_non_existing_interface task complete in {time.time() - start_time}s')
 
 
-    async def _clear_stockpiles_new_war(self, shard_api: FoxholeAPIWrapper) -> None:
-        current_state = shard_api.get_current_war_state()
+    async def _clear_stockpiles_new_war(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
+        async with aiohttp.ClientSession() as session:
+            current_state = await shard_api.get_current_war_state(session)
         if (
                 current_state.get('conquestEndTime') is None # The war is still active
                 or (res_start_time := current_state.get('resistanceStartTime')) is None # Ensure we can work with the resistanceStartTime otherwise
@@ -125,12 +130,12 @@ class DatabaseCleaner(commands.Cog):
 
     @tasks.loop(hours=1)
     async def clear_stockpiles_able(self) -> None:
-        await self._clear_stockpiles_new_war(FoxholeAPIWrapper())
+        await self._clear_stockpiles_new_war(FoxholeAsyncAPIWrapper())
 
     @tasks.loop(hours=1)
     async def clear_stockpiles_baker(self) -> None:
-        await self._clear_stockpiles_new_war(FoxholeAPIWrapper(shard=Shard.BAKER))
+        await self._clear_stockpiles_new_war(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
 
     @tasks.loop(hours=1)
     async def clear_stockpiles_charlie(self) -> None:
-        await self._clear_stockpiles_new_war(FoxholeAPIWrapper(shard=Shard.CHARLIE))
+        await self._clear_stockpiles_new_war(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))

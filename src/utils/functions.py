@@ -1,7 +1,14 @@
+from __future__ import annotations
+
 import configparser
 import operator
 from configparser import ConfigParser
+from typing import TYPE_CHECKING
 
+import discord
+
+if TYPE_CHECKING:
+    from main import Oisol
 from .oisol_enums import Faction, Language, Shard
 
 
@@ -44,15 +51,6 @@ def repair_default_config_dict(current_config: ConfigParser | None = None) -> Co
     return final_config
 
 
-def get_highest_res_img_link(img_path: str) -> str:
-    """
-    Create a link with the given img path. If the given image is a thumbnail, a pattern is applied to get the full res path
-    :param img_path: internal picture path
-    :return: external link to the correct picture
-    """
-    return '/'.join(f'https://foxhole.wiki.gg{img_path}'.replace('/thumb', '').split('/')[:-1]) if '/thumb' in img_path else f'https://foxhole.wiki.gg{img_path}'
-
-
 def sort_nested_dicts_by_key(input_dict: dict) -> dict:
     return {
         k: sort_nested_dicts_by_key(v) if isinstance(v, dict) else v for k, v in sorted(
@@ -74,3 +72,21 @@ def convert_time_to_readable_time(value: float) -> str:
     h, m = divmod(m, 60)
 
     return f'{int(h)}:{int(m):02d}:{int(s):02d}h'
+
+
+async def refresh_interface(
+        bot: Oisol,
+        channel_id: str | int,
+        message_id: str | int,
+        embed: discord.Embed | None = None,
+) -> None:
+    """
+    Update an interface using its channel and message ids
+    :param bot: Oisol
+    :param channel_id: discord channel id
+    :param message_id: discord message id
+    :param embed: updated embed
+    """
+    channel = bot.get_channel(int(channel_id))
+    message = await channel.fetch_message(int(message_id))
+    await message.edit(embed=embed)

@@ -57,7 +57,7 @@ class HealthEntryEngine:
         Format attributes to discord embed format
         """
         self.__embed['title'] = self.__name
-        self.__embed['description'] = f'Class: {self.__class}\nHealth: {self.__hp}HP{f'\n{f'Disabled: below {int(int(self.__hp) * (float(self.__raw_data['disable']) / 100))}HP ({int(self.__raw_data['disable'])}%)' if 'disable' in self.__raw_data else f'Entrenched: {int(self.__special_hp)}HP'}' if self.__special_hp != -1 else ''}'
+        self.__embed['description'] = f'__Class__: {self.__class}\n__Health__: **{self.__hp}** HP{f'\n{f'__Disabled__: below **{int(int(self.__hp) * (float(self.__raw_data['disable']) / 100))}** HP (**{int(self.__raw_data['disable'])}**%)' if 'disable' in self.__raw_data else f'__Entrenched__: **{int(self.__special_hp)}** HP'}' if self.__special_hp != -1 else ''}'
         self.__embed['color'] = self.__faction_color
         self.__embed['thumbnail'] = {'url': self.__image_url}
         self.__embed['fields'] = []

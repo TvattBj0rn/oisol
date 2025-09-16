@@ -78,8 +78,7 @@ class ModuleTodolist(commands.Cog):
             todolist_view = TodolistViewMenu()
             todolist_view.refresh_view(title, msg, todolist_id)
             await msg.edit(view=todolist_view, embed=todolist_view.embed)
-            # await interaction.response.send_message(view=todolist_view, embed=todolist_view.embed)
-            # interaction_response_message = await interaction.original_response()
+
             cursor.execute(
                 'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
                 (interaction.guild_id, interaction.channel_id, msg.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),

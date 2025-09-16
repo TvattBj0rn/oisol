@@ -192,7 +192,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             # Retrieve all permissions for the todolist
             todolist_permissions = cursor.execute(
                 'SELECT DiscordId, DiscordIdType FROM GroupsInterfacesAccess WHERE GroupId == ? AND MessageId == ?',
-                (interaction.guild_id, interaction.message.id),
+                (guild_id, interaction.message.id),
             ).fetchall()
 
             # Check whether the user id or its roles id are in todolist permissions
@@ -209,7 +209,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             current_time = int(time.time())
             current_tasks = cursor.execute(
                 'SELECT GroupId, TodolistId, TaskContent, TaskPriority, LastUpdated FROM GroupsTodolistsTasks WHERE GroupId == ? AND TodolistId == ?',
-                (interaction.guild_id, embed_uuid),
+                (guild_id, embed_uuid),
             ).fetchall()
             current_tasks = [
                 *[(task[0], task[1], task[2], task[3], current_time) for task in current_tasks if task[3] == PriorityType.HIGH.name],
@@ -219,7 +219,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             current_tasks.pop(list(EMOTES_CUSTOM_ID).index(self.emoji))
             cursor.execute(
                 'DELETE FROM GroupsTodolistsTasks WHERE GroupId == ? AND TodolistId == ?',
-                (interaction.guild_id, embed_uuid),
+                (guild_id, embed_uuid),
             )
             # This could be reworked by using LIMIT in the previous DELETE request
             cursor.executemany(

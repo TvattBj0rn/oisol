@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import configparser
 from itertools import compress
 from typing import TYPE_CHECKING
@@ -28,10 +27,26 @@ if TYPE_CHECKING:
 class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+        self.__connection_instances = {}
+
+
+
+    @staticmethod
+    async def __create_new_logged_in_instance() -> FoxholeWikiAPIWrapper:
+        wrapper = FoxholeWikiAPIWrapper()
+        await wrapper.log_bot()
+        return wrapper
+
+    @staticmethod
+    async def __log_instance_out(wrapper: FoxholeWikiAPIWrapper, key_id: int) -> int:
+        await wrapper.close()
+        return key_id
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
+
+        self.__connection_instances.pop(await self.__log_instance_out(self.__connection_instances[interaction.user.id], interaction.user.id), None)
 
         async with FoxholeWikiAPIWrapper() as wrapper:
             # search request, but redirect are resolved
@@ -48,6 +63,8 @@ class ModuleWiki(commands.Cog):
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
+
+        self.__connection_instances.pop(await self.__log_instance_out(self.__connection_instances[interaction.user.id], interaction.user.id), None)
 
         # Fields required for health process for the two available tables
         table_fields = {
@@ -91,28 +108,32 @@ class ModuleWiki(commands.Cog):
                 # Maps targets are converted to their associated structures
                 health_table = WikiTables.STRUCTURES.value
 
-            data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, resolved_search_request)
+            # Search request can include tiered entries while resolved serve as a backup
+            final_search_request = resolved_search_request if health_table_redirect is None else search_request
 
-        data_dict['name'] = resolved_search_request
+            data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, final_search_request)
+
+        data_dict['name'] = final_search_request
         health_embed = HealthEntryEngine(data_dict).get_generated_embed()
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
     @wiki.autocomplete('search_request')
     @entities_health.autocomplete('search_request')
-    async def structures_vehicles_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
+    async def structures_vehicles_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         if not current:
             current = 'foxhole' # when user input is empty, search for a default value foxhole
+        if interaction.user.id not in self.__connection_instances:
+            self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
-            # Get raw search results
-            search_results_redirect = await wrapper.wiki_search_request(current, do_resolve_redirect=False)
+        # Get non redirected search results
+        search_results = await self.__connection_instances[interaction.user.id].wiki_search_request(current, do_resolve_redirect=False)
 
-            # Create a mask of valid entries from raw results (not a page but a redirect are ignored for example)
-            mask = await asyncio.gather(*(wrapper.is_page_wiki_page(wrapper.get_active_session(), table) for table in list(search_results_redirect)))
+        # Create a mask of valid entries from raw results (not a page but a redirect are ignored for example)
+        mask = await self.__connection_instances[interaction.user.id].is_page_wiki_page(self.__connection_instances[interaction.user.id].get_active_session(), list(search_results))
 
         # Get valid entries from the mask
-        search_results_redirect = compress(list(search_results_redirect), mask)
+        search_results_redirect = compress(list(search_results), mask)
 
         # Manual corrections to add all types of a specific entry,
         # Replace k by k: k + vv for vv in v
@@ -123,6 +144,12 @@ class ModuleWiki(commands.Cog):
             'Post Office': tier_iterable,
             'School': tier_iterable,
             'Bunker Base': tier_iterable,
+            'Wall': tier_iterable,
+            'Gate': tier_iterable,
+            'Bunker': tier_iterable,
+            'Bunker Ramp': tier_iterable,
+            'Bunker Corner': tier_iterable,
+            'Observation Bunker': tier_iterable,
             'Garrisoned House': [
                 '- Small (Tier 1)', '- Medium (Tier 1)', '- Large (Tier 1)',
                 '- Small (Tier 2)', '- Medium (Tier 2)', '- Large (Tier 2)',
