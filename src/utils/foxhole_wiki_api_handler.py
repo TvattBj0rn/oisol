@@ -1,7 +1,9 @@
 import asyncio
+import os
 from itertools import compress
 
 import aiohttp
+import dotenv
 from aiohttp import ClientResponse, ClientSession
 
 
@@ -9,6 +11,26 @@ class FoxholeWikiAPIWrapper:
     def __init__(self, **kwargs):
         self.__entry_point = 'https://foxhole.wiki.gg/api.php?'
         self.__session = aiohttp.ClientSession(**kwargs)
+
+    async def log_bot(self) -> None:
+        dotenv.load_dotenv()
+        login_token_async_response = await self.__session.get(
+            f'{self.__entry_point}action=query&meta=tokens&type=login&format=json',
+            timeout=5,
+        )
+        login_token_response = await self.__response_handler(login_token_async_response)
+        login_async_response = await self.__session.post(
+            self.__entry_point,
+            timeout=5,
+            data={
+                'action': 'login',
+                'lgname': os.getenv('FOXHOLE_WIKI_USERNAME'),
+                'lgpassword': os.getenv('FOXHOLE_WIKI_PASSWORD'),
+                'lgtoken': login_token_response['query']['tokens']['logintoken'],
+                'format': 'json',
+            },
+        )
+        await self.__response_handler(login_async_response)
 
     async def __aenter__(self):
         return self
