@@ -27,13 +27,11 @@ if TYPE_CHECKING:
 class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self._autocomplete_cache = {}
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
 
-        self._autocomplete_cache.pop(interaction.user.id, None)
 
         async with FoxholeWikiAPIWrapper() as wrapper:
             # search request, but redirect are resolved
@@ -51,7 +49,6 @@ class ModuleWiki(commands.Cog):
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
 
-        self._autocomplete_cache.pop(interaction.user.id, None)
 
         # Fields required for health process for the two available tables
         table_fields = {
