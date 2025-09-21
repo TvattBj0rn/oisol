@@ -29,32 +29,29 @@ class ModuleWiki(commands.Cog):
         self.bot = bot
         self.__connection_instances = {}
 
-
-
     @staticmethod
     async def __create_new_logged_in_instance() -> FoxholeWikiAPIWrapper:
         wrapper = FoxholeWikiAPIWrapper()
         await wrapper.log_bot()
         return wrapper
 
-    @staticmethod
-    async def __log_instance_out(wrapper: FoxholeWikiAPIWrapper, key_id: int) -> int:
-        await wrapper.close()
-        return key_id
-
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
 
-        self.__connection_instances.pop(await self.__log_instance_out(self.__connection_instances[interaction.user.id], interaction.user.id), None)
+        if interaction.user.id not in self.__connection_instances:
+            self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
+        search_request = await self._search_user_request(interaction, search_request)
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
+        async with self.__connection_instances[interaction.user.id] as wrapper:
             # search request, but redirect are resolved
             resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)), search_request)
 
             table_name = await wrapper.find_table_from_value_name(resolved_search_request, [WikiTables.MAPS.value, WikiTables.VEHICLES.value, WikiTables.STRUCTURES.value, WikiTables.ITEM_DATA.value])
             target_fields = await wrapper.fetch_cargo_table_fields(table_name)
             data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, resolved_search_request)
+
+        self.__connection_instances.pop(interaction.user.id, None)
 
         embeded_data = WikiTemplateFactory(data_dict).get(WikiTables(table_name)).generate_embed_data()
 
@@ -64,7 +61,9 @@ class ModuleWiki(commands.Cog):
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
 
-        self.__connection_instances.pop(await self.__log_instance_out(self.__connection_instances[interaction.user.id], interaction.user.id), None)
+        if interaction.user.id not in self.__connection_instances:
+            self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
+        search_request = await self._search_user_request(interaction, search_request)
 
         # Fields required for health process for the two available tables
         table_fields = {
@@ -72,7 +71,7 @@ class ModuleWiki(commands.Cog):
             WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction'],
         }
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
+        async with self.__connection_instances[interaction.user.id] as wrapper:
             # search request, but redirect are resolved
             resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)), search_request)
 
@@ -113,24 +112,22 @@ class ModuleWiki(commands.Cog):
 
             data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, final_search_request)
 
+        self.__connection_instances.pop(interaction.user.id, None)
+
         data_dict['name'] = final_search_request
         health_embed = HealthEntryEngine(data_dict).get_generated_embed()
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
-    @wiki.autocomplete('search_request')
-    @entities_health.autocomplete('search_request')
-    async def structures_vehicles_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
-        if not current:
-            current = 'foxhole' # when user input is empty, search for a default value foxhole
-        if interaction.user.id not in self.__connection_instances:
-            self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
+    async def _search_user_request(self, interaction: discord.Interaction, user_request: str) -> list[app_commands.Choice[str]]:
+        if not user_request:
+            user_request = 'foxhole' # when user input is empty, search for a default value foxhole
 
         # Get non redirected search results
-        search_results = await self.__connection_instances[interaction.user.id].wiki_search_request(current, do_resolve_redirect=False)
+        search_results = await self.__connection_instances[interaction.user.id].wiki_search_request(user_request, do_resolve_redirect=False)
 
         # Create a mask of valid entries from raw results (not a page but a redirect are ignored for example)
-        mask = await self.__connection_instances[interaction.user.id].is_page_wiki_page(self.__connection_instances[interaction.user.id].get_active_session(), list(search_results))
+        mask = await self.__connection_instances[interaction.user.id].is_page_wiki_page(list(search_results))
 
         # Get valid entries from the mask
         search_results_redirect = compress(list(search_results), mask)
@@ -165,4 +162,4 @@ class ModuleWiki(commands.Cog):
             else:
                 final_search_list.append(entry)
 
-        return [app_commands.Choice(name=result, value=result) for result in final_search_list]
+        return final_search_list[0]
