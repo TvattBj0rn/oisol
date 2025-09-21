@@ -63,7 +63,6 @@ class ModuleWiki(commands.Cog):
 
         if interaction.user.id not in self.__connection_instances:
             self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
-
         search_request = await self._search_user_request(interaction, search_request)
 
         # Fields required for health process for the two available tables
@@ -119,55 +118,6 @@ class ModuleWiki(commands.Cog):
         health_embed = HealthEntryEngine(data_dict).get_generated_embed()
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
-
-    # @wiki.autocomplete('search_request')
-    # @entities_health.autocomplete('search_request')
-    async def structures_vehicles_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
-        if not current:
-            current = 'foxhole' # when user input is empty, search for a default value foxhole
-        if interaction.user.id not in self.__connection_instances:
-            self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
-
-        # Get non redirected search results
-        search_results = await self.__connection_instances[interaction.user.id].wiki_search_request(current, do_resolve_redirect=False)
-
-        # Create a mask of valid entries from raw results (not a page but a redirect are ignored for example)
-        mask = await self.__connection_instances[interaction.user.id].is_page_wiki_page(list(search_results))
-
-        # Get valid entries from the mask
-        search_results_redirect = compress(list(search_results), mask)
-
-        # Manual corrections to add all types of a specific entry,
-        # Replace k by k: k + vv for vv in v
-        tier_iterable = ['(Tier 1)', '(Tier 2)', '(Tier 3)']
-        manual_corrections = {
-            'Safe House': tier_iterable,
-            'Town Center': tier_iterable,
-            'Post Office': tier_iterable,
-            'School': tier_iterable,
-            'Bunker Base': tier_iterable,
-            'Wall': tier_iterable,
-            'Gate': tier_iterable,
-            'Bunker': tier_iterable,
-            'Bunker Ramp': tier_iterable,
-            'Bunker Corner': tier_iterable,
-            'Observation Bunker': tier_iterable,
-            'Garrisoned House': [
-                '- Small (Tier 1)', '- Medium (Tier 1)', '- Large (Tier 1)',
-                '- Small (Tier 2)', '- Medium (Tier 2)', '- Large (Tier 2)',
-                '- Small (Tier 3)', '- Medium (Tier 3)', '- Large (Tier 3)',
-            ],
-        }
-
-        final_search_list = []
-
-        for entry in search_results_redirect:
-            if entry in manual_corrections:
-                final_search_list.extend(f'{entry} {correction}' for correction in manual_corrections[entry])
-            else:
-                final_search_list.append(entry)
-
-        return [app_commands.Choice(name=result, value=result) for result in final_search_list]
 
     async def _search_user_request(self, interaction: discord.Interaction, user_request: str) -> list[app_commands.Choice[str]]:
         if not user_request:
