@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import configparser
-from itertools import compress
 from typing import TYPE_CHECKING
 
 import discord
@@ -16,6 +15,12 @@ from src.utils import (
     WikiTables,
 )
 
+from ...utils.autocompletion import (
+    ITEMDATA_DATA,
+    MAPS_DATA,
+    STRUCTURES_DATA,
+    VEHICLES_DATA,
+)
 from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
 from .health_embed_template import HealthEntryEngine
 from .wiki_embeds_templates import WikiTemplateFactory
@@ -27,31 +32,17 @@ if TYPE_CHECKING:
 class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        self.__connection_instances = {}
-
-    @staticmethod
-    async def __create_new_logged_in_instance() -> FoxholeWikiAPIWrapper:
-        wrapper = FoxholeWikiAPIWrapper()
-        await wrapper.log_bot()
-        return wrapper
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
 
-        if interaction.user.id not in self.__connection_instances:
-            self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
-        search_request = await self._search_user_request(interaction, search_request)
+        # Retrieve search_request & table from autocomplete value: search_request@table
+        search_request, table_name = search_request.split('@')
 
-        async with self.__connection_instances[interaction.user.id] as wrapper:
-            # search request, but redirect are resolved
-            resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)), search_request)
-
-            table_name = await wrapper.find_table_from_value_name(resolved_search_request, [WikiTables.MAPS.value, WikiTables.VEHICLES.value, WikiTables.STRUCTURES.value, WikiTables.ITEM_DATA.value])
+        async with FoxholeWikiAPIWrapper() as wrapper:
             target_fields = await wrapper.fetch_cargo_table_fields(table_name)
-            data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, resolved_search_request)
-
-        self.__connection_instances.pop(interaction.user.id, None)
+            data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, search_request)
 
         embeded_data = WikiTemplateFactory(data_dict).get(WikiTables(table_name)).generate_embed_data()
 
@@ -61,105 +52,81 @@ class ModuleWiki(commands.Cog):
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
 
-        if interaction.user.id not in self.__connection_instances:
-            self.__connection_instances[interaction.user.id] = await self.__create_new_logged_in_instance()
-        search_request = await self._search_user_request(interaction, search_request)
-
         # Fields required for health process for the two available tables
         table_fields = {
             WikiTables.STRUCTURES.value: ['image', 'type', 'structure_hp', 'structure_hp_entrenched', 'armour_type', 'faction'],
             WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction'],
         }
 
-        async with self.__connection_instances[interaction.user.id] as wrapper:
-            # search request, but redirect are resolved
-            resolved_search_request = next(iter(await wrapper.wiki_search_request(search_request)), search_request)
+        # Retrieve search_request & table from autocomplete value: search_request@table
+        search_request, health_table = search_request.split('@')
 
-            # Get the table to request, depending on the user request
-            health_table = await wrapper.find_table_from_value_name(resolved_search_request, [WikiTables.MAPS.value, WikiTables.STRUCTURES.value, WikiTables.VEHICLES.value])
-            health_table_redirect = await wrapper.find_table_from_value_name(search_request, [WikiTables.MAPS.value, WikiTables.STRUCTURES.value, WikiTables.VEHICLES.value])
+        # Special subregion buffer for display purpose
+        subregion_name = ''
 
-            # In case the user requested something that cannot be processed as a "health" entity
-            if health_table is None or (health_table_redirect is not None and health_table is not None and health_table == WikiTables.MAPS.value):
-                await interaction.response.send_message('> This entry is not a vehicle or a structure', ephemeral=True, delete_after=5)
-                return
+        # Associate given subregion to its current type of base + tier status
+        if health_table == 'custom_map':
+            # Get the discord's server current shard
+            config = configparser.ConfigParser()
+            config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
+            guild_shard = config.get('default', 'shard', fallback='ABLE')
+            subregion_name = search_request
 
-            if health_table == WikiTables.MAPS.value:
-                # Get the discord's server current shard
-                config = configparser.ConfigParser()
-                config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
-                guild_shard = config.get('default', 'shard', fallback='ABLE')
+            town_tier_mapping = {
+                'TOWN_BASE_1': ' (Tier 1)',
+                'TOWN_BASE_2': ' (Tier 2)',
+                'TOWN_BASE_3': ' (Tier 3)',
+            }
+            # Get base tier level of selected town base / relic
+            tier_level = self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][guild_shard][search_request]
 
-                town_tier_mapping = {
-                    'TOWN_BASE_1': ' (Tier 1)',
-                    'TOWN_BASE_2': ' (Tier 2)',
-                    'TOWN_BASE_3': ' (Tier 3)',
-                }
-                # Get base tier level of selected town base / relic
-                tier_level = self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][guild_shard][search_request]
+            # Get base type of selected town base / relic
+            base_type = REGIONS_TYPES[search_request].value
 
-                # Get base type of selected town base / relic
-                base_type = REGIONS_TYPES[search_request].value
+            # Convert subregion to associated type & tier (Cuttail Station -> Town Center (Tier 3)
+            search_request = f'{base_type}{town_tier_mapping.get(tier_level, '')}'
 
-                # Convert subregion to associated type & tier (Cuttail Station -> Town Center (Tier 3)
-                resolved_search_request = f'{base_type}{town_tier_mapping.get(tier_level, '')}'
+            # Maps targets are converted to their associated structures
+            health_table = WikiTables.STRUCTURES.value
 
-                # Maps targets are converted to their associated structures
-                health_table = WikiTables.STRUCTURES.value
+        async with FoxholeWikiAPIWrapper() as wrapper:
+            data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, search_request)
 
-            # Search request can include tiered entries while resolved serve as a backup
-            final_search_request = resolved_search_request if health_table_redirect is None else search_request
+        data_dict['name'] = subregion_name if subregion_name else search_request
 
-            data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, final_search_request)
-
-        self.__connection_instances.pop(interaction.user.id, None)
-
-        data_dict['name'] = final_search_request
+        # Compute health of search_request & generate embed
         health_embed = HealthEntryEngine(data_dict).get_generated_embed()
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
-    async def _search_user_request(self, interaction: discord.Interaction, user_request: str) -> list[app_commands.Choice[str]]:
-        if not user_request:
-            user_request = 'foxhole' # when user input is empty, search for a default value foxhole
+    @staticmethod
+    def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
+        # Normalize current
+        current = current.lower().strip().split(' ')
 
-        # Get non redirected search results
-        search_results = await self.__connection_instances[interaction.user.id].wiki_search_request(user_request, do_resolve_redirect=False)
+        # Score each entry using keywords and current
+        scoring_result = {}
+        for i, entry in enumerate(search_data):
+            if entry_sum_result := sum(1 for kw in current if kw in entry['keywords']):
+                scoring_result[i] = entry_sum_result
 
-        # Create a mask of valid entries from raw results (not a page but a redirect are ignored for example)
-        mask = await self.__connection_instances[interaction.user.id].is_page_wiki_page(list(search_results))
+        # Sort to get the highest entry score
+        scoring_result = dict(sorted(scoring_result.items(), key=lambda item: item[1], reverse=True))
 
-        # Get valid entries from the mask
-        search_results_redirect = compress(list(search_results), mask)
+        top_entries_indexes = list(scoring_result)[:10]
+        top_entries = [search_data[i] for i in top_entries_indexes]
 
-        # Manual corrections to add all types of a specific entry,
-        # Replace k by k: k + vv for vv in v
-        tier_iterable = ['(Tier 1)', '(Tier 2)', '(Tier 3)']
-        manual_corrections = {
-            'Safe House': tier_iterable,
-            'Town Center': tier_iterable,
-            'Post Office': tier_iterable,
-            'School': tier_iterable,
-            'Bunker Base': tier_iterable,
-            'Wall': tier_iterable,
-            'Gate': tier_iterable,
-            'Bunker': tier_iterable,
-            'Bunker Ramp': tier_iterable,
-            'Bunker Corner': tier_iterable,
-            'Observation Bunker': tier_iterable,
-            'Garrisoned House': [
-                '- Small (Tier 1)', '- Medium (Tier 1)', '- Large (Tier 1)',
-                '- Small (Tier 2)', '- Medium (Tier 2)', '- Large (Tier 2)',
-                '- Small (Tier 3)', '- Medium (Tier 3)', '- Large (Tier 3)',
+        return [app_commands.Choice(name=entry['name'], value=f'{entry['name']}@{entry['table']}') for entry in top_entries]
+
+    @entities_health.autocomplete('search_request')
+    async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+        return self._generic_autocomplete(
+            STRUCTURES_DATA + VEHICLES_DATA + [
+                {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
             ],
-        }
+            current,
+        )
 
-        final_search_list = []
-
-        for entry in search_results_redirect:
-            if entry in manual_corrections:
-                final_search_list.extend(f'{entry} {correction}' for correction in manual_corrections[entry])
-            else:
-                final_search_list.append(entry)
-
-        return final_search_list[0]
+    @wiki.autocomplete('search_request')
+    async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
+        return self._generic_autocomplete(ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA, current)
