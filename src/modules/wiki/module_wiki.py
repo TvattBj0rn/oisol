@@ -29,6 +29,15 @@ if TYPE_CHECKING:
     from main import Oisol
 
 
+HEALTH_DATA = STRUCTURES_DATA + VEHICLES_DATA + [
+                {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
+            ]
+HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
+
+WIKI_DATA = ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA
+WIKI_DATA_KEYS = [entry['name'] for entry in WIKI_DATA]
+
+
 class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
@@ -38,7 +47,15 @@ class ModuleWiki(commands.Cog):
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
-        search_request, table_name = search_request.split('@')
+        split_search_request = search_request.split('@')
+        if len(split_search_request) != 2:
+            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
+            return
+
+        search_request, table_name = split_search_request
+        if search_request not in WIKI_DATA_KEYS:
+            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
+            return
 
         async with FoxholeWikiAPIWrapper() as wrapper:
             target_fields = await wrapper.fetch_cargo_table_fields(table_name)
@@ -59,7 +76,15 @@ class ModuleWiki(commands.Cog):
         }
 
         # Retrieve search_request & table from autocomplete value: search_request@table
-        search_request, health_table = search_request.split('@')
+        split_search_request = search_request.split('@')
+        if len(split_search_request) != 2:
+            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
+            return
+
+        search_request, health_table = split_search_request
+        if search_request not in HEALTH_DATA_KEYS:
+            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
+            return
 
         # Special subregion buffer for display purpose
         subregion_name = ''
@@ -120,13 +145,8 @@ class ModuleWiki(commands.Cog):
 
     @entities_health.autocomplete('search_request')
     async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
-        return self._generic_autocomplete(
-            STRUCTURES_DATA + VEHICLES_DATA + [
-                {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
-            ],
-            current,
-        )
+        return self._generic_autocomplete(HEALTH_DATA, current)
 
     @wiki.autocomplete('search_request')
     async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
-        return self._generic_autocomplete(ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA, current)
+        return self._generic_autocomplete(WIKI_DATA, current)
