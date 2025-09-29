@@ -134,9 +134,8 @@ class WikiTables(Enum):
     ICON_DATA = 'icondata'
     ITEM_DATA = 'itemdata'
     MAPS = 'maps'
-    PRODUCTION = 'production'
-    PRODUCTION_SHIPPABLE = 'productionshippable'
-    PRODUCTION_VEHICLE = 'productionvehicle'
+    PRODUCTION = 'production' # Facility crafts (materials)
+    PRODUCTION_MERGED = 'productionmerged' # Vehicles & Shippable craft (including both vanilla & facility crafts)
     STRUCTURES = 'structures'
     VEHICLES = 'vehicles'
     VEHICLE_CLASS = 'VehicleClass'
