@@ -22,7 +22,7 @@ from ...utils.autocompletion import (
     VEHICLES_DATA,
 )
 from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
-from .health_embed_template import HealthEntryEngine
+from .health_embed_templates import HealthEntryEngine
 from .wiki_embeds_templates import WikiTemplateFactory
 
 if TYPE_CHECKING:
