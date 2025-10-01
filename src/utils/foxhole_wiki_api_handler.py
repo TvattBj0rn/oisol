@@ -218,7 +218,8 @@ class FoxholeWikiAPIWrapper:
         :return: target & damage data
         """
         async_vehicle_data = await self.__session.get(
-            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where=_PageName="{target_name}" or name="{target_name}"')
+            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where=_PageName="{target_name}" or name="{target_name}"',
+        )
         row_data = (await self.__response_handler(async_vehicle_data))['cargoquery'][0]['title']
 
         # tasks that can be run independently at once, format -> [(foo, args)],
@@ -240,3 +241,30 @@ class FoxholeWikiAPIWrapper:
 
         return row_data
 
+    async def get_codename_from_name(self, table_name: str, name: str) -> str:
+        codename_response = await self.__session.get(
+            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields=codename&where=_PageName="{name}"',
+        )
+
+        return (await self.__response_handler(codename_response))['cargoquery'][0]['title']['codename']
+
+    async def get_name_from_codename(self, table_name: str, codename: str) -> str:
+        name_response = await self.__session.get(
+            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields=name&where=codename="{codename}"',
+        )
+
+        return (await self.__response_handler(name_response))['cargoquery'][0]['title']['name']
+
+    async def retrieve_production_row(
+            self,
+            target_fields: list[str],
+            table_name: str,
+            target_field_name: str,
+            target_value: str
+    ) -> list[dict]:
+        response = await self.__session.get(
+            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={target_fields}&where="{target_field_name}"="{target_value}"'
+        )
+        production_row_list_raw = (await self.__response_handler(response))['cargoquery']
+
+        return [entry['title'] for entry in production_row_list_raw]
