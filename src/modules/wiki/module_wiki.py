@@ -129,7 +129,25 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='production', description='Vehicles / Items production costs')
     async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False):
-        pass
+        self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Retrieve search_request & table from autocomplete value: search_request@table
+        split_search_request = search_request.split('@')
+        if len(split_search_request) != 2:
+            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
+            return
+
+        search_request, table_name = split_search_request
+        if search_request not in PRODUCTION_DATA_KEYS:
+            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
+            return
+
+        #Todo: productionmerged -> all vics, production -> items/structs
+        async with FoxholeWikiAPIWrapper() as wrapper:
+            codename = await wrapper.get_codename_from_name(table_name, search_request)
+            production_merged_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION_MERGED.value)
+
+
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
