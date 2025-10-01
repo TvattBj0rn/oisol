@@ -34,6 +34,9 @@ HEALTH_DATA = STRUCTURES_DATA + VEHICLES_DATA + [
             ]
 HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
 
+PRODUCTION_DATA = ITEMDATA_DATA + VEHICLES_DATA
+PRODUCTION_DATA_KEYS = [entry['name'] for entry in PRODUCTION_DATA]
+
 WIKI_DATA = ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA
 WIKI_DATA_KEYS = [entry['name'] for entry in WIKI_DATA]
 
@@ -124,6 +127,10 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
+    @app_commands.command(name='production', description='Vehicles / Items production costs')
+    async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False):
+        pass
+
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
         # Normalize current
@@ -146,6 +153,10 @@ class ModuleWiki(commands.Cog):
     @entities_health.autocomplete('search_request')
     async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         return self._generic_autocomplete(HEALTH_DATA, current)
+
+    @production_cost.autocomplete('search_request')
+    async def production_autocomplet(self, _interaction: discord.Interaction, current: str) ->  list[app_commands.Choice]:
+        return self._generic_autocomplete(PRODUCTION_DATA, current)
 
     @wiki.autocomplete('search_request')
     async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
