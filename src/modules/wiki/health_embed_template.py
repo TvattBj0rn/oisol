@@ -24,7 +24,13 @@ class HealthEntryEngine:
 
         # There are only two cases possible here, either a struct or a vehicle, each with their own specific attributes
         self.__hp = int(self.__raw_data['structure hp']) if 'structure hp' in self.__raw_data else int(self.__raw_data['vehicle hp'])
-        self.__special_hp = (int(self.__raw_data['structure hp entrenched']) if self.__raw_data['structure hp entrenched'] is not None else -1) if 'structure hp entrenched' in self.__raw_data else int(self.__hp) - int(self.__raw_data['vehicle hp']) * (float(self.__raw_data['disable']) / 100)
+        if 'structure hp entrenched' not in self.__raw_data:
+            if self.__raw_data['disable'] is None:
+                self.__special_hp = -1
+            else:
+                self.__special_hp = int(self.__hp) - int(self.__raw_data['vehicle hp']) * (float(self.__raw_data['disable']) / 100)
+        else:
+            self.__special_hp = int(self.__raw_data['structure hp entrenched']) if self.__raw_data['structure hp entrenched'] is not None else -1
         self.__embed = {}
 
     @staticmethod
@@ -93,7 +99,11 @@ class HealthEntryEngine:
 
         if self.__case == WikiTables.VEHICLES.value:
             if main_value_rng is None:
+                if self.__special_hp == -1:
+                    return damage_result + f'{main_value}'
                 return  damage_result + f'{special_value} **|** {main_value}'
+            if self.__special_hp == -1:
+                return damage_result + f'{main_value_rng}-{main_value}'
             return damage_result + f'{special_value_rng}-{special_value} **|** {main_value_rng}-{main_value}'
 
         ## Structure cases
