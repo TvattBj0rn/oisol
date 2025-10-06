@@ -617,3 +617,29 @@ REGIONS_TYPES = {
 	'Talonsfort': WorldSpawnTypes.RELIC_MEDIUM,
 	'The Whetstone': WorldSpawnTypes.RELIC_LARGE,
 }
+
+
+CODENAME_TO_GAMENAME = {
+    # Materials
+    'Cloth': 'Basic Materials',
+    'Wood': 'Refined Materials',
+    'FacilityMaterials1': 'Construction Materials',
+    'FacilityMaterials2': 'Processed Construction Materials',
+    'FacilityMaterials3': 'Stell Construction Materials',
+    'FacilityMaterials4': 'Assembly Materials I',
+    'FacilityMaterials5': 'Assembly Materials II',
+    'FacilityMaterials6': 'Assembly Materials III',
+    'FacilityMaterials7': 'Assembly Materials IV',
+    'FacilityMaterials8': 'Assembly Materials V',
+    'FacilityMaterials9': 'Rare Alloys',
+    'FacilityMaterials10': 'Unstable Substances',
+    'FacilityMaterials11': 'Thermal Shielding',
+    'ShipPart1': 'Naval Hull Segments',
+    'ShipPart2': 'Naval Shell Plating',
+    # Structures
+    'FacilityVehicleFactory1': 'Small Assembly Station',
+    'FacilityVehicleFactory2': 'Large Assembly Station',
+    'FacilityVehicleFactory3': 'Dry Dock',
+    'LargeShipBaseShip': 'Longhook',
+    'VehicleFactory': 'Garage',
+}
