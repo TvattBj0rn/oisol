@@ -144,10 +144,12 @@ class ModuleWiki(commands.Cog):
 
         #Todo: productionmerged -> all vics, production -> items/structs
         async with FoxholeWikiAPIWrapper() as wrapper:
-            codename = await wrapper.get_codename_from_name(table_name, search_request)
-            production_merged_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION_MERGED.value)
+            if table_name == WikiTables.VEHICLES.value:
+                codename = await wrapper.get_codename_from_name(table_name, search_request)
+                production_merged_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION_MERGED.value)
+                production_rows = await wrapper.retrieve_production_row(production_merged_table_fields, WikiTables.PRODUCTION_MERGED.value, 'Output', codename)
 
-
+                print(production_rows)
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
