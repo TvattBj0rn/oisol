@@ -263,8 +263,6 @@ class FoxholeWikiAPIWrapper:
             target_value: str
     ) -> list[dict]:
         response = await self.__session.get(
-            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={target_fields}&where="{target_field_name}"="{target_value}"'
+            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where={target_field_name}="{target_value}"'
         )
-        production_row_list_raw = (await self.__response_handler(response))['cargoquery']
-
-        return [entry['title'] for entry in production_row_list_raw]
+        return [entry['title'] for entry in (await self.__response_handler(response))['cargoquery']]
