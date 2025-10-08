@@ -12,7 +12,7 @@ from src.utils import (
     REGIONS_TYPES,
     CacheKeys,
     DataFilesPath,
-    WikiTables,
+    WikiTables, CODENAME_TO_GAMENAME,
 )
 
 from ...utils.autocompletion import (
@@ -142,14 +142,21 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
-        #Todo: productionmerged -> all vics, production -> items/structs
         async with FoxholeWikiAPIWrapper() as wrapper:
             if table_name == WikiTables.VEHICLES.value:
                 codename = await wrapper.get_codename_from_name(table_name, search_request)
                 production_merged_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION_MERGED.value)
-                production_rows = await wrapper.retrieve_production_row(production_merged_table_fields, WikiTables.PRODUCTION_MERGED.value, 'Output', codename)
+                production_rows_codename = await wrapper.retrieve_production_row(production_merged_table_fields, WikiTables.PRODUCTION_MERGED.value, 'Output', codename)
 
-                print(production_rows)
+                # Replace codename values with game name values
+                production_rows = [{k: CODENAME_TO_GAMENAME.get(v, v) for k, v in production_row.items()} for production_row in production_rows_codename]
+                for production_row in production_rows:
+                    production_row.update(Output=search_request)
+            else:
+                production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
+                production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'OutputItem1', search_request)
+
+            print(production_rows)
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
