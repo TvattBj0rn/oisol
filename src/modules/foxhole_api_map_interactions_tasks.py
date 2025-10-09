@@ -80,7 +80,7 @@ class WorldSpawnsStatus(commands.Cog):
             res = await asyncio.gather(*(self._get_region_world_spawn_status(session, shard_api, region) for region in available_regions_list))
 
         # Update bot shard cache
-        self._update_world_spawn_cache(res, shard_api.shard_name)
+        self._update_world_spawn_cache(res, await shard_api.shard_name)
 
         # Update status tracker, to prevent having a log displayed every 2 minutes on the console
         self.tasks_status_tracker.append(shard_api.shard_name)

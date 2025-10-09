@@ -14,6 +14,7 @@ from src.utils import (
     DataFilesPath,
     WikiTables, CODENAME_TO_GAMENAME,
 )
+from .production_embed_templates import ProductionTemplate
 
 from ...utils.autocompletion import (
     ITEMDATA_DATA,
@@ -156,7 +157,10 @@ class ModuleWiki(commands.Cog):
                 production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
                 production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'OutputItem1', search_request)
 
-            print(production_rows)
+        p = ProductionTemplate(production_rows, search_request)
+
+        await interaction.response.send_message(embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()], ephemeral=True)
+
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
