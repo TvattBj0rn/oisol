@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import itertools
 import re
 import sqlite3
 from typing import TYPE_CHECKING
@@ -68,7 +69,7 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
         result = await asyncio.gather(*[self._prepare_region_data(session, api_wrapper, war_data, region) for region in region_list])
 
         # Return flattened version from list of lists len 1 of tuple to list of tuples
-        return [stockpile_list_info[0] for stockpile_list_info in result]
+        return list(itertools.chain(*result))
 
     async def _update_stockpile_subregions(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
         self.all_regions_stockpiles = []
