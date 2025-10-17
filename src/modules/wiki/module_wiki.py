@@ -8,13 +8,13 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.utils import (
+    CODENAME_TO_GAMENAME,
     OISOL_HOME_PATH,
     REGIONS_TYPES,
     CacheKeys,
     DataFilesPath,
-    WikiTables, CODENAME_TO_GAMENAME,
+    WikiTables,
 )
-from .production_embed_templates import ProductionTemplate
 
 from ...utils.autocompletion import (
     ITEMDATA_DATA,
@@ -24,6 +24,7 @@ from ...utils.autocompletion import (
 )
 from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
 from .health_embed_templates import HealthEntryEngine
+from .production_embed_templates import ProductionTemplate
 from .wiki_embeds_templates import WikiTemplateFactory
 
 if TYPE_CHECKING:
@@ -129,7 +130,7 @@ class ModuleWiki(commands.Cog):
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
     @app_commands.command(name='production', description='Vehicles / Items production costs')
-    async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False):
+    async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name}')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
@@ -159,7 +160,7 @@ class ModuleWiki(commands.Cog):
 
         p = ProductionTemplate(production_rows, search_request)
 
-        await interaction.response.send_message(embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()], ephemeral=True)
+        await interaction.response.send_message(embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()], ephemeral=not visible)
 
 
     @staticmethod

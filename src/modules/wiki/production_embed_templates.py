@@ -1,7 +1,7 @@
 import datetime
 import math
 
-from src.utils import Faction, EMOJIS_FROM_DICT
+from src.utils import EMOJIS_FROM_DICT, Faction
 
 
 class ProductionTemplate:
@@ -22,7 +22,7 @@ class ProductionTemplate:
         increase_costs = [0.1, 0.2, 0.3, 0.4, 0.5] if is_short_mpf else [0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5, 0.5, 0.5]
         return [sum(default_cost - math.ceil(default_cost * increase_costs[j]) for j in range(i)) for i in range(1, len(increase_costs) + 1)]
 
-    def __process_mpf(self, mpf_parameters: dict[str, str]):
+    def __process_mpf(self, mpf_parameters: dict[str, str]) -> None:
         mpf_embed = {
             'title': 'Mass Production Factory',
             'description': '',
@@ -46,7 +46,7 @@ class ProductionTemplate:
                 break
             production_costs[mpf_parameters[f'InputItem{i}']] = [f'x{cost}  {EMOJIS_FROM_DICT.get(mpf_parameters[f'InputItem{i}'], '')}' for cost in self.__apply_mpf_formula(int(mpf_parameters[f'InputItem{i}Amount']), is_short_mpf)]
 
-        for i in range(len(list(production_costs.values())[0])):
+        for i in range(len(next(iter(production_costs.values())))):
             mpf_embed['fields'].append({
                 'name': f'{i + 1} Crate' if i + 1 == 1 else f'{i + 1} Crates',
                 'value': '\n'.join(cost_type[i] for cost_type in production_costs.values()),
@@ -55,7 +55,7 @@ class ProductionTemplate:
 
         self.__output.append(mpf_embed)
 
-    def __prepare_embeds_data(self):
+    def __prepare_embeds_data(self) -> None:
         for production_method in self.__raw_data:
             structure_embed = {
                 'title': production_method['StructureName'],
@@ -78,7 +78,7 @@ class ProductionTemplate:
                 ('InputVehicle', 'Chassis', lambda value: value),
                 ('InputPower', 'Power', lambda value: f'{value}  {EMOJIS_FROM_DICT.get('MW of power', '')}'),
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
-                ('Output', 'Output', lambda value: value)
+                ('Output', 'Output', lambda value: value),
             ]:
                 if category_name in production_method and production_method[category_name] is not None:
                     structure_embed['fields'].append({
@@ -103,6 +103,6 @@ class ProductionTemplate:
                 self.__process_mpf(production_method.copy())
 
 
-    def get_generated_embeds(self):
+    def get_generated_embeds(self) -> list[dict[str, str | list]]:
         self.__prepare_embeds_data()
         return self.__output

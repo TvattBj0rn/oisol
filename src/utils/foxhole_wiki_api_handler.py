@@ -260,9 +260,9 @@ class FoxholeWikiAPIWrapper:
             target_fields: list[str],
             table_name: str,
             target_field_name: str,
-            target_value: str
+            target_value: str,
     ) -> list[dict]:
         response = await self.__session.get(
-            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where={target_field_name}="{target_value}"'
+            f'{self.__entry_point}action=cargoquery&format=json&tables={table_name}&fields={','.join(target_fields)}&where={target_field_name}="{target_value}"',
         )
         return [entry['title'] for entry in (await self.__response_handler(response))['cargoquery']]
