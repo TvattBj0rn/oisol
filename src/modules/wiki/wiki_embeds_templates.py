@@ -34,7 +34,7 @@ class WikiTemplate:
         return {
             'name': f'Armor type: *{self._raw_data.get('armour type')}*',
             'value': f'{''.join(f'- {attribute_name} ({EMOJIS_FROM_DICT.get(attribute_name)}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armor_attributes').items())}',
-            'inplace': inplace,
+            'inline': inplace,
         }
 
     def _generate_armament_value(self, armament_id: int) -> str:

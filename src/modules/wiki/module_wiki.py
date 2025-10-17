@@ -12,8 +12,9 @@ from src.utils import (
     REGIONS_TYPES,
     CacheKeys,
     DataFilesPath,
-    WikiTables,
+    WikiTables, CODENAME_TO_GAMENAME,
 )
+from .production_embed_templates import ProductionTemplate
 
 from ...utils.autocompletion import (
     ITEMDATA_DATA,
@@ -22,11 +23,23 @@ from ...utils.autocompletion import (
     VEHICLES_DATA,
 )
 from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
-from .health_embed_template import HealthEntryEngine
+from .health_embed_templates import HealthEntryEngine
 from .wiki_embeds_templates import WikiTemplateFactory
 
 if TYPE_CHECKING:
     from main import Oisol
+
+
+HEALTH_DATA = STRUCTURES_DATA + VEHICLES_DATA + [
+                {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
+            ]
+HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
+
+PRODUCTION_DATA = ITEMDATA_DATA + VEHICLES_DATA
+PRODUCTION_DATA_KEYS = [entry['name'] for entry in PRODUCTION_DATA]
+
+WIKI_DATA = ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA
+WIKI_DATA_KEYS = [entry['name'] for entry in WIKI_DATA]
 
 
 class ModuleWiki(commands.Cog):
@@ -38,7 +51,15 @@ class ModuleWiki(commands.Cog):
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
-        search_request, table_name = search_request.split('@')
+        split_search_request = search_request.split('@')
+        if len(split_search_request) != 2:
+            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
+            return
+
+        search_request, table_name = split_search_request
+        if search_request not in WIKI_DATA_KEYS:
+            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
+            return
 
         async with FoxholeWikiAPIWrapper() as wrapper:
             target_fields = await wrapper.fetch_cargo_table_fields(table_name)
@@ -59,7 +80,15 @@ class ModuleWiki(commands.Cog):
         }
 
         # Retrieve search_request & table from autocomplete value: search_request@table
-        search_request, health_table = search_request.split('@')
+        split_search_request = search_request.split('@')
+        if len(split_search_request) != 2:
+            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
+            return
+
+        search_request, health_table = split_search_request
+        if search_request not in HEALTH_DATA_KEYS:
+            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
+            return
 
         # Special subregion buffer for display purpose
         subregion_name = ''
@@ -99,6 +128,40 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
+    @app_commands.command(name='production', description='Vehicles / Items production costs')
+    async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False):
+        self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Retrieve search_request & table from autocomplete value: search_request@table
+        split_search_request = search_request.split('@')
+        if len(split_search_request) != 2:
+            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
+            return
+
+        search_request, table_name = split_search_request
+        if search_request not in PRODUCTION_DATA_KEYS:
+            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
+            return
+
+        async with FoxholeWikiAPIWrapper() as wrapper:
+            if table_name == WikiTables.VEHICLES.value:
+                codename = await wrapper.get_codename_from_name(table_name, search_request)
+                production_merged_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION_MERGED.value)
+                production_rows_codename = await wrapper.retrieve_production_row(production_merged_table_fields, WikiTables.PRODUCTION_MERGED.value, 'Output', codename)
+
+                # Replace codename values with game name values
+                production_rows = [{k: CODENAME_TO_GAMENAME.get(v, v) for k, v in production_row.items()} for production_row in production_rows_codename]
+                for production_row in production_rows:
+                    production_row.update(Output=search_request)
+            else:
+                production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
+                production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'OutputItem1', search_request)
+
+        p = ProductionTemplate(production_rows, search_request)
+
+        await interaction.response.send_message(embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()], ephemeral=True)
+
+
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
         # Normalize current
@@ -120,13 +183,12 @@ class ModuleWiki(commands.Cog):
 
     @entities_health.autocomplete('search_request')
     async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
-        return self._generic_autocomplete(
-            STRUCTURES_DATA + VEHICLES_DATA + [
-                {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
-            ],
-            current,
-        )
+        return self._generic_autocomplete(HEALTH_DATA, current)
+
+    @production_cost.autocomplete('search_request')
+    async def production_autocomplet(self, _interaction: discord.Interaction, current: str) ->  list[app_commands.Choice]:
+        return self._generic_autocomplete(PRODUCTION_DATA, current)
 
     @wiki.autocomplete('search_request')
     async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
-        return self._generic_autocomplete(ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA, current)
+        return self._generic_autocomplete(WIKI_DATA, current)
