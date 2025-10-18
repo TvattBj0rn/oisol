@@ -30,7 +30,7 @@ class HealthEntryEngine:
             else:
                 self.__special_hp = int(self.__hp) - int(self.__raw_data['vehicle hp']) * (float(self.__raw_data['disable']) / 100)
         else:
-            self.__special_hp = int(self.__raw_data['structure hp entrenched']) if self.__raw_data['structure hp entrenched'] is not None else -1
+            self.__special_hp = int(self.__raw_data['structure hp entrenched']) if self.__raw_data['structure hp entrenched'] else -1
         self.__embed = {}
 
     @staticmethod
