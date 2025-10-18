@@ -18,10 +18,11 @@ from src.utils import (
     DiscordIdType,
     InterfacesTypes,
     Shard,
-    refresh_interface,
+    refresh_interface, Faction,
 )
 
 from .stockpile_interface_handling import get_stockpile_info
+from .stockpile_view_menu import StockpilesViewMenu
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -121,6 +122,41 @@ class ModuleStockpiles(commands.Cog):
 
     @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
     async def stockpile_interface_create(
+            self,
+            interaction: discord.Interaction,
+            name: str,
+            role_1: discord.Role = None,
+            role_2: discord.Role = None,
+            role_3: discord.Role = None,
+            role_4: discord.Role = None,
+            role_5: discord.Role = None,
+            member_1: discord.Member = None,
+            member_2: discord.Member = None,
+            member_3: discord.Member = None,
+            member_4: discord.Member = None,
+            member_5: discord.Member = None,
+    ) -> None:
+        self.bot.logger.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
+        # Create interface association id
+        association_id = uuid.uuid4().hex
+
+        config = configparser.ConfigParser()
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
+        guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
+
+        await interaction.response.send_message(
+            embed=discord.Embed.from_dict({
+                'title': f'<:region:1130915923704946758> | Stockpiles | {name}',
+                'color': Faction[guild_faction].value,
+                'description': '- **View Stockpiles** button: will display more or less stockpiles to the user depedning on its level of access to the interface (1-5)\n'
+                               '- **Share ID** button: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
+            }),
+            view=StockpilesViewMenu(),
+        )
+
+
+    @app_commands.command(name='gfdsghf', description='Create a new stockpile interface')
+    async def gdf(
             self,
             interaction: discord.Interaction,
             name: str,
