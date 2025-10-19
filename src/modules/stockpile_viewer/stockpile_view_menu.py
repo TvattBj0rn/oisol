@@ -26,6 +26,7 @@ class StockpilesViewMenu(discord.ui.View):
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        pass
-
-
+        if interaction.user.name != interaction.message.interaction_metadata.user.name:
+            await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True)
+        else:
+            await interaction.response.send_message('> The association id is: ``', ephemeral=True)

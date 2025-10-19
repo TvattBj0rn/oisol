@@ -140,6 +140,7 @@ class ModuleStockpiles(commands.Cog):
         # Create interface association id
         association_id = uuid.uuid4().hex
 
+        # Retrieve guild faction, for embed color
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
@@ -153,7 +154,6 @@ class ModuleStockpiles(commands.Cog):
             }),
             view=StockpilesViewMenu(),
         )
-
 
     @app_commands.command(name='gfdsghf', description='Create a new stockpile interface')
     async def gdf(
