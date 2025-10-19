@@ -36,13 +36,13 @@ class ProductionTemplate:
             is_short_mpf = True
             cost_multiplier = 5 if mpf_parameters['MPFOutputAmount'] == '5' else 3
             for i in range(1, 7):
-                if mpf_parameters[f'InputItem{i}'] is None:
+                if not mpf_parameters[f'InputItem{i}']:
                     break
                 mpf_parameters[f'InputItem{i}Amount'] = str(int(mpf_parameters[f'InputItem{i}Amount']) * cost_multiplier)
 
         production_costs = {}
         for i in range(1, 7):
-            if mpf_parameters[f'InputItem{i}'] is None:
+            if not mpf_parameters[f'InputItem{i}']:
                 break
             production_costs[mpf_parameters[f'InputItem{i}']] = [f'x{cost}  {EMOJIS_FROM_DICT.get(mpf_parameters[f'InputItem{i}'], '')}' for cost in self.__apply_mpf_formula(int(mpf_parameters[f'InputItem{i}Amount']), is_short_mpf)]
 
@@ -66,7 +66,7 @@ class ProductionTemplate:
             # Max input item is 6
             for i in range(1, 7):
                 # production & productionmerged tables do not have the same amount of input items
-                if (input_item_title := f'InputItem{i}') in production_method and production_method[input_item_title] is not None:
+                if (input_item_title := f'InputItem{i}') in production_method and production_method[input_item_title]:
                     structure_embed['fields'].append({
                         'name': 'Input',
                         'value': f'x{production_method[f'{input_item_title}Amount']} {EMOJIS_FROM_DICT.get(production_method[input_item_title], production_method[input_item_title])}',
@@ -80,7 +80,7 @@ class ProductionTemplate:
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
                 ('Output', 'Output', lambda value: value),
             ]:
-                if category_name in production_method and production_method[category_name] is not None:
+                if category_name in production_method and production_method[category_name]:
                     structure_embed['fields'].append({
                         'name': display_name,
                         'value': action(production_method[category_name]),
@@ -89,7 +89,7 @@ class ProductionTemplate:
 
             if 'Output' not in production_method:
                 for i in range(1, 4):
-                    if (output_item_title := f'OutputItem{i}') in production_method and production_method[output_item_title] is not None:
+                    if (output_item_title := f'OutputItem{i}') in production_method and production_method[output_item_title]:
                         structure_embed['fields'].append({
                             'name': 'Output',
                             'value': f'x{production_method[f'{output_item_title}Amount']} {production_method[output_item_title]}  {EMOJIS_FROM_DICT.get(production_method[output_item_title], '')}',
