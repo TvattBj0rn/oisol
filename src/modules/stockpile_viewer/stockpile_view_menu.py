@@ -29,12 +29,12 @@ class StockpilesViewMenu(discord.ui.View):
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        if interaction.user.name != interaction.message.interaction_metadata.user.name:
+        if interaction.user.name != interaction.message.embeds[0].footer.text:
             await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True)
         else:
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-                potential_association_id_as_list = conn.cursor().execute(
-                    'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType IN (?, ?)',
-                    (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value),
-                ).fetchall()
-            await interaction.response.send_message('> The association id is: ``', ephemeral=True)
+                association_id = conn.cursor().execute(
+                    'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
+                    (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
+                ).fetchone()
+            await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
