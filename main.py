@@ -12,7 +12,7 @@ from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.foxhole_api_map_interactions_tasks import WorldSpawnsStatus
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles, TaskUpdateAvailableStockpiles
+from src.modules.stockpile_viewer import ModuleStockpiles, TaskUpdateAvailableStockpiles, StockpilesViewMenu
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -92,6 +92,7 @@ class Oisol(commands.Bot):
         self.add_view(ConfigViewMenu())
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
+        self.add_view(StockpilesViewMenu())
         self.add_dynamic_items(TodolistButtonCheckmark)
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
