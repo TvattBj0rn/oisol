@@ -17,15 +17,14 @@ from src.utils import (
 
 
 class StockpilesViewMenu(discord.ui.View):
+    """
+    Main menu interface of the stockpiles module
+    """
     def __init__(self):
         super().__init__(timeout=None)
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:View', label='View Stockpiles', emoji='📥')
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        pass
-
-    @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:Permissions', label='Configure Permissions', emoji='🔑')
-    async def edit_interface_permissions(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         pass
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
