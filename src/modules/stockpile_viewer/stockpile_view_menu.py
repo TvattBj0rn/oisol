@@ -48,7 +48,7 @@ class StockpilesViewMenu(discord.ui.View):
                 value_string += f'**{subregion_type.split('_')[0]}** ({FoxholeBuildings[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'].value})\n'
                 for name, code_level in vv.items():
                     code, level = code_level.split('_')
-                    value_string += f'{name} **|** {code} ({level})\n'
+                    value_string += f'{name} **|** ({level}) {code}\n'
                 value_string += '\n'
             embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
         return embed_fields
