@@ -68,7 +68,7 @@ class StockpilesViewMenu(discord.ui.View):
                 'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
                 (interaction.guild_id, interaction.channel_id, interaction.message.id),
             ).fetchall())
-            access_level = 0
+            access_level = 5
             # Search for matching ids between interface roles and user roles
             for user_role_id in [str(role.id) for role in interaction.user.roles]:
                 if user_role_id in interface_access_levels:
