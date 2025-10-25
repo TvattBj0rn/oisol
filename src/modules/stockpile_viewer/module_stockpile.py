@@ -179,25 +179,46 @@ class ModuleStockpiles(commands.Cog):
     async def multiserver_join_interface(
             self,
             interaction: discord.Interaction,
+            interface_name: str,
             interface_id: str,
     ) -> None:
         self.bot.logger.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
-        await interaction.response.defer(ephemeral=True)
+
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
+
+        if (error_msg := self._validate_stockpile_ids(ids_list)) is not None:
+            await interaction.response.send_message(
+                error_msg,
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
-            query_response = cursor.execute(
-                'SELECT AssociationId, InterfaceName FROM AllInterfacesReferences WHERE AssociationId == ?',
+
+            # Retrieve the provided association_id from the db
+            user_association_id = cursor.execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE AssociationId == ?',
                 (interface_id,),
             ).fetchone()
 
-            if not all(query_response):
-                await interaction.followup.send('> The provided interface id is invalid', ephemeral=True)
+            # Ensure the user provided association_id exists
+            if not all(user_association_id):
+                await interaction.response.send_message('> The provided interface id is invalid', ephemeral=True, delete_after=5)
                 return
 
-            # todo: must sync here
+            guild_id, channel_id, message_id, association_id = ids_list
 
-            await interaction.followup.send('> The interface was successfully joined', ephemeral=True)
+            # Update current interface association_id with user provided association_id
+            cursor.execute(
+                'UPDATE AllInterfacesReferences SET AssociationId = ? WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? and InterfaceType == ?',
+                (user_association_id[0], guild_id, channel_id, message_id, InterfacesTypes.STOCKPILE.value),
+            )
+            conn.commit()
+
+        await interaction.response.send_message('> The interface was successfully joined', ephemeral=True, delete_after=5)
 
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
@@ -337,6 +358,7 @@ class ModuleStockpiles(commands.Cog):
     @clear_interface.autocomplete('interface_name')
     @stockpile_delete.autocomplete('interface_name')
     @stockpile_create.autocomplete('interface_name')
+    @multiserver_join_interface.autocomplete('interface_name')
     async def interface_name_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
         :param interaction: current interaction object
