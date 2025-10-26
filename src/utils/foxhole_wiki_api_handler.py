@@ -225,10 +225,11 @@ class FoxholeWikiAPIWrapper:
         # tasks that can be run independently at once, format -> [(foo, args)],
         # result of gather is a list of each method result, following the call order
         tasks_stack = []
-        if 'image' in row_data:
-            tasks_stack.append((self.retrieve_image_url_from_name, row_data['image']))
-        if 'armour type' in row_data:
-            tasks_stack.append((self.retrieve_armor_attributes, row_data['armour type']))
+        if row_data_image := row_data.get('image', False):
+            tasks_stack.append((self.retrieve_image_url_from_name, row_data_image))
+
+        if row_data_armour := row_data.get('armour type', False):
+            tasks_stack.append((self.retrieve_armor_attributes, row_data_armour))
         tasks_stack.append((self.retrieve_damage_emitters,))
 
         res = await asyncio.gather(*(foo(*args) for foo, *args in tasks_stack))
