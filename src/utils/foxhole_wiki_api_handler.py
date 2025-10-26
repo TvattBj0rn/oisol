@@ -228,8 +228,10 @@ class FoxholeWikiAPIWrapper:
         if row_data_image := row_data.get('image', False):
             tasks_stack.append((self.retrieve_image_url_from_name, row_data_image))
 
-        if row_data_armour := row_data.get('armour type', False):
-            tasks_stack.append((self.retrieve_armor_attributes, row_data_armour))
+        if 'armour type' in row_data:
+            if row_data['armour type'] == '':
+                row_data['armour type'] = 'None'
+            tasks_stack.append((self.retrieve_armor_attributes, row_data['armour type']))
         tasks_stack.append((self.retrieve_damage_emitters,))
 
         res = await asyncio.gather(*(foo(*args) for foo, *args in tasks_stack))

@@ -74,6 +74,15 @@ class HealthEntryEngine:
         :return: dict ready to be used as a discord embed
         """
         self.__prepare_embed()
+
+        # Specific edge case handling (todo: make a better handling of weird cases)
+        if self.__embed['title'] == 'Barbed Wire':
+            self.__embed['fields'].append({
+                'name': f'DEMOLITION (<:demolition:1239343432367870035>)',
+                'value': '<:hydras_whisper:1240724688523628565>: 1',
+            })
+            return self.__embed
+
         self.__process_all_damages()
 
         return self.__embed
