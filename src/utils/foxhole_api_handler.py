@@ -32,7 +32,7 @@ class FoxholeAsyncAPIWrapper:
 
         async with session.get(
                 f'{self.shard_endpoint}/worldconquest/war',
-                timeout=5,
+                timeout=aiohttp.ClientTimeout(total=5),
         ) as response:
             return await response.json()
 
@@ -43,7 +43,7 @@ class FoxholeAsyncAPIWrapper:
         """
         async with session.get(
                 f'{self.shard_endpoint}/worldconquest/maps',
-                timeout=5,
+                timeout=aiohttp.ClientTimeout(total=5),
         ) as response:
             return await response.json()
 
@@ -57,7 +57,7 @@ class FoxholeAsyncAPIWrapper:
         """
         async with session.get(
                 f'{self.shard_endpoint}/worldconquest/warReport/{region}',
-                timeout=5,
+                timeout=aiohttp.ClientTimeout(total=5),
                 headers={'If-None-Match': etag} if etag is not None else None,
         ) as response:
             return await self._response_handler(response, etag)
@@ -72,7 +72,7 @@ class FoxholeAsyncAPIWrapper:
         """
         async with session.get(
                 f'{self.shard_endpoint}/worldconquest/maps/{region}/static',
-                timeout=5,
+                timeout=aiohttp.ClientTimeout(total=5),
                 headers={'If-None-Match': etag} if etag is not None else None,
         ) as response:
             return await self._response_handler(response, etag)
@@ -87,7 +87,7 @@ class FoxholeAsyncAPIWrapper:
         """
         async with session.get(
                 f'{self.shard_endpoint}/worldconquest/maps/{region}/dynamic/public',
-                timeout=5,
+                timeout=aiohttp.ClientTimeout(total=5),
                 headers={'If-None-Match': etag} if etag is not None else None,
         ) as response:
             return await self._response_handler(response, etag)
