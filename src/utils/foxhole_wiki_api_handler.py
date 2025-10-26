@@ -225,9 +225,12 @@ class FoxholeWikiAPIWrapper:
         # tasks that can be run independently at once, format -> [(foo, args)],
         # result of gather is a list of each method result, following the call order
         tasks_stack = []
-        if 'image' in row_data:
-            tasks_stack.append((self.retrieve_image_url_from_name, row_data['image']))
+        if row_data_image := row_data.get('image', False):
+            tasks_stack.append((self.retrieve_image_url_from_name, row_data_image))
+
         if 'armour type' in row_data:
+            if row_data['armour type'] == '':
+                row_data['armour type'] = 'None'
             tasks_stack.append((self.retrieve_armor_attributes, row_data['armour type']))
         tasks_stack.append((self.retrieve_damage_emitters,))
 
