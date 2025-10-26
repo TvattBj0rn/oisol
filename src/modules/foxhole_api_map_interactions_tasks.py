@@ -75,9 +75,13 @@ class WorldSpawnsStatus(commands.Cog):
         self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][shard_name] = dict(subregion for region in new_data for subregion in region)
 
     async def _update_shard_world_spawn_cache(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
-        async with aiohttp.ClientSession() as session:
-            available_regions_list = await shard_api.get_regions_list(session)
-            res = await asyncio.gather(*(self._get_region_world_spawn_status(session, shard_api, region) for region in available_regions_list))
+        try:
+            async with aiohttp.ClientSession() as session:
+                available_regions_list = await shard_api.get_regions_list(session)
+                res = await asyncio.gather(*(self._get_region_world_spawn_status(session, shard_api, region) for region in available_regions_list))
+        except TimeoutError:
+            self.bot.logger.warning(f'Update world spawn cache timed out for {shard_api.shard_name}')
+            return
 
         # Update bot shard cache
         self._update_world_spawn_cache(res, shard_api.shard_name)
