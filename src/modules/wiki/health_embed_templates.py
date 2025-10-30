@@ -64,7 +64,6 @@ class HealthEntryEngine:
         """
         self.__embed['title'] = self.__name
 
-        # self.__embed['description'] = f'__Class__: {self.__class}\n__Health__: **{self.__hp}** HP{f'\n{f'__Disabled__: below **{int(int(self.__hp) * (float(self.__raw_data['disable']) / 100))}** HP (**{int(self.__raw_data['disable'])}**%)' if 'disable' in self.__raw_data else f'__Entrenched__: **{int(self.__special_hp)}** HP'}' if self.__special_hp != -1 else ''}'
         self.__embed['description'] = f'__Class__: {self.__class}\n__Health__: **{self.__hp}** HP'
 
         if 'disable' in self.__raw_data:
@@ -87,7 +86,7 @@ class HealthEntryEngine:
         # Specific edge case handling (todo: make a better handling of weird cases)
         if self.__embed['title'] == 'Barbed Wire':
             self.__embed['fields'].append({
-                'name': f'DEMOLITION (<:demolition:1239343432367870035>)',
+                'name': 'DEMOLITION (<:demolition:1239343432367870035>)',
                 'value': '<:hydras_whisper:1240724688523628565>: 1',
             })
             return self.__embed
