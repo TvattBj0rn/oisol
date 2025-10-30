@@ -25,7 +25,7 @@ class HealthEntryEngine:
         # There are only two cases possible here, either a struct or a vehicle, each with their own specific attributes
         self.__hp = int(self.__raw_data['structure hp']) if 'structure hp' in self.__raw_data else int(self.__raw_data['vehicle hp'])
         if 'structure hp entrenched' not in self.__raw_data:
-            if self.__raw_data['disable'] is None:
+            if self.__raw_data['disable'] == '':
                 self.__special_hp = -1
             else:
                 self.__special_hp = int(self.__hp) - int(self.__raw_data['vehicle hp']) * (float(self.__raw_data['disable']) / 100)
@@ -63,7 +63,16 @@ class HealthEntryEngine:
         Format attributes to discord embed format
         """
         self.__embed['title'] = self.__name
-        self.__embed['description'] = f'__Class__: {self.__class}\n__Health__: **{self.__hp}** HP{f'\n{f'__Disabled__: below **{int(int(self.__hp) * (float(self.__raw_data['disable']) / 100))}** HP (**{int(self.__raw_data['disable'])}**%)' if 'disable' in self.__raw_data else f'__Entrenched__: **{int(self.__special_hp)}** HP'}' if self.__special_hp != -1 else ''}'
+
+        # self.__embed['description'] = f'__Class__: {self.__class}\n__Health__: **{self.__hp}** HP{f'\n{f'__Disabled__: below **{int(int(self.__hp) * (float(self.__raw_data['disable']) / 100))}** HP (**{int(self.__raw_data['disable'])}**%)' if 'disable' in self.__raw_data else f'__Entrenched__: **{int(self.__special_hp)}** HP'}' if self.__special_hp != -1 else ''}'
+        self.__embed['description'] = f'__Class__: {self.__class}\n__Health__: **{self.__hp}** HP'
+
+        if 'disable' in self.__raw_data:
+            if self.__raw_data['disable'] != '':
+                self.__embed['description'] += f'__Disabled__: below **{int(int(self.__hp) * (float(self.__raw_data['disable']) / 100))}** HP (**{int(float(self.__raw_data['disable']))}**%)'
+        else:
+            self.__embed['description'] += f'__Entrenched__: **{int(self.__special_hp)}** HP' if self.__special_hp != -1 else ''
+
         self.__embed['color'] = self.__faction_color
         self.__embed['thumbnail'] = {'url': self.__image_url}
         self.__embed['fields'] = []
