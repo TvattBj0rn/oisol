@@ -265,11 +265,6 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Advanced Ammunition Factory',
-		'keywords': 'advancedammunitionfactory',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
 		'name': 'Ammunition Factory',
 		'keywords': 'ammunitionfactory',
 		'table': WikiTables.STRUCTURES.value,
