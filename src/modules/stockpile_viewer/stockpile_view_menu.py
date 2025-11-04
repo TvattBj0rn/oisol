@@ -7,7 +7,7 @@ from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     InterfacesTypes,
-    sort_nested_dicts_by_key, FoxholeBuildings, Faction,
+    sort_nested_dicts_by_key, FoxholeBuildings, Faction, OisolLogger,
 )
 
 
@@ -100,6 +100,42 @@ class StockpilesViewMenu(discord.ui.View):
                     (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
                 ).fetchone()
             await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
+
+
+class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
+    def __init__(self, user_access_level: int, association_id: str):
+        super().__init__()
+        self.logger = OisolLogger('oisol')
+
+        self._user_access_level = user_access_level
+        self._association_id = association_id
+
+    user_information = discord.ui.TextDisplay(
+        content='Separator is `|`\n'
+                'Each row a different stockpile, in the following format:\n'
+                '`name | code | region | subregion | level`\n\n'
+                '`name`: name of your stockpile (required)\n'
+                '`code`: code of your stockpile (required)\n'
+                '`region`: region name of your stockpile (required)\n'
+                '`subregion`: subregion name of your stockpile (required)\n'
+                '`level`: level of access of your stockpile (optional)\n'
+    )
+
+    stockpiles_input = discord.ui.TextInput(
+        label=f'User input',
+        style=discord.TextStyle.long,
+        required=True,
+        placeholder='name | code | region | subregion | level',
+    )
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        stockpile_rows = self.stockpiles_input.value.split('\n')
+
+        valid_stockpiles = [] # list[tuple[str]]
+        invalid_stockpiles = [] # list[tuple[tuple[str], str]], has invalid reason text
+        for stockpile_raw_info in stockpile_rows:
+            stockpile_raw_info.split('|')
+        # todo: string match the region & subregion with a given list
 
 
 class StockpileBulkDeleteDropDownView(discord.ui.View):

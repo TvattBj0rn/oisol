@@ -22,7 +22,7 @@ from src.utils import (
 )
 
 from .stockpile_interface_handling import get_stockpile_info
-from .stockpile_view_menu import StockpilesViewMenu, StockpileBulkDeleteDropDownView
+from .stockpile_view_menu import StockpilesViewMenu, StockpileBulkDeleteDropDownView, StockpileCreateModal
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -288,6 +288,43 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
 
+    @app_commands.command(name='stockpile-bulk-create', description='Create multiple stockpiles from a selected interface')
+    async def stockpile_bulk_create(self, interaction: discord.Interaction, interface_name: str) -> None:
+        self.bot.logger.command(f'stockpile-bulk-create command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
+
+        if error_msg := self._validate_stockpile_ids(ids_list):
+            await interaction.response.send_message(
+                error_msg,
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
+
+        user_role_ids = {role.id for role in interaction.user.roles}
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Retrieve interface permissions
+            all_interface_permissions = cursor.execute(
+                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
+                (interface_guild_id, interface_channel_id, interface_message_id),
+            ).fetchall()
+
+            # Get user level of access on this interface
+            user_level = 5
+            for role_id, access_level in all_interface_permissions:
+                if role_id in user_role_ids:
+                    user_level = access_level
+                if user_level == 1:  # The user has the maximum level of access, no need to iterate further
+                    break
+
+        await interaction.response.send_modal(StockpileCreateModal(user_level, interface_association_id))
+
+
     @app_commands.command(name='stockpile-delete', description='Delete an existing stockpile')
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
@@ -409,6 +446,7 @@ class ModuleStockpiles(commands.Cog):
     @stockpile_delete.autocomplete('interface_name')
     @stockpile_bulk_delete.autocomplete('interface_name')
     @stockpile_create.autocomplete('interface_name')
+    @stockpile_bulk_create.autocomplete('interface_name')
     @multiserver_join_interface.autocomplete('interface_name')
     async def interface_name_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
