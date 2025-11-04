@@ -357,7 +357,7 @@ class ModuleStockpiles(commands.Cog):
             cursor = conn.cursor()
             # Retrieve interface permissions
             all_interface_permissions = cursor.execute(
-                'SELECT DiscordId, LEVEL FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
+                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
                 (interface_guild_id, interface_channel_id, interface_message_id),
             ).fetchall()
 
