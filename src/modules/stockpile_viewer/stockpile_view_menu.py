@@ -1,18 +1,10 @@
 import configparser
-import re
 import sqlite3
-import string
-import time
-from idlelib.autocomplete import TRY_A
-from typing import Self
 
 import discord
 
 from src.utils import (
-    EMOTES_CUSTOM_ID,
     OISOL_HOME_PATH,
-    OisolLogger,
-    PriorityType,
     DataFilesPath,
     InterfacesTypes,
     sort_nested_dicts_by_key, FoxholeBuildings, Faction,
@@ -108,3 +100,45 @@ class StockpilesViewMenu(discord.ui.View):
                     (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
                 ).fetchone()
             await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
+
+
+class StockpileBulkDeleteDropDownView(discord.ui.View):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+        super().__init__(timeout=None)
+        self.add_item(StockpileBulkDeleteDropDownSelect(stockpiles_info, faction, association_id))
+
+
+class StockpileBulkDeleteDropDownSelect(discord.ui.Select):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+        self.interaction_association_id = association_id
+
+        options = []
+        for region, subregion, code, name, stockpile_type, access_level in stockpiles_info:
+            options.append(discord.SelectOption(
+                label=f'{name} | {subregion} in {region} | {code} ({access_level})',
+                value=f'{name}@{region}@{subregion}@{code}@{access_level}',
+                emoji=FoxholeBuildings[f'{stockpile_type}_{faction}'].value,
+            ))
+
+        super().__init__(placeholder='Choose the stockpiles you want to delete', options=options, max_values=len(options) if len(options) < 25 else 25)
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        values_as_query_parameters = []
+        for value in self.values:
+            name, region, subregion, code, level = value.split('@')
+            values_as_query_parameters.append((region, subregion, code, self.interaction_association_id))
+
+        # Delete all user selected stockpiles
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            deleted_stockpiles = cursor.executemany(
+                'DELETE FROM GroupsStockpilesList WHERE Region == ? AND Subregion == ? AND Code == ? AND AssociationId == ? RETURNING *',
+                values_as_query_parameters,
+            ).fetchall()
+            conn.commit()
+
+        # Print out the stockpiles that were properly removed
+        await interaction.response.send_message(
+            f'> The following stockpiles were properly deleted:\n```{'\n -'.join(f'{name} | {region} in {subregion} | {code} ({level})' for _, region, subregion, code, name, _, level in deleted_stockpiles)}```',
+            ephemeral=True,
+        )
