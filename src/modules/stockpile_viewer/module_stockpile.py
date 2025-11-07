@@ -75,6 +75,52 @@ class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
 
+    @staticmethod
+    def _get_user_available_stockpiles(user_roles_ids: set[int], guild_id: str, channel_id: str, message_id: str, association_id: str) -> list[tuple]:
+        """
+        Retrieve the stockpiles the user has access to based on its roles
+        :param user_roles_ids: user roles on the server
+        :param guild_id: guild id
+        :param channel_id: channel id
+        :param message_id: message id
+        :param association_id: association_id
+        :return:
+        """
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Retrieve interface permissions
+            all_interface_permissions = cursor.execute(
+                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
+                (guild_id, channel_id, message_id),
+            ).fetchall()
+
+            # Get user level of access on this interface
+            user_level = 5
+            for role_id, access_level in all_interface_permissions:
+                if role_id in user_roles_ids:
+                    user_level = access_level
+                if user_level == 1:  # The user has the maximum level of access, no need to iterate further
+                    break
+
+            # Retrieve the stockpiles the user has access to
+            available_user_stockpiles = conn.execute(
+                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ?',
+                (association_id, user_level),
+            ).fetchall()
+
+        return available_user_stockpiles
+
+    @staticmethod
+    def _get_guild_faction(guild_id: int) -> str:
+        """
+        Retrieve the faction of a given guild using its configuration file
+        :param guild_id: id of the guild to retrieve the faction from
+        :return: Faction name
+        """
+        config = configparser.ConfigParser()
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
+        return config.get('regiment', 'faction', fallback='NEUTRAL')
+
     @commands.Cog.listener(name='on_raw_message_delete')
     async def delete_listener(self, payload: discord.RawMessageDeleteEvent) -> None:
         # Convert interface_name to a readable text
@@ -220,6 +266,43 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.response.send_message('> The interface was successfully joined', ephemeral=True, delete_after=5)
 
+    @app_commands.command(name='stockpile-refresh-codes', description='Update up to 5 stockpiles codes from a list')
+    async def refresh_codes(self, interaction: discord.Interaction, interface_name: str) -> None:
+        self.bot.logger.command(f'stockpile-refresh-codes command by {interaction.user.name} on {interaction.guild.name}')
+
+        # Convert interface_name to a readable text
+        ids_list = interface_name.split('.')
+
+        if (error_msg := self._validate_stockpile_ids(ids_list)) is not None:
+            await interaction.response.send_message(
+                error_msg,
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
+
+        user_role_ids = {role.id for role in interaction.user.roles}
+
+        available_user_stockpiles = self._get_user_available_stockpiles(
+            user_role_ids,
+            interface_guild_id,
+            interface_channel_id,
+            interface_message_id,
+            interface_association_id,
+        )
+
+        # Case where there is no stockpiles to refresh or no stockpiles the user has access to available for deletion
+        if len(available_user_stockpiles) == 0:
+            await interaction.response.send_message('> There are currently no stockpiles available for refresh', ephemeral=True, delete_after=5)
+            return
+
+        guild_faction = self._get_guild_faction(interaction.guild_id)
+
+        await interaction.response.send_message(
+            view=StockpileBulkDeleteDropDownView(available_user_stockpiles, guild_faction, interface_association_id),
+            ephemeral=True,
+        )
 
     @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
@@ -324,7 +407,6 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.response.send_modal(StockpileCreateModal(user_level, interface_association_id))
 
-
     @app_commands.command(name='stockpile-delete', description='Delete an existing stockpile')
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
@@ -390,37 +472,22 @@ class ModuleStockpiles(commands.Cog):
 
         user_role_ids = {role.id for role in interaction.user.roles}
 
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            # Retrieve interface permissions
-            all_interface_permissions = cursor.execute(
-                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
-                (interface_guild_id, interface_channel_id, interface_message_id),
-            ).fetchall()
-
-            # Get user level of access on this interface
-            user_level = 5
-            for role_id, access_level in all_interface_permissions:
-                if role_id in user_role_ids:
-                    user_level = access_level
-                if user_level == 1:  # The user has the maximum level of access, no need to iterate further
-                    break
-
-            # Retrieve the stockpiles the user has access to
-            available_user_stockpiles = conn.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ?',
-                (interface_association_id, user_level),
-            ).fetchall()
+        # Retrieve the stockpiles the user has access to
+        available_user_stockpiles = self._get_user_available_stockpiles(
+            user_role_ids,
+            interface_guild_id,
+            interface_channel_id,
+            interface_message_id,
+            interface_association_id,
+        )
 
         # Case where there is no stockpiles to delete or no stockpiles the user has access to available for deletion
         if len(available_user_stockpiles) == 0:
             await interaction.response.send_message('> There are currently no stockpiles available for deletion', ephemeral=True, delete_after=5)
             return
 
-        # Retrieve guild faction
-        config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
-        guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
+        # Get the faction name
+        guild_faction = self._get_guild_faction(interaction.guild_id)
 
         await interaction.response.send_message(view=StockpileBulkDeleteDropDownView(available_user_stockpiles, guild_faction, interface_association_id), ephemeral=True)
 
