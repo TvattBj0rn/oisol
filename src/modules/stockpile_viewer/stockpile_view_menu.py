@@ -172,4 +172,4 @@ class StockpileBulkDeleteDropDownSelect(discord.ui.Select):
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True)
+        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True, delete_after=5)
