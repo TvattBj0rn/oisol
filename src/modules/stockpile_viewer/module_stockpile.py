@@ -408,7 +408,7 @@ class ModuleStockpiles(commands.Cog):
 
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level == ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ?',
                 (interface_association_id, user_level),
             ).fetchall()
 
