@@ -166,15 +166,10 @@ class StockpileBulkDeleteDropDownSelect(discord.ui.Select):
 
         # Delete all user selected stockpiles
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            deleted_stockpiles = cursor.executemany(
-                'DELETE FROM GroupsStockpilesList WHERE Region == ? AND Subregion == ? AND Code == ? AND AssociationId == ? RETURNING *',
+            conn.cursor().executemany(
+                'DELETE FROM GroupsStockpilesList WHERE Region == ? AND Subregion == ? AND Code == ? AND AssociationId == ?',
                 values_as_query_parameters,
-            ).fetchall()
+            )
             conn.commit()
 
-        # Print out the stockpiles that were properly removed
-        await interaction.response.send_message(
-            f'> The following stockpiles were properly deleted:\n```{'\n -'.join(f'{name} | {region} in {subregion} | {code} ({level})' for _, region, subregion, code, name, _, level in deleted_stockpiles)}```',
-            ephemeral=True,
-        )
+        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True)
