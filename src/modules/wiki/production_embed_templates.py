@@ -80,7 +80,7 @@ class ProductionTemplate:
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
                 ('Output', 'Output', lambda value: value),
             ]:
-                if category_name in production_method and production_method[category_name]:
+                if production_method.get(category_name):
                     structure_embed['fields'].append({
                         'name': display_name,
                         'value': action(production_method[category_name]),
