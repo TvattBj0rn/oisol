@@ -9,13 +9,11 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockpile_info
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     Faction,
     InterfacesTypes,
-    refresh_interface,
     repair_default_config_dict,
 )
 
@@ -159,7 +157,7 @@ class ModuleConfig(commands.Cog):
                 'SELECT GroupId, ChannelId, MessageId, AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND InterfaceType == ?',
                 (interaction.guild_id, InterfacesTypes.STOCKPILE.value),
             ).fetchall()
-        for group_id, channel_id, message_id, association_id in stockpile_interfaces:
+        for _, channel_id, message_id, _ in stockpile_interfaces:
             channel = self.bot.get_channel(int(channel_id))
             message = await channel.fetch_message(int(message_id))
 

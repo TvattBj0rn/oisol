@@ -16,13 +16,19 @@ from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     DiscordIdType,
+    Faction,
     InterfacesTypes,
     Shard,
-    refresh_interface, Faction,
+    refresh_interface,
 )
 
 from .stockpile_interface_handling import get_stockpile_info
-from .stockpile_view_menu import StockpilesViewMenu, StockpileBulkDeleteDropDownView, StockpileCreateModal
+from .stockpile_view_menu import (
+    StockpileBulkDeleteDropDownView,
+    StockpileCreateModal,
+    StockpileEditDropDownView,
+    StockpilesViewMenu,
+)
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -108,7 +114,7 @@ class ModuleStockpiles(commands.Cog):
                 (association_id, user_level),
             ).fetchall()
 
-        return available_user_stockpiles
+        return available_user_stockpiles # noqa RET504
 
     @staticmethod
     def _get_guild_faction(guild_id: int) -> str:
@@ -300,7 +306,7 @@ class ModuleStockpiles(commands.Cog):
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
         await interaction.response.send_message(
-            view=StockpileBulkDeleteDropDownView(available_user_stockpiles, guild_faction, interface_association_id),
+            view=StockpileEditDropDownView(available_user_stockpiles, guild_faction, interface_association_id),
             ephemeral=True,
         )
 
@@ -515,6 +521,7 @@ class ModuleStockpiles(commands.Cog):
     @stockpile_create.autocomplete('interface_name')
     @stockpile_bulk_create.autocomplete('interface_name')
     @multiserver_join_interface.autocomplete('interface_name')
+    @refresh_codes.autocomplete('interface_name')
     async def interface_name_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
         :param interaction: current interaction object

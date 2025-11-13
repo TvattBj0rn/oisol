@@ -1,13 +1,17 @@
 import configparser
 import sqlite3
+import warnings
 
 import discord
 
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
+    Faction,
+    FoxholeBuildings,
     InterfacesTypes,
-    sort_nested_dicts_by_key, FoxholeBuildings, Faction, OisolLogger,
+    OisolLogger,
+    sort_nested_dicts_by_key,
 )
 
 
@@ -45,7 +49,7 @@ class StockpilesViewMenu(discord.ui.View):
             embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
         return embed_fields
 
-    def generate_stockpile_embed_data(self, stockpiles_data: list[tuple], user_access_level, group_faction: str) -> dict[str, str | list]:
+    def generate_stockpile_embed_data(self, stockpiles_data: list[tuple], user_access_level: int, group_faction: str) -> dict[str, str | list]:
         return {
             'title': f'Access Level {user_access_level}',
             'color': Faction[group_faction].value,
@@ -71,7 +75,7 @@ class StockpilesViewMenu(discord.ui.View):
 
             access_level_stockpiles = cursor.execute(
                 'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level >= ?',
-                (access_level,)
+                (access_level,),
             ).fetchall()
         if not access_level_stockpiles:
             await interaction.response.send_message('> There are currently no stockpiles for your access level', ephemeral=True, delete_after=5)
@@ -118,11 +122,11 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
                 '`code`: code of your stockpile (required)\n'
                 '`region`: region name of your stockpile (required)\n'
                 '`subregion`: subregion name of your stockpile (required)\n'
-                '`level`: level of access of your stockpile (optional)\n'
+                '`level`: level of access of your stockpile (optional)\n',
     )
 
     stockpiles_input = discord.ui.TextInput(
-        label=f'User input',
+        label='User input',
         style=discord.TextStyle.long,
         required=True,
         placeholder='name | code | region | subregion | level',
@@ -136,6 +140,99 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
         for stockpile_raw_info in stockpile_rows:
             stockpile_raw_info.split('|')
         # todo: string match the region & subregion with a given list
+
+
+class StockpileEditDropDownView(discord.ui.View):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+        super().__init__(timeout=None)
+        self.add_item(StockpileEditDropDownSelect(stockpiles_info, faction, association_id))
+
+
+class StockpileEditDropDownSelect(discord.ui.Select):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+        self.interaction_association_id = association_id
+        self.stockpiles_info = stockpiles_info
+
+        # Add user interactions
+        options = []
+        for region, subregion, code, name, stockpile_type, access_level in stockpiles_info:
+            options.append(discord.SelectOption(
+                label=f'{name} | {subregion} in {region} | {code} ({access_level})',
+                value=f'{region}@{subregion}@{code}@{name}@{access_level}',
+                emoji=FoxholeBuildings[f'{stockpile_type}_{faction}'].value,
+            ))
+
+        super().__init__(placeholder='Choose the stockpiles you want to edit', options=options, max_values=len(options) if len(options) < 5 else 5)
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        await interaction.response.send_modal(StockpileEditModal(
+            [selected_option.split('@') for selected_option in self.values],
+            self.interaction_association_id,
+        ))
+
+
+class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
+    def __init__(self, selected_stockpiles_data: list[list[str]], association_id: str):
+        super().__init__()
+        self.logger = OisolLogger('oisol')
+        self._selected_stockpiles_data = selected_stockpiles_data
+        self._association_id = association_id
+        self._selected_stockpiles_buffer = {}
+
+        for region, subregion, code, name, level in self._selected_stockpiles_data:
+            stockpile_label = f'{name} ({level}) | {subregion}, {region}'
+
+            # discord API prevent labels lengths over 45 chars
+            if len(stockpile_label) >= 45:
+                stockpile_label = f'{name} ({level})'
+
+            text_input = discord.ui.TextInput(
+                label=stockpile_label,
+                style=discord.TextStyle.short,
+                required=True,
+                default=code,
+            )
+
+            # save stockpile infos to be used on submit
+            self._selected_stockpiles_buffer[text_input.custom_id.__hash__()] = [association_id, region, subregion, name]
+
+            self.add_item(text_input)
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        invalid_codes = []
+        valid_query_codes = []
+        for modal_item in self.children:
+            # Ensure the current item is a user input
+            if not isinstance(modal_item, discord.ui.TextInput):
+                continue
+            new_stockpile_code = modal_item.value
+
+            # Ensure the user provided code is valid
+            if len(new_stockpile_code) != 6 or not new_stockpile_code.isdigit():
+                invalid_codes.append((new_stockpile_code, modal_item.label))
+                continue
+
+            # This action raise a deprecation warning and provide a replacement that has not been implemented yet
+            # This warning cannot be avoided nor fixed in the current discord-py version (~=2.6)
+            with warnings.catch_warnings(action='ignore'):
+                stockpile_info = self._selected_stockpiles_buffer[modal_item.custom_id.__hash__()]
+
+            valid_query_codes.append((new_stockpile_code, *stockpile_info))
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            conn.cursor().executemany(
+                'UPDATE GroupsStockpilesList SET Code = ? WHERE AssociationId == ? AND Region == ? AND Subregion == ? AND Name == ?',
+                valid_query_codes,
+            )
+            conn.commit()
+
+        response_string = '> '
+        if valid_query_codes:
+            response_string += f'The following stockpiles codes were properly updated:\n> - {'\n> - '.join(f'{name} ({code}) | {subregion} in {region}' for code, _, region, subregion, name in valid_query_codes)}\n'
+        if invalid_codes:
+            response_string += f'The provided new codes are invalid for the following stockpiles:\n> - {'\n- '.join(f'{code}, {label}' for code, label in invalid_codes)}'
+
+        await interaction.response.send_message(response_string, ephemeral=True)
 
 
 class StockpileBulkDeleteDropDownView(discord.ui.View):
