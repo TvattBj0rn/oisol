@@ -8,6 +8,7 @@ dependencies = [
   "libretranslatepy",
   "python-dotenv",
   "requests",
+  "thefuzz>=0.22.1",
 ]
 
 [dependency-groups]
