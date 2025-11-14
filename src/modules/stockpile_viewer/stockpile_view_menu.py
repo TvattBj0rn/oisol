@@ -4,6 +4,8 @@ import warnings
 
 import discord
 
+from thefuzz import process
+
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
@@ -11,7 +13,7 @@ from src.utils import (
     FoxholeBuildings,
     InterfacesTypes,
     OisolLogger,
-    sort_nested_dicts_by_key,
+    sort_nested_dicts_by_key, REGIONS_TYPES,
 )
 
 
@@ -136,10 +138,57 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
         stockpile_rows = self.stockpiles_input.value.split('\n')
 
         valid_stockpiles = [] # list[tuple[str]]
-        invalid_stockpiles = [] # list[tuple[tuple[str], str]], has invalid reason text
+        invalid_stockpiles = [] # list[tuple[str, str]]
+
+        # Retrieve shard of the guild the command is run from
+        config = configparser.ConfigParser()
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
+        guild_shard = config.get('default', 'shard', fallback='ABLE')
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            region_subregion_list = conn.cursor().execute(
+                'SELECT Region, Subregion, Type FROM StockpilesZones WHERE Shard == ?',
+                (guild_shard,),
+            ).fetchall()
+        subregions_to_region = {subregion: region for region, subregion, _ in region_subregion_list}
+        subregion_to_type = {subregion: subregion_type for _, subregion, subregion_type in region_subregion_list}
+        shard_all_subregions = list(subregions_to_region)
+
         for stockpile_raw_info in stockpile_rows:
-            stockpile_raw_info.split('|')
-        # todo: string match the region & subregion with a given list
+            split_info = [striped_field.strip() for striped_field in stockpile_raw_info.split('|')]
+
+            # Ensure the correct amount of info was given
+            if len(split_info) != 5:
+                invalid_stockpiles.append((stockpile_raw_info, 'incorrect number of parameters'))
+                continue
+            name, code, region, subregion, access_level = split_info
+
+            # Validate code
+            if len(code) != 6 or not code.isdigit():
+                invalid_stockpiles.append((stockpile_raw_info, 'invalid code'))
+
+            # Validate access level
+            if not access_level.isdigit() or int(access_level) < 1 or int(access_level) > 5 or int(access_level) < self._user_access_level:
+                invalid_stockpiles.append((stockpile_raw_info, 'invalid access level'))
+
+            # For both region & subregion there is not proper validation, only a match to the most likely name
+            # Match subregion, currently no need to match region as well
+            subregion = process.extract(subregion, shard_all_subregions)[0][0]
+            region = subregions_to_region[subregion]
+
+            valid_stockpiles.append(
+                (self._association_id, region, subregion, code, name, subregion_to_type[subregion], access_level),
+            )
+
+        # Add validated stockpiles to the db
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            conn.cursor().executemany(
+                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                valid_stockpiles,
+            )
+            conn.commit()
+
+        await interaction.response.send_message('> The stockpiles were properly added', ephemeral=True, delete_after=5)
 
 
 class StockpileEditDropDownView(discord.ui.View):
