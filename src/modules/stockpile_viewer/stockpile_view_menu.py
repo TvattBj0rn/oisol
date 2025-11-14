@@ -75,9 +75,14 @@ class StockpilesViewMenu(discord.ui.View):
                     if interface_access_levels[user_role_id] == 1:
                         break
 
+            association_id = cursor.execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (interaction.guild_id, interaction.channel_id, interaction.message.id),
+            ).fetchone()[0]
+
             access_level_stockpiles = cursor.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level >= ?',
-                (access_level,),
+                'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level >= ? AND AssociationId == ?',
+                (access_level, association_id),
             ).fetchall()
         if not access_level_stockpiles:
             await interaction.response.send_message('> There are currently no stockpiles for your access level', ephemeral=True, delete_after=5)
@@ -166,10 +171,12 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
             # Validate code
             if len(code) != 6 or not code.isdigit():
                 invalid_stockpiles.append((stockpile_raw_info, 'invalid code'))
+                continue
 
             # Validate access level
             if not access_level.isdigit() or int(access_level) < 1 or int(access_level) > 5 or int(access_level) < self._user_access_level:
                 invalid_stockpiles.append((stockpile_raw_info, 'invalid access level'))
+                continue
 
             # For both region & subregion there is not proper validation, only a match to the most likely name
             # Match subregion, currently no need to match region as well
@@ -188,7 +195,12 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly added', ephemeral=True, delete_after=5)
+        response_string = 'The stockpiles were properly added'
+
+        if invalid_stockpiles:
+            response_string = f'> The following stockpiles could not be added:\n> - {'\n> - '.join(f'{user_input} -> {invalid_reason}' for user_input, invalid_reason in invalid_stockpiles)}'
+
+        await interaction.response.send_message(response_string, ephemeral=True)
 
 
 class StockpileEditDropDownView(discord.ui.View):
