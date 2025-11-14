@@ -399,14 +399,14 @@ class ModuleStockpiles(commands.Cog):
             cursor = conn.cursor()
             # Retrieve interface permissions
             all_interface_permissions = cursor.execute(
-                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
-                (interface_guild_id, interface_channel_id, interface_message_id),
+                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (interface_guild_id, int(interface_channel_id), interface_message_id),
             ).fetchall()
 
             # Get user level of access on this interface
             user_level = 5
             for role_id, access_level in all_interface_permissions:
-                if role_id in user_role_ids:
+                if int(role_id) in user_role_ids and int(access_level) < user_level:
                     user_level = access_level
                 if user_level == 1:  # The user has the maximum level of access, no need to iterate further
                     break
