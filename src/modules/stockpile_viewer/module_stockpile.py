@@ -82,6 +82,26 @@ class ModuleStockpiles(commands.Cog):
         self.bot = bot
 
     @staticmethod
+    def _get_user_access_level(user_roles_ids: set[int], guild_id: str, channel_id: str, message_id: str, association_id: str) -> int:
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Retrieve interface permissions
+            all_interface_permissions = cursor.execute(
+                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
+                (guild_id, channel_id, message_id),
+            ).fetchall()
+
+        # Get user level of access on this interface
+        user_level = 5
+        for role_id, access_level in all_interface_permissions:
+            if role_id in user_roles_ids:
+                user_level = access_level
+            if user_level == 1:  # The user has the maximum level of access, no need to iterate further
+                break
+
+        return user_level
+
+    @staticmethod
     def _get_user_available_stockpiles(user_roles_ids: set[int], guild_id: str, channel_id: str, message_id: str, association_id: str) -> list[tuple]:
         """
         Retrieve the stockpiles the user has access to based on its roles
@@ -358,6 +378,25 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
+        interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
+
+        user_access_level = self._get_user_access_level(
+            {role.id for role in interaction.user.roles},
+            interface_guild_id,
+            interface_channel_id,
+            interface_message_id,
+            interface_association_id,
+        )
+
+        # Ensure the user is creating an appropriately leveled stockpile
+        if user_access_level > int(level):
+            await interaction.response.send_message(
+                f'> Your level ({user_access_level}) does not have the permission to create this stockpile (stockpile level: {level})',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+
         region, subregion = localisation.split(' | ')  # Only one '|' -> 2 splits
         shard_name = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', code)
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -431,11 +470,20 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
+        interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
+        user_access_level = self._get_user_access_level(
+            {role.id for role in interaction.user.roles},
+            interface_guild_id,
+            interface_channel_id,
+            interface_message_id,
+            interface_association_id,
+        )
+
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             if not (deleted_stockpiles := cursor.execute(
-                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? RETURNING *',
-                    (ids_list[3], stockpile_code),
+                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? AND Level <= ? RETURNING *',
+                    (ids_list[3], stockpile_code, user_access_level),
             ).fetchall()):
                 await interaction.response.send_message(
                     '> The stockpile code you provided does not exists.',
