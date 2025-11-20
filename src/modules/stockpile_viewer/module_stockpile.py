@@ -61,22 +61,6 @@ def get_current_shard(path: pathlib.Path, _code: str) -> str:
     return config.get('default', 'shard', fallback=Shard.ABLE.name)
 
 
-async def update_all_associated_stockpiles(bot: Oisol, association_id: str) -> None:
-    with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-        all_interfaces_to_update = conn.cursor().execute(
-            'SELECT GroupId, ChannelId, MessageId FROM AllInterfacesReferences WHERE AssociationId == ?',
-            (association_id,),
-        ).fetchall()
-
-    for group_id, channel_id, message_id in all_interfaces_to_update:
-        await refresh_interface(
-            bot,
-            channel_id,
-            message_id,
-            discord.Embed().from_dict(get_stockpile_info(int(group_id), association_id, message_id=int(message_id))),
-        )
-
-
 class ModuleStockpiles(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
