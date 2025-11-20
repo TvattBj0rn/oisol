@@ -9,13 +9,11 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.modules.stockpile_viewer.stockpile_interface_handling import get_stockpile_info
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     Faction,
     InterfacesTypes,
-    refresh_interface,
     repair_default_config_dict,
 )
 
@@ -159,13 +157,16 @@ class ModuleConfig(commands.Cog):
                 'SELECT GroupId, ChannelId, MessageId, AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND InterfaceType == ?',
                 (interaction.guild_id, InterfacesTypes.STOCKPILE.value),
             ).fetchall()
-        for group_id, channel_id, message_id, association_id in stockpile_interfaces:
-            await refresh_interface(
-                self.bot,
-                channel_id,
-                message_id,
-                discord.Embed().from_dict(get_stockpile_info(int(group_id), association_id, message_id=int(message_id))),
-            )
+        for _, channel_id, message_id, _ in stockpile_interfaces:
+            channel = self.bot.get_channel(int(channel_id))
+            message = await channel.fetch_message(int(message_id))
+
+            # It is guaranteed that there is only a single embed
+            embed_dict = message.embeds[0].to_dict()
+
+            embed_dict['color'] = faction.value
+
+            await message.edit(embed=discord.Embed.from_dict(embed_dict))
 
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
 

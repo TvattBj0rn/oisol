@@ -12,7 +12,11 @@ from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.foxhole_api_map_interactions_tasks import WorldSpawnsStatus
 from src.modules.registre import ModuleRegister, RegisterViewMenu
-from src.modules.stockpile_viewer import ModuleStockpiles, TaskUpdateAvailableStockpiles
+from src.modules.stockpile_viewer import (
+    ModuleStockpiles,
+    StockpilesViewMenu,
+    TaskUpdateAvailableStockpiles,
+)
 from src.modules.todolist import (
     ModuleTodolist,
     TodolistButtonCheckmark,
@@ -92,6 +96,7 @@ class Oisol(commands.Bot):
         self.add_view(ConfigViewMenu())
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
+        self.add_view(StockpilesViewMenu())
         self.add_dynamic_items(TodolistButtonCheckmark)
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
@@ -112,9 +117,9 @@ class Oisol(commands.Bot):
             conn.cursor().executescript(
                 '''
                 CREATE TABLE IF NOT EXISTS AllInterfacesReferences(AssociationId TEXT, GroupId TEXT, ChannelId TEXT, MessageId TEXT, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
-                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, ChannelId, MessageId TEXT, DiscordId TEXT, DiscordIdType TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, ChannelId, MessageId TEXT, DiscordId TEXT, DiscordIdType TEXT, Level INTEGER);
                 CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
-                CREATE TABLE IF NOT EXISTS GroupsStockpilesList(AssociationId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT);
+                CREATE TABLE IF NOT EXISTS GroupsStockpilesList(AssociationId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT, Level TEXT);
                 CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(AssociationId TEXT, GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
                 CREATE TABLE IF NOT EXISTS StockpilesZones(Shard TEXT, WarNumber INTEGER, ConquestStartTime INTEGER, Region TEXT, Subregion TEXT, Type TEXT);
                 ''',

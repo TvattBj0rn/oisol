@@ -10,9 +10,6 @@ import aiohttp
 import discord
 from discord.ext import commands, tasks
 
-from src.modules.stockpile_viewer.module_stockpile import (
-    update_all_associated_stockpiles,
-)
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
@@ -123,8 +120,6 @@ class DatabaseCleaner(commands.Cog):
                 'DELETE FROM GroupsStockpilesList WHERE AssociationId == ?',
                 all_stockpiles_interfaces,
             )
-        for association_id, *_ in all_stockpiles_interfaces:
-            await update_all_associated_stockpiles(self.bot, association_id)
 
         self.bot.logger.task(f'Stockpile interfaces were cleared for shard {shard_api.shard_name}')
 

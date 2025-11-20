@@ -46,7 +46,7 @@ class ProductionTemplate:
                 break
             production_costs[mpf_parameters[f'InputItem{i}']] = [f'x{cost}  {EMOJIS_FROM_DICT.get(mpf_parameters[f'InputItem{i}'], '')}' for cost in self.__apply_mpf_formula(int(mpf_parameters[f'InputItem{i}Amount']), is_short_mpf)]
 
-        for i in range(len(list(production_costs.values())[0])):
+        for i in range(len(next(iter(production_costs.values())))):
             mpf_embed['fields'].append({
                 'name': f'{i + 1} Crate' if i + 1 == 1 else f'{i + 1} Crates',
                 'value': '\n'.join(cost_type[i] for cost_type in production_costs.values()),
@@ -80,7 +80,7 @@ class ProductionTemplate:
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
                 ('Output', 'Output', lambda value: value),
             ]:
-                if category_name in production_method and production_method[category_name]:
+                if production_method.get(category_name):
                     structure_embed['fields'].append({
                         'name': display_name,
                         'value': action(production_method[category_name]),
@@ -103,6 +103,6 @@ class ProductionTemplate:
                 self.__process_mpf(production_method.copy())
 
 
-    def get_generated_embeds(self) -> list:
+    def get_generated_embeds(self) -> list[dict[str, str | list]]:
         self.__prepare_embeds_data()
         return self.__output
