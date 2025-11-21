@@ -72,13 +72,13 @@ class ModuleStockpiles(commands.Cog):
             # Retrieve interface permissions
             all_interface_permissions = cursor.execute(
                 'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
-                (guild_id, channel_id, message_id),
+                (guild_id, int(channel_id), message_id),
             ).fetchall()
 
         # Get user level of access on this interface
         user_level = 5
         for role_id, access_level in all_interface_permissions:
-            if role_id in user_roles_ids:
+            if int(role_id) in user_roles_ids:
                 user_level = access_level
             if user_level == 1:  # The user has the maximum level of access, no need to iterate further
                 break
