@@ -3,7 +3,6 @@ import sqlite3
 import warnings
 
 import discord
-
 from thefuzz import process
 
 from src.utils import (
@@ -13,7 +12,7 @@ from src.utils import (
     FoxholeBuildings,
     InterfacesTypes,
     OisolLogger,
-    sort_nested_dicts_by_key, REGIONS_TYPES,
+    sort_nested_dicts_by_key,
 )
 
 
