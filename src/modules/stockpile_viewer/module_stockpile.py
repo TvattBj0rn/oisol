@@ -6,6 +6,7 @@ import pathlib
 import random
 import sqlite3
 import uuid
+from sqlite3 import Connection
 from typing import TYPE_CHECKING, Literal
 
 import discord
@@ -66,14 +67,26 @@ class ModuleStockpiles(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def _get_user_access_level(user_roles_ids: set[int], guild_id: str, channel_id: str, message_id: str, association_id: str) -> int:
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            # Retrieve interface permissions
-            all_interface_permissions = cursor.execute(
-                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
-                (guild_id, int(channel_id), message_id),
-            ).fetchall()
+    def _get_user_access_level(
+            conn: Connection,
+            user_roles_ids: set[int],
+            guild_id: str,
+            channel_id: str,
+            message_id: str,
+    ) -> int:
+        """
+        Retrieve interface roles to compare the user's roles
+        :param conn: Connection object from caller with context
+        :param user_roles_ids: user discord roles ids
+        :param guild_id: interaction guild id
+        :param channel_id: interaction channel id
+        :param message_id: interaction message id
+        :return: an integer corresponding to the user's level of access on interface
+        """
+        all_interface_permissions = conn.cursor().execute(
+            'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
+            (guild_id, int(channel_id), message_id),
+        ).fetchall()
 
         # Get user level of access on this interface
         user_level = 5
@@ -82,39 +95,30 @@ class ModuleStockpiles(commands.Cog):
                 user_level = access_level
             if user_level == 1:  # The user has the maximum level of access, no need to iterate further
                 break
-
         return user_level
 
-    @staticmethod
-    def _get_user_available_stockpiles(user_roles_ids: set[int], guild_id: str, channel_id: str, message_id: str, association_id: str) -> list[tuple]:
+    def _get_user_available_stockpiles(
+            self,
+            user_roles_ids: set[int],
+            guild_id: str,
+            channel_id: str,
+            message_id: str,
+            association_id: str,
+    ) -> list[tuple]:
         """
         Retrieve the stockpiles the user has access to based on its roles
         :param user_roles_ids: user roles on the server
         :param guild_id: guild id
         :param channel_id: channel id
         :param message_id: message id
-        :param association_id: association_id
-        :return:
+        :return: list of stockpiles info that the user can access
         """
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            # Retrieve interface permissions
-            all_interface_permissions = cursor.execute(
-                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
-                (guild_id, channel_id, message_id),
-            ).fetchall()
-
-            # Get user level of access on this interface
-            user_level = 5
-            for role_id, access_level in all_interface_permissions:
-                if role_id in user_roles_ids:
-                    user_level = access_level
-                if user_level == 1:  # The user has the maximum level of access, no need to iterate further
-                    break
+            user_level = self._get_user_access_level(conn, user_roles_ids, guild_id, channel_id, message_id)
 
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level >= ?',
                 (association_id, user_level),
             ).fetchall()
 
@@ -364,13 +368,14 @@ class ModuleStockpiles(commands.Cog):
 
         interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
 
-        user_access_level = self._get_user_access_level(
-            {role.id for role in interaction.user.roles},
-            interface_guild_id,
-            interface_channel_id,
-            interface_message_id,
-            interface_association_id,
-        )
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            user_access_level = self._get_user_access_level(
+                conn,
+                {role.id for role in interaction.user.roles},
+                interface_guild_id,
+                interface_channel_id,
+                interface_message_id,
+            )
 
         # Ensure the user is creating an appropriately leveled stockpile
         if user_access_level > int(level):
@@ -455,18 +460,19 @@ class ModuleStockpiles(commands.Cog):
             return
 
         interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
-        user_access_level = self._get_user_access_level(
-            {role.id for role in interaction.user.roles},
-            interface_guild_id,
-            interface_channel_id,
-            interface_message_id,
-            interface_association_id,
-        )
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
+            # Retrieve the user access level
+            user_access_level = self._get_user_access_level(
+                conn,
+                {role.id for role in interaction.user.roles},
+                interface_guild_id,
+                interface_channel_id,
+                interface_message_id,
+            )
             if not (deleted_stockpiles := cursor.execute(
-                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? AND Level <= ? RETURNING *',
+                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? AND Level >= ? RETURNING *',
                     (ids_list[3], stockpile_code, user_access_level),
             ).fetchall()):
                 await interaction.response.send_message(
