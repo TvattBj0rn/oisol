@@ -78,7 +78,7 @@ class ModuleStockpiles(commands.Cog):
         # Get user level of access on this interface
         user_level = 5
         for role_id, access_level in all_interface_permissions:
-            if int(role_id) in user_roles_ids:
+            if int(role_id) in user_roles_ids and access_level < user_level:
                 user_level = access_level
             if user_level == 1:  # The user has the maximum level of access, no need to iterate further
                 break
