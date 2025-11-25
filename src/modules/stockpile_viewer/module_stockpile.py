@@ -22,7 +22,6 @@ from src.utils import (
     Shard,
 )
 
-from .stockpile_interface_handling import get_stockpile_info
 from .stockpile_view_menu import (
     StockpileBulkDeleteDropDownView,
     StockpileCreateModal,
