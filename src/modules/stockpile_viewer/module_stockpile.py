@@ -638,16 +638,3 @@ class ModuleStockpiles(commands.Cog):
         if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
             return '> The provided interface name is not correct'
         return None
-
-    @staticmethod
-    def _generate_access_list(**kwargs) -> list:
-        """
-        Get all non-nulls roles & access as permission list
-        """
-        return [
-            # Tuple of either member.id or role.id and discord id type
-            (v.id, DiscordIdType.ROLE.name if k.startswith('role_') else DiscordIdType.USER.name)
-            for k, v in kwargs.items()
-            # Make sure we use appropriate non-null parameters
-            if k.startswith(('role_', 'member_')) and v is not None
-        ]
