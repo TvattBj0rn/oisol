@@ -10,7 +10,7 @@ from sqlite3 import Connection
 from typing import TYPE_CHECKING, Literal
 
 import discord
-from discord import app_commands, Role
+from discord import Role, app_commands
 from discord.ext import commands
 
 from src.utils import (
