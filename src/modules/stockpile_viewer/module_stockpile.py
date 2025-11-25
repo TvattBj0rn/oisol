@@ -20,7 +20,6 @@ from src.utils import (
     Faction,
     InterfacesTypes,
     Shard,
-    refresh_interface,
 )
 
 from .stockpile_interface_handling import get_stockpile_info
