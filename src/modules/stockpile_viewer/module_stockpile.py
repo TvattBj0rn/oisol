@@ -10,7 +10,7 @@ from sqlite3 import Connection
 from typing import TYPE_CHECKING, Literal
 
 import discord
-from discord import app_commands
+from discord import Role, app_commands
 from discord.ext import commands
 
 from src.utils import (
@@ -20,10 +20,8 @@ from src.utils import (
     Faction,
     InterfacesTypes,
     Shard,
-    refresh_interface,
 )
 
-from .stockpile_interface_handling import get_stockpile_info
 from .stockpile_view_menu import (
     StockpileBulkDeleteDropDownView,
     StockpileCreateModal,
@@ -69,7 +67,7 @@ class ModuleStockpiles(commands.Cog):
     @staticmethod
     def _get_user_access_level(
             conn: Connection,
-            user_roles_ids: set[int],
+            user_roles: list[Role],
             guild_id: str,
             channel_id: str,
             message_id: str,
@@ -77,12 +75,16 @@ class ModuleStockpiles(commands.Cog):
         """
         Retrieve interface roles to compare the user's roles
         :param conn: Connection object from caller with context
-        :param user_roles_ids: user discord roles ids
+        :param user_roles: user discord roles
         :param guild_id: interaction guild id
         :param channel_id: interaction channel id
         :param message_id: interaction message id
         :return: an integer corresponding to the user's level of access on interface
         """
+        # Get all user roles ids to compare with the interface roles
+        user_roles_ids = {role.id for role in user_roles}
+
+        # Retrieve the roles ids & access levels of the interface
         all_interface_permissions = conn.cursor().execute(
             'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
             (guild_id, int(channel_id), message_id),
@@ -99,7 +101,7 @@ class ModuleStockpiles(commands.Cog):
 
     def _get_user_available_stockpiles(
             self,
-            user_roles_ids: set[int],
+            user_roles: list[Role],
             guild_id: str,
             channel_id: str,
             message_id: str,
@@ -107,14 +109,14 @@ class ModuleStockpiles(commands.Cog):
     ) -> list[tuple]:
         """
         Retrieve the stockpiles the user has access to based on its roles
-        :param user_roles_ids: user roles on the server
+        :param user_roles: user roles on the server
         :param guild_id: guild id
         :param channel_id: channel id
         :param message_id: message id
         :return: list of stockpiles info that the user can access
         """
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            user_level = self._get_user_access_level(conn, user_roles_ids, guild_id, channel_id, message_id)
+            user_level = self._get_user_access_level(conn, user_roles, guild_id, channel_id, message_id)
 
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
@@ -296,10 +298,8 @@ class ModuleStockpiles(commands.Cog):
             return
         interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
 
-        user_role_ids = {role.id for role in interaction.user.roles}
-
         available_user_stockpiles = self._get_user_available_stockpiles(
-            user_role_ids,
+            interaction.user.roles,
             interface_guild_id,
             interface_channel_id,
             interface_message_id,
@@ -371,7 +371,7 @@ class ModuleStockpiles(commands.Cog):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             user_access_level = self._get_user_access_level(
                 conn,
-                {role.id for role in interaction.user.roles},
+                interaction.user.roles,
                 interface_guild_id,
                 interface_channel_id,
                 interface_message_id,
@@ -421,23 +421,15 @@ class ModuleStockpiles(commands.Cog):
             return
         interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
 
-        user_role_ids = {role.id for role in interaction.user.roles}
-
+        # Retrieve user access level on the interface
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            # Retrieve interface permissions
-            all_interface_permissions = cursor.execute(
-                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
-                (interface_guild_id, int(interface_channel_id), interface_message_id),
-            ).fetchall()
-
-            # Get user level of access on this interface
-            user_level = 5
-            for role_id, access_level in all_interface_permissions:
-                if int(role_id) in user_role_ids and int(access_level) < user_level:
-                    user_level = access_level
-                if user_level == 1:  # The user has the maximum level of access, no need to iterate further
-                    break
+            user_level = self._get_user_access_level(
+                conn,
+                interaction.user.roles,
+                interface_guild_id,
+                interface_channel_id,
+                interface_message_id,
+            )
 
         await interaction.response.send_modal(StockpileCreateModal(user_level, interface_association_id))
 
@@ -466,7 +458,7 @@ class ModuleStockpiles(commands.Cog):
             # Retrieve the user access level
             user_access_level = self._get_user_access_level(
                 conn,
-                {role.id for role in interaction.user.roles},
+                interaction.user.roles,
                 interface_guild_id,
                 interface_channel_id,
                 interface_message_id,
@@ -514,11 +506,9 @@ class ModuleStockpiles(commands.Cog):
             return
         interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
 
-        user_role_ids = {role.id for role in interaction.user.roles}
-
         # Retrieve the stockpiles the user has access to
         available_user_stockpiles = self._get_user_available_stockpiles(
-            user_role_ids,
+            interaction.user.roles,
             interface_guild_id,
             interface_channel_id,
             interface_message_id,
@@ -646,73 +636,3 @@ class ModuleStockpiles(commands.Cog):
         if len(ids_list) != 4 or not all(ids.isdigit() for ids in ids_list[0:-1]):
             return '> The provided interface name is not correct'
         return None
-
-    @staticmethod
-    def _generate_access_list(**kwargs) -> list:
-        """
-        Get all non-nulls roles & access as permission list
-        """
-        return [
-            # Tuple of either member.id or role.id and discord id type
-            (v.id, DiscordIdType.ROLE.name if k.startswith('role_') else DiscordIdType.USER.name)
-            for k, v in kwargs.items()
-            # Make sure we use appropriate non-null parameters
-            if k.startswith(('role_', 'member_')) and v is not None
-        ]
-
-    async def _create_stockpile_interface(
-            self,
-            interaction: discord.Interaction,
-            association_id: str,
-            interface_name: str,
-            permissions: dict,
-            do_interface_update: bool = False,
-    ) -> None:
-        """
-        Create a new stockpile in the db and send back an empty embed (do_interface_update False) or an embed with the
-        existing data (do_interface_update True)
-        :param interaction: discord interaction
-        :param association_id: stockpile group id
-        :param interface_name: interface name
-        :param permissions: users / roles authorized on this interface
-        :param do_interface_update: whether to refresh the empty embed with existing data (for /stockpile-interface-join cases)
-        """
-        # Send an empty stockpile interface as a separate message to hide association id on discord clients
-        msg = await interaction.channel.send(embed=discord.Embed().from_dict(
-            get_stockpile_info(
-                interaction.guild_id, association_id, interface_name=interface_name,
-            ),
-        ))
-
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            # Only update the access db if specific permissions were given
-            if any(raw_access_list := self._generate_access_list(**permissions)):
-                cursor.executemany(
-                    'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType) VALUES (?, ?, ?, ?, ?)',
-                    [
-                        (interaction.guild_id, interaction.channel_id, msg.id, discord_id, discord_id_type)
-                        for discord_id, discord_id_type in raw_access_list
-                    ],
-                )
-
-            # Add joined interface to existing interfaces
-            cursor.execute(
-                'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (association_id, interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.STOCKPILE.value,None, interface_name),
-            )
-            conn.commit()
-
-        if do_interface_update:
-            # Update the interface
-            await refresh_interface(
-                self.bot,
-                interaction.channel_id,
-                msg.id,
-                discord.Embed().from_dict(get_stockpile_info(
-                    interaction.guild_id,
-                    association_id,
-                    message_id=msg.id,
-                    interface_name=interface_name,
-                )),
-            )
