@@ -4,7 +4,7 @@ from src.utils import EMOJIS_FROM_DICT, Faction, WikiTables
 
 
 class HealthEntryEngine:
-    def __init__(self, process_data: dict, bot_emojis: dict = None):
+    def __init__(self, process_data: dict, bot_emojis: dict | None = None):
         self.__bot_emojis = bot_emojis
         self.__raw_data = process_data
 

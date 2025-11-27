@@ -22,7 +22,7 @@ class Damage:
 
 
 class WikiTemplate:
-    def __init__(self, data_dict: dict, bot_emojis: dict = None):
+    def __init__(self, data_dict: dict, bot_emojis: dict | None = None):
         self._bot_emojis = bot_emojis
         self._raw_data = data_dict
         self._categories_attributes = {}

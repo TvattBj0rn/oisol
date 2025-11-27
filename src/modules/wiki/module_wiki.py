@@ -125,7 +125,7 @@ class ModuleWiki(commands.Cog):
         data_dict['name'] = subregion_name if subregion_name else search_request
 
         # Compute health of search_request & generate embed
-        health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict,).get_generated_embed()
+        health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 

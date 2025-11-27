@@ -1,7 +1,5 @@
 import pathlib
 
-import discord
-
 from . import WorldSpawnTypes
 
 OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
