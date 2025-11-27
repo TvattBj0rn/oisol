@@ -91,10 +91,10 @@ class VehicleTemplate(WikiTemplate):
                 self._create_formatted_attribute('Health', f'{vic_hp} HP' if (vic_hp := self._raw_data.get('vehicle hp')) else ''),
                 self._create_formatted_attribute('Disable threshold', f'{disable}%' if (disable := self._raw_data.get('disable')) else ''),
                 self._create_formatted_attribute('Subsystems disable chance', f'{
-                (f'- Tracks (<:tracked:1239349968767291454>): {tracks_chance}%\n' if (tracks_chance := self._raw_data.get('disable chance tracks')) else '') +
-                (f'- Fuel Tank (<:fuel_leak:1239349986471313499>): {fuel_chance}%\n' if (fuel_chance := self._raw_data.get('disable chance fueltank')) else '') +
-                (f'- Main Turret (<:turret:1239349978170921060>): {turret_1_chance}%\n' if (turret_1_chance := self._raw_data.get('disable chance turret')) else '') +
-                (f'- Secondary Turret (<:secondary_turret_cannon:1239616804184264818>): {turret_2_chance}%\n' if (turret_2_chance := self._raw_data.get('disable chance turret2')) else '')
+                (f'- Tracks ({self._bot_emojis.get('tracked')}): {tracks_chance}%\n' if (tracks_chance := self._raw_data.get('disable chance tracks')) else '') +
+                (f'- Fuel Tank ({self._bot_emojis.get('fuel_leak')}): {fuel_chance}%\n' if (fuel_chance := self._raw_data.get('disable chance fueltank')) else '') +
+                (f'- Main Turret ({self._bot_emojis.get('turreted')}): {turret_1_chance}%\n' if (turret_1_chance := self._raw_data.get('disable chance turret')) else '') +
+                (f'- Secondary Turret ({self._bot_emojis.get('turreted')}): {turret_2_chance}%\n' if (turret_2_chance := self._raw_data.get('disable chance turret2')) else '')
                 }'),
                 self._add_armor_attribute(),
                 self._create_formatted_attribute('Armor HP', f'{armor_hp} HP' if (armor_hp := self._raw_data.get('armour hp')) else ''),
