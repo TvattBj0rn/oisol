@@ -145,7 +145,7 @@ EMOJIS_FROM_DICT = {
     'Mass Production Factory': 'mpf',
     'Factory': 'factory',
     'Garage': 'garage',
-    'MW of power': 'mw_of_power',
+    'MW of power': 'power',
     'Small Assembly Station': 'small_assembly_station',
     'Infantry Arms Factory': 'infantry_facility',
     'MapIconManufacturing': 'refinery',
