@@ -78,7 +78,7 @@ class Oisol(commands.Bot):
 
         # Sync app emojis
         self.app_emojis = await self.fetch_application_emojis()
-        self.app_emojis_dict = {emoji.name: emoji for emoji in self.app_emojis}
+        self.app_emojis_dict = {emoji.name: f'<:{emoji.name}:{emoji.id}>' for emoji in self.app_emojis}
 
         try:
             synced = await self.tree.sync()
