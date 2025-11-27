@@ -46,7 +46,7 @@ class ProductionTemplate:
             if not mpf_parameters[f'InputItem{i}']:
                 break
 
-            production_costs[mpf_parameters[f'InputItem{i}']] = [f'x{cost}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(mpf_parameters[f'InputItem{i}']), 'missing_texture')}' for cost in self.__apply_mpf_formula(int(mpf_parameters[f'InputItem{i}Amount']), is_short_mpf)]
+            production_costs[mpf_parameters[f'InputItem{i}']] = [f'x{cost}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(mpf_parameters[f'InputItem{i}']), self.__bot_emojis.get('missing_texture'))}' for cost in self.__apply_mpf_formula(int(mpf_parameters[f'InputItem{i}Amount']), is_short_mpf)]
 
         for i in range(len(next(iter(production_costs.values())))):
             mpf_embed['fields'].append({
@@ -71,14 +71,14 @@ class ProductionTemplate:
                 if (input_item_title := f'InputItem{i}') in production_method and production_method[input_item_title]:
                     structure_embed['fields'].append({
                         'name': 'Input',
-                        'value': f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), 'missing_texture')}',
+                        'value': f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), self.__bot_emojis.get('missing_texture'))}',
                         'inline': True,
                     })
                 else:
                     break
             for category_name, display_name, action in [
                 ('InputVehicle', 'Chassis', lambda value: value),
-                ('InputPower', 'Power', lambda value: f'{value}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get('MW of power'), 'missing_texture')}'),
+                ('InputPower', 'Power', lambda value: f'{value}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get('MW of power'), self.__bot_emojis.get('missing_texture'))}'),
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
                 ('Output', 'Output', lambda value: value),
             ]:
@@ -94,7 +94,7 @@ class ProductionTemplate:
                     if (output_item_title := f'OutputItem{i}') in production_method and production_method[output_item_title]:
                         structure_embed['fields'].append({
                             'name': 'Output',
-                            'value': f'x{production_method[f'{output_item_title}Amount']} {production_method[output_item_title]}  {EMOJIS_FROM_DICT.get(production_method[output_item_title], '')}',
+                            'value': f'x{production_method[f'{output_item_title}Amount']} {production_method[output_item_title]}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[output_item_title]), self.__bot_emojis.get('missing_texture'))}',
                             'inline': True,
                         })
                     else:
