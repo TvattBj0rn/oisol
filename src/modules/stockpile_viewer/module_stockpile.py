@@ -314,7 +314,7 @@ class ModuleStockpiles(commands.Cog):
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
         await interaction.response.send_message(
-            view=StockpileEditDropDownView(available_user_stockpiles, guild_faction, interface_association_id),
+            view=StockpileEditDropDownView(available_user_stockpiles, guild_faction, interface_association_id, self.bot.app_emojis_dict),
             ephemeral=True,
         )
 
@@ -523,7 +523,15 @@ class ModuleStockpiles(commands.Cog):
         # Get the faction name
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
-        await interaction.response.send_message(view=StockpileBulkDeleteDropDownView(available_user_stockpiles, guild_faction, interface_association_id), ephemeral=True)
+        await interaction.response.send_message(
+            view=StockpileBulkDeleteDropDownView(
+                available_user_stockpiles,
+                guild_faction,
+                interface_association_id,
+                self.bot.app_emojis_dict,
+            ),
+            ephemeral=True,
+        )
 
     # AUTOCOMPLETE METHODS
     @stockpile_create.autocomplete('localisation')
