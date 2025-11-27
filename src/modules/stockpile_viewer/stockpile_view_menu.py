@@ -222,7 +222,7 @@ class StockpileEditDropDownView(discord.ui.View):
 
 
 class StockpileEditDropDownSelect(discord.ui.Select):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emoji_dict):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emoji_dict: dict):
         self.interaction_association_id = association_id
         self.stockpiles_info = stockpiles_info
         self.__emojis_dict = emoji_dict
