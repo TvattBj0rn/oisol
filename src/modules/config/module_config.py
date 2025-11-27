@@ -94,7 +94,7 @@ class ModuleConfig(commands.Cog):
     async def config_language(self, interaction: discord.Interaction) -> None:
         self.bot.logger.command(f'config-language command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.send_message(
-            view=SelectLanguageView(),
+            view=SelectLanguageView(self.bot.app_emojis_dict),
             ephemeral=True,
         )
 

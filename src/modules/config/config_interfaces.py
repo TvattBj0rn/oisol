@@ -42,16 +42,16 @@ class ConfigViewMenu(discord.ui.View):
 
 
 class SelectLanguageView(discord.ui.View):
-    def __init__(self, *, timeout: float | None = None):
+    def __init__(self, emojis_dict: dict, *, timeout: float | None = None):
         super().__init__(timeout=timeout)
-        self.add_item(SelectLanguage())
+        self.add_item(SelectLanguage(emojis_dict))
 
 
 class SelectLanguage(discord.ui.Select):
-    def __init__(self):
+    def __init__(self, emojis_dict: dict):
         options = [
             discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
-            discord.SelectOption(label='English', emoji='<:ukus:1205153501823377438>', value=Language.EN.name),
+            discord.SelectOption(label='English', emoji=emojis_dict.get('ukus'), value=Language.EN.name),
         ]
         super().__init__(placeholder='Choose a language', options=options)
 

@@ -207,7 +207,7 @@ class ModuleStockpiles(commands.Cog):
         # Send default interface
         interface_message = await interaction.channel.send(
             embed=discord.Embed.from_dict({
-                'title': f'<:region:1130915923704946758> | Stockpiles | {name}',
+                'title': f'{self.bot.app_emojis_dict.get('region')} | Stockpiles | {name}',
                 'color': Faction[guild_faction].value,
                 'description': '- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (1-5)\n'
                                '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
@@ -314,7 +314,7 @@ class ModuleStockpiles(commands.Cog):
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
         await interaction.response.send_message(
-            view=StockpileEditDropDownView(available_user_stockpiles, guild_faction, interface_association_id),
+            view=StockpileEditDropDownView(available_user_stockpiles, guild_faction, interface_association_id, self.bot.app_emojis_dict),
             ephemeral=True,
         )
 
@@ -523,7 +523,15 @@ class ModuleStockpiles(commands.Cog):
         # Get the faction name
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
-        await interaction.response.send_message(view=StockpileBulkDeleteDropDownView(available_user_stockpiles, guild_faction, interface_association_id), ephemeral=True)
+        await interaction.response.send_message(
+            view=StockpileBulkDeleteDropDownView(
+                available_user_stockpiles,
+                guild_faction,
+                interface_association_id,
+                self.bot.app_emojis_dict,
+            ),
+            ephemeral=True,
+        )
 
     # AUTOCOMPLETE METHODS
     @stockpile_create.autocomplete('localisation')

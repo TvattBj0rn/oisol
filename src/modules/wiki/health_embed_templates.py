@@ -4,7 +4,8 @@ from src.utils import EMOJIS_FROM_DICT, Faction, WikiTables
 
 
 class HealthEntryEngine:
-    def __init__(self, process_data: dict):
+    def __init__(self, process_data: dict, bot_emojis: dict | None = None):
+        self.__bot_emojis = bot_emojis
         self.__raw_data = process_data
 
         self.__name = self.__raw_data['name']
@@ -86,8 +87,8 @@ class HealthEntryEngine:
         # Specific edge case handling (todo: make a better handling of weird cases)
         if self.__embed['title'] == 'Barbed Wire':
             self.__embed['fields'].append({
-                'name': 'DEMOLITION (<:demolition:1239343432367870035>)',
-                'value': '<:hydras_whisper:1240724688523628565>: 1',
+                'name': f'DEMOLITION ({self.__bot_emojis.get('demolition')})',
+                'value': f'{self.__bot_emojis.get('hydras')}: 1',
             })
             return self.__embed
 
@@ -112,7 +113,7 @@ class HealthEntryEngine:
         :param special_value_rng: special_value * 1.5 when damage_dict[damage rng] is not None
         :return: formatted string with discord emoji
         """
-        damage_result = f'{EMOJIS_FROM_DICT.get(damage_name, damage_name)}: '
+        damage_result = f'{self.__bot_emojis.get(EMOJIS_FROM_DICT.get(damage_name), f'{self.__bot_emojis.get('missing_texture')} ({damage_name})')}: '
 
         if self.__case == WikiTables.VEHICLES.value:
             if main_value_rng is None:
@@ -141,7 +142,7 @@ class HealthEntryEngine:
         embed.
         """
         for category_name, category_damages in self.__game_damages.items():
-            category_field = {'name': f'{category_name.upper()}{f' ({emoji})' if (emoji := EMOJIS_FROM_DICT.get(category_name, '')) else ''}', 'value': ''}
+            category_field = {'name': f'{category_name.upper()}{f' ({emoji})' if (emoji := self.__bot_emojis.get(EMOJIS_FROM_DICT.get(category_name), f'{self.__bot_emojis.get('missing_texture')} ({category_name})')) else ''}', 'value': ''}
 
             for i, damage_dict in enumerate(category_damages):
                 armor_damage_reduction = float(self.__armor_attributes[damage_dict['damage type']])

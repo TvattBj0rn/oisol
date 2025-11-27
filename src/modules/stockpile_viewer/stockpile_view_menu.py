@@ -9,7 +9,6 @@ from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     Faction,
-    FoxholeBuildings,
     InterfacesTypes,
     OisolLogger,
     sort_nested_dicts_by_key,
@@ -24,7 +23,7 @@ class StockpilesViewMenu(discord.ui.View):
         super().__init__(timeout=None)
 
     @staticmethod
-    def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str) -> list:
+    def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str, emojis_dict: dict) -> list:
         # Group stockpiles by regions
         grouped_stockpiles = {}
         for region, subregion, code, name, building_type, level in guild_stockpiles:
@@ -42,7 +41,7 @@ class StockpilesViewMenu(discord.ui.View):
         for region, v in sorted_grouped_stockpiles.items():
             value_string = ''
             for subregion_type, vv in v.items():
-                value_string += f'**{subregion_type.split('_')[0]}** ({FoxholeBuildings[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'].value})\n'
+                value_string += f'**{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'.lower()]})\n'
                 for name, code_level in vv.items():
                     code, level = code_level.split('_')
                     value_string += f'{name} **|** ({level}) {code}\n'
@@ -50,11 +49,17 @@ class StockpilesViewMenu(discord.ui.View):
             embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
         return embed_fields
 
-    def generate_stockpile_embed_data(self, stockpiles_data: list[tuple], user_access_level: int, group_faction: str) -> dict[str, str | list]:
+    def generate_stockpile_embed_data(
+            self,
+            stockpiles_data: list[tuple],
+            user_access_level: int,
+            group_faction: str,
+            emojis_dict: dict,
+    ) -> dict[str, str | list]:
         return {
             'title': f'Access Level {user_access_level}',
             'color': Faction[group_faction].value,
-            'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction),
+            'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction, emojis_dict),
         }
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:View', label='View Stockpiles', emoji='📥')
@@ -91,7 +96,15 @@ class StockpilesViewMenu(discord.ui.View):
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
-        await interaction.response.send_message(embed=discord.Embed.from_dict(self.generate_stockpile_embed_data(access_level_stockpiles, access_level, group_faction)), ephemeral=True)
+        await interaction.response.send_message(
+            embed=discord.Embed.from_dict(self.generate_stockpile_embed_data(
+                access_level_stockpiles,
+                access_level,
+                group_faction,
+                interaction.client.app_emojis_dict,
+            )),
+            ephemeral=True,
+        )
 
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
@@ -203,15 +216,16 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
 
 
 class StockpileEditDropDownView(discord.ui.View):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
         super().__init__(timeout=None)
-        self.add_item(StockpileEditDropDownSelect(stockpiles_info, faction, association_id))
+        self.add_item(StockpileEditDropDownSelect(stockpiles_info, faction, association_id, emojis_dict))
 
 
 class StockpileEditDropDownSelect(discord.ui.Select):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emoji_dict: dict):
         self.interaction_association_id = association_id
         self.stockpiles_info = stockpiles_info
+        self.__emojis_dict = emoji_dict
 
         # Add user interactions
         options = []
@@ -219,7 +233,7 @@ class StockpileEditDropDownSelect(discord.ui.Select):
             options.append(discord.SelectOption(
                 label=f'{name} | {subregion} in {region} | {code} ({access_level})',
                 value=f'{region}@{subregion}@{code}@{name}@{access_level}',
-                emoji=FoxholeBuildings[f'{stockpile_type}_{faction}'].value,
+                emoji=self.__emojis_dict[f'{stockpile_type}_{faction}'.lower()],
             ))
 
         super().__init__(placeholder='Choose the stockpiles you want to edit', options=options, max_values=len(options) if len(options) < 5 else 5)
@@ -296,21 +310,22 @@ class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
 
 
 class StockpileBulkDeleteDropDownView(discord.ui.View):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
         super().__init__(timeout=None)
-        self.add_item(StockpileBulkDeleteDropDownSelect(stockpiles_info, faction, association_id))
+        self.add_item(StockpileBulkDeleteDropDownSelect(stockpiles_info, faction, association_id, emojis_dict))
 
 
 class StockpileBulkDeleteDropDownSelect(discord.ui.Select):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str):
+    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
         self.interaction_association_id = association_id
+        self.__emoji_dict = emojis_dict
 
         options = []
         for region, subregion, code, name, stockpile_type, access_level in stockpiles_info:
             options.append(discord.SelectOption(
                 label=f'{name} | {subregion} in {region} | {code} ({access_level})',
                 value=f'{name}@{region}@{subregion}@{code}@{access_level}',
-                emoji=FoxholeBuildings[f'{stockpile_type}_{faction}'].value,
+                emoji=self.__emoji_dict[f'{stockpile_type}_{faction}'.lower()],
             ))
 
         super().__init__(placeholder='Choose the stockpiles you want to delete', options=options, max_values=len(options) if len(options) < 25 else 25)

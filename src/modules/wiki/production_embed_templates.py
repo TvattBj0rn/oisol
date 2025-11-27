@@ -5,7 +5,8 @@ from src.utils import EMOJIS_FROM_DICT, Faction
 
 
 class ProductionTemplate:
-    def __init__(self, data: list[dict], name: str):
+    def __init__(self, data: list[dict], name: str, bot_emojis: dict):
+        self.__bot_emojis = bot_emojis
         self.__raw_data = data
         self.__name = name
         self.__color = Faction[self.__raw_data[0].get('Faction', 'NEUTRAL').replace('Both', 'NEUTRAL').upper()].value
@@ -44,7 +45,8 @@ class ProductionTemplate:
         for i in range(1, 7):
             if not mpf_parameters[f'InputItem{i}']:
                 break
-            production_costs[mpf_parameters[f'InputItem{i}']] = [f'x{cost}  {EMOJIS_FROM_DICT.get(mpf_parameters[f'InputItem{i}'], '')}' for cost in self.__apply_mpf_formula(int(mpf_parameters[f'InputItem{i}Amount']), is_short_mpf)]
+
+            production_costs[mpf_parameters[f'InputItem{i}']] = [f'x{cost}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(mpf_parameters[f'InputItem{i}']), 'missing_texture')}' for cost in self.__apply_mpf_formula(int(mpf_parameters[f'InputItem{i}Amount']), is_short_mpf)]
 
         for i in range(len(next(iter(production_costs.values())))):
             mpf_embed['fields'].append({
@@ -69,14 +71,14 @@ class ProductionTemplate:
                 if (input_item_title := f'InputItem{i}') in production_method and production_method[input_item_title]:
                     structure_embed['fields'].append({
                         'name': 'Input',
-                        'value': f'x{production_method[f'{input_item_title}Amount']} {EMOJIS_FROM_DICT.get(production_method[input_item_title], production_method[input_item_title])}',
+                        'value': f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), 'missing_texture')}',
                         'inline': True,
                     })
                 else:
                     break
             for category_name, display_name, action in [
                 ('InputVehicle', 'Chassis', lambda value: value),
-                ('InputPower', 'Power', lambda value: f'{value}  {EMOJIS_FROM_DICT.get('MW of power', '')}'),
+                ('InputPower', 'Power', lambda value: f'{value}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get('MW of power'), 'missing_texture')}'),
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
                 ('Output', 'Output', lambda value: value),
             ]:

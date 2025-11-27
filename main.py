@@ -49,6 +49,9 @@ class Oisol(commands.Bot):
         # Custom bot emojis not relying on dedicated discord servers
         self.app_emojis = []
 
+        # Sorted app_emojis with name as key to easily retrieve
+        self.app_emojis_dict = {}
+
         # Custom logger with colors for tasks, commands, buttons interactions, joins, ...
         self.logger = OisolLogger('oisol')
 
@@ -75,6 +78,7 @@ class Oisol(commands.Bot):
 
         # Sync app emojis
         self.app_emojis = await self.fetch_application_emojis()
+        self.app_emojis_dict = {emoji.name: emoji for emoji in self.app_emojis}
 
         try:
             synced = await self.tree.sync()

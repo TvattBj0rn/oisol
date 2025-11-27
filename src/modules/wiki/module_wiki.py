@@ -66,9 +66,9 @@ class ModuleWiki(commands.Cog):
             target_fields = await wrapper.fetch_cargo_table_fields(table_name)
             data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, search_request)
 
-        embeded_data = WikiTemplateFactory(data_dict).get(WikiTables(table_name)).generate_embed_data()
+        embedded_data = WikiTemplateFactory(data_dict).get(WikiTables(table_name)).generate_embed_data()
 
-        await interaction.response.send_message(embed=discord.Embed().from_dict(embeded_data), ephemeral=not visible)
+        await interaction.response.send_message(embed=discord.Embed().from_dict(embedded_data), ephemeral=not visible)
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
@@ -125,7 +125,7 @@ class ModuleWiki(commands.Cog):
         data_dict['name'] = subregion_name if subregion_name else search_request
 
         # Compute health of search_request & generate embed
-        health_embed = HealthEntryEngine(data_dict).get_generated_embed()
+        health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
@@ -158,7 +158,7 @@ class ModuleWiki(commands.Cog):
                 production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
                 production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'OutputItem1', search_request)
 
-        p = ProductionTemplate(production_rows, search_request)
+        p = ProductionTemplate(production_rows, search_request, self.bot.app_emojis_dict)
 
         await interaction.response.send_message(embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()], ephemeral=not visible)
 

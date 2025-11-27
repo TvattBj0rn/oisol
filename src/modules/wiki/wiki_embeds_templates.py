@@ -22,7 +22,8 @@ class Damage:
 
 
 class WikiTemplate:
-    def __init__(self, data_dict: dict):
+    def __init__(self, data_dict: dict, bot_emojis: dict | None = None):
+        self._bot_emojis = bot_emojis
         self._raw_data = data_dict
         self._categories_attributes = {}
 
@@ -33,7 +34,7 @@ class WikiTemplate:
     def _add_armor_attribute(self, inplace: bool = True) -> dict:
         return {
             'name': f'Armor type: *{self._raw_data.get('armour type')}*',
-            'value': f'{''.join(f'- {attribute_name} ({EMOJIS_FROM_DICT.get(attribute_name)}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armor_attributes').items())}',
+            'value': f'{''.join(f'- {attribute_name} ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(attribute_name)), 'missing_texture'}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armor_attributes').items())}',
             'inline': inplace,
         }
 
@@ -50,7 +51,7 @@ class WikiTemplate:
         if not is_armament_valid:
             return ''
         return (
-            f'{main_name if main_name  else self._raw_data.get('name')}{f' ({EMOJIS_FROM_DICT.get(ammo_name)})' if ammo_name  else ''}\n'
+            f'{main_name if main_name  else self._raw_data.get('name')}{f' ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(ammo_name), 'missing_texture')})' if ammo_name  else ''}\n'
             + (f'- Velocity of {velocity_mod}%\n' if velocity_mod  else '')
             + (f'- Reload time of {reload_time}s\n' if reload_time  else '')
             + (f'- Range of {gun_range}m' if gun_range  else '')
@@ -90,10 +91,10 @@ class VehicleTemplate(WikiTemplate):
                 self._create_formatted_attribute('Health', f'{vic_hp} HP' if (vic_hp := self._raw_data.get('vehicle hp')) else ''),
                 self._create_formatted_attribute('Disable threshold', f'{disable}%' if (disable := self._raw_data.get('disable')) else ''),
                 self._create_formatted_attribute('Subsystems disable chance', f'{
-                (f'- Tracks (<:tracked:1239349968767291454>): {tracks_chance}%\n' if (tracks_chance := self._raw_data.get('disable chance tracks')) else '') +
-                (f'- Fuel Tank (<:fuel_leak:1239349986471313499>): {fuel_chance}%\n' if (fuel_chance := self._raw_data.get('disable chance fueltank')) else '') +
-                (f'- Main Turret (<:turret:1239349978170921060>): {turret_1_chance}%\n' if (turret_1_chance := self._raw_data.get('disable chance turret')) else '') +
-                (f'- Secondary Turret (<:secondary_turret_cannon:1239616804184264818>): {turret_2_chance}%\n' if (turret_2_chance := self._raw_data.get('disable chance turret2')) else '')
+                (f'- Tracks ({self._bot_emojis.get('tracked')}): {tracks_chance}%\n' if (tracks_chance := self._raw_data.get('disable chance tracks')) else '') +
+                (f'- Fuel Tank ({self._bot_emojis.get('fuel_leak')}): {fuel_chance}%\n' if (fuel_chance := self._raw_data.get('disable chance fueltank')) else '') +
+                (f'- Main Turret ({self._bot_emojis.get('turreted')}): {turret_1_chance}%\n' if (turret_1_chance := self._raw_data.get('disable chance turret')) else '') +
+                (f'- Secondary Turret ({self._bot_emojis.get('turreted')}): {turret_2_chance}%\n' if (turret_2_chance := self._raw_data.get('disable chance turret2')) else '')
                 }'),
                 self._add_armor_attribute(),
                 self._create_formatted_attribute('Armor HP', f'{armor_hp} HP' if (armor_hp := self._raw_data.get('armour hp')) else ''),
@@ -105,7 +106,7 @@ class VehicleTemplate(WikiTemplate):
                 self._create_formatted_attribute('Inventory slots', str(slots) if (slots := self._raw_data.get('slots'))  else ''),
             ],
             'ENGINE': [
-                self._create_formatted_attribute('Fuel Capacity', f'{fuel_cap}{'U' if self._raw_data.get('fueltype') == 'Coal' else 'L'}{f', {f'Diesel ({EMOJIS_FROM_DICT.get('Diesel')}) / Petrol ({EMOJIS_FROM_DICT.get('Petrol')})' if (fuel_type := self._raw_data.get('fueltype')) is None else f'{fuel_type} ({EMOJIS_FROM_DICT.get(fuel_type)})'}'}' if (fuel_cap := self._raw_data.get('fuelcap'))  else ''),
+                self._create_formatted_attribute('Fuel Capacity', f'{fuel_cap}{'U' if self._raw_data.get('fueltype') == 'Coal' else 'L'}{f', {f'Diesel ({self._bot_emojis.get(EMOJIS_FROM_DICT.get('Diesel'), 'missing_texture')}) / Petrol ({self._bot_emojis.get(EMOJIS_FROM_DICT.get('Petrol')), 'missing_texture'})' if (fuel_type := self._raw_data.get('fueltype')) is None else f'{fuel_type} ({EMOJIS_FROM_DICT.get(fuel_type)})'}'}' if (fuel_cap := self._raw_data.get('fuelcap'))  else ''),
                 self._create_formatted_attribute('Speed', f'{
                 f'{f'- On road: {speed} m/s\n' if (speed := self._raw_data.get('speed')) else ''}' +
                 f'{f'- On road (boost): {speed_boost} m/s\n' if (speed_boost := self._raw_data.get('boostspeed')) else ''}' +
@@ -139,7 +140,7 @@ class StructureTemplate(WikiTemplate):
             'STRUCTURE SUPPORT': [
                 self._create_formatted_attribute('Intel range', f'{intel_range}m' if (intel_range := self._raw_data.get('intel range'))  else ''),
                 self._create_formatted_attribute('AI range', f'{ai_range}m' if (ai_range := self._raw_data.get('ai range'))  else ''),
-                self._create_formatted_attribute('Construction', f'x{build_amount} {build_material}{f' {EMOJIS_FROM_DICT.get(build_material, '')} '} using {built_with}{f' {EMOJIS_FROM_DICT.get(built_with, '')}'}' if any(((build_amount := self._raw_data.get('build amount')), (build_material := self._raw_data.get('build material')), (built_with := self._raw_data.get('built with')))) else ''),
+                self._create_formatted_attribute('Construction', f'x{build_amount} {build_material}{f' {self._bot_emojis.get(EMOJIS_FROM_DICT.get(build_material), 'missing_texture')} '} using {built_with}{f' {EMOJIS_FROM_DICT.get(built_with, '')}'}' if any(((build_amount := self._raw_data.get('build amount')), (build_material := self._raw_data.get('build material')), (built_with := self._raw_data.get('built with')))) else ''),
             ],
             'ARMAMENT': [
                 self._create_formatted_attribute('', self._generate_armament_value(1)),
@@ -154,7 +155,7 @@ class ItemTemplate(WikiTemplate):
         self._damage_range = lambda d, m: f'{int(d) * int(m)}-'
         self._categories_attributes = {
             'ITEM': [
-                self._create_formatted_attribute('Category', f'{f'{item_category}{f' ({category_emoji})' if (category_emoji := EMOJIS_FROM_DICT.get(item_category))  else ''}'}' if (item_category := self._raw_data.get('category'))  else ''),
+                self._create_formatted_attribute('Category', f'{f'{item_category}{f' ({category_emoji})' if (category_emoji := self._bot_emojis.get(EMOJIS_FROM_DICT.get(item_category)), 'missing_texture')  else ''}'}' if (item_category := self._raw_data.get('category'))  else ''),
                 self._create_formatted_attribute('Class', f'{item_class}' if (item_class := self._raw_data.get('type'))  else ''),
                 self._create_formatted_attribute('Equipment slot', f'{NUMBER_TO_EQUIPMENT_SLOT.get(slot)}' if (slot := self._raw_data.get('slot'))  else ''),
                 self._create_formatted_attribute('Use', f'{uses}' if (uses := self._raw_data.get('uses'))  else ''),
@@ -165,8 +166,8 @@ class ItemTemplate(WikiTemplate):
                 self._create_formatted_attribute(
                     'Damage',
                     f'{
-                        f'{Damage(damage_info['damage'], self._raw_data.get('damage multiplier'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}'
-                        f'{f'\nSemi automatic mode: {Damage(damage_info['damage'], self._raw_data.get('damage multiplier2'), damage_info['damage rng']).get()}{f' ({EMOJIS_FROM_DICT.get(damage_info['damage type'])})'}' if self._raw_data.get('firing mode') == 'Auto / Semi' else ''}'
+                        f'{Damage(damage_info['damage'], self._raw_data.get('damage multiplier'), damage_info['damage rng']).get()}{f' ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(damage_info['damage type'])), 'missing_texture'})'}'
+                        f'{f'\nSemi automatic mode: {Damage(damage_info['damage'], self._raw_data.get('damage multiplier2'), damage_info['damage rng']).get()}{f' ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(damage_info['damage type'])), 'missing_texture'})'}' if self._raw_data.get('firing mode') == 'Auto / Semi' else ''}'
                     }' if (damage_info := self._raw_data.get('ammo_info'))  else '',
                 ),
                 self._create_formatted_attribute(
@@ -178,11 +179,11 @@ class ItemTemplate(WikiTemplate):
                 ),
                 self._create_formatted_attribute(
                     'Ammunition',
-                    (f'Shoots {all_ammo}' if (all_ammo := ', '.join(f'{v}{f' ({EMOJIS_FROM_DICT.get(self._raw_data[k])})'}' for k in ['ammo', 'ammo2', 'ammo3', 'ammo4'] if (v := self._raw_data[k]) )) else '')
+                    (f'Shoots {all_ammo}' if (all_ammo := ', '.join(f'{v}{f' ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(self._raw_data[k])), 'missing_texture'})'}' for k in ['ammo', 'ammo2', 'ammo3', 'ammo4'] if (v := self._raw_data[k]) )) else '')
                     + (f'\n- Magazine size of {mag_size}' if (mag_size := self._raw_data.get('magazine'))  else '')
                     + (f'\n- Reload time of {reload_time}s' if (reload_time := self._raw_data.get('reload'))  else ''),
                 ),
-                self._create_formatted_attribute('Damage', f'{Damage(self._raw_data.get('damage'), self._raw_data.get('damage multiplier'), self._raw_data.get('damage rng')).get()} ({EMOJIS_FROM_DICT.get(self._raw_data.get('damage type'))})' if self._raw_data.get('damage')  else ''),
+                self._create_formatted_attribute('Damage', f'{Damage(self._raw_data.get('damage'), self._raw_data.get('damage multiplier'), self._raw_data.get('damage rng')).get()} ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(self._raw_data.get('damage type'))), 'missing_texture'})' if self._raw_data.get('damage')  else ''),
             ],
         }
 
