@@ -66,7 +66,7 @@ class ModuleWiki(commands.Cog):
             target_fields = await wrapper.fetch_cargo_table_fields(table_name)
             data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, search_request)
 
-        embedded_data = WikiTemplateFactory(data_dict).get(WikiTables(table_name)).generate_embed_data()
+        embedded_data = WikiTemplateFactory(data_dict, self.bot.app_emojis_dict).get(WikiTables(table_name)).generate_embed_data()
 
         await interaction.response.send_message(embed=discord.Embed().from_dict(embedded_data), ephemeral=not visible)
 
