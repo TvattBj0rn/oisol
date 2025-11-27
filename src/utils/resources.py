@@ -32,6 +32,8 @@ EMOJIS_FROM_DICT = {
     'Anti-Tank Explosive': 'at_explosive',
     'Anti-Tank Pillbox': 'at_pillbox',
     'Explosive': 'explosive',
+    'Flare': 'flare',
+    'Melee': 'fists',
     'High Explosive': 'high_explosive',
     'Armour Piercing': 'armour_piercing',
     'Fire': 'fire',
