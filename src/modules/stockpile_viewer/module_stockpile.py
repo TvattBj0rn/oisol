@@ -91,11 +91,11 @@ class ModuleStockpiles(commands.Cog):
         ).fetchall()
 
         # Get user level of access on this interface
-        user_level = 5
+        user_level = 1
         for role_id, access_level in all_interface_permissions:
-            if int(role_id) in user_roles_ids and access_level < user_level:
+            if int(role_id) in user_roles_ids and access_level > user_level:
                 user_level = access_level
-            if user_level == 1:  # The user has the maximum level of access, no need to iterate further
+            if user_level == 5:  # The user has the maximum level of access, no need to iterate further
                 break
         return user_level
 
@@ -120,7 +120,7 @@ class ModuleStockpiles(commands.Cog):
 
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level >= ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ?',
                 (association_id, user_level),
             ).fetchall()
 
@@ -464,7 +464,7 @@ class ModuleStockpiles(commands.Cog):
                 interface_message_id,
             )
             if not (deleted_stockpiles := cursor.execute(
-                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? AND Level >= ? RETURNING *',
+                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? AND Level <= ? RETURNING *',
                     (ids_list[3], stockpile_code, user_access_level),
             ).fetchall()):
                 await interaction.response.send_message(
