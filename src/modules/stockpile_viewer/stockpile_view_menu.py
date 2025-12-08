@@ -107,7 +107,7 @@ class StockpilesViewMenu(discord.ui.View):
         )
 
 
-    @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
+    @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         """
         Interaction when the Share button is clicked. Since only the user that created the interface can do this action,
@@ -124,6 +124,41 @@ class StockpilesViewMenu(discord.ui.View):
                 ).fetchone()
             await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
 
+    @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Roles', label='Edit Roles', emoji='✏️')
+    async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        await interaction.response.send_modal(StockpileEditRolesModal())
+
+
+class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
+    # Complete access
+    role_5 = discord.ui.Label(
+        text='Select the role(s) for level 5 (complete)',
+        component=discord.ui.RoleSelect(max_values=25),
+    )
+
+    # Advanced access
+    role_4 = discord.ui.Label(
+        text='Select the role(s) for level 4 (advanced)',
+        component=discord.ui.RoleSelect(max_values=25),
+    )
+
+    # Medium access
+    role_3 = discord.ui.Label(
+        text='Select the role(s) for level 3 (medium)',
+        component=discord.ui.RoleSelect(max_values=25),
+    )
+
+    # Low access
+    role_2 = discord.ui.Label(
+        text='Select the role(s) for level 2 (low)',
+        component=discord.ui.RoleSelect(max_values=25),
+    )
+
+    # Public access
+    role_1 = discord.ui.Label(
+        text='Select the role(s) for level 1 (public)',
+        component=discord.ui.RoleSelect(max_values=25),
+    )
 
 class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
     def __init__(self, user_access_level: int, association_id: str):
