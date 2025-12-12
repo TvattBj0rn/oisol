@@ -8,6 +8,7 @@ from thefuzz import process
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
+    DiscordIdType,
     Faction,
     InterfacesTypes,
     OisolLogger,
@@ -106,6 +107,13 @@ class StockpilesViewMenu(discord.ui.View):
             ephemeral=True,
         )
 
+    @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Roles', label='Edit Roles', emoji='✏️')
+    async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        if interaction.user.name != interaction.message.embeds[0].footer.text:
+            await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True, delete_after=5)
+            return
+        await interaction.response.send_modal(StockpileEditRolesModal(interaction))
+
 
     @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
@@ -115,56 +123,95 @@ class StockpilesViewMenu(discord.ui.View):
         Then the association id is retrieved and sent in an ephemeral message.
         """
         if interaction.user.name != interaction.message.embeds[0].footer.text:
-            await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True)
-        else:
-            with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-                association_id = conn.cursor().execute(
-                    'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
-                    (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
-                ).fetchone()
-            await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
+            await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True, delete_after=5)
+            return
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            association_id = conn.cursor().execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
+                (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
+            ).fetchone()
+        await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
 
-    @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Roles', label='Edit Roles', emoji='✏️')
-    async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        await interaction.response.send_modal(StockpileEditRolesModal())
 
 
 class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
-    # Complete access
-    role_5 = discord.ui.Label(
-        text='Select the role(s) for level 5 (complete)',
-        component=discord.ui.RoleSelect(max_values=25),
-    )
+    def __init__(self, interaction: discord.Interaction):
+        super().__init__()
 
-    # Advanced access
-    role_4 = discord.ui.Label(
-        text='Select the role(s) for level 4 (advanced)',
-        component=discord.ui.RoleSelect(max_values=25),
-    )
+        # Retrieve existing roles
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            interface_roles = conn.cursor().execute(
+                'SELECT Level, DiscordId FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (interaction.guild_id, interaction.channel_id, interaction.message.id),
+            ).fetchall()
 
-    # Medium access
-    role_3 = discord.ui.Label(
-        text='Select the role(s) for level 3 (medium)',
-        component=discord.ui.RoleSelect(max_values=25),
-    )
+        # Create a dict where each existing access level has an associated set of role ids
+        level_roles = {}
+        for access_level, role_id in interface_roles:
+            if access_level not in level_roles:
+                level_roles[access_level] = set()
+            if role := self.__fetch_role(list(interaction.guild.roles), int(role_id)):
+                level_roles[access_level].add(role)
 
-    # Low access
-    role_2 = discord.ui.Label(
-        text='Select the role(s) for level 2 (low)',
-        component=discord.ui.RoleSelect(max_values=25),
-    )
+        # Create role edit user input using existing values as default values
+        for level_value in range(5, 0, -1):
+            self.add_item(discord.ui.Label(
+                id=level_value,
+                text=f'Level {level_value}',
+                description=f'Select the role(s) for level {level_value}/5',
+                component=discord.ui.RoleSelect(
+                    max_values=25,
+                    default_values=level_roles.get(level_value, []),
+                ),
+            ))
 
-    # Public access
-    role_1 = discord.ui.Label(
-        text='Select the role(s) for level 1 (public)',
-        component=discord.ui.RoleSelect(max_values=25),
-    )
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        OisolLogger('oisol').interface(f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
+        interface_new_roles = []
+
+        # Create the parameters for the SQL query
+        for level_value in range(5, 0, -1):
+            roles_select_input = self.find_item(level_value)
+            # The case this prevents should not exist, but it properly integrates the typing
+            if not (
+                isinstance(roles_select_input, discord.ui.Label)
+                and isinstance(roles_select_input.component, discord.ui.RoleSelect)
+            ):
+                continue
+            # There can be multiple selected roles, here all available role are added within a generator
+            interface_new_roles.extend(
+                (interaction.guild_id, interaction.channel_id, interaction.message.id, role.id, DiscordIdType.ROLE.name, level_value)
+                for role in roles_select_input.component.values
+            )
+
+        # Remove old roles values & add the one submitted in the form
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                'DELETE FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (interaction.guild_id, interaction.channel_id, interaction.message.id),
+            )
+
+            cursor.executemany(
+                'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType, Level) VALUES (?, ?, ?, ?, ?, ?)',
+                interface_new_roles,
+            )
+
+            conn.commit()
+
+        await interaction.response.send_message('> The interface roles were properly updated', ephemeral=True, delete_after=5)
+
+
+    @staticmethod
+    def __fetch_role(guild_roles: list[discord.Role], role_id: int) -> discord.Role | None:
+        for role in guild_roles:
+            if role.id == role_id:
+                return role
+        return None
 
 class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
     def __init__(self, user_access_level: int, association_id: str):
         super().__init__()
-        self.logger = OisolLogger('oisol')
-
         self._user_access_level = user_access_level
         self._association_id = association_id
 
@@ -283,7 +330,6 @@ class StockpileEditDropDownSelect(discord.ui.Select):
 class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
     def __init__(self, selected_stockpiles_data: list[list[str]], association_id: str):
         super().__init__()
-        self.logger = OisolLogger('oisol')
         self._selected_stockpiles_data = selected_stockpiles_data
         self._association_id = association_id
         self._selected_stockpiles_buffer = {}
