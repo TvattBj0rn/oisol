@@ -16,7 +16,6 @@ from discord.ext import commands
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    DiscordIdType,
     Faction,
     InterfacesTypes,
     Shard,
@@ -43,7 +42,8 @@ def get_shard_stockpiles_subregions(shard_name: str, _code: str) -> list[str]:
 
     with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
         stockpiles_subregions = conn.cursor().execute(
-            f"SELECT Region, Subregion FROM StockpilesZones WHERE Shard == '{shard_name}'",
+            'SELECT Region, Subregion FROM StockpilesZones WHERE Shard == ?',
+            (shard_name,),
         ).fetchall()
     return [' | '.join(subregion) for subregion in stockpiles_subregions]
 
@@ -91,11 +91,11 @@ class ModuleStockpiles(commands.Cog):
         ).fetchall()
 
         # Get user level of access on this interface
-        user_level = 5
+        user_level = 1
         for role_id, access_level in all_interface_permissions:
-            if int(role_id) in user_roles_ids and access_level < user_level:
+            if int(role_id) in user_roles_ids and access_level > user_level:
                 user_level = access_level
-            if user_level == 1:  # The user has the maximum level of access, no need to iterate further
+            if user_level == 5:  # The user has the maximum level of access, no need to iterate further
                 break
         return user_level
 
@@ -120,7 +120,7 @@ class ModuleStockpiles(commands.Cog):
 
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level >= ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ?',
                 (association_id, user_level),
             ).fetchall()
 
@@ -187,11 +187,6 @@ class ModuleStockpiles(commands.Cog):
             self,
             interaction: discord.Interaction,
             name: str,
-            role_1: discord.Role = None,
-            role_2: discord.Role = None,
-            role_3: discord.Role = None,
-            role_4: discord.Role = None,
-            role_5: discord.Role = None,
     ) -> None:
         self.bot.logger.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
@@ -209,7 +204,7 @@ class ModuleStockpiles(commands.Cog):
             embed=discord.Embed.from_dict({
                 'title': f'{self.bot.app_emojis_dict.get('region')} | Stockpiles | {name}',
                 'color': Faction[guild_faction].value,
-                'description': '- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (1-5)\n'
+                'description': '- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
                                '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
                 'footer': {'text': interaction.user.name, 'icon_url': interaction.user.avatar.url},
             }),
@@ -218,18 +213,8 @@ class ModuleStockpiles(commands.Cog):
 
         # Create the stockpile interface on the table
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            # Retrieve and set potential permission
-            if any(permissions_list := [(param_name.split('_')[-1], param_value.id) for param_name, param_value in locals().items() if param_value is not None and param_name.startswith('role_')]):
-                cursor.executemany(
-                    'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType, Level) VALUES (?, ?, ?, ?, ?, ?)',
-                    [
-                        (interaction.guild_id, interaction.channel_id, interface_message.id, discord_id, DiscordIdType.ROLE.name, level)
-                        for level, discord_id in permissions_list
-                    ],
-                )
             # Add joined interface to existing interfaces
-            cursor.execute(
+            conn.cursor().execute(
                 'INSERT INTO AllInterfacesReferences (AssociationId, GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?, ?)',
                 (association_id, interaction.guild_id, interaction.channel_id, interface_message.id, InterfacesTypes.STOCKPILE.value, None, name),
             )
@@ -347,7 +332,7 @@ class ModuleStockpiles(commands.Cog):
         )
 
     @app_commands.command(name='stockpile-create', description='Create a new stockpile')
-    async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str, level: Literal['1', '2', '3', '4', '5'] = '5') -> None:
+    async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str, level: Literal['5', '4', '3', '2', '1'] = '1') -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
@@ -378,7 +363,7 @@ class ModuleStockpiles(commands.Cog):
             )
 
         # Ensure the user is creating an appropriately leveled stockpile
-        if user_access_level > int(level):
+        if user_access_level < int(level):
             await interaction.response.send_message(
                 f'> Your level ({user_access_level}) does not have the permission to create this stockpile (stockpile level: {level})',
                 ephemeral=True,
@@ -464,7 +449,7 @@ class ModuleStockpiles(commands.Cog):
                 interface_message_id,
             )
             if not (deleted_stockpiles := cursor.execute(
-                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? AND Level >= ? RETURNING *',
+                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Code == ? AND Level <= ? RETURNING *',
                     (ids_list[3], stockpile_code, user_access_level),
             ).fetchall()):
                 await interaction.response.send_message(
