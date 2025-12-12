@@ -43,7 +43,7 @@ def get_shard_stockpiles_subregions(shard_name: str, _code: str) -> list[str]:
     with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
         stockpiles_subregions = conn.cursor().execute(
             'SELECT Region, Subregion FROM StockpilesZones WHERE Shard == ?',
-            (shard_name,)
+            (shard_name,),
         ).fetchall()
     return [' | '.join(subregion) for subregion in stockpiles_subregions]
 
