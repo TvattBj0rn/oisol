@@ -86,7 +86,7 @@ class StockpilesViewMenu(discord.ui.View):
             ).fetchone()[0]
 
             access_level_stockpiles = cursor.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level >= ? AND AssociationId == ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
                 (access_level, association_id),
             ).fetchall()
         if not access_level_stockpiles:
