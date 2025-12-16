@@ -67,18 +67,21 @@ class StockpilesViewMenu(discord.ui.View):
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
-            interface_access_levels = dict(cursor.execute(
-                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+
+            # TODO: This is a duplicate of ModuleStockpiles._get_user_access_level, fix without circular import
+            all_interface_permissions = conn.cursor().execute(
+                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
                 (interaction.guild_id, interaction.channel_id, interaction.message.id),
-            ).fetchall())
-            access_level = 5
+            ).fetchall()
+
+            user_roles_ids = {role.id for role in interaction.user.roles}
+            user_level = 1
             # Search for matching ids between interface roles and user roles
-            for user_role_id in [str(role.id) for role in interaction.user.roles]:
-                if user_role_id in interface_access_levels:
-                    access_level = interface_access_levels[user_role_id]
-                    # No need to continue searching when max possible level is found
-                    if interface_access_levels[user_role_id] == 1:
-                        break
+            for role_id, access_level in all_interface_permissions:
+                if int(role_id) in user_roles_ids and access_level > user_level:
+                    user_level = access_level
+                if user_level == 5:  # The user has the maximum level of access, no need to iterate further
+                    break
 
             association_id = cursor.execute(
                 'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
