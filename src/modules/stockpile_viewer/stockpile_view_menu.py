@@ -90,7 +90,7 @@ class StockpilesViewMenu(discord.ui.View):
 
             access_level_stockpiles = cursor.execute(
                 'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
-                (access_level, association_id),
+                (user_level, association_id),
             ).fetchall()
         if not access_level_stockpiles:
             await interaction.response.send_message('> There are currently no stockpiles for your access level', ephemeral=True, delete_after=5)
@@ -103,7 +103,7 @@ class StockpilesViewMenu(discord.ui.View):
         await interaction.response.send_message(
             embed=discord.Embed.from_dict(self.generate_stockpile_embed_data(
                 access_level_stockpiles,
-                access_level,
+                user_level,
                 group_faction,
                 interaction.client.app_emojis_dict,
             )),
