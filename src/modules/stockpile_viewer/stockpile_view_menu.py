@@ -271,7 +271,7 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
                 continue
 
             # Validate access level
-            if not access_level.isdigit() or int(access_level) < 1 or int(access_level) > 5 or int(access_level) < self._user_access_level:
+            if not access_level.isdigit() or int(access_level) < 1 or int(access_level) > 5 or int(access_level) > self._user_access_level:
                 invalid_stockpiles.append((stockpile_raw_info, 'invalid access level'))
                 continue
 
