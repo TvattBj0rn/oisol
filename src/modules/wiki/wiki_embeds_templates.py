@@ -191,13 +191,12 @@ class ItemTemplate(WikiTemplate):
 
 
 class WikiTemplateFactory:
-    table_to_template_mapping = {
+    def __init__(self, data_dict: dict, bot_emojis: dict[str, discord.Emoji]):
+        self.table_to_template_mapping = {
         WikiTables.VEHICLES: VehicleTemplate,
         WikiTables.STRUCTURES: StructureTemplate,
         WikiTables.ITEM_DATA: ItemTemplate,
-    }
-
-    def __init__(self, data_dict: dict, bot_emojis: dict[str, discord.Emoji]):
+        }
         self._data_dict = data_dict
         self._bot_emojis = bot_emojis
 

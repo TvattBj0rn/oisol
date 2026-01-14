@@ -35,4 +35,4 @@ class ModuleTranslation(commands.Cog):
             await interaction.response.send_message(translated_source, ephemeral=True)
         except Exception:
             await interaction.response.send_message('> This translation is not supported', ephemeral=True)
-            self.bot.logger.error(f'Invalid translation for locale ({str(interaction.locale), str(interaction.locale).split('-')[0].lower()}) and source ({source_language})')
+            self.bot.logger.exception(f'Invalid translation for locale ({str(interaction.locale), str(interaction.locale).split('-')[0].lower()}) and source ({source_language})')

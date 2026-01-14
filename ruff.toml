@@ -30,8 +30,6 @@ ignore = [
     "ANN002", # Args typing
     "ANN003", # Kwargs typing
     "RUF001", # Unicode chars
-    "TRY400", # Exception instead of error
-    "RUF012", # Mutable-class-default
     "W191", # Indentation contains tabs
 ]
 

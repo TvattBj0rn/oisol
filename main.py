@@ -84,7 +84,7 @@ class Oisol(commands.Bot):
             synced = await self.tree.sync()
             self.logger.info(f'Synced {len(synced)} command(s)')
         except Exception:
-            self.logger.error('Could not sync tree properly')
+            self.logger.exception('Could not sync tree properly')
 
         self.logger.info(f'Logged in as {self.user} (ID:{self.user.id})')
 
