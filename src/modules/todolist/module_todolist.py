@@ -8,7 +8,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import OISOL_HOME_PATH, DiscordIdType, InterfaceType
+from src.utils import OISOL_HOME_PATH, DiscordIdType, InterfacesTypes
 
 from .todolist_view_menu import TodolistViewMenu
 
@@ -81,7 +81,7 @@ class ModuleTodolist(commands.Cog):
 
             cursor.execute(
                 'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
-                (interaction.guild_id, interaction.channel_id, msg.id, InterfaceType.TODOLIST_VIEW.name, todolist_id, title),
+                (interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.TODOLIST, todolist_id, title),
             )
             conn.commit()
 
