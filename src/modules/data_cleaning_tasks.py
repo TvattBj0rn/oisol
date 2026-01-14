@@ -3,11 +3,9 @@ from __future__ import annotations
 import configparser
 import datetime
 import sqlite3
-import time
 from typing import TYPE_CHECKING
 
 import aiohttp
-import discord
 from discord.ext import commands, tasks
 
 from src.utils import (
@@ -15,7 +13,6 @@ from src.utils import (
     DataFilesPath,
     FoxholeAsyncAPIWrapper,
     InterfacesTypes,
-    InterfaceType,
     Shard,
 )
 
@@ -26,8 +23,6 @@ if TYPE_CHECKING:
 class DatabaseCleaner(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
-        # Clear available interfaces that were deleted
-        self.remove_non_existing_interfaces.start()
 
         # Clear existing stockpiles at war's end
         if Shard.ABLE.name in self.bot.connected_shards:
@@ -36,48 +31,6 @@ class DatabaseCleaner(commands.Cog):
             self.clear_stockpiles_baker.start()
         if Shard.CHARLIE.name in self.bot.connected_shards:
             self.clear_stockpiles_charlie.start()
-
-    @staticmethod
-    def _clear_entries(
-            conn_cursor: tuple[sqlite3.Connection, sqlite3.Cursor],
-            channel_id: int,
-            message_id: int,
-            interface_type: str,
-            interface_reference: str,
-    ) -> None:
-        for table, column in InterfaceType[interface_type].value:
-            conn_cursor[1].execute(
-                f'DELETE FROM {table} WHERE ? == ?',
-                (column, interface_reference),
-            )
-
-        conn_cursor[1].execute(
-            'DELETE FROM AllInterfacesReferences WHERE ChannelId == ? AND MessageId == ?',
-            (channel_id, message_id),
-        )
-
-        conn_cursor[0].commit()
-
-    @tasks.loop(hours=24)
-    async def remove_non_existing_interfaces(self) -> None:
-        start_time = time.time()
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            cursor = conn.cursor()
-            all_existing_interfaces = cursor.execute(
-                'SELECT ChannelId, MessageId, InterfaceType, InterfaceReference FROM AllInterfacesReferences',
-            ).fetchall()
-            for channel_id, message_id, interface_type, interface_reference in all_existing_interfaces:
-                # Check if the interface exists
-                channel = self.bot.get_channel(int(channel_id))
-                try:
-                    await channel.fetch_message(int(message_id))
-                except (discord.NotFound, AttributeError):
-                    # Associated message does not exist on the path given in the db
-                    self._clear_entries((conn, cursor), int(channel_id), int(message_id), interface_type, interface_reference)
-                except (discord.Forbidden, discord.HTTPException):
-                    # Rights of the bot have been removed or fail on network part
-                    continue
-        self.bot.logger.task(f'remove_non_existing_interface task complete in {time.time() - start_time}s')
 
 
     async def _clear_stockpiles_new_war(self, shard_api: FoxholeAsyncAPIWrapper) -> None:

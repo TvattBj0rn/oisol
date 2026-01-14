@@ -37,16 +37,6 @@ class Language(Enum):
     EN = auto()
 
 
-class InterfaceType(Enum):
-    """
-    Enum of possible interfaces types as name and list of associated table & column as value
-    """
-    MULTISERVER_STOCKPILE_VIEW = []
-    REGISTER_VIEW = []
-    STOCKPILE_VIEW = []
-    TODOLIST_VIEW = [('GroupsInterfacesAccess', 'InterfaceId'), ('GroupsTodolistsTasks', 'TodolistId')]
-
-
 class InterfacesTypes(Enum):
     """
     Enum of possible interfaces types as name and list of associated table & column as value
@@ -54,6 +44,7 @@ class InterfacesTypes(Enum):
     MULTISERVER_STOCKPILE = 'MULTISERVER_STOCKPILE_VIEW'
     REGISTER = 'REGISTER_VIEW'
     STOCKPILE = 'STOCKPILE_VIEW'
+    TIMED_STOCKPILE = 'TIMED_STOCKPILE'
     TODOLIST = 'TODOLIST_VIEW'
 
 
