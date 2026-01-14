@@ -81,7 +81,7 @@ class ModuleTodolist(commands.Cog):
 
             cursor.execute(
                 'INSERT INTO AllInterfacesReferences (GroupId, ChannelId, MessageId, InterfaceType, InterfaceReference, InterfaceName) VALUES (?, ?, ?, ?, ?, ?)',
-                (interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.TODOLIST, todolist_id, title),
+                (interaction.guild_id, interaction.channel_id, msg.id, InterfacesTypes.TODOLIST.value, todolist_id, title),
             )
             conn.commit()
 
