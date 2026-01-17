@@ -12,8 +12,8 @@ from src.utils import (
     Faction,
     InterfacesTypes,
     OisolLogger,
-    sort_nested_dicts_by_key,
     get_user_access_level,
+    sort_nested_dicts_by_key,
 )
 
 

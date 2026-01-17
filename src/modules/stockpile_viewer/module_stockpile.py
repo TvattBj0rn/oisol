@@ -6,7 +6,6 @@ import pathlib
 import random
 import sqlite3
 import uuid
-from sqlite3 import Connection
 from typing import TYPE_CHECKING, Literal
 
 import discord
