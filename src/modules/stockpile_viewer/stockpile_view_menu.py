@@ -66,6 +66,7 @@ class StockpilesViewMenu(discord.ui.View):
 
     @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:View', label='View Stockpiles', emoji='📥')
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        OisolLogger('oisol').interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -126,6 +127,9 @@ class StockpilesViewMenu(discord.ui.View):
         if interaction.user.name != interaction.message.embeds[0].footer.text:
             await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True, delete_after=5)
             return
+        OisolLogger('oisol').interface(f'share id interaction by {interaction.user.name} on {interaction.guild.name}')
+
+        # Retrieve the association id using the interface guild, channel & message ids
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             association_id = conn.cursor().execute(
                 'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
