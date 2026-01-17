@@ -19,6 +19,7 @@ from src.utils import (
     Faction,
     InterfacesTypes,
     Shard,
+    get_user_access_level,
 )
 
 from .stockpile_view_menu import (
@@ -65,42 +66,7 @@ class ModuleStockpiles(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def _get_user_access_level(
-            conn: Connection,
-            user_roles: list[Role],
-            guild_id: str,
-            channel_id: str,
-            message_id: str,
-    ) -> int:
-        """
-        Retrieve interface roles to compare the user's roles
-        :param conn: Connection object from caller with context
-        :param user_roles: user discord roles
-        :param guild_id: interaction guild id
-        :param channel_id: interaction channel id
-        :param message_id: interaction message id
-        :return: an integer corresponding to the user's level of access on interface
-        """
-        # Get all user roles ids to compare with the interface roles
-        user_roles_ids = {role.id for role in user_roles}
-
-        # Retrieve the roles ids & access levels of the interface
-        all_interface_permissions = conn.cursor().execute(
-            'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
-            (guild_id, int(channel_id), message_id),
-        ).fetchall()
-
-        # Get user level of access on this interface
-        user_level = 1
-        for role_id, access_level in all_interface_permissions:
-            if int(role_id) in user_roles_ids and access_level > user_level:
-                user_level = access_level
-            if user_level == 5:  # The user has the maximum level of access, no need to iterate further
-                break
-        return user_level
-
     def _get_user_available_stockpiles(
-            self,
             user_roles: list[Role],
             guild_id: str,
             channel_id: str,
@@ -116,7 +82,7 @@ class ModuleStockpiles(commands.Cog):
         :return: list of stockpiles info that the user can access
         """
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            user_level = self._get_user_access_level(conn, user_roles, guild_id, channel_id, message_id)
+            user_level = get_user_access_level(conn, user_roles, guild_id, channel_id, message_id)
 
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
@@ -354,7 +320,7 @@ class ModuleStockpiles(commands.Cog):
         interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            user_access_level = self._get_user_access_level(
+            user_access_level = get_user_access_level(
                 conn,
                 interaction.user.roles,
                 interface_guild_id,
@@ -408,7 +374,7 @@ class ModuleStockpiles(commands.Cog):
 
         # Retrieve user access level on the interface
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            user_level = self._get_user_access_level(
+            user_level = get_user_access_level(
                 conn,
                 interaction.user.roles,
                 interface_guild_id,
@@ -441,7 +407,7 @@ class ModuleStockpiles(commands.Cog):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
             # Retrieve the user access level
-            user_access_level = self._get_user_access_level(
+            user_access_level = get_user_access_level(
                 conn,
                 interaction.user.roles,
                 interface_guild_id,

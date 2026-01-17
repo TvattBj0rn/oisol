@@ -13,6 +13,7 @@ from src.utils import (
     InterfacesTypes,
     OisolLogger,
     sort_nested_dicts_by_key,
+    get_user_access_level,
 )
 
 
@@ -68,26 +69,22 @@ class StockpilesViewMenu(discord.ui.View):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
-            # TODO: This is a duplicate of ModuleStockpiles._get_user_access_level, fix without circular import
-            all_interface_permissions = conn.cursor().execute(
-                'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
-                (interaction.guild_id, interaction.channel_id, interaction.message.id),
-            ).fetchall()
+            # Retrieve the maximum level of the author's interaction
+            user_level = get_user_access_level(
+                conn,
+                interaction.user.roles,
+                str(interaction.guild_id),
+                str(interaction.channel_id),
+                str(interaction.message.id),
+            )
 
-            user_roles_ids = {role.id for role in interaction.user.roles}
-            user_level = 1
-            # Search for matching ids between interface roles and user roles
-            for role_id, access_level in all_interface_permissions:
-                if int(role_id) in user_roles_ids and access_level > user_level:
-                    user_level = access_level
-                if user_level == 5:  # The user has the maximum level of access, no need to iterate further
-                    break
-
+            # Retrieve the interface association id
             association_id = cursor.execute(
                 'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
                 (interaction.guild_id, interaction.channel_id, interaction.message.id),
             ).fetchone()[0]
 
+            # Retrieve the interface's stockpiles, using the user's level access level
             access_level_stockpiles = cursor.execute(
                 'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
                 (user_level, association_id),
@@ -95,6 +92,7 @@ class StockpilesViewMenu(discord.ui.View):
         if not access_level_stockpiles:
             await interaction.response.send_message('> There are currently no stockpiles for your access level', ephemeral=True, delete_after=5)
             return
+
         # Get group faction
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
