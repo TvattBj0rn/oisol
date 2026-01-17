@@ -3,6 +3,9 @@ from __future__ import annotations
 import configparser
 import operator
 from configparser import ConfigParser
+from sqlite3 import Connection
+
+from discord import Role
 
 from .oisol_enums import Faction, Language, Shard
 
@@ -67,3 +70,37 @@ def convert_time_to_readable_time(value: float) -> str:
     h, m = divmod(m, 60)
 
     return f'{int(h)}:{int(m):02d}:{int(s):02d}h'
+
+def get_user_access_level(
+        conn: Connection,
+        user_roles: list[Role],
+        guild_id: int,
+        channel_id: int,
+        message_id: int,
+) -> int:
+    """
+    Retrieve interface roles to compare the user's roles
+    :param conn: Connection object from caller with context
+    :param user_roles: user discord roles
+    :param guild_id: interaction guild id
+    :param channel_id: interaction channel id
+    :param message_id: interaction message id
+    :return: an integer corresponding to the user's level of access on interface
+    """
+    # Get all user roles ids to compare with the interface roles
+    user_roles_ids = {role.id for role in user_roles}
+
+    # Retrieve the roles ids & access levels of the interface
+    all_interface_permissions = conn.cursor().execute(
+        'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
+        (guild_id, int(channel_id), message_id),
+    ).fetchall()
+
+    # Get user level of access on this interface
+    user_level = 1
+    for role_id, access_level in all_interface_permissions:
+        if int(role_id) in user_roles_ids and access_level > user_level:
+            user_level = access_level
+        if user_level == 5:  # The user has the maximum level of access, no need to iterate further
+            break
+    return user_level
