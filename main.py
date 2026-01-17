@@ -121,7 +121,7 @@ class Oisol(commands.Bot):
             conn.cursor().executescript(
                 '''
                 CREATE TABLE IF NOT EXISTS AllInterfacesReferences(AssociationId TEXT, GroupId TEXT, ChannelId TEXT, MessageId TEXT, InterfaceType TEXT, InterfaceReference TEXT, InterfaceName TEXT);
-                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, ChannelId, MessageId TEXT, DiscordId TEXT, DiscordIdType TEXT, Level INTEGER);
+                CREATE TABLE IF NOT EXISTS GroupsInterfacesAccess(GroupId TEXT, ChannelId TEXT, MessageId TEXT, DiscordId TEXT, DiscordIdType TEXT, Level INTEGER);
                 CREATE TABLE IF NOT EXISTS GroupsRegister(GroupId INTEGER, RegistrationDate INTEGER, MemberId INTEGER);
                 CREATE TABLE IF NOT EXISTS GroupsStockpilesList(AssociationId TEXT, Region TEXT, Subregion TEXT, Code TEXT, Name TEXT, Type TEXT, Level TEXT, LastUpdated INTEGER);
                 CREATE TABLE IF NOT EXISTS GroupsTodolistsTasks(AssociationId TEXT, GroupId INTEGER, TodolistId TEXT, TaskContent TEXT, TaskPriority TEXT, LastUpdated INTEGER);
