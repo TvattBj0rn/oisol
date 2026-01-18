@@ -49,7 +49,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
         split_search_request = search_request.split('@')
@@ -72,7 +72,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
         # Fields required for health process for the two available tables
         table_fields = {
@@ -131,7 +131,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(name='production', description='Vehicles / Items production costs')
     async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name}')
+        self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
         split_search_request = search_request.split('@')
