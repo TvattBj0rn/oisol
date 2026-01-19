@@ -473,6 +473,8 @@ class ModuleStockpiles(commands.Cog):
         # Get the faction name
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
+        print(available_user_stockpiles, guild_faction, interface_association_id, self.bot.app_emojis_dict)
+
         await interaction.response.send_message(
             view=StockpileBulkDeleteDropDownView(
                 available_user_stockpiles,
