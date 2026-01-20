@@ -170,6 +170,9 @@ EMOJIS_FROM_DICT = {
     'A0E-9 Rocket Warhead': 'rocket_warhead',
     'A0E-9 Rocket Body': 'rocket_body',
     'A0E-9 Rocket Booster': 'rocket_booster',
+	'Salvage': 'salvage',
+	'Coke': 'coke',
+	'Sulfur': 'sulfur',
 }
 
 
