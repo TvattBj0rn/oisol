@@ -27,12 +27,13 @@ class ModuleTranslation(commands.Cog):
 
     async def translate_to_user_language(self, interaction: discord.Interaction, message: discord.Message) -> None:
         self.bot.logger.command(f'translate command by {interaction.user.name} on {interaction.guild.name}')
+        await interaction.response.defer(ephemeral=True)
 
         source_language = self.lt_api.detect(message.content)[0]['language']
         target_language = TERRITORY_LANGUAGES.get(str(interaction.locale).split('-')[0].lower())[0]
         try:
             translated_source = self.lt_api.translate(message.content, source_language, target_language)
-            await interaction.response.send_message(translated_source, ephemeral=True)
+            await interaction.followup.send(translated_source, ephemeral=True)
         except Exception:
-            await interaction.response.send_message('> This translation is not supported', ephemeral=True)
+            await interaction.followup.send('> This translation is not supported', ephemeral=True)
             self.bot.logger.error(f'Invalid translation for locale ({str(interaction.locale), str(interaction.locale).split('-')[0].lower()}) and source ({source_language})')
