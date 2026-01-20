@@ -9,7 +9,7 @@ class ProductionTemplate:
         self.__bot_emojis = bot_emojis
         self.__raw_data = data
         self.__name = name
-        self.__color = Faction[self.__raw_data[0].get('Faction', 'NEUTRAL').replace('Both', 'NEUTRAL').upper()].value
+        self.__color = Faction[self.__raw_data[0].get('Faction', 'NEUTRAL').replace('Both', 'NEUTRAL').replace('War', 'WARDEN').replace('Col', 'COLONIAL')].value
         self.__output = []
 
     @staticmethod
@@ -60,7 +60,7 @@ class ProductionTemplate:
     def __prepare_embeds_data(self) -> None:
         for production_method in self.__raw_data:
             structure_embed = {
-                'title': production_method['StructureName'],
+                'title': production_method['Source'],
                 'description': '',
                 'color': self.__color,
                 'fields': [],
@@ -101,7 +101,7 @@ class ProductionTemplate:
                         break
 
             self.__output.append(structure_embed)
-            if (mpf_flag := production_method.get('IsMPFable', False)) and mpf_flag == '1' and production_method['StructureName'] in ['Garage', 'Factory']:
+            if (mpf_flag := production_method.get('IsMPFable', False)) and mpf_flag == '1' and production_method['Source'] in ['Garage', 'Factory']:
                 self.__process_mpf(production_method.copy())
 
 

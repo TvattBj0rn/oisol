@@ -145,22 +145,14 @@ class ModuleWiki(commands.Cog):
             return
 
         async with FoxholeWikiAPIWrapper() as wrapper:
-            if table_name == WikiTables.VEHICLES.value:
-                codename = await wrapper.get_codename_from_name(table_name, search_request)
-                production_merged_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION_MERGED.value)
-                production_rows_codename = await wrapper.retrieve_production_row(production_merged_table_fields, WikiTables.PRODUCTION_MERGED.value, 'Output', codename)
+            production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
+            production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'Output', search_request)
 
-                # Replace codename values with game name values
-                production_rows = [{k: CODENAME_TO_GAMENAME.get(v, v) for k, v in production_row.items()} for production_row in production_rows_codename]
-                for production_row in production_rows:
-                    production_row.update(Output=search_request)
-            else:
-                production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
-                production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'OutputItem1', search_request)
-
-        p = ProductionTemplate(production_rows, search_request, self.bot.app_emojis_dict)
-
-        await interaction.response.send_message(embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()], ephemeral=not visible)
+            p = ProductionTemplate(production_rows, search_request, self.bot.app_emojis_dict)
+            await interaction.response.send_message(
+                embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()],
+                ephemeral=not visible,
+            )
 
 
     @staticmethod
