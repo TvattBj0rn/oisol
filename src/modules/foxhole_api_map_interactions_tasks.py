@@ -42,8 +42,6 @@ class WorldSpawnsStatus(commands.Cog):
         if Shard.CHARLIE.name in self.bot.connected_shards:
             self.update_charlie_world_spawn_cache.start()
 
-        self.cog_activation_report.start()
-
     @staticmethod
     async def _get_region_world_spawn_status(session: aiohttp.ClientSession, shard_api: FoxholeAsyncAPIWrapper, region: str) -> list:
         region_world_spawn_map_items = await shard_api.get_region_specific_icons(
