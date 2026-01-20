@@ -502,7 +502,7 @@ class ModuleStockpiles(commands.Cog):
                 self.bot.app_emojis_dict,
             )
         else:
-            await interaction.response.send_message('> Invalid display mode provided')
+            await interaction.response.send_message('> Invalid display mode provided', ephemeral=True, delete_after=5)
             return
 
         # Send the selected modal
