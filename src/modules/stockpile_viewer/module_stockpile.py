@@ -22,7 +22,9 @@ from src.utils import (
 )
 
 from .stockpile_view_menu import (
-    StockpileBulkDeleteDropDownView,
+    StockpileBulkDeleteModalRegionDisplay,
+    StockpileBulkDeleteModalStockpileDisplay,
+    StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
     StockpileEditDropDownView,
     StockpilesViewMenu,
@@ -85,7 +87,7 @@ class ModuleStockpiles(commands.Cog):
 
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ? ORDER BY Region, Subregion',
                 (association_id, user_level),
             ).fetchall()
 
@@ -221,7 +223,7 @@ class ModuleStockpiles(commands.Cog):
                 await interaction.response.send_message('> The provided interface id is invalid', ephemeral=True, delete_after=5)
                 return
 
-            guild_id, channel_id, message_id, association_id = ids_list
+            guild_id, channel_id, message_id, _ = ids_list
 
             # Update current interface association_id with user provided association_id
             cursor.execute(
@@ -316,7 +318,7 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
-        interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
+        interface_guild_id, interface_channel_id, interface_message_id, _ = ids_list
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             user_access_level = get_user_access_level(
@@ -401,7 +403,7 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
-        interface_guild_id, interface_channel_id, interface_message_id, interface_association_id = ids_list
+        interface_guild_id, interface_channel_id, interface_message_id, _ = ids_list
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -441,7 +443,12 @@ class ModuleStockpiles(commands.Cog):
             )
 
     @app_commands.command(name='stockpile-bulk-delete', description='Delete multiple existing stockpiles from a selected interface')
-    async def stockpile_bulk_delete(self, interaction: discord.Interaction, interface_name: str) -> None:
+    async def stockpile_bulk_delete(
+            self,
+            interaction: discord.Interaction,
+            interface_name: str,
+            display: Literal['Stockpile', 'Subregion', 'Region'] = 'Stockpile',
+    ) -> None:
         self.bot.logger.command(f'stockpile-bulk-delete command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
@@ -473,17 +480,33 @@ class ModuleStockpiles(commands.Cog):
         # Get the faction name
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
-        print(available_user_stockpiles, guild_faction, interface_association_id, self.bot.app_emojis_dict)
-
-        await interaction.response.send_message(
-            view=StockpileBulkDeleteDropDownView(
+        # Depending on the display mode, a different modal is instantiated
+        if display == 'Stockpile':
+            display_modal = StockpileBulkDeleteModalStockpileDisplay(
                 available_user_stockpiles,
                 guild_faction,
                 interface_association_id,
                 self.bot.app_emojis_dict,
-            ),
-            ephemeral=True,
-        )
+            )
+        elif display == 'Subregion':
+            display_modal = StockpileBulkDeleteModalSubregionDisplay(
+                available_user_stockpiles,
+                interface_association_id,
+                self.bot.app_emojis_dict,
+
+            )
+        elif display == 'Region':
+            display_modal = StockpileBulkDeleteModalRegionDisplay(
+                available_user_stockpiles,
+                interface_association_id,
+                self.bot.app_emojis_dict,
+            )
+        else:
+            await interaction.response.send_message('> Invalid display mode provided', ephemeral=True, delete_after=5)
+            return
+
+        # Send the selected modal
+        await interaction.response.send_modal(display_modal)
 
     # AUTOCOMPLETE METHODS
     @stockpile_create.autocomplete('localisation')
