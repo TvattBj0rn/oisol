@@ -8,7 +8,6 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.utils import (
-    CODENAME_TO_GAMENAME,
     OISOL_HOME_PATH,
     REGIONS_TYPES,
     CacheKeys,
@@ -139,7 +138,7 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
             return
 
-        search_request, table_name = split_search_request
+        search_request, _ = split_search_request
         if search_request not in PRODUCTION_DATA_KEYS:
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
