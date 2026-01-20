@@ -119,8 +119,7 @@ class MapIcon(Enum):
 class WikiTables(Enum):
     ITEM_DATA = 'itemdata'
     MAPS = 'maps'
-    PRODUCTION = 'production' # Facility crafts (materials)
-    PRODUCTION_MERGED = 'productionmerged' # Vehicles & Shippable craft (including both vanilla & facility crafts)
+    PRODUCTION = 'productionmerged3' # Facility crafts (materials) Vehicles & Shippable craft (including both vanilla & facility crafts)
     STRUCTURES = 'structures'
     VEHICLES = 'vehicles'
 
