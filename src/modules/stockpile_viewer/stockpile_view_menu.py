@@ -3,6 +3,7 @@ import sqlite3
 import warnings
 
 import discord
+from discord import Interaction
 from thefuzz import process
 
 from src.utils import (
@@ -12,6 +13,7 @@ from src.utils import (
     Faction,
     InterfacesTypes,
     OisolLogger,
+    chunks,
     get_user_access_level,
     sort_nested_dicts_by_key,
 )
@@ -395,38 +397,180 @@ class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
         await interaction.response.send_message(response_string, ephemeral=True)
 
 
-class StockpileBulkDeleteDropDownView(discord.ui.View):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
-        super().__init__(timeout=None)
-        self.add_item(StockpileBulkDeleteDropDownSelect(stockpiles_info, faction, association_id, emojis_dict))
+class StockpileBulkDeleteModalStockpileDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
+    def __init__(
+            self,
+            stockpiles_info: list[tuple[str]],
+            faction: str,
+            association_id: str,
+            emojis_dict: dict,
+    ):
+        super().__init__()
+        self.__association_id = association_id
 
+        # This will create a list of chunks of 25 stockpiles max.
+        options_list = list(chunks([discord.SelectOption(
+            label=f'{name} | {subregion} in {region} | {code} ({access_level})',
+            value=f'{name}@{region}@{subregion}@{code}@{access_level}',
+            emoji=emojis_dict[f'{stockpile_type}_{faction}'.lower()],
+        ) for region, subregion, code, name, stockpile_type, access_level in stockpiles_info],
+        25))
 
-class StockpileBulkDeleteDropDownSelect(discord.ui.Select):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
-        self.interaction_association_id = association_id
-        self.__emoji_dict = emojis_dict
-
-        options = []
-        for region, subregion, code, name, stockpile_type, access_level in stockpiles_info:
-            options.append(discord.SelectOption(
-                label=f'{name} | {subregion} in {region} | {code} ({access_level})',
-                value=f'{name}@{region}@{subregion}@{code}@{access_level}',
-                emoji=self.__emoji_dict[f'{stockpile_type}_{faction}'.lower()],
+        # Each chunk is added as a separate field
+        for i, chunk in enumerate(options_list):
+            self.add_item(discord.ui.Label(
+                text='Bulk-delete (stockpile display)',
+                description='Select one or more stockpiles to be deleted',
+                component=discord.ui.Select(
+                    options=chunk,
+                    min_values=1,
+                    max_values=len(chunk),
+                    id=i,
+                ),
             ))
 
-        super().__init__(placeholder='Choose the stockpiles you want to delete', options=options, max_values=len(options) if len(options) < 25 else 25)
+    async def on_submit(self, interaction: Interaction) -> None:
+        stockpiles_to_delete = []
+        for i in range(4):
+            if (modal_select := self.find_item(i)) is None:
+                break
 
-    async def callback(self, interaction: discord.Interaction) -> None:
-        values_as_query_parameters = []
-        for value in self.values:
-            name, region, subregion, code, level = value.split('@')
-            values_as_query_parameters.append((region, subregion, code, self.interaction_association_id))
+            for selected_stockpile in modal_select.values:
+                name, region, subregion, code, _ = selected_stockpile.split('@')
+                stockpiles_to_delete.append((name, region, subregion, code, self.__association_id))
 
         # Delete all user selected stockpiles
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().executemany(
-                'DELETE FROM GroupsStockpilesList WHERE Region == ? AND Subregion == ? AND Code == ? AND AssociationId == ?',
-                values_as_query_parameters,
+                'DELETE FROM GroupsStockpilesList WHERE Name == ? AND Region == ? AND Subregion == ? AND Code == ? AND AssociationId == ?',
+                stockpiles_to_delete,
+            )
+            conn.commit()
+
+        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True, delete_after=5)
+
+
+class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
+    def __init__(
+            self,
+            stockpiles_info: list[tuple[str]],
+            association_id: str,
+            emojis_dict: dict,
+    ):
+        super().__init__()
+        self.__association_id = association_id
+        self.__level = 1
+
+        # Select all subregion from user stockpiles as dict to keep number of potential stockpiles too
+        subregions_dict = {}
+        for region, subregion, _, _, _, level in stockpiles_info:
+            # Allow to specify a level limit for stockpiles deletions for lower ranks without impacting upper ranks
+            if int(level) > self.__level:
+                self.__level = int(level)
+            if (titled_subregion := f'{subregion} (in {region})') not in subregions_dict:
+                subregions_dict[titled_subregion] = 1
+            else:
+                subregions_dict[titled_subregion] += 1
+
+        # This will create a list of chunks of 25 stockpiles max.
+        options_list = list(chunks([discord.SelectOption(
+            label=f'{titled_subregion} | {potential_stockpiles} stockpiles would be deleted',
+            value=titled_subregion,
+            emoji=emojis_dict['region'],
+        ) for titled_subregion, potential_stockpiles in subregions_dict.items()],
+            25))
+
+        # Each chunk is added as a separate field
+        for i, chunk in enumerate(options_list):
+            self.add_item(discord.ui.Label(
+                text='Bulk-delete (subregion display)',
+                description='Select one or more subregion to delete all the stockpiles from',
+                component=discord.ui.Select(
+                    options=chunk,
+                    min_values=1,
+                    max_values=len(chunk),
+                    id=i,
+                ),
+            ))
+
+    async def on_submit(self, interaction: Interaction) -> None:
+        stockpiles_to_delete = []
+        for i in range(4):
+            if (modal_select := self.find_item(i)) is None:
+                break
+            modal_select: discord.ui.Select
+
+            for selected_subregion in modal_select.values:
+                selected_subregion = selected_subregion.split(' (in ')
+                stockpiles_to_delete.append((selected_subregion[1].removesuffix(')'), selected_subregion[0], self.__association_id, self.__level))
+
+        # Delete all user selected stockpiles from subregion
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            conn.cursor().executemany(
+                'DELETE FROM GroupsStockpilesList WHERE Region == ? AND Subregion == ? AND AssociationId == ? AND Level <= ?',
+                stockpiles_to_delete,
+            )
+            conn.commit()
+
+        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True, delete_after=5)
+
+
+class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
+    def __init__(
+            self,
+            stockpiles_info: list[tuple[str]],
+            association_id: str,
+            emojis_dict: dict,
+    ):
+        super().__init__()
+        self.__association_id = association_id
+        self.__level = 1
+
+        # Select all regions from user stockpiles as dict to keep number of potential stockpiles too
+        regions_dict = {}
+        for region, _, _, _, _, level in stockpiles_info:
+            # Allow to specify a level limit for stockpiles deletions for lower ranks without impacting upper ranks
+            if int(level) > self.__level:
+                self.__level = int(level)
+            if region not in regions_dict:
+                regions_dict[region] = 1
+            else:
+                regions_dict[region] += 1
+
+        # This will create a list of chunks of 25 stockpiles max.
+        options_list = list(chunks([discord.SelectOption(
+            label=f'{region} | {potential_stockpiles} stockpiles would be deleted',
+            value=region,
+            emoji=emojis_dict['region'],
+        ) for region, potential_stockpiles in regions_dict.items()],
+            25))
+
+        # Each chunk is added as a separate field
+        for i, chunk in enumerate(options_list):
+            self.add_item(discord.ui.Label(
+                text='Bulk-delete (subregion display)',
+                description='Select one or more subregion to delete all the stockpiles from',
+                component=discord.ui.Select(
+                    options=chunk,
+                    min_values=1,
+                    max_values=len(chunk),
+                    id=i,
+                ),
+            ))
+
+    async def on_submit(self, interaction: Interaction) -> None:
+        stockpiles_to_delete = []
+        for i in range(4):
+            if (modal_select := self.find_item(i)) is None:
+                break
+            modal_select: discord.ui.Select
+            stockpiles_to_delete.extend((region, self.__association_id, self.__level) for region in modal_select.values)
+
+        # Delete all user selected stockpiles from region
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            conn.cursor().executemany(
+                'DELETE FROM GroupsStockpilesList WHERE Region == ? AND AssociationId == ? AND Level <= ?',
+                stockpiles_to_delete,
             )
             conn.commit()
 

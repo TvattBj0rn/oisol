@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import configparser
 import operator
+from collections.abc import Generator
 from configparser import ConfigParser
 from sqlite3 import Connection
 
-from discord import Role
+from discord import Role, SelectOption
 
 from .oisol_enums import Faction, Language, Shard
 
@@ -106,6 +107,6 @@ def get_user_access_level(
     return user_level
 
 
-def chunks(object_list: list, chunk_size: int):
+def chunks(object_list: list, chunk_size: int) -> Generator[list[list[SelectOption]]]:
     for i in range(0, len(object_list), chunk_size):
         yield object_list[i:i + chunk_size]
