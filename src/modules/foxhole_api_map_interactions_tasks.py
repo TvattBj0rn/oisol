@@ -21,8 +21,6 @@ class WorldSpawnsStatus(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
 
-        self.tasks_status_tracker = []
-
         # Create cog related cache
         if CacheKeys.WORLD_SPAWNS_STATUS not in self.bot.cache:
             self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS] = {}
@@ -43,8 +41,6 @@ class WorldSpawnsStatus(commands.Cog):
             self.update_baker_world_spawn_cache.start()
         if Shard.CHARLIE.name in self.bot.connected_shards:
             self.update_charlie_world_spawn_cache.start()
-
-        self.cog_activation_report.start()
 
     @staticmethod
     async def _get_region_world_spawn_status(session: aiohttp.ClientSession, shard_api: FoxholeAsyncAPIWrapper, region: str) -> list:
@@ -86,9 +82,6 @@ class WorldSpawnsStatus(commands.Cog):
         # Update bot shard cache
         self._update_world_spawn_cache(res, shard_api.shard_name)
 
-        # Update status tracker, to prevent having a log displayed every 2 minutes on the console
-        self.tasks_status_tracker.append(shard_api.shard_name)
-
 
     @tasks.loop(minutes=2)
     async def update_able_world_spawn_cache(self) -> None:
@@ -101,8 +94,3 @@ class WorldSpawnsStatus(commands.Cog):
     @tasks.loop(minutes=2)
     async def update_charlie_world_spawn_cache(self) -> None:
         await self._update_shard_world_spawn_cache(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
-
-    @tasks.loop(hours=24)
-    async def cog_activation_report(self) -> None:
-        self.bot.logger.task(f'The world_spawn_status cache was updated {len(self.tasks_status_tracker)} times in the last 24 hours')
-        self.tasks_status_tracker.clear()

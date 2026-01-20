@@ -548,8 +548,8 @@ class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile b
         # Each chunk is added as a separate field
         for i, chunk in enumerate(options_list):
             self.add_item(discord.ui.Label(
-                text='Bulk-delete (subregion display)',
-                description='Select one or more subregion to delete all the stockpiles from',
+                text='Bulk-delete (region display)',
+                description='Select one or more region to delete all the stockpiles from',
                 component=discord.ui.Select(
                     options=chunk,
                     min_values=1,
