@@ -3050,4 +3050,112 @@ VEHICLES_DATA = [
 		'keywords': 'odysseyluv',
 		'table': WikiTables.VEHICLES.value,
 	},
+	# Planes
+	{
+		'name': 'Luminary Mk. II Harbinger',
+		'keywords': 'luminaryharbingerfighterairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Toxot-902 “Blind Silver”',
+		'keywords': 'toxotblindsilverfighterairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Tulka P4 Welkinrive',
+		'keywords': 'tulkawelkinrivebomberaiarplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'V-1 Tzykalia',
+		'keywords': 'tzykaliabomberaiarplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'M925 Austringer Man-O-War',
+		'keywords': 'austringertorpedobomberairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Mergo-4 “Myrmidon”',
+		'keywords': 'mergomyrmidondivebomberairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Rinnspeir Mk. I Zealot',
+		'keywords': 'rinnspeirzealotparatroopertransportairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'V-5b Pegasus',
+		'keywords': 'pegasusparatroopertransportairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Tulka I1.9 White Raven',
+		'keywords': 'tulkawhiteravenlightfighterairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Luminary Mk. IV Herald',
+		'keywords': 'luminaryheraldscoutairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'A51 Venti “Daedalus”',
+		'keywords': 'ventidaedalusscoutairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	# Aircraft carrier
+	{
+		'name': 'Mercy',
+		'keywords': 'mercyaircraftcarrierwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Poseidon',
+		'keywords': 'poseidonaircraftcarriercolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	# Boats
+	{
+		'name': 'Bellweather by VAC',
+		'keywords': 'mineboatbellweathervac',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Das Krokodil by VAC',
+		'keywords': 'lightfreightercargodaskrokodilvac',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': '68A-4 Ronan Fathomer',
+		'keywords': 'ronanfathomerinfantryboatwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'K-81e “Sombre”',
+		'keywords': 'sombreinfantryboatcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Rinnspeir Ornitier-Class Gunship',
+		'keywords': 'rinnspeirornitiergunshipwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Strider',
+		'keywords': 'stridergunshipcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': '81f-f Ronan Blackguard',
+		'keywords': 'ronanblackguardsiegeboatwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Type B - “Lucian”',
+		'keywords': 'luciansiegeboatcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
 ]
