@@ -195,7 +195,7 @@ class FoxholeWikiAPIWrapper:
         if response is None:
             return None
 
-        return {armor_attr['title']['name']: armor_attr['title'][armor_name] for armor_attr in response['cargoquery']}
+        return {armor_attr['title']['name']: armor_attr['title'][armor_name] for armor_attr in response['cargoquery'] if armor_attr['title'][armor_name]}  # All value are string, so '0' -> True while '' -> False
 
     async def retrieve_damage_emitters(self) -> list | None:
         async_response = await self.__session.get(
