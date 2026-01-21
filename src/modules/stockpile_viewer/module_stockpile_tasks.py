@@ -37,7 +37,7 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
         single_region_stockpiles = []
 
         map_tasks_array = {
-            api_wrapper.get_region_specific_icons: [session, region, [MapIcon.SEAPORT.value, MapIcon.STORAGE_DEPOT.value]],
+            api_wrapper.get_region_specific_icons: [session, region, [MapIcon.SEAPORT.value, MapIcon.STORAGE_DEPOT.value, MapIcon.AIRCRAFT_DEPOT.value]],
             api_wrapper.get_region_specific_labels: [session, region],
         }
         map_items, map_labels = await asyncio.gather(*[foo(*args) for foo, args in map_tasks_array.items()])
