@@ -1354,6 +1354,61 @@ STRUCTURES_DATA = [
 		'keywords': 'weatherstationparts',
 		'table': WikiTables.STRUCTURES.value,
 	},
+	{
+		'name': 'Aircraft Maintenance Factory',
+		'keywords': 'aircraftmaintenancefactory',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Depot',
+		'keywords': 'aircraftdepot',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Hangar',
+		'keywords': 'aircrafthangar',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Runway (Tier 1)',
+		'keywords': 'aircraftrunwayt1',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Runway (Tier 2)',
+		'keywords': 'aircraftrunwayt2',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'SC-3 Aerial Interceptor Array',
+		'keywords': 'aerialinterceptorarrayradar',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'DAE 5b “Zeal”',
+		'keywords': 'zealantiairemplacementaae',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Leary AA-70 Bolas',
+		'keywords': 'learybolasantiairemplacementaae',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Infantry Support Gun Pillbox',
+		'keywords': 'infantrysupportgunpillboxisg',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'E681-B Hullbreaker Minefield',
+		'keywords': 'hullbreakerseaminefield',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'E680-S Rudder Lock Minefield',
+		'keywords': 'rudderlockseaminefield',
+		'table': WikiTables.STRUCTURES.value,
+	},
 ]
 
 ITEMDATA_DATA = [
@@ -2332,6 +2387,61 @@ ITEMDATA_DATA = [
 		'keywords': 'wrench',
 		'table': WikiTables.ITEM_DATA.value,
 	},
+	{
+		'name': 'Liaison Transmitter',
+		'keywords': 'liaisontransmitterradio',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Lodesman's Lorica",
+		'keywords': 'lodesmanloricapilotuniformcolonial',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Aviator's Raiment",
+		'keywords': 'aviatorraimentpilotuniformwarden',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Paratrooper's Ruck",
+		'keywords': 'paratrooperruckparachutebackpack',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Auster's Harness",
+		'keywords': 'austerharnessparatrooperuniformcolonial',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Cloudrunner's Vesture",
+		'keywords': 'cloudrunnervestureparatrooperuniformwarden',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Mark II Raidbreaker',
+		'keywords': 'raidbreakerbomb',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': '912 Shrike Rounds',
+		'keywords': 'shrikeroundsbomb',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': '950-70b Anti-Aircraft Shell',
+		'keywords': 'antiaircraftshellaa',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Quillback Torpedo',
+		'keywords': 'quillbacktorpedo',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'E681-B Hullbreaker Mine',
+		'keywords': 'hullbreakerseanavalmine',
+		'table': WikiTables.ITEM_DATA.value,
+	},
 ]
 
 VEHICLES_DATA = [
@@ -3048,6 +3158,114 @@ VEHICLES_DATA = [
 	{
 		'name': 'UV-5c “Odyssey”',
 		'keywords': 'odysseyluv',
+		'table': WikiTables.VEHICLES.value,
+	},
+	# Planes
+	{
+		'name': 'Luminary Mk. II Harbinger',
+		'keywords': 'luminaryharbingerfighterairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Toxot-902 “Blind Silver”',
+		'keywords': 'toxotblindsilverfighterairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Tulka P4 Welkinrive',
+		'keywords': 'tulkawelkinrivebomberaiarplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'V-1 Tzykalia',
+		'keywords': 'tzykaliabomberaiarplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'M925 Austringer Man-O-War',
+		'keywords': 'austringertorpedobomberairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Mergo-4 “Myrmidon”',
+		'keywords': 'mergomyrmidondivebomberairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Rinnspeir Mk. I Zealot',
+		'keywords': 'rinnspeirzealotparatroopertransportairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'V-5b Pegasus',
+		'keywords': 'pegasusparatroopertransportairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Tulka I1.9 White Raven',
+		'keywords': 'tulkawhiteravenlightfighterairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Luminary Mk. IV Herald',
+		'keywords': 'luminaryheraldscoutairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'A51 Venti “Daedalus”',
+		'keywords': 'ventidaedalusscoutairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	# Aircraft carrier
+	{
+		'name': 'Mercy',
+		'keywords': 'mercyaircraftcarrierwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Poseidon',
+		'keywords': 'poseidonaircraftcarriercolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	# Boats
+	{
+		'name': 'Bellweather by VAC',
+		'keywords': 'mineboatbellweathervac',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Das Krokodil by VAC',
+		'keywords': 'lightfreightercargodaskrokodilvac',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': '68A-4 Ronan Fathomer',
+		'keywords': 'ronanfathomerinfantryboatwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'K-81e “Sombre”',
+		'keywords': 'sombreinfantryboatcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Rinnspeir Ornitier-Class Gunship',
+		'keywords': 'rinnspeirornitiergunshipwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Strider',
+		'keywords': 'stridergunshipcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': '81f-f Ronan Blackguard',
+		'keywords': 'ronanblackguardsiegeboatwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Type B - “Lucian”',
+		'keywords': 'luciansiegeboatcolonial',
 		'table': WikiTables.VEHICLES.value,
 	},
 ]
