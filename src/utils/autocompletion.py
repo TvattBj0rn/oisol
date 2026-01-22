@@ -1354,6 +1354,61 @@ STRUCTURES_DATA = [
 		'keywords': 'weatherstationparts',
 		'table': WikiTables.STRUCTURES.value,
 	},
+	{
+		'name': 'Aircraft Maintenance Factory',
+		'keywords': 'aircraftmaintenancefactory',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Depot',
+		'keywords': 'aircraftdepot',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Hangar',
+		'keywords': 'aircrafthangar',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Runway (Tier 1)',
+		'keywords': 'aircraftrunwayt1',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Aircraft Runway (Tier 2)',
+		'keywords': 'aircraftrunwayt2',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'SC-3 Aerial Interceptor Array',
+		'keywords': 'aerialinterceptorarrayradar',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'DAE 5b “Zeal”',
+		'keywords': 'zealantiairemplacementaae',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Leary AA-70 Bolas',
+		'keywords': 'learybolasantiairemplacementaae',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Infantry Support Gun Pillbox',
+		'keywords': 'infantrysupportgunpillboxisg',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'E681-B Hullbreaker Minefield',
+		'keywords': 'hullbreakerseaminefield',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'E680-S Rudder Lock Minefield',
+		'keywords': 'rudderlockseaminefield',
+		'table': WikiTables.STRUCTURES.value,
+	},
 ]
 
 ITEMDATA_DATA = [
@@ -2330,6 +2385,61 @@ ITEMDATA_DATA = [
 	{
 		'name': 'Wrench',
 		'keywords': 'wrench',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Liaison Transmitter',
+		'keywords': 'liaisontransmitterradio',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Lodesman's Lorica",
+		'keywords': 'lodesmanloricapilotuniformcolonial',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Aviator's Raiment",
+		'keywords': 'aviatorraimentpilotuniformwarden',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Paratrooper's Ruck",
+		'keywords': 'paratrooperruckparachutebackpack',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Auster's Harness",
+		'keywords': 'austerharnessparatrooperuniformcolonial',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': "Cloudrunner's Vesture",
+		'keywords': 'cloudrunnervestureparatrooperuniformwarden',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Mark II Raidbreaker',
+		'keywords': 'raidbreakerbomb',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': '912 Shrike Rounds',
+		'keywords': 'shrikeroundsbomb',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': '950-70b Anti-Aircraft Shell',
+		'keywords': 'antiaircraftshellaa',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Quillback Torpedo',
+		'keywords': 'quillbacktorpedo',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'E681-B Hullbreaker Mine',
+		'keywords': 'hullbreakerseanavalmine',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 ]
