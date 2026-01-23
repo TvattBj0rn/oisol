@@ -33,9 +33,9 @@ class ProductionTemplate:
         is_short_mpf = False
 
         # For vics, base cost depend on the number of vics per output crate
-        if 'MPFOutputAmount' in mpf_parameters:
+        if mpf_parameters.get('Source', '') == 'Garage':
             is_short_mpf = True
-            cost_multiplier = 5 if mpf_parameters['MPFOutputAmount'] == '5' else 3
+            cost_multiplier = 5 if mpf_parameters['CrateCapacity'] == '5' else 3
             for i in range(1, 7):
                 if not mpf_parameters[f'InputItem{i}']:
                     break
