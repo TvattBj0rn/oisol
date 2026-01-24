@@ -632,7 +632,7 @@ CODENAME_TO_GAMENAME = {
     'Wood': 'Refined Materials',
     'FacilityMaterials1': 'Construction Materials',
     'FacilityMaterials2': 'Processed Construction Materials',
-    'FacilityMaterials3': 'Stell Construction Materials',
+    'FacilityMaterials3': 'Steel Construction Materials',
     'FacilityMaterials4': 'Assembly Materials I',
     'FacilityMaterials5': 'Assembly Materials II',
     'FacilityMaterials6': 'Assembly Materials III',
