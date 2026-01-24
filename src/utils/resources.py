@@ -173,6 +173,9 @@ EMOJIS_FROM_DICT = {
 	'Salvage': 'salvage',
 	'Coke': 'coke',
 	'Sulfur': 'sulfur',
+	'Mark II Raidbreaker': 'mark_ii_raidbreaker',
+	'E681-B Hullbreaker Mine': 'hullbreaker_navalmine',
+	'912 Shrike Rounds': 'dive_bomber_ammo',
 }
 
 
