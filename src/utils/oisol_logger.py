@@ -1,6 +1,8 @@
 import logging
 from logging import LogRecord
 
+from src.utils import OISOL_HOME_PATH
+
 
 class OisolFormatter(logging.Formatter):
     def __init__(self):
@@ -38,10 +40,17 @@ class OisolLogger(logging.Logger):
         super().__init__(name)
         self.level = logging.DEBUG
 
+        # The logs displayed on the console
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(logging.DEBUG)
         stream_handler.setFormatter(OisolFormatter())
         self.addHandler(stream_handler)
+
+        # The logs saved on a dedicated file (append mode)
+        file_handler = logging.FileHandler(OISOL_HOME_PATH / 'oisol.log', mode='a')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(OisolFormatter())
+        self.addHandler(file_handler)
 
         logging.addLevelName(21, 'COMMAND')
         logging.addLevelName(22, 'INTERFACE')
