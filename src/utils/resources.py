@@ -164,7 +164,7 @@ EMOJIS_FROM_DICT = {
     'Bomastone Grenade': 'bomastone',
     'Tremola Grenade GPb-1': 'tremola',
     'PT-815 Smoke Grenade': 'smoke',
-    'Green Ash Grenade': 'gas',
+    'Green Ash Grenade': 'gas_grenade',
     'Sea Mine': 'sea_mine',
     'E680-S Rudder Lock': 'sea_mine',
     'A0E-9 Rocket Warhead': 'rocket_warhead',
@@ -176,6 +176,8 @@ EMOJIS_FROM_DICT = {
 	'Mark II Raidbreaker': 'mark_ii_raidbreaker',
 	'E681-B Hullbreaker Mine': 'hullbreaker_navalmine',
 	'912 Shrike Rounds': 'dive_bomber_ammo',
+	'14.5mm': '14_5mm',
+	'950-70b Anti-Aircraft Shell': 'anti_aircraft_shell',
 }
 
 
