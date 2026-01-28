@@ -32,6 +32,7 @@ from src.utils import (
     Shard,
     repair_default_config_dict,
 )
+from src.utils.bot_translator import OisolTranslator
 
 
 class Oisol(commands.Bot):
@@ -102,6 +103,7 @@ class Oisol(commands.Bot):
         self.add_view(TodolistViewMenu())
         self.add_view(StockpilesViewMenu())
         self.add_dynamic_items(TodolistButtonCheckmark)
+        await self.tree.set_translator(OisolTranslator())
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
         self.logger.join(f'joined {guild.name} (id: {guild.id})')
