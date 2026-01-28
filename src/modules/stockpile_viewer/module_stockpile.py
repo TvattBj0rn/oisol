@@ -149,7 +149,10 @@ class ModuleStockpiles(commands.Cog):
 
             conn.commit()
 
-    @app_commands.command(name='stockpile-interface-create', description='Create a new stockpile interface')
+    @app_commands.command(
+        name='stockpile-interface-create',
+        description=app_commands.locale_str('Create a new stockpile interface'),
+    )
     async def stockpile_interface_create(
             self,
             interaction: discord.Interaction,
@@ -189,7 +192,10 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.followup.send('> The interface was properly created', ephemeral=True)
 
-    @app_commands.command(name='stockpile-interface-join', description='Join an existing stockpile interface shared between multiple servers')
+    @app_commands.command(
+        name='stockpile-interface-join',
+        description=app_commands.locale_str('Join an existing stockpile interface shared between multiple servers'),
+    )
     async def multiserver_join_interface(
             self,
             interaction: discord.Interaction,
@@ -234,7 +240,10 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.response.send_message('> The interface was successfully joined', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='stockpile-refresh-codes', description='Update up to 5 stockpiles codes from a list')
+    @app_commands.command(
+        name='stockpile-refresh-codes',
+        description=app_commands.locale_str('Update up to 5 stockpiles codes from a list'),
+    )
     async def refresh_codes(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(f'stockpile-refresh-codes command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -270,7 +279,10 @@ class ModuleStockpiles(commands.Cog):
             ephemeral=True,
         )
 
-    @app_commands.command(name='stockpile-interface-clear', description='Clear a specific interface')
+    @app_commands.command(
+        name='stockpile-interface-clear',
+        description=app_commands.locale_str('Clear a given interface, and its network if connected to other interfaces'),
+    )
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -298,7 +310,10 @@ class ModuleStockpiles(commands.Cog):
             delete_after=5,
         )
 
-    @app_commands.command(name='stockpile-create', description='Create a new stockpile')
+    @app_commands.command(
+        name='stockpile-create',
+        description=app_commands.locale_str('Create a new stockpile on a given interface/network'),
+    )
     async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str, level: Literal['5', '4', '3', '2', '1'] = '1') -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -357,7 +372,10 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='stockpile-bulk-create', description='Create multiple stockpiles from a selected interface')
+    @app_commands.command(
+        name='stockpile-bulk-create',
+        description=app_commands.locale_str('Create multiple stockpiles at once on a given interface/network'),
+    )
     async def stockpile_bulk_create(self, interaction: discord.Interaction, interface_name: str) -> None:
         self.bot.logger.command(f'stockpile-bulk-create command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -385,7 +403,10 @@ class ModuleStockpiles(commands.Cog):
 
         await interaction.response.send_modal(StockpileCreateModal(user_level, interface_association_id))
 
-    @app_commands.command(name='stockpile-delete', description='Delete an existing stockpile')
+    @app_commands.command(
+        name='stockpile-delete',
+        description=app_commands.locale_str('Delete an existing stockpile on a given interface/network'),
+    )
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
         self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -442,7 +463,10 @@ class ModuleStockpiles(commands.Cog):
                 ephemeral=True,  # No auto delete in case of a fuck-up
             )
 
-    @app_commands.command(name='stockpile-bulk-delete', description='Delete multiple existing stockpiles from a selected interface')
+    @app_commands.command(
+        name='stockpile-bulk-delete',
+        description=app_commands.locale_str('Delete multiple existing stockpiles on a given interface/network'),
+    )
     async def stockpile_bulk_delete(
             self,
             interaction: discord.Interaction,

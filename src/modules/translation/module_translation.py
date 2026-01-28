@@ -20,7 +20,7 @@ class ModuleTranslation(commands.Cog):
         self.lt_api = LibreTranslateAPI(os.getenv('LIBRETRANSLATE_API_IP'))
         self.bot.tree.add_command(
             app_commands.ContextMenu(
-                name='Translate',
+                name=app_commands.locale_str('Translate'),
                 callback=self.translate_to_user_language,
             ),
         )

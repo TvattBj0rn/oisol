@@ -46,7 +46,10 @@ class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
 
-    @app_commands.command(name='wiki', description='Get a wiki infobox')
+    @app_commands.command(
+        name='wiki',
+        description='Get a wiki infobox',
+    )
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
@@ -69,7 +72,10 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=discord.Embed().from_dict(embedded_data), ephemeral=not visible)
 
-    @app_commands.command(name='health', description='Structures / Vehicles health')
+    @app_commands.command(
+        name='health',
+        description='List each required ammunition to destroy a given vehicle / structure',
+    )
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
@@ -128,7 +134,10 @@ class ModuleWiki(commands.Cog):
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
-    @app_commands.command(name='production', description='Vehicles / Items production costs')
+    @app_commands.command(
+        name='production',
+        description='Production cost of a given entry, with all possibilities (Factory, MPF, Facility)',
+    )
     async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 

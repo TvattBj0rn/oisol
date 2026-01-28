@@ -20,7 +20,10 @@ class ModuleTodolist(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
 
-    @app_commands.command(name='todolist-generate')
+    @app_commands.command(
+        name='todolist-generate',
+        description=app_commands.locale_str('Create a new todolist interface, with option to limit the interface usage to specific role(s) / user(s)')
+    )
     async def todolist_generate(
             self,
             interaction: discord.Interaction,
