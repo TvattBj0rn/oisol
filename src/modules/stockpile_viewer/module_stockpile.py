@@ -173,7 +173,7 @@ class ModuleStockpiles(commands.Cog):
                 'color': Faction[guild_faction].value,
                 'description': '- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
                                '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
-                'footer': {'text': interaction.user.name, 'icon_url': interaction.user.avatar.url},
+                'footer': {'text': interaction.user.name, 'icon_url': interaction.user.display_avatar.url},
             }),
             view=StockpilesViewMenu(),
         )
