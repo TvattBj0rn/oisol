@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import configparser
+import sqlite3
 from typing import TYPE_CHECKING
 
 import discord
@@ -143,16 +144,19 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
-            production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
-            production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'Output', search_request)
+        with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            production_rows = cursor.execute(
+                'SELECT * FROM productionmerged3 WHERE Output == ?',
+                (search_request,)
+            ).fetchall()
 
-            p = ProductionTemplate(production_rows, search_request, self.bot.app_emojis_dict)
+            p = ProductionTemplate([dict(row) for row in production_rows], search_request, self.bot.app_emojis_dict)
             await interaction.response.send_message(
                 embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()],
                 ephemeral=not visible,
             )
-
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
