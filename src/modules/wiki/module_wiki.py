@@ -61,12 +61,36 @@ class ModuleWiki(commands.Cog):
         if search_request not in WIKI_DATA_KEYS:
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
+        with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
-            target_fields = await wrapper.fetch_cargo_table_fields(table_name)
-            data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, search_request)
+            # Retrieve wiki entry data from db
+            wiki_row_data = dict(cursor.execute(
+                f'SELECT * FROM {table_name} WHERE name == ?',
+                (search_request,),
+            ).fetchone())
 
-        embedded_data = WikiTemplateFactory(data_dict, self.bot.app_emojis_dict).get(WikiTables(table_name)).generate_embed_data()
+            # If the entry has an armor, query the armor table to get its attributes
+            if (wiki_armor_name := wiki_row_data.get('armour type')) is not None:
+                # Entry with armor type but empty value means no armor hence fallback on armor named 'None'
+                if wiki_armor_name == '':
+                    wiki_armor_name = 'None'
+                armor_type = cursor.execute(
+                    f'SELECT name, {wiki_armor_name} FROM damagetypes',
+                ).fetchall()
+                wiki_row_data['armor_attributes'] = {row['name']: row[wiki_armor_name] for row in armor_type}
+
+            # Retrieve damage emitters
+            damages_rows = cursor.execute(
+                "SELECT name, damage, 'damage type', 'damage rng', 'damage no bug' FROM itemdata WHERE damage != ''",
+            ).fetchall()
+            wiki_row_data['damages'] = [dict(row) for row in damages_rows]
+
+        # Create the entry picture link from the image name
+        wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image']}'
+
+        embedded_data = WikiTemplateFactory(wiki_row_data, self.bot.app_emojis_dict).get(WikiTables(table_name)).generate_embed_data()
 
         await interaction.response.send_message(embed=discord.Embed().from_dict(embedded_data), ephemeral=not visible)
 
