@@ -47,20 +47,8 @@ class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
 
-    @app_commands.command(name='wiki', description='Get a wiki infobox')
-    async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
-
-        # Retrieve search_request & table from autocomplete value: search_request@table
-        split_search_request = search_request.split('@')
-        if len(split_search_request) != 2:
-            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
-            return
-
-        search_request, table_name = split_search_request
-        if search_request not in WIKI_DATA_KEYS:
-            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
-            return
+    @classmethod
+    def __retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str]:
         with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
@@ -83,12 +71,32 @@ class ModuleWiki(commands.Cog):
 
             # Retrieve damage emitters
             damages_rows = cursor.execute(
-                "SELECT name, damage, 'damage type', 'damage rng', 'damage no bug' FROM itemdata WHERE damage != ''",
+                "SELECT name, damage, `damage type`, `damage rng`, `damage no bug` FROM itemdata WHERE damage != ''",
             ).fetchall()
             wiki_row_data['damages'] = [dict(row) for row in damages_rows]
+            print(wiki_row_data['damages'])
 
         # Create the entry picture link from the image name
         wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image']}'
+
+        return wiki_row_data
+
+    @app_commands.command(name='wiki', description='Get a wiki infobox')
+    async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
+        self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
+
+        # Retrieve search_request & table from autocomplete value: search_request@table
+        split_search_request = search_request.split('@')
+        if len(split_search_request) != 2:
+            await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
+            return
+
+        search_request, table_name = split_search_request
+        if search_request not in WIKI_DATA_KEYS:
+            await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
+            return
+
+        wiki_row_data = self.__retrieve_row_from_name(table_name, search_request)
 
         embedded_data = WikiTemplateFactory(wiki_row_data, self.bot.app_emojis_dict).get(WikiTables(table_name)).generate_embed_data()
 
@@ -143,8 +151,10 @@ class ModuleWiki(commands.Cog):
             # Maps targets are converted to their associated structures
             health_table = WikiTables.STRUCTURES.value
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
-            data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, search_request)
+        data_dict = self.__retrieve_row_from_name(health_table, search_request)
+
+        # async with FoxholeWikiAPIWrapper() as wrapper:
+        #     data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, search_request)
 
         data_dict['name'] = subregion_name if subregion_name else search_request
 
