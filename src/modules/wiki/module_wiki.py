@@ -22,7 +22,6 @@ from ...utils.autocompletion import (
     STRUCTURES_DATA,
     VEHICLES_DATA,
 )
-from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
 from .health_embed_templates import HealthEntryEngine
 from .production_embed_templates import ProductionTemplate
 from .wiki_embeds_templates import WikiTemplateFactory
@@ -106,12 +105,6 @@ class ModuleWiki(commands.Cog):
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
-        # Fields required for health process for the two available tables
-        table_fields = {
-            WikiTables.STRUCTURES.value: ['image', 'type', 'structure_hp', 'structure_hp_entrenched', 'armour_type', 'faction'],
-            WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction'],
-        }
-
         # Retrieve search_request & table from autocomplete value: search_request@table
         split_search_request = search_request.split('@')
         if len(split_search_request) != 2:
@@ -152,9 +145,6 @@ class ModuleWiki(commands.Cog):
             health_table = WikiTables.STRUCTURES.value
 
         data_dict = self.__retrieve_row_from_name(health_table, search_request)
-
-        # async with FoxholeWikiAPIWrapper() as wrapper:
-        #     data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, search_request)
 
         data_dict['name'] = subregion_name if subregion_name else search_request
 
