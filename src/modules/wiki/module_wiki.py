@@ -73,7 +73,6 @@ class ModuleWiki(commands.Cog):
                 "SELECT name, damage, `damage type`, `damage rng`, `damage no bug` FROM itemdata WHERE damage != ''",
             ).fetchall()
             wiki_row_data['damages'] = [dict(row) for row in damages_rows]
-            print(wiki_row_data['damages'])
 
         # Create the entry picture link from the image name
         wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image']}'
@@ -173,7 +172,7 @@ class ModuleWiki(commands.Cog):
             cursor = conn.cursor()
             production_rows = cursor.execute(
                 'SELECT * FROM productionmerged3 WHERE Output == ?',
-                (search_request,)
+                (search_request,),
             ).fetchall()
 
             p = ProductionTemplate([dict(row) for row in production_rows], search_request, self.bot.app_emojis_dict)
