@@ -47,7 +47,7 @@ class ModuleWiki(commands.Cog):
         self.bot = bot
 
     @classmethod
-    def __retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str]:
+    def retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str]:
         with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
@@ -94,7 +94,7 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
-        wiki_row_data = self.__retrieve_row_from_name(table_name, search_request)
+        wiki_row_data = self.retrieve_row_from_name(table_name, search_request)
 
         embedded_data = WikiTemplateFactory(wiki_row_data, self.bot.app_emojis_dict).get(WikiTables(table_name)).generate_embed_data()
 
@@ -143,7 +143,7 @@ class ModuleWiki(commands.Cog):
             # Maps targets are converted to their associated structures
             health_table = WikiTables.STRUCTURES.value
 
-        data_dict = self.__retrieve_row_from_name(health_table, search_request)
+        data_dict = self.retrieve_row_from_name(health_table, search_request)
 
         data_dict['name'] = subregion_name if subregion_name else search_request
 
