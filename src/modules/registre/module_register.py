@@ -119,8 +119,13 @@ class ModuleRegister(commands.Cog):
                 config.getint('register', 'recruit_id') in [role.id for role in after.roles]
                 and config.getint('register', 'recruit_id') not in [role.id for role in before.roles]
         ):
-            if config.has_option('register', 'input'):
-                await after.edit(nick=safeguarded_nickname(f'{config.get('register', 'input', fallback='')} {after.display_name}'))
+            try:
+                if config.has_option('register', 'input'):
+                    await after.edit(nick=safeguarded_nickname(f'{config.get('register', 'input', fallback='')} {after.display_name}'))
+            except discord.Forbidden:
+                self.bot.logger.warn(f'Member renaming failed due to missing permissions on {before.guild.id}')
+
+            # Update on db side
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
                 conn.cursor().execute(
                     'INSERT INTO GroupsRegister (GroupId, RegistrationDate, MemberId) VALUES (?, ?, ?)',
@@ -143,7 +148,12 @@ class ModuleRegister(commands.Cog):
             if config.has_option('register', 'promoted_get_tag') and config.getboolean('register', 'promoted_get_tag'):
                 member_name = f'[{config.get('regiment', 'tag')}] {member_name}'
 
-            await after.edit(nick=safeguarded_nickname(member_name))
+            try:
+                await after.edit(nick=safeguarded_nickname(member_name))
+            except discord.Forbidden:
+                self.bot.logger.warn(f'Member renaming failed due to missing permissions on {before.guild.id}')
+
+            # Update on db side
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
                 conn.cursor().execute(
                     'DELETE FROM GroupsRegister WHERE GroupId == ? AND MemberId == ?',
