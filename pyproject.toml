@@ -15,7 +15,6 @@ dependencies = [
 qa = [
   "pytest",
   "pytest-xdist",
-  "pytest-asyncio",
   "ruff"
 ]
 
