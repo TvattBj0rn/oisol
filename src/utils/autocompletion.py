@@ -1473,8 +1473,8 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': '20 Neville Anti-Tank Rifle',
-		'keywords': 'neville',
+		'name': 'Neville Anti-Tank Rifle',
+		'keywords': 'nevilleantitankrifleatr',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
