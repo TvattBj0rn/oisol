@@ -1,6 +1,8 @@
 import discord
 from discord import app_commands
 
+from src.utils.localization import USER_LOCALE_LOCALIZATION_DICT
+
 
 class OisolTranslator(app_commands.Translator):
     async def translate(
@@ -10,15 +12,12 @@ class OisolTranslator(app_commands.Translator):
         context: app_commands.TranslationContext,
     ) -> str | None:
         sentence = str(string)
+        print(sentence)
         match locale:
             case discord.Locale.french:
-                return self.__french_translation(sentence)
-        return None
-
-    @staticmethod
-    def __french_translation(message: str) -> str | None:
-        if message == 'Traduire':
-            return 'Traduire'
-        elif message == '__General config__':
-            return '__Configuration Globale__'
-        return None
+                return USER_LOCALE_LOCALIZATION_DICT['french'][sentence]
+            case discord.Locale.spain_spanish | discord.Locale.latin_american_spanish:
+                return USER_LOCALE_LOCALIZATION_DICT['spanish'][sentence]
+            case discord.Locale.brazil_portuguese:
+                return USER_LOCALE_LOCALIZATION_DICT['portuguese'][sentence]
+        return sentence
