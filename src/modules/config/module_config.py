@@ -27,7 +27,10 @@ class ModuleConfig(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
 
-    @app_commands.command(name='repair-oisol', description='Command to add missing config, with possibility to reset to default')
+    @app_commands.command(
+        name='repair-oisol',
+        description=app_commands.locale_str('Command to add missing config, with possibility to reset the existing configuration'),
+    )
     async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False) -> None:
         self.bot.logger.command(f'repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -46,7 +49,10 @@ class ModuleConfig(commands.Cog):
             config.write(configfile)
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config-display', description='Display current config for the server')
+    @app_commands.command(
+        name='config-display',
+        description=app_commands.locale_str('Display the current server configuration'),
+    )
     async def config(self, interaction: discord.Interaction) -> None:
         self.bot.logger.command(f'config-display command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -62,8 +68,18 @@ class ModuleConfig(commands.Cog):
         await config_view.update_config_embed(interaction)
         await interaction.response.send_message(view=config_view, embed=config_view.embed)
 
-    @app_commands.command(name='config-register', description='Set the recruit discord role, icons for recruit & promoted recruit and the option to not change ')
-    async def config_register(self, interaction: discord.Interaction, recruit_role: discord.Role | None = None, recruit_symbol: str | None = None, promoted_recruit_symbol: str | None = None, promotion_gives_symbol: bool | None = None) -> None:
+    @app_commands.command(
+        name='config-register',
+        description=app_commands.locale_str('Set the recruit discord role, icons for recruits & promoted recruits'),
+    )
+    async def config_register(
+            self,
+            interaction: discord.Interaction,
+            recruit_role: discord.Role | None = None,
+            recruit_symbol: str | None = None,
+            promoted_recruit_symbol: str | None = None,
+            promotion_gives_symbol: bool | None = None,
+    ) -> None:
         self.bot.logger.command(f'config-register command by {interaction.user.name} on {interaction.guild.name}')
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
             await interaction.response.send_message('> No changes were made because no option was given', ephemeral=True, delete_after=5)
@@ -90,7 +106,10 @@ class ModuleConfig(commands.Cog):
             config.write(configfile)
         await interaction.response.send_message('> The register config was updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config-language', description='Set the language the bot uses for the server')
+    @app_commands.command(
+        name='config-language',
+        description=app_commands.locale_str('Set the language the bot uses for the server'),
+    )
     async def config_language(self, interaction: discord.Interaction) -> None:
         self.bot.logger.command(f'config-language command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.send_message(
@@ -117,19 +136,28 @@ class ModuleConfig(commands.Cog):
         with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini', 'w', newline='') as configfile:
             config.write(configfile)
 
-    @app_commands.command(name='config-name', description='Set the name of the group using the bot')
+    @app_commands.command(
+        name='config-name',
+        description=app_commands.locale_str('Set the name of the group using the bot'),
+    )
     async def config_name(self, interaction: discord.Interaction, name: str) -> None:
         self.bot.logger.command(f'config-name command by {interaction.user.name} on {interaction.guild.name}')
         self._regiment_config_generic(interaction.guild_id, name=name)
         await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config-tag', description='Set the tag of the regiment group using the bot')
+    @app_commands.command(
+        name='config-tag',
+        description=app_commands.locale_str('Set the tag of the regiment group using the bot'),
+    )
     async def config_tag(self, interaction: discord.Interaction, tag: str) -> None:
         self.bot.logger.command(f'config-tag command by {interaction.user.name} on {interaction.guild.name}')
         self._regiment_config_generic(interaction.guild_id, tag=tag)
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config-shard', description='Set the shard of the group')
+    @app_commands.command(
+        name='config-shard',
+        description=app_commands.locale_str('Set the shard of the group (default is Able)'),
+    )
     async def config_shard(self, interaction: discord.Interaction, shard_name: str) -> None:
         self.bot.logger.command(f'config-shard command by {interaction.user.name} on {interaction.guild.name}')
 
@@ -147,7 +175,10 @@ class ModuleConfig(commands.Cog):
         self._regiment_config_generic(interaction.guild_id, shard=shard_name)
         await interaction.response.send_message('> Shard was updated', ephemeral=True, delete_after=5)
 
-    @app_commands.command(name='config-faction', description='Set the faction of the group using the bot')
+    @app_commands.command(
+        name='config-faction',
+        description=app_commands.locale_str('Set the faction of the group using the bot, this will impact the color of the stockpile interface'),
+    )
     async def config_faction(self, interaction: discord.Interaction, faction: Faction) -> None:
         self.bot.logger.command(f'config-faction command by {interaction.user.name} on {interaction.guild.name}')
         self._regiment_config_generic(interaction.guild_id, faction=faction.name)
