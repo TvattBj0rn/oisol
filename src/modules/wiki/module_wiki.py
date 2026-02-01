@@ -81,7 +81,10 @@ class ModuleWiki(commands.Cog):
 
         return wiki_row_data
 
-    @app_commands.command(name='wiki', description='Get a wiki infobox')
+    @app_commands.command(
+        name='wiki',
+        description=app_commands.locale_str('Get a wiki infobox'),
+    )
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
@@ -104,7 +107,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(
         name='health',
-        description='List each required ammunition to destroy a given vehicle / structure',
+        description=app_commands.locale_str('List each required ammunition to destroy a given vehicle / structure'),
     )
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
@@ -159,7 +162,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(
         name='production',
-        description='Production cost of a given entry, with all possibilities (Factory, MPF, Facility)',
+        description=app_commands.locale_str('Production cost of a given entry, with all possibilities (Factory, MPF, Facility)'),
     )
     async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
