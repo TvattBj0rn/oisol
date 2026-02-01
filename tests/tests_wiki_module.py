@@ -35,7 +35,7 @@ def test_wiki_command(search_request: str):
     assert len(entry_embed), f'Embed is empty for {search_request}'
 
 
-@pytest.mark.parametrize('search_request', WIKI_TEST_DATA)
+@pytest.mark.parametrize('search_request', PRODUCTION_TEST_DATA)
 def test_production_command(search_request: str):
     search_request, table_name = search_request.split('@')
     entry_data = ModuleWiki.retrieve_row_from_name(table_name, search_request)
