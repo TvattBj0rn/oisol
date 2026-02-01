@@ -70,7 +70,7 @@ class ModuleConfig(commands.Cog):
 
     @app_commands.command(
         name='config-register',
-        description=app_commands.locale_str('Set the recruit discord role, icons for recruits & promoted recruits as well as the option to update or not the symbol on promotion'),
+        description=app_commands.locale_str('Set the recruit discord role, icons for recruits & promoted recruits'),
     )
     async def config_register(
             self,
@@ -156,7 +156,7 @@ class ModuleConfig(commands.Cog):
 
     @app_commands.command(
         name='config-shard',
-        description=app_commands.locale_str('Set the shard of the group (default is Able), this can impact the results of the stockpiles creation & health commands (shard dependant)'),
+        description=app_commands.locale_str('Set the shard of the group (default is Able)'),
     )
     async def config_shard(self, interaction: discord.Interaction, shard_name: str) -> None:
         self.bot.logger.command(f'config-shard command by {interaction.user.name} on {interaction.guild.name}')
@@ -177,7 +177,7 @@ class ModuleConfig(commands.Cog):
 
     @app_commands.command(
         name='config-faction',
-        description=app_commands.locale_str('Set the faction of the group using the bot, this will only impact the color of the stockpile interface'),
+        description=app_commands.locale_str('Set the faction of the group using the bot, this will impact the color of the stockpile interface'),
     )
     async def config_faction(self, interaction: discord.Interaction, faction: Faction) -> None:
         self.bot.logger.command(f'config-faction command by {interaction.user.name} on {interaction.guild.name}')

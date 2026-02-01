@@ -162,7 +162,7 @@ class ModuleWiki(commands.Cog):
 
     @app_commands.command(
         name='production',
-        description=app_commands.locale_str('Production cost of a given entry, with all possibilities (Factory, MPF, Facility)'),
+        description=app_commands.locale_str('Production cost of a given entry, with all possibilities'),
     )
     async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
