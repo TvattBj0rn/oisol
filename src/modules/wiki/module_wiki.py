@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import configparser
+import sqlite3
 from typing import TYPE_CHECKING
 
 import discord
@@ -17,11 +18,12 @@ from src.utils import (
 
 from ...utils.autocompletion import (
     ITEMDATA_DATA,
+    ITEMDATA_STANDALONE_DATA,
     MAPS_DATA,
     STRUCTURES_DATA,
     VEHICLES_DATA,
+    VEHICLES_STANDALONE_DATA,
 )
-from ...utils.foxhole_wiki_api_handler import FoxholeWikiAPIWrapper
 from .health_embed_templates import HealthEntryEngine
 from .production_embed_templates import ProductionTemplate
 from .wiki_embeds_templates import WikiTemplateFactory
@@ -30,7 +32,7 @@ if TYPE_CHECKING:
     from main import Oisol
 
 
-HEALTH_DATA = STRUCTURES_DATA + VEHICLES_DATA + [
+HEALTH_DATA = STRUCTURES_DATA + VEHICLES_DATA +  VEHICLES_STANDALONE_DATA + [
                 {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
             ]
 HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
@@ -38,13 +40,46 @@ HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
 PRODUCTION_DATA = ITEMDATA_DATA + VEHICLES_DATA
 PRODUCTION_DATA_KEYS = [entry['name'] for entry in PRODUCTION_DATA]
 
-WIKI_DATA = ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA
+WIKI_DATA = ITEMDATA_DATA + ITEMDATA_STANDALONE_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA
 WIKI_DATA_KEYS = [entry['name'] for entry in WIKI_DATA]
 
 
 class ModuleWiki(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+
+    @classmethod
+    def retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str]:
+        with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            # Retrieve wiki entry data from db
+            wiki_row_data = dict(cursor.execute(
+                f'SELECT * FROM {table_name} WHERE name == ?',
+                (search_request,),
+            ).fetchone())
+
+            # If the entry has an armor, query the armor table to get its attributes
+            if (wiki_armor_name := wiki_row_data.get('armour type')) is not None:
+                # Entry with armor type but empty value means no armor hence fallback on armor named 'None'
+                if wiki_armor_name == '':
+                    wiki_armor_name = 'None'
+                armor_type = cursor.execute(
+                    f'SELECT name, {wiki_armor_name} FROM damagetypes',
+                ).fetchall()
+                wiki_row_data['armor_attributes'] = {row['name']: row[wiki_armor_name] for row in armor_type}
+
+            # Retrieve damage emitters
+            damages_rows = cursor.execute(
+                "SELECT name, damage, `damage type`, `damage rng`, `damage no bug` FROM itemdata WHERE damage != ''",
+            ).fetchall()
+            wiki_row_data['damages'] = [dict(row) for row in damages_rows]
+
+        # Create the entry picture link from the image name
+        wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image']}'
+
+        return wiki_row_data
 
     @app_commands.command(name='wiki', description='Get a wiki infobox')
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
@@ -61,23 +96,15 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
-            target_fields = await wrapper.fetch_cargo_table_fields(table_name)
-            data_dict = await wrapper.retrieve_row_data_from_table(target_fields, table_name, search_request)
+        wiki_row_data = self.retrieve_row_from_name(table_name, search_request)
 
-        embedded_data = WikiTemplateFactory(data_dict, self.bot.app_emojis_dict).get(WikiTables(table_name)).generate_embed_data()
+        embedded_data = WikiTemplateFactory(wiki_row_data, self.bot.app_emojis_dict).get(WikiTables(table_name)).generate_embed_data()
 
         await interaction.response.send_message(embed=discord.Embed().from_dict(embedded_data), ephemeral=not visible)
 
     @app_commands.command(name='health', description='Structures / Vehicles health')
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
-
-        # Fields required for health process for the two available tables
-        table_fields = {
-            WikiTables.STRUCTURES.value: ['image', 'type', 'structure_hp', 'structure_hp_entrenched', 'armour_type', 'faction'],
-            WikiTables.VEHICLES.value: ['image', 'type', 'vehicle_hp', 'armour_type', 'disable', 'faction'],
-        }
 
         # Retrieve search_request & table from autocomplete value: search_request@table
         split_search_request = search_request.split('@')
@@ -118,8 +145,7 @@ class ModuleWiki(commands.Cog):
             # Maps targets are converted to their associated structures
             health_table = WikiTables.STRUCTURES.value
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
-            data_dict = await wrapper.retrieve_row_data_from_table(table_fields[health_table], health_table, search_request)
+        data_dict = self.retrieve_row_from_name(health_table, search_request)
 
         data_dict['name'] = subregion_name if subregion_name else search_request
 
@@ -143,16 +169,19 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
-        async with FoxholeWikiAPIWrapper() as wrapper:
-            production_table_fields = await wrapper.fetch_cargo_table_fields(WikiTables.PRODUCTION.value)
-            production_rows = await wrapper.retrieve_production_row(production_table_fields, WikiTables.PRODUCTION.value, 'Output', search_request)
+        with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            production_rows = cursor.execute(
+                'SELECT * FROM productionmerged3 WHERE Output == ?',
+                (search_request,),
+            ).fetchall()
 
-            p = ProductionTemplate(production_rows, search_request, self.bot.app_emojis_dict)
+            p = ProductionTemplate([dict(row) for row in production_rows], search_request, self.bot.app_emojis_dict)
             await interaction.response.send_message(
                 embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()],
                 ephemeral=not visible,
             )
-
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:

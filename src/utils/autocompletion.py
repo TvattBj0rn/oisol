@@ -1473,8 +1473,8 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': '20 Neville Anti-Tank Rifle',
-		'keywords': 'neville',
+		'name': 'Neville Anti-Tank Rifle',
+		'keywords': 'nevilleantitankrifleatr',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -1573,18 +1573,8 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Ahti Model 2',
-		'keywords': 'ahti',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'Alligator Charge',
 		'keywords': 'alligatorchargesatchel',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Aluminum',
-		'keywords': 'aluminum',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -1778,18 +1768,8 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Copper',
-		'keywords': 'copper',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'Copper Alloy',
 		'keywords': 'copperalloy',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Crate',
-		'keywords': 'crate',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -1798,18 +1778,8 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Critically Wounded Soldier',
-		'keywords': 'criticallywoundedsoldier',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': "Crow's Foot Mine",
 		'keywords': "crow'sfootmineinfantry",
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Crude Oil',
-		'keywords': 'crudeoil',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -1868,11 +1838,6 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Ferro 879',
-		'keywords': 'ferro',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'Fiddler Submachine Gun Model 868',
 		'keywords': 'fiddler',
 		'table': WikiTables.ITEM_DATA.value,
@@ -1880,11 +1845,6 @@ ITEMDATA_DATA = [
 	{
 		'name': 'First Aid Kit',
 		'keywords': 'firstaidkit',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Fists',
-		'keywords': 'fists',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -1938,11 +1898,6 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Hammer',
-		'keywords': 'hammer',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'Havoc Charge',
 		'keywords': 'havoccharge',
 		'table': WikiTables.ITEM_DATA.value,
@@ -1983,16 +1938,6 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Infantry Battledress',
-		'keywords': 'infantrybattledressuniform',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Iron',
-		'keywords': 'iron',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'Iron Alloy',
 		'keywords': 'ironAlloy',
 		'table': WikiTables.ITEM_DATA.value,
@@ -2030,11 +1975,6 @@ ITEMDATA_DATA = [
 	{
 		'name': 'Legion Vexillum',
 		'keywords': 'legionvexillumuniform',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Legionary Fatigues',
-		'keywords': 'legionaryfatiguesuniform',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -2168,11 +2108,6 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Prototype Kit',
-		'keywords': 'prototypekit',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'PT-815 Smoke Grenade',
 		'keywords': 'smokegrenade',
 		'table': WikiTables.ITEM_DATA.value,
@@ -2190,11 +2125,6 @@ ITEMDATA_DATA = [
 	{
 		'name': 'Rare Alloys',
 		'keywords': 'rarealloys',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Rare Metal',
-		'keywords': 'raremetal',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -2373,16 +2303,6 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Wounded Player',
-		'keywords': 'woundedplayer',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
-		'name': 'Wreckage',
-		'keywords': 'wreckage',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'Wrench',
 		'keywords': 'wrench',
 		'table': WikiTables.ITEM_DATA.value,
@@ -2440,6 +2360,84 @@ ITEMDATA_DATA = [
 	{
 		'name': 'E681-B Hullbreaker Mine',
 		'keywords': 'hullbreakerseanavalmine',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+]
+
+ITEMDATA_STANDALONE_DATA = [
+	{
+		'name': 'Ahti Model 2',
+		'keywords': 'ahti',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Aluminum',
+		'keywords': 'aluminum',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Iron',
+		'keywords': 'iron',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Copper',
+		'keywords': 'copper',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Fists',
+		'keywords': 'fists',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Infantry Battledress',
+		'keywords': 'infantrybattledressuniform',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Legionary Fatigues',
+		'keywords': 'legionaryfatiguesuniform',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Hammer',
+		'keywords': 'hammer',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Ferro 879',
+		'keywords': 'ferro',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Prototype Kit',
+		'keywords': 'prototypekit',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Rare Metal',
+		'keywords': 'raremetal',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Wounded Player',
+		'keywords': 'woundedplayer',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Critically Wounded Soldier',
+		'keywords': 'criticallywoundedsoldier',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Crate',
+		'keywords': 'crate',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Wreckage',
+		'keywords': 'wreckage',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 ]
@@ -2568,11 +2566,6 @@ VEHICLES_DATA = [
 	{
 		'name': 'Blacksteele',
 		'keywords': 'blacksteelefrigate',
-		'table': WikiTables.VEHICLES.value,
-	},
-	{
-		'name': 'Blumfield LK205',
-		'keywords': 'blumfieldbicycle',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2746,7 +2739,7 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
-		'name': "Duncan's Coin 20mm",
+		'name': "Duncan's Coin 14.5mm",
 		'keywords': "duncan'scoinfatr",
 		'table': WikiTables.VEHICLES.value,
 	},
@@ -3266,6 +3259,14 @@ VEHICLES_DATA = [
 	{
 		'name': 'Type B - “Lucian”',
 		'keywords': 'luciansiegeboatcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+]
+
+VEHICLES_STANDALONE_DATA = [
+	{
+		'name': 'Blumfield LK205',
+		'keywords': 'blumfieldbicycle',
 		'table': WikiTables.VEHICLES.value,
 	},
 ]
