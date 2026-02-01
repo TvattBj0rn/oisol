@@ -2746,7 +2746,7 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
-		'name': "Duncan's Coin 20mm",
+		'name': "Duncan's Coin 14.5mm",
 		'keywords': "duncan'scoinfatr",
 		'table': WikiTables.VEHICLES.value,
 	},
