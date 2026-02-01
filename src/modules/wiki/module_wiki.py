@@ -18,9 +18,11 @@ from src.utils import (
 
 from ...utils.autocompletion import (
     ITEMDATA_DATA,
+    ITEMDATA_STANDALONE_DATA,
     MAPS_DATA,
     STRUCTURES_DATA,
     VEHICLES_DATA,
+    VEHICLES_STANDALONE_DATA,
 )
 from .health_embed_templates import HealthEntryEngine
 from .production_embed_templates import ProductionTemplate
@@ -30,7 +32,7 @@ if TYPE_CHECKING:
     from main import Oisol
 
 
-HEALTH_DATA = STRUCTURES_DATA + VEHICLES_DATA + [
+HEALTH_DATA = STRUCTURES_DATA + VEHICLES_DATA +  VEHICLES_STANDALONE_DATA + [
                 {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
             ]
 HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
@@ -38,7 +40,7 @@ HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
 PRODUCTION_DATA = ITEMDATA_DATA + VEHICLES_DATA
 PRODUCTION_DATA_KEYS = [entry['name'] for entry in PRODUCTION_DATA]
 
-WIKI_DATA = ITEMDATA_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA
+WIKI_DATA = ITEMDATA_DATA + ITEMDATA_STANDALONE_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA
 WIKI_DATA_KEYS = [entry['name'] for entry in WIKI_DATA]
 
 
