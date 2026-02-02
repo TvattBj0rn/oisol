@@ -1,7 +1,8 @@
 import datetime
 import math
+import sqlite3
 
-from src.utils import EMOJIS_FROM_DICT, Faction
+from src.utils import EMOJIS_FROM_DICT, Faction, OISOL_HOME_PATH
 
 
 class ProductionTemplate:
@@ -65,7 +66,7 @@ class ProductionTemplate:
                 'color': self.__color,
                 'fields': [],
             }
-            # Add any inputs that is not null (there can be null inputs between non-null inputs -> the loop must check all iterations)
+            # Add any inputs that are not null (there can be null inputs between non-null inputs -> the loop must check all iterations)
             structure_embed['fields'].extend({
                 'name': 'Input',
                 'value': f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), self.__bot_emojis.get('missing_texture'))}',
