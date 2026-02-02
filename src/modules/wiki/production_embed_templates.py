@@ -65,17 +65,13 @@ class ProductionTemplate:
                 'color': self.__color,
                 'fields': [],
             }
-            # Max input item is 6
-            for i in range(1, 7):
-                # production & productionmerged tables do not have the same amount of input items
-                if (input_item_title := f'InputItem{i}') in production_method and production_method[input_item_title]:
-                    structure_embed['fields'].append({
-                        'name': 'Input',
-                        'value': f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), self.__bot_emojis.get('missing_texture'))}',
-                        'inline': True,
-                    })
-                else:
-                    break
+            # Add any inputs that is not null (there can be null inputs between non-null inputs -> the loop must check all iterations)
+            structure_embed['fields'].extend({
+                'name': 'Input',
+                'value': f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), self.__bot_emojis.get('missing_texture'))}',
+                'inline': True,
+            } for i in range(1, 7) if production_method[input_item_title := f'InputItem{i}'])
+
             for category_name, display_name, action in [
                 ('InputVehicle', 'Chassis', lambda value: value),
                 ('InputPower', 'Power', lambda value: f'{value}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get('MW of power'), self.__bot_emojis.get('missing_texture'))}'),
