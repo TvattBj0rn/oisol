@@ -112,16 +112,16 @@ USER_LOCALE_LOCALIZATION_DICT = {
         'stockpile_delete_desc': 'Eliminar una reserva existente en una interfaz/red determinada',
         'stockpile_bulk_delete_desc': 'Eliminar múltiples reservas existentes en una interfaz/red determinada',
         # Module Todolist
-        'todolist_generate_desc': 'Cree una nueva interfaz de lista de tareas pendientes, con la opción de limitar el uso de la interfaz a roles o usuarios específicos.',
+        'todolist_generate_desc': 'Nueva interfaz de tareas con acceso limitado por roles o usuarios.',
         # Module Config
-        'oisol_repair_desc': 'Comando para agregar configuración faltante, con posibilidad de restablecer la configuración existente',
+        'oisol_repair_desc': 'Agregar configuración faltante, con posibilidad de restablecer la configuración existente',
         'config_show_desc': 'Mostrar la configuración actual del servidor',
         'config_register_desc as well as the option to update or not the symbol on promotion': 'Establese el rol de Discord del recluta, los íconos para los reclutas y los reclutas promovidos, así como la opción de actualizar o no el símbolo en la promoción.',
         'config_language_desc': 'Establese el idioma que utiliza el bot para el servidor',
         'config_name_desc': 'Establese el nombre del grupo usando el bot',
         'config_tag_desc': 'Establese la etiqueta del grupo del regimiento usando el bot',
         'config_shard_desc, this can impact the results of the stockpiles creation & health commands (shard dependant)': 'Establese el servidor del grupo (el valor predeterminado es Able), esto puede afectar los resultados de la creación de reservas y los comandos de estado (depende del servidor)',
-        'config_faction_desc': 'Establese la facción del grupo usando el bot, esto solo afectará el color de la interfaz de almacenamiento.',
+        'config_faction_desc': 'Establese la facción que el bot usara , esto solo afectará el color de la interfaz.',
         # Module Wiki
         'wiki_desc': 'Obtener un cuadro de información wiki',
         'health_desc': 'Enumera cada munición necesaria para destruir un vehículo o estructura determinados.',
