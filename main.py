@@ -85,7 +85,6 @@ class Oisol(commands.Bot):
             synced = await self.tree.sync()
             self.logger.info(f'Synced {len(synced)} command(s)')
         except Exception as e:
-            print(e)
             self.logger.error(f'Could not sync tree properly {e}')
 
         self.logger.info(f'Logged in as {self.user} (ID:{self.user.id})')
@@ -144,8 +143,9 @@ class Oisol(commands.Bot):
             if response.status == 503:
                 return
 
-        # Shard is live
-        self.connected_shards.add(shard.name)
+        if shard.name != 'BAKER': # Hard lock baker to prevent continuous errors
+            # Shard is live
+            self.connected_shards.add(shard.name)
 
     async def _fetch_available_shards(self) -> None:
         """
