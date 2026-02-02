@@ -36,7 +36,7 @@ class WikiTemplate:
     def _add_armor_attribute(self, inplace: bool = True) -> dict:
         return {
             'name': f'Armor type: *{self._raw_data.get('armour type')}*',
-            'value': f'{''.join(f'- {attribute_name} ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(attribute_name), self._bot_emojis.get('missing_texture'))}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armor_attributes').items())}',
+            'value': f'{''.join(f'- {attribute_name} ({self._bot_emojis.get(EMOJIS_FROM_DICT.get(attribute_name), self._bot_emojis.get('missing_texture'))}): -{float(attribute_value) * 100}%\n' for attribute_name, attribute_value in self._raw_data.get('armor_attributes').items() if attribute_name not in ['Extinguishing', 'Smoke', 'Melee'])}',
             'inline': inplace,
         }
 
