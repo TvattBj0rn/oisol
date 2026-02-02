@@ -1,7 +1,10 @@
 import discord
 from discord import app_commands
 
-from src.utils.localization import USER_LOCALE_LOCALIZATION_DICT, USER_LOCALE_LOCALIZATION_ENGLISH
+from src.utils.localization import (
+    USER_LOCALE_LOCALIZATION_DICT,
+    USER_LOCALE_LOCALIZATION_ENGLISH,
+)
 
 
 class OisolTranslator(app_commands.Translator):

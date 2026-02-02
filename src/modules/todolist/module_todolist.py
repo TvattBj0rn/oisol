@@ -22,7 +22,7 @@ class ModuleTodolist(commands.Cog):
 
     @app_commands.command(
         name='todolist-generate',
-        description=app_commands.locale_str('Create a new todolist interface, with possibility to limit usage to specific roles/users')
+        description=app_commands.locale_str('Create a new todolist interface, with possibility to limit usage to specific roles/users'),
     )
     async def todolist_generate(
             self,

@@ -52,7 +52,7 @@ USER_LOCALE_LOCALIZATION_DICT = {
         # Module Config
         'oisol_repair_desc': 'Compléter la configuration avec des éléments manquants, avec possibilité de reinitialiser la config',
         'config_show_desc': 'Afficher la configuration actuelle sur ce serveur',
-        'config_register_desc': "Définir le rôle recrue & les symboles recrues et recrues promues",
+        'config_register_desc': 'Définir le rôle recrue & les symboles recrues et recrues promues',
         'config_language_desc': 'Définir le langage que le bot utilise pour le serveur',
         'config_name_desc': 'Définir le nom de la guilde',
         'config_tag_desc': 'Definir le tag de la guilde',

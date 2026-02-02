@@ -1,8 +1,7 @@
 import datetime
 import math
-import sqlite3
 
-from src.utils import EMOJIS_FROM_DICT, Faction, OISOL_HOME_PATH
+from src.utils import EMOJIS_FROM_DICT, Faction
 
 
 class ProductionTemplate:
