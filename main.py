@@ -139,7 +139,7 @@ class Oisol(commands.Bot):
         :param shard: Shard object to test
         """
         async with session.get(shard.value) as response:
-            # Shards that are not live will specifically return the 503 code
+            # Shards that are not live will return a 500 error
             if 600 > response.status >= 500:
                 return
 
