@@ -173,7 +173,7 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
             return
 
-        search_request, _ = split_search_request
+        search_request, entry_table = split_search_request
         if search_request not in PRODUCTION_DATA_KEYS:
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
@@ -181,14 +181,20 @@ class ModuleWiki(commands.Cog):
         with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
+
+            image_name = cursor.execute(
+                f'SELECT image from {entry_table} WHERE name == ?',
+                (search_request,)
+            ).fetchone()['image']
+
             production_rows = cursor.execute(
                 'SELECT * FROM productionmerged3 WHERE Output == ?',
                 (search_request,),
             ).fetchall()
 
-            p = ProductionTemplate([dict(row) for row in production_rows], search_request, self.bot.app_emojis_dict)
+            p = ProductionTemplate([dict(row) for row in production_rows], search_request, f'https://foxhole.wiki.gg/images/{image_name}', self.bot.app_emojis_dict)
             await interaction.response.send_message(
-                embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()],
+                embeds=[discord.Embed.from_dict(embed_data) for embed_data in p.get_generated_embeds()],
                 ephemeral=not visible,
             )
 

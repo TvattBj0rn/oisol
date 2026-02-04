@@ -38,17 +38,21 @@ def test_wiki_command(search_request: str):
 @pytest.mark.parametrize('search_request', PRODUCTION_TEST_DATA)
 def test_production_command(search_request: str):
     search_request, table_name = search_request.split('@')
-    entry_data = ModuleWiki.retrieve_row_from_name(table_name, search_request)
 
     with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
+        image_name = cursor.execute(
+            f'SELECT image from {table_name} WHERE name == ?',
+            (search_request,)
+        ).fetchone()['image']
+
         production_rows = cursor.execute(
             'SELECT * FROM productionmerged3 WHERE Output == ?',
             (search_request,),
         ).fetchall()
 
-        production_data = ProductionTemplate([dict(row) for row in production_rows], search_request, {})
+        production_data = ProductionTemplate([dict(row) for row in production_rows], search_request, image_name, {})
         entry_embeds = production_data.get_generated_embeds()
 
     assert len(entry_embeds), f'Embed is empty for {search_request}'

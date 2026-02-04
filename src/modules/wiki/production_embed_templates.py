@@ -5,10 +5,11 @@ from src.utils import EMOJIS_FROM_DICT, Faction
 
 
 class ProductionTemplate:
-    def __init__(self, data: list[dict], name: str, bot_emojis: dict):
-        self.__bot_emojis = bot_emojis
+    def __init__(self, data: list[dict], name: str, img_link: str, bot_emojis: dict):
         self.__raw_data = data
+        self.__bot_emojis = bot_emojis
         self.__name = name
+        self.__img_link = img_link
         self.__color = Faction[self.__raw_data[0].get('Faction', 'NEUTRAL').replace('Both', 'NEUTRAL').replace('War', 'WARDEN').replace('Col', 'COLONIAL')].value
         self.__output = []
 
@@ -58,7 +59,9 @@ class ProductionTemplate:
         self.__output.append(mpf_embed)
 
     def __prepare_embeds_data(self) -> None:
+        available_structs = set()  # This is used for header embed
         for production_method in self.__raw_data:
+            available_structs.add(production_method['Source'])
             structure_embed = {
                 'title': production_method['Source'],
                 'description': '',
@@ -97,8 +100,19 @@ class ProductionTemplate:
                         break
 
             self.__output.append(structure_embed)
-            if (mpf_flag := production_method.get('IsMPFable', False)) and mpf_flag == '1' and production_method['Source'] in ['Garage', 'Factory']:
+            if production_method.get('IsMPFable', False) == '1' and production_method['Source'] in ['Garage', 'Factory']:
+                available_structs.add('Mass Production Factory')
                 self.__process_mpf(production_method.copy())
+
+        # Insert embed, after all available productions structs were retrieved
+        self.__output.insert(
+            0,
+            {
+                'title': self.__name,
+                'description': f'Available structures:\n- {'\n- '.join(available_structs)}',
+                'thumbnail': {'url': self.__img_link},
+                'color': self.__color,
+            })
 
 
     def get_generated_embeds(self) -> list[dict[str, str | list]]:
