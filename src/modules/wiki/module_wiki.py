@@ -153,7 +153,7 @@ class ModuleWiki(commands.Cog):
 
         data_dict = self.retrieve_row_from_name(health_table, search_request)
 
-        data_dict['name'] = subregion_name if subregion_name else search_request
+        data_dict['name'] = f'{subregion_name} | {search_request}' if subregion_name else search_request
 
         # Compute health of search_request & generate embed
         health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
