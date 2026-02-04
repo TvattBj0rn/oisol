@@ -29,6 +29,10 @@ class ModuleTranslation(commands.Cog):
         self.bot.logger.command(f'translate command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
 
+        if not message.content:
+            await interaction.followup.send('> The bot can only translate text messages')
+            return
+
         source_language = self.lt_api.detect(message.content)[0]['language']
         target_language = TERRITORY_LANGUAGES.get(str(interaction.locale).split('-')[0].lower())[0]
         try:
