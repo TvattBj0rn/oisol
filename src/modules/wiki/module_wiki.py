@@ -77,7 +77,7 @@ class ModuleWiki(commands.Cog):
             wiki_row_data['damages'] = [dict(row) for row in damages_rows]
 
         # Create the entry picture link from the image name
-        wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image']}'
+        wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image'].replace(' ', '_')}'
 
         return wiki_row_data
 
