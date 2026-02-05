@@ -97,7 +97,7 @@ class ProductionTemplate:
                     continue
                 structure_embed['fields'].append({
                     'name': f'{output_next} Output',
-                    'value': f'x{production_method[f'{output_next}OutputAmount']} {production_method[output_column_name]}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[output_column_name]), self.__bot_emojis.get('missing_texture'))}',
+                    'value': f'x{production_method[f'{output_next}OutputAmount']}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[output_column_name]), self.__bot_emojis.get('missing_texture'))}',
                     'inline': True,
                 })
 
