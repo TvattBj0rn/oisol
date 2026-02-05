@@ -106,6 +106,12 @@ class ProductionTemplate:
                 available_structs.add('Mass Production Factory')
                 self.__process_mpf(production_method.copy())
 
+        # Sort alphabetic order displayed prod. struct list
+        available_structs = sorted(list(available_structs))
+
+        # Have a proper embed order for all entries, same as the header
+        self.__output.sort(key=lambda prod: prod['title'])
+
         # Insert embed, after all available productions structs were retrieved
         self.__output.insert(
             0,
