@@ -33,7 +33,7 @@ class ProductionTemplate:
         }
         is_short_mpf = False
 
-        # For vics, base cost depend on the number of vics per output crate
+        # For vehicles, base cost depend on the number of vehicles per output crate
         if mpf_parameters.get('Source', '') == 'Garage':
             is_short_mpf = True
             cost_multiplier = 5 if mpf_parameters['CrateCapacity'] == '5' else 3
