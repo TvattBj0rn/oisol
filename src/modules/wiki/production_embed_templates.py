@@ -71,11 +71,11 @@ class ProductionTemplate:
             }
 
             # Add any inputs that are not null (there can be null inputs between non-null inputs -> the loop must check all iterations)
-            structure_embed['fields'].extend({
-                'name': 'Input',
-                'value': f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), self.__bot_emojis.get('missing_texture'))}',
+            structure_embed['fields'].append({
+                'name': 'Input(s)',
+                'value': '\n'.join(f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), self.__bot_emojis.get('missing_texture'))}' for i in range(1, 7) if production_method[input_item_title := f'InputItem{i}']),
                 'inline': True,
-            } for i in range(1, 7) if production_method[input_item_title := f'InputItem{i}'])
+            })
 
             for category_name, display_name, action in [
                 ('InputVehicle', 'Chassis', lambda value: value),
