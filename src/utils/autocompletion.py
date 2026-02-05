@@ -2148,11 +2148,6 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Rocket Booster',
-		'keywords': 'rocketbooster',
-		'table': WikiTables.ITEM_DATA.value,
-	},
-	{
 		'name': 'RPG',
 		'keywords': 'rpg',
 		'table': WikiTables.ITEM_DATA.value,

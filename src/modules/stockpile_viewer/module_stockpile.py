@@ -627,7 +627,7 @@ class ModuleStockpiles(commands.Cog):
         :param localisation: The localization to test.
         :return: None if valid, the error message to send back to the user otherwise.
         """
-        # Case where a user did not select a provided localisation
+        # Case where a user did not select a provided localization
         if ' | ' not in localisation or localisation.startswith(' | '):
             return '> The localisation you entered is incorrect, displayed localisations are clickable'
         return None

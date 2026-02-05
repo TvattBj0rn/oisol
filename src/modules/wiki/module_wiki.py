@@ -77,7 +77,7 @@ class ModuleWiki(commands.Cog):
             wiki_row_data['damages'] = [dict(row) for row in damages_rows]
 
         # Create the entry picture link from the image name
-        wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image']}'
+        wiki_row_data['image_url'] = f'https://foxhole.wiki.gg/images/{wiki_row_data['image'].replace(' ', '_')}'
 
         return wiki_row_data
 
@@ -153,7 +153,7 @@ class ModuleWiki(commands.Cog):
 
         data_dict = self.retrieve_row_from_name(health_table, search_request)
 
-        data_dict['name'] = subregion_name if subregion_name else search_request
+        data_dict['name'] = f'{subregion_name} | {search_request}' if subregion_name else search_request
 
         # Compute health of search_request & generate embed
         health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
@@ -173,24 +173,32 @@ class ModuleWiki(commands.Cog):
             await interaction.response.send_message('> The entry you provided is invalid', ephemeral=True, delete_after=5)
             return
 
-        search_request, _ = split_search_request
-        if search_request not in PRODUCTION_DATA_KEYS:
+        search_request, entry_table = split_search_request
+        if search_request not in PRODUCTION_DATA_KEYS or entry_table not in (table.value for table in WikiTables):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
         with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
+
+            # Retrieve the image file name from the entry table
+            image_name = cursor.execute(
+                f'SELECT image from {entry_table} WHERE name == ?',
+                (search_request,),
+            ).fetchone()['image']
+
+            # Retrieve all production rows using the entry name
             production_rows = cursor.execute(
                 'SELECT * FROM productionmerged3 WHERE Output == ?',
                 (search_request,),
             ).fetchall()
 
-            p = ProductionTemplate([dict(row) for row in production_rows], search_request, self.bot.app_emojis_dict)
-            await interaction.response.send_message(
-                embeds=[discord.Embed().from_dict(embed_data) for embed_data in p.get_generated_embeds()],
-                ephemeral=not visible,
-            )
+        p = ProductionTemplate([dict(row) for row in production_rows], search_request, f'https://foxhole.wiki.gg/images/{image_name}', self.bot.app_emojis_dict)
+        await interaction.response.send_message(
+            embeds=[discord.Embed.from_dict(embed_data) for embed_data in p.get_generated_embeds()],
+            ephemeral=not visible,
+        )
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:

@@ -178,6 +178,12 @@ EMOJIS_FROM_DICT = {
 	'912 Shrike Rounds': 'dive_bomber_ammo',
 	'14.5mm': '14_5mm',
 	'950-70b Anti-Aircraft Shell': 'anti_aircraft_shell',
+	'Quillback Torpedo': 'quillback_torpedo',
+	"Willow's Bane Ammo": 'willows_bane_ammo',
+	'Water': 'water',
+	'Coal': 'coal',
+	'Components': 'component',
+	'Oil': 'oil',
 }
 
 
