@@ -61,13 +61,15 @@ class ProductionTemplate:
     def __prepare_embeds_data(self) -> None:
         available_structs = set()  # This is used for header embed
         for production_method in self.__raw_data:
-            available_structs.add(production_method['Source'])
+            production_structure_name = f'{production_method['Source']} ({production_method['ProductionCategory']})' if production_method['ProductionCategory'] != 'None' and production_method['Source'] != 'Factory' else production_method['Source']
+            available_structs.add(production_structure_name)
             structure_embed = {
-                'title': production_method['Source'],
+                'title': production_structure_name,
                 'description': '',
                 'color': self.__color,
                 'fields': [],
             }
+
             # Add any inputs that are not null (there can be null inputs between non-null inputs -> the loop must check all iterations)
             structure_embed['fields'].extend({
                 'name': 'Input',
