@@ -174,7 +174,7 @@ class ModuleWiki(commands.Cog):
             return
 
         search_request, entry_table = split_search_request
-        if search_request not in PRODUCTION_DATA_KEYS:
+        if search_request not in PRODUCTION_DATA_KEYS or entry_table not in (table.value for table in WikiTables):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
@@ -184,7 +184,7 @@ class ModuleWiki(commands.Cog):
 
             image_name = cursor.execute(
                 f'SELECT image from {entry_table} WHERE name == ?',
-                (search_request,)
+                (search_request,),
             ).fetchone()['image']
 
             production_rows = cursor.execute(
