@@ -70,19 +70,13 @@ class ProductionTemplate:
                 'fields': [],
             }
 
-            # Add any inputs that are not null (there can be null inputs between non-null inputs -> the loop must check all iterations)
-            structure_embed['fields'].append({
-                'name': 'Input(s)',
-                'value': '\n'.join(f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), self.__bot_emojis.get('missing_texture'))}' for i in range(1, 7) if production_method[input_item_title := f'InputItem{i}']),
-                'inline': True,
-            })
-
+            # Add intermediary case specific fields
             for category_name, display_name, action in [
-                ('InputVehicle', 'Chassis', lambda value: value),
-                ('InputPower', 'Power', lambda value: f'{value}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get('MW of power'), self.__bot_emojis.get('missing_texture'))}'),
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
-                ('Output', 'Output', lambda value: f'x{production_method['OutputAmount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(value), value)}'),
+                ('InputPower', 'Power', lambda value: f'{value}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get('MW of power'), self.__bot_emojis.get('missing_texture'))}'),
+                ('InputVehicle', 'Chassis', lambda value: value),
             ]:
+                # Check if field exists and if it is not null/None
                 if production_method.get(category_name):
                     structure_embed['fields'].append({
                         'name': display_name,
@@ -90,16 +84,26 @@ class ProductionTemplate:
                         'inline': True,
                     })
 
-            # Some recipes can have more than one output, this ensures they are added if they exist
-            for output_next in ['Secondary', 'Tertiary']:
-                output_column_name = f'{output_next}Output'
-                if not production_method[output_column_name]:
-                    continue
-                structure_embed['fields'].append({
-                    'name': f'{output_next} Output',
-                    'value': f'x{production_method[f'{output_next}OutputAmount']}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[output_column_name]), self.__bot_emojis.get('missing_texture'))}',
-                    'inline': True,
-                })
+            # Add manual field separator
+            structure_embed['fields'].append({
+                'name': '',
+                'value': '',
+                'inline': False,
+            })
+
+            # Add any inputs that are not null (there can be null inputs between non-null inputs -> the loop must check all iterations)
+            structure_embed['fields'].append({
+                'name': 'Input(s)',
+                'value': '\n'.join(f'x{production_method[f'{input_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[input_item_title]), f'{production_method[input_item_title]} {self.__bot_emojis.get('missing_texture')}')}' for i in range(1, 7) if production_method[input_item_title := f'InputItem{i}']),
+                'inline': True,
+            })
+
+            # Add output using the same format as the inputs field
+            structure_embed['fields'].append({
+                'name': 'Output(s)',
+                'value': '\n'.join(f'x{production_method[f'{output_item_title}Amount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[output_item_title]), production_method[output_item_title])}' for o in ['', 'Secondary', 'Tertiary'] if production_method[output_item_title := f'{o}Output']),
+                'inline': True,
+            })
 
             self.__output.append(structure_embed)
             if production_method.get('IsMPFable', False) == '1' and production_method['Source'] in ['Garage', 'Factory']:
