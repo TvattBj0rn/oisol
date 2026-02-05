@@ -111,7 +111,7 @@ class ProductionTemplate:
                 self.__process_mpf(production_method.copy())
 
         # Sort alphabetic order displayed prod. struct list
-        available_structs = sorted(list(available_structs))
+        available_structs = sorted(available_structs)
 
         # Have a proper embed order for all entries, same as the header
         self.__output.sort(key=lambda prod: prod['title'])
