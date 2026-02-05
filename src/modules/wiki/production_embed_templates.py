@@ -81,7 +81,7 @@ class ProductionTemplate:
                 ('InputVehicle', 'Chassis', lambda value: value),
                 ('InputPower', 'Power', lambda value: f'{value}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get('MW of power'), self.__bot_emojis.get('missing_texture'))}'),
                 ('ProductionTime', 'Time', lambda value: f'{datetime.timedelta(seconds=float(value))}'),
-                ('Output', 'Output', lambda value: value),
+                ('Output', 'Output', lambda value: f'x{production_method['OutputAmount']} {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(value), value)}'),
             ]:
                 if production_method.get(category_name):
                     structure_embed['fields'].append({
@@ -117,7 +117,7 @@ class ProductionTemplate:
             0,
             {
                 'title': self.__name,
-                'description': f'Available structures:\n- {'\n- '.join(available_structs)}',
+                'description': f'Available production structures:\n- {'\n- '.join(available_structs)}',
                 'thumbnail': {'url': self.__img_link},
                 'color': self.__color,
             })
