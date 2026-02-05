@@ -182,21 +182,23 @@ class ModuleWiki(commands.Cog):
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
 
+            # Retrieve the image file name from the entry table
             image_name = cursor.execute(
                 f'SELECT image from {entry_table} WHERE name == ?',
                 (search_request,),
             ).fetchone()['image']
 
+            # Retrieve all production rows using the entry name
             production_rows = cursor.execute(
                 'SELECT * FROM productionmerged3 WHERE Output == ?',
                 (search_request,),
             ).fetchall()
 
-            p = ProductionTemplate([dict(row) for row in production_rows], search_request, f'https://foxhole.wiki.gg/images/{image_name}', self.bot.app_emojis_dict)
-            await interaction.response.send_message(
-                embeds=[discord.Embed.from_dict(embed_data) for embed_data in p.get_generated_embeds()],
-                ephemeral=not visible,
-            )
+        p = ProductionTemplate([dict(row) for row in production_rows], search_request, f'https://foxhole.wiki.gg/images/{image_name}', self.bot.app_emojis_dict)
+        await interaction.response.send_message(
+            embeds=[discord.Embed.from_dict(embed_data) for embed_data in p.get_generated_embeds()],
+            ephemeral=not visible,
+        )
 
     @staticmethod
     def _generic_autocomplete(search_data: list[dict], current: str) -> list[app_commands.Choice]:
