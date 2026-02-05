@@ -88,16 +88,16 @@ class ProductionTemplate:
                         'inline': True,
                     })
 
-            if 'Output' not in production_method:
-                for i in range(1, 4):
-                    if (output_item_title := f'OutputItem{i}') in production_method and production_method[output_item_title]:
-                        structure_embed['fields'].append({
-                            'name': 'Output',
-                            'value': f'x{production_method[f'{output_item_title}Amount']} {production_method[output_item_title]}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[output_item_title]), self.__bot_emojis.get('missing_texture'))}',
-                            'inline': True,
-                        })
-                    else:
-                        break
+            # Some recipes can have more than one output, this ensures they are added if they exist
+            for output_next in ['Secondary', 'Tertiary']:
+                output_column_name = f'{output_next}Output'
+                if not production_method[output_column_name]:
+                    continue
+                structure_embed['fields'].append({
+                    'name': f'{output_next} Output',
+                    'value': f'x{production_method[f'{output_next}OutputAmount']} {production_method[output_column_name]}  {self.__bot_emojis.get(EMOJIS_FROM_DICT.get(production_method[output_column_name]), self.__bot_emojis.get('missing_texture'))}',
+                    'inline': True,
+                })
 
             self.__output.append(structure_embed)
             if production_method.get('IsMPFable', False) == '1' and production_method['Source'] in ['Garage', 'Factory']:
