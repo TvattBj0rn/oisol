@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from src.modules.config import ConfigViewMenu, ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.foxhole_api_map_interactions_tasks import WorldSpawnsStatus
+from src.modules.owner_commands import ModuleOwner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
 from src.modules.stockpile_viewer import (
     ModuleStockpiles,
@@ -45,6 +46,7 @@ class Oisol(commands.Bot):
             command_prefix='$',
             intents=intents,
             help_command=commands.DefaultHelpCommand(no_category='Commands'),
+            owner_id=282262941271719937,
         )
 
         # Custom bot emojis not relying on dedicated discord servers
@@ -66,13 +68,14 @@ class Oisol(commands.Bot):
     async def on_ready(self) -> None:
         # Modules loading
         await self.add_cog(ModuleConfig(self))
+        await self.add_cog(ModuleOwner(self))
         await self.add_cog(ModuleStockpiles(self))
         await self.add_cog(ModuleRegister(self))
         await self.add_cog(ModuleTodolist(self))
         await self.add_cog(ModuleTranslation(self))
         await self.add_cog(ModuleWiki(self))
 
-        await self._fetch_available_shards()
+        await self.fetch_available_shards()
 
         # Ready the db
         self._setup_oisol_db()
@@ -131,7 +134,7 @@ class Oisol(commands.Bot):
                 ''',
             )
 
-    async def _test_potential_shard(self, session: ClientSession, shard: Shard) -> None:
+    async def __test_potential_shard(self, session: ClientSession, shard: Shard) -> None:
         """
         Method that will try to get the default shard api/ url, if the return code is 503, the shard is not live else
         the shard is added to the bot's set of available shards
@@ -145,12 +148,12 @@ class Oisol(commands.Bot):
 
         self.connected_shards.add(shard.name)
 
-    async def _fetch_available_shards(self) -> None:
+    async def fetch_available_shards(self) -> None:
         """
         Method that will call the method for each shard value concurrently
         """
         async with aiohttp.ClientSession() as session:
-            tasks = [self._test_potential_shard(session, shard) for shard in Shard]
+            tasks = [self.__test_potential_shard(session, shard) for shard in Shard]
             await asyncio.gather(*tasks)
 
 
