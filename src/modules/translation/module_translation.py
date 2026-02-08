@@ -4,7 +4,7 @@ import os
 from typing import TYPE_CHECKING
 
 import discord
-from discord import app_commands
+from discord import app_commands, InteractionCallbackResponse
 from discord.ext import commands
 from libretranslatepy import LibreTranslateAPI
 
@@ -63,13 +63,22 @@ class ModuleTranslation(commands.Cog):
 
         try:
             translated_source = self.lt_api.translate(message.content, source_language, target_language)
-            if len(translated_source) < DISCORD_MESSAGE_MAX_LENGTH:
-                await interaction.followup.send(translated_source, ephemeral=True)
-                return
-
-            for msg in self.__split_into_discord_message_length(translated_source):
-                await interaction.followup.send(msg, ephemeral=True)
-
         except Exception:
             await interaction.followup.send('> This translation is not supported', ephemeral=True)
             self.bot.logger.error(f'Invalid translation for locale ({str(interaction.locale), str(interaction.locale).split('-')[0].lower()}) and source ({source_language})')
+            return
+
+        channel = await interaction.user.create_dm() if not interaction.app_permissions.send_messages else None
+
+        if len(translated_source) < DISCORD_MESSAGE_MAX_LENGTH:
+            if channel is not None:
+                await channel.send(translated_source)
+            else:
+                await interaction.followup.send(translated_source, ephemeral=True)
+            return
+
+        for msg in self.__split_into_discord_message_length(translated_source):
+            if channel is not None:
+                await channel.send(translated_source)
+            else:
+                await interaction.followup.send(msg, ephemeral=True)
