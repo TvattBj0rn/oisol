@@ -270,7 +270,7 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Anti-Tank Pillbox',
+		'name': 'Anti-Tank Rifle Pillbox',
 		'keywords': 'atanti-tankpillbox',
 		'table': WikiTables.STRUCTURES.value,
 	},
