@@ -155,6 +155,7 @@ class Oisol(commands.Bot):
         async with aiohttp.ClientSession() as session:
             tasks = [self.__test_potential_shard(session, shard) for shard in Shard]
             await asyncio.gather(*tasks)
+        self.logger.task(f'Fetch available shards completed, current shards are {' '.join(self.connected_shards)}')
 
 
 if __name__ == '__main__':
