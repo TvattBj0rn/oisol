@@ -126,7 +126,7 @@ class ModuleRegister(commands.Cog):
                 if config.has_option('register', 'input'):
                     await after.edit(nick=safeguarded_nickname(f'{config.get('register', 'input', fallback='')} {after.display_name}'))
             except discord.Forbidden:
-                self.bot.logger.warn(f'Member renaming failed due to missing permissions on {before.guild.id}')
+                self.bot.logger.warning(f'Member renaming failed due to missing permissions on {before.guild.id}')
 
             # Update on db side
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -154,7 +154,7 @@ class ModuleRegister(commands.Cog):
             try:
                 await after.edit(nick=safeguarded_nickname(member_name))
             except discord.Forbidden:
-                self.bot.logger.warn(f'Member renaming failed due to missing permissions on {before.guild.id}')
+                self.bot.logger.warning(f'Member renaming failed due to missing permissions on {before.guild.id}')
 
             # Update on db side
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
