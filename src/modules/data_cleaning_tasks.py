@@ -82,7 +82,11 @@ class DatabaseCleaner(commands.Cog):
 
     async def _clear_stockpiles_new_war(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
         async with aiohttp.ClientSession() as session:
-            current_state = await shard_api.get_current_war_state(session)
+            try:
+                current_state = await shard_api.get_current_war_state(session)
+            except TimeoutError:
+                self.bot.logger.warning(f'Clear stockpile task timed out for shard {shard_api.shard_name}')
+                return
         if (
                 current_state.get('conquestEndTime') is None # The war is still active
                 or (res_start_time := current_state.get('resistanceStartTime')) is None # Ensure we can work with the resistanceStartTime otherwise
