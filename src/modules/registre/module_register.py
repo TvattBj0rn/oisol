@@ -62,7 +62,6 @@ class ModuleRegister(commands.Cog):
         return [t for t in members if t[2] in [m.id for m in guild.members] and guild.get_member(t[2]).get_role(recruit_id)]
 
     async def update_register(self, guild_id: int) -> None:
-        self.bot.logger.command(f'register interface was updated on guild {guild_id}')
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
 
@@ -95,11 +94,16 @@ class ModuleRegister(commands.Cog):
             message = await channel.fetch_message(config.getint('register', 'message_id'))
         except (discord.NotFound, AttributeError):
             return
+        except discord.Forbidden:
+            self.bot.logger.warning(f'Register update did not happen because the register interface could not be fetched on {guild_id}')
+            return
 
         # Update existing register
         register_view = RegisterViewMenu()
         register_view.refresh_register_embed(guild_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
+
+        self.bot.logger.command(f'register interface was updated on guild {guild_id}')
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
