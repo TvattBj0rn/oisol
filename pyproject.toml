@@ -7,7 +7,6 @@ dependencies = [
   "discord-py==2.6.4",
   "libretranslatepy",
   "python-dotenv",
-  "requests",
   "thefuzz>=0.22.1",
 ]
 
