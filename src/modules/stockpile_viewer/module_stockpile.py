@@ -314,7 +314,16 @@ class ModuleStockpiles(commands.Cog):
         name='stockpile-create',
         description=app_commands.locale_str('Create a new stockpile on a given interface/network'),
     )
-    async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str, level: Literal['5', '4', '3', '2', '1'] = '1') -> None:
+    async def stockpile_create(
+            self,
+            interaction: discord.Interaction,
+            interface_name: str,
+            code: str,
+            localisation: str,
+            stockpile_name: str,
+            level: Literal['5', '4', '3', '2', '1'] = '1',
+            stockpile_creator: discord.User | None = None,
+    ) -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
@@ -332,6 +341,10 @@ class ModuleStockpiles(commands.Cog):
                 delete_after=5,
             )
             return
+
+        # Ensures stockpiles_creator is of type discord.User
+        if stockpile_creator is None:
+            stockpile_creator = interaction.user
 
         interface_guild_id, interface_channel_id, interface_message_id, _ = ids_list
 
@@ -365,8 +378,8 @@ class ModuleStockpiles(commands.Cog):
 
             # Insert new stockpile to db
             cursor.execute(
-                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level)),
+                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level), stockpile_creator.id),
             )
             conn.commit()
 

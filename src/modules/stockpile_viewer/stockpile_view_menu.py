@@ -30,12 +30,12 @@ class StockpilesViewMenu(discord.ui.View):
     def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str, emojis_dict: dict) -> list:
         # Group stockpiles by regions
         grouped_stockpiles = {}
-        for region, subregion, code, name, building_type, level in guild_stockpiles:
+        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
             if region not in grouped_stockpiles:
                 grouped_stockpiles[region] = {}
             if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
                 grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
-            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}'
+            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
 
         # Sort all keys in dict and subdicts by key
         sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
@@ -47,10 +47,13 @@ class StockpilesViewMenu(discord.ui.View):
             for subregion_type, vv in v.items():
                 value_string += f'**{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'.lower()]})\n'
                 for name, code_level in vv.items():
-                    code, level = code_level.split('_')
-                    value_string += f'{name} ({level}) **|** {code}\n'
+                    code, level, owner_id = code_level.split('_')
+                    value_string += f'{name} ({level}) **|** {code}'
+                    if owner_id != 'None':
+                        value_string += f' **|** <@{owner_id}>'
+                    value_string += '\n'
                 value_string += '\n'
-            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
+            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': False})
         return embed_fields
 
     def generate_stockpile_embed_data(
@@ -89,7 +92,7 @@ class StockpilesViewMenu(discord.ui.View):
 
             # Retrieve the interface's stockpiles, using the user's level access level
             access_level_stockpiles = cursor.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level, Owner From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
                 (user_level, association_id),
             ).fetchall()
         if not access_level_stockpiles:
