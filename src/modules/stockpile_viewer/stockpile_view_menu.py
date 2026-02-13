@@ -4,7 +4,6 @@ import warnings
 
 import discord
 from discord import Interaction
-from discord.ui import LayoutView
 from thefuzz import process
 
 from src.utils import (
@@ -588,7 +587,13 @@ class StockpileMainInterface(discord.ui.LayoutView):
     def __init__(self):
         super().__init__(timeout=None)
 
-    def reset_interface(self, emojis_dict: dict, stockpile_interface_name: str, user: discord.User) -> None:
+    def reset_interface(
+            self,
+            emojis_dict: dict,
+            stockpile_interface_name: str,
+            user: discord.User,
+            guild_faction: str,
+    ) -> None:
         self.clear_items()
         self.add_item(
             discord.ui.Container(
@@ -612,6 +617,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 discord.ui.Separator(),
                 # Buttons row
                 self.__stockpile_main_interface_buttons,
+                accent_colour=Faction[guild_faction].value,
             )
         )
 
