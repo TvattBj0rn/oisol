@@ -27,7 +27,7 @@ from .stockpile_view_menu import (
     StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
     StockpileEditDropDownView,
-    StockpilesViewMenu,
+    StockpilesViewMenu, StockpileMainInterface,
 )
 
 if TYPE_CHECKING:
@@ -171,14 +171,8 @@ class ModuleStockpiles(commands.Cog):
 
         # Send default interface
         interface_message = await interaction.channel.send(
-            embed=discord.Embed.from_dict({
-                'title': f'{self.bot.app_emojis_dict.get('region')} | Stockpiles | {name}',
-                'color': Faction[guild_faction].value,
-                'description': '- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
-                               '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
-                'footer': {'text': interaction.user.name, 'icon_url': interaction.user.display_avatar.url},
-            }),
-            view=StockpilesViewMenu(),
+            view=StockpileMainInterface(self.bot.app_emojis_dict, name, interaction.user),
+            silent=True,
         )
 
         # Create the stockpile interface on the table
