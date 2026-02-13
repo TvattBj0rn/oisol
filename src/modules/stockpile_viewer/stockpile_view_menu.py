@@ -113,6 +113,7 @@ class StockpilesViewMenu(discord.ui.View):
             )),
             ephemeral=True,
         )
+        await auto_migrate_stockpile_interface(interaction.guild, interaction.message, interaction.client.app_emojis_dict)
 
     @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Roles', label='Edit Roles', emoji='✏️')
     async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
@@ -591,7 +592,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
             self,
             emojis_dict: dict,
             stockpile_interface_name: str,
-            user: discord.User,
+            user: discord.User | discord.Member,
             guild_faction: str,
     ) -> None:
         self.clear_items()
@@ -771,3 +772,32 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
+
+
+
+async def auto_migrate_stockpile_interface(
+        guild: discord.Guild,
+        interface_message: discord.Message,
+        emoji_dict: dict,
+) -> None:
+    oisol_logger = OisolLogger('oisol')
+    new_interface = StockpileMainInterface()
+
+    # Retrieve guild faction, for embed color
+    config = configparser.ConfigParser()
+    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini')
+    guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
+
+    # There can only be one embed
+    old_interface = interface_message.embeds[0]
+    interface_title = old_interface.title.split(' | ')[-1]
+    user = guild.get_member_named(old_interface.footer.text)
+
+    if user is None:
+        oisol_logger.warning(f'Could not migrate interface on {guild.name}')
+        return
+
+    new_interface.reset_interface(emoji_dict, interface_title, user, guild_faction)
+
+    await interface_message.edit(embed=None, view=new_interface)
+    oisol_logger.info(f'Stockpile interface was properly migrated on {guild.name}')
