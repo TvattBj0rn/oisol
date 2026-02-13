@@ -605,7 +605,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 # Main content
                 discord.ui.TextDisplay(
                     content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
-                            '- **Settings**: available only to the creator of the interface, edit access levels\n'
+                            '- **Edit Roles**: available only to the creator of the interface, edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
                             '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)'
                 ),
                 discord.ui.Separator(),
@@ -721,7 +721,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
 
     @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.grey,
-        custom_id='stockpiles_settings',
+        custom_id='stockpiles_edit_roles',
         label='Edit Roles',
         emoji='✏️',
     )
