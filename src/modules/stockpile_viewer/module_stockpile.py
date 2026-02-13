@@ -169,9 +169,12 @@ class ModuleStockpiles(commands.Cog):
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
+        main_interface_view = StockpileMainInterface()
+        main_interface_view.reset_interface(self.bot.app_emojis_dict, name, interaction.user)
+
         # Send default interface
         interface_message = await interaction.channel.send(
-            view=StockpileMainInterface(self.bot.app_emojis_dict, name, interaction.user),
+            view=main_interface_view,
             silent=True,
         )
 

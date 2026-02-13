@@ -15,6 +15,7 @@ from src.modules.owner_commands import ModuleOwner
 from src.modules.registre import ModuleRegister, RegisterViewMenu
 from src.modules.stockpile_viewer import (
     ModuleStockpiles,
+    StockpileMainInterface,
     StockpilesViewMenu,
     TaskUpdateAvailableStockpiles,
 )
@@ -104,7 +105,11 @@ class Oisol(commands.Bot):
         self.add_view(ConfigViewMenu())
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
+        self.add_view(StockpileMainInterface())
+
+        # This should be removed once all interface are migrated or next war (133), replace by StockpileMainInterface
         self.add_view(StockpilesViewMenu())
+
         self.add_dynamic_items(TodolistButtonCheckmark)
         await self.tree.set_translator(OisolTranslator())
 

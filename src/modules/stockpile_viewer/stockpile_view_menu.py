@@ -4,6 +4,7 @@ import warnings
 
 import discord
 from discord import Interaction
+from discord.ui import LayoutView
 from thefuzz import process
 
 from src.utils import (
@@ -580,18 +581,92 @@ class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile b
         await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True, delete_after=5)
 
 
-class StockpileMainInterfaceButtons(discord.ui.ActionRow):
-    def __init__(self):
-        super().__init__()
+class StockpileMainInterface(discord.ui.LayoutView):
 
-    @discord.ui.button(
+    __stockpile_main_interface_buttons = discord.ui.ActionRow()
+
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    def reset_interface(self, emojis_dict: dict, stockpile_interface_name: str, user: discord.User) -> None:
+        self.clear_items()
+        self.add_item(
+            discord.ui.Container(
+                # Title
+                discord.ui.TextDisplay(
+                    content=f'## {emojis_dict.get('region')} | Stockpiles | {stockpile_interface_name}',
+                ),
+                discord.ui.Separator(),
+                # Main content
+                discord.ui.TextDisplay(
+                    content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
+                            '- **Settings**: available only to the creator of the interface, edit access levels\n'
+                            '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)'
+                ),
+                discord.ui.Separator(),
+                # Interface editor
+                discord.ui.TextDisplay(
+                    content=f'> Interface editor: {user.mention}',
+                    id=STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
+                ),
+                discord.ui.Separator(),
+                # Buttons row
+                self.__stockpile_main_interface_buttons,
+            )
+        )
+
+    @staticmethod
+    def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str, emojis_dict: dict) -> list:
+        # Group stockpiles by regions
+        grouped_stockpiles = {}
+        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
+            if region not in grouped_stockpiles:
+                grouped_stockpiles[region] = {}
+            if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
+                grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
+            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
+
+        # Sort all keys in dict and subdicts by key
+        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
+
+        # Set stockpiles to discord fields format
+        embed_fields = []
+        for region, v in sorted_grouped_stockpiles.items():
+            value_string = ''
+            for subregion_type, vv in v.items():
+                value_string += f'**{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'.lower()]})\n'
+                for name, code_level in vv.items():
+                    code, level, owner_id = code_level.split('_')
+                    value_string += f'{name} ({level}) **|** {code}'
+                    if owner_id != 'None':
+                        value_string += f' **|** <@{owner_id}>'
+                    value_string += '\n'
+                value_string += '\n'
+            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': False})
+        return embed_fields
+
+    def generate_stockpile_embed_data(
+            self,
+            stockpiles_data: list[tuple],
+            user_access_level: int,
+            group_faction: str,
+            emojis_dict: dict,
+    ) -> dict[str, str | list]:
+        return {
+            'title': f'Access Level {user_access_level}',
+            'color': Faction[group_faction].value,
+            'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction, emojis_dict),
+        }
+
+    @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.blurple,
         custom_id='view_stockpiles',
         label='View Stockpiles',
         emoji='📥',
     )
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OisolLogger('oisol').interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
+        OisolLogger('oisol').interface(
+            f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -638,7 +713,12 @@ class StockpileMainInterfaceButtons(discord.ui.ActionRow):
             ephemeral=True,
         )
 
-    @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='stockpiles_settings', label='Edit Roles', emoji='✏️')
+    @__stockpile_main_interface_buttons.button(
+        style=discord.ButtonStyle.grey,
+        custom_id='stockpiles_settings',
+        label='Edit Roles',
+        emoji='✏️',
+    )
     async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         # Stockpile main interface contains a single container component with multiple children
         editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
@@ -653,7 +733,12 @@ class StockpileMainInterfaceButtons(discord.ui.ActionRow):
             return
         await interaction.response.send_modal(StockpileEditRolesModal(interaction))
 
-    @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='stockpile_share_id', label='Share ID', emoji='🔗')
+    @__stockpile_main_interface_buttons.button(
+        style=discord.ButtonStyle.grey,
+        custom_id='stockpile_share_id',
+        label='Share ID',
+        emoji='🔗',
+    )
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         """
         Interaction when the Share button is clicked. Since only the user that created the interface can do this action,
@@ -680,70 +765,3 @@ class StockpileMainInterfaceButtons(discord.ui.ActionRow):
                 (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
-
-
-class StockpileMainInterface(discord.ui.LayoutView):
-    def __init__(self, emojis_dict: dict, stockpile_interface_name: str, user: discord.User):
-        super().__init__(timeout=None)
-
-        self.__main_container = discord.ui.Container(
-            # Title
-            discord.ui.TextDisplay(content=f'## {emojis_dict.get('region')} | Stockpiles | {stockpile_interface_name}'),
-            discord.ui.Separator(),
-            # Main content
-            discord.ui.TextDisplay(
-                content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
-                        '- **Settings**: available only to the creator of the interface, edit access levels\n'
-                        '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)'
-            ),
-            discord.ui.Separator(),
-            # Interface admin
-            discord.ui.TextDisplay(content=f'> Interface editor: {user.mention}', id=STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID),
-            discord.ui.Separator(),
-            # Buttons row
-            StockpileMainInterfaceButtons(),
-        )
-        self.add_item(self.__main_container)
-
-    @staticmethod
-    def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str, emojis_dict: dict) -> list:
-        # Group stockpiles by regions
-        grouped_stockpiles = {}
-        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
-            if region not in grouped_stockpiles:
-                grouped_stockpiles[region] = {}
-            if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
-                grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
-            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
-
-        # Sort all keys in dict and subdicts by key
-        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
-
-        # Set stockpiles to discord fields format
-        embed_fields = []
-        for region, v in sorted_grouped_stockpiles.items():
-            value_string = ''
-            for subregion_type, vv in v.items():
-                value_string += f'**{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'.lower()]})\n'
-                for name, code_level in vv.items():
-                    code, level, owner_id = code_level.split('_')
-                    value_string += f'{name} ({level}) **|** {code}'
-                    if owner_id != 'None':
-                        value_string += f' **|** <@{owner_id}>'
-                    value_string += '\n'
-                value_string += '\n'
-            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': False})
-        return embed_fields
-
-    def generate_stockpile_embed_data(
-            self,
-            stockpiles_data: list[tuple],
-            user_access_level: int,
-            group_faction: str,
-            emojis_dict: dict,
-    ) -> dict[str, str | list]:
-        return {
-            'title': f'Access Level {user_access_level}',
-            'color': Faction[group_faction].value,
-            'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction, emojis_dict),
-        }
