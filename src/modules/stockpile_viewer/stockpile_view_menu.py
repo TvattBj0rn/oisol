@@ -114,6 +114,7 @@ class StockpilesViewMenu(discord.ui.View):
             )),
             ephemeral=True,
         )
+        # First live tests will be on FCF
         if interaction.guild_id == 1125790880922607616:
             await auto_migrate_stockpile_interface(interaction.guild, interaction.message, interaction.client.app_emojis_dict)
 
@@ -123,7 +124,6 @@ class StockpilesViewMenu(discord.ui.View):
             await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True, delete_after=5)
             return
         await interaction.response.send_modal(StockpileEditRolesModal(interaction))
-
 
     @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
@@ -144,7 +144,6 @@ class StockpilesViewMenu(discord.ui.View):
                 (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
-
 
 
 class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
@@ -214,13 +213,13 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
 
         await interaction.response.send_message('> The interface roles were properly updated', ephemeral=True, delete_after=5)
 
-
     @staticmethod
     def __fetch_role(guild_roles: list[discord.Role], role_id: int) -> discord.Role | None:
         for role in guild_roles:
             if role.id == role_id:
                 return role
         return None
+
 
 class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
     def __init__(self, user_access_level: int, association_id: str):
@@ -799,7 +798,6 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
-
 
 
 async def auto_migrate_stockpile_interface(
