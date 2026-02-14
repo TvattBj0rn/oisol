@@ -15,7 +15,6 @@ from discord.ext import commands
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    Faction,
     InterfacesTypes,
     Shard,
     get_user_access_level,
@@ -27,7 +26,7 @@ from .stockpile_view_menu import (
     StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
     StockpileEditDropDownView,
-    StockpilesViewMenu, StockpileMainInterface,
+    StockpileMainInterface,
 )
 
 if TYPE_CHECKING:

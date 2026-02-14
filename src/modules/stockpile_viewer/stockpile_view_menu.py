@@ -8,6 +8,7 @@ from thefuzz import process
 
 from src.utils import (
     OISOL_HOME_PATH,
+    STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
     DataFilesPath,
     DiscordIdType,
     Faction,
@@ -15,7 +16,7 @@ from src.utils import (
     OisolLogger,
     chunks,
     get_user_access_level,
-    sort_nested_dicts_by_key, STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
+    sort_nested_dicts_by_key,
 )
 
 
@@ -681,7 +682,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 discord.ui.TextDisplay(
                     content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
                             '- **Edit Roles**: available only to the creator of the interface, edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
-                            '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)'
+                            '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
                 ),
                 discord.ui.Separator(),
                 # Interface editor
@@ -693,7 +694,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 # Buttons row
                 self.__stockpile_main_interface_buttons,
                 accent_colour=Faction[guild_faction].value,
-            )
+            ),
         )
 
     @__stockpile_main_interface_buttons.button(
