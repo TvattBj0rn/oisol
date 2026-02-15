@@ -230,11 +230,6 @@ MAPS_DATA = [
 
 STRUCTURES_DATA = [
 	{
-		'name': '50-500 “Thunderbolt” Cannon',
-		'keywords': 'thunderboltarty150mm',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
 		'name': 'A0E-9 Rocket',
 		'keywords': 'a0e-9rocketnuke',
 		'table': WikiTables.STRUCTURES.value,
@@ -500,26 +495,6 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'DAE 1b-2 “Serra”',
-		'keywords': 'serraemg',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': 'DAE 1o-3 “Polybolos”',
-		'keywords': 'polybolosbeat',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': 'DAE 2a-1 “Ruptura”',
-		'keywords': 'ruptura75mm',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': "DAE 3b-2 “Hades' Net”",
-		'keywords': 'hadesnet',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
 		'name': 'Deployed Legion Vexillum',
 		'keywords': 'deployedlegionvexillum',
 		'table': WikiTables.STRUCTURES.value,
@@ -730,21 +705,6 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Huber Exalt 150mm',
-		'keywords': 'huberexaltarty150mm',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': 'Huber Lariat 120mm',
-		'keywords': 'huberlariatarty120mm',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': 'Huber Starbreaker 94.5mm',
-		'keywords': 'huberstarbreaker94.5mm',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
 		'name': 'Infantry Kit Factory',
 		'keywords': 'infantrykitfactory',
 		'table': WikiTables.STRUCTURES.value,
@@ -772,16 +732,6 @@ STRUCTURES_DATA = [
 	{
 		'name': 'Large Structure Foundation',
 		'keywords': 'largestructurefoundation',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': 'Leary Shellbore 68mm',
-		'keywords': 'learyshellbore68mmeat',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': 'Leary Snare Trap 127',
-		'keywords': 'learysnaretrapemg',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -1385,16 +1335,6 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'DAE 5b “Zeal”',
-		'keywords': 'zealantiairemplacementaae',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
-		'name': 'Leary AA-70 Bolas',
-		'keywords': 'learybolasantiairemplacementaae',
-		'table': WikiTables.STRUCTURES.value,
-	},
-	{
 		'name': 'Infantry Support Gun Pillbox',
 		'keywords': 'infantrysupportgunpillboxisg',
 		'table': WikiTables.STRUCTURES.value,
@@ -1407,6 +1347,69 @@ STRUCTURES_DATA = [
 	{
 		'name': 'E680-S Rudder Lock Minefield',
 		'keywords': 'rudderlockseaminefield',
+		'table': WikiTables.STRUCTURES.value,
+	},
+]
+
+EMPLACED_DATA = [
+	{
+		'name': '50-500 “Thunderbolt” Cannon',
+		'keywords': 'thunderboltarty150mm',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'DAE 1b-2 “Serra”',
+		'keywords': 'serraemg',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'DAE 1o-3 “Polybolos”',
+		'keywords': 'polybolosbeat',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'DAE 2a-1 “Ruptura”',
+		'keywords': 'ruptura75mm',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': "DAE 3b-2 “Hades' Net”",
+		'keywords': 'hadesnet',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'DAE 5b “Zeal”',
+		'keywords': 'zealantiairemplacementaae',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Leary AA-70 Bolas',
+		'keywords': 'learybolasantiairemplacementaae',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Huber Exalt 150mm',
+		'keywords': 'huberexaltarty150mm',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Huber Lariat 120mm',
+		'keywords': 'huberlariatarty120mm',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Huber Starbreaker 94.5mm',
+		'keywords': 'huberstarbreaker94.5mm',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Leary Shellbore 68mm',
+		'keywords': 'learyshellbore68mmeat',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Leary Snare Trap 127',
+		'keywords': 'learysnaretrapemg',
 		'table': WikiTables.STRUCTURES.value,
 	},
 ]
