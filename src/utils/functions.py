@@ -93,7 +93,7 @@ def get_user_access_level(
 
     # Retrieve the roles ids & access levels of the interface
     all_interface_permissions = conn.cursor().execute(
-        'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId = ?',
+        'SELECT DiscordId, Level FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
         (guild_id, int(channel_id), message_id),
     ).fetchall()
 
