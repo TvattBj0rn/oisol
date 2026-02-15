@@ -71,11 +71,14 @@ class StockpilesViewMenu(discord.ui.View):
             'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction, emojis_dict),
         }
 
-    @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:View', label='View Stockpiles',
-                       emoji='📥')
+    @discord.ui.button(
+        style=discord.ButtonStyle.blurple,
+        custom_id='Stockpile:View',
+        label='View Stockpiles',
+        emoji='📥',
+    )
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OisolLogger('oisol').interface(
-            f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
+        OisolLogger('oisol').interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -100,8 +103,11 @@ class StockpilesViewMenu(discord.ui.View):
                 (user_level, association_id),
             ).fetchall()
         if not access_level_stockpiles:
-            await interaction.response.send_message('> There are currently no stockpiles for your access level',
-                                                    ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                '> There are currently no stockpiles for your access level',
+                ephemeral=True,
+                delete_after=5,
+            )
             return
 
         # Get group faction
@@ -120,14 +126,20 @@ class StockpilesViewMenu(discord.ui.View):
         )
         # First live tests will be on FCF
         if interaction.guild_id == 1125790880922607616:
-            await auto_migrate_stockpile_interface(interaction.guild, interaction.message,
-                                                   interaction.client.app_emojis_dict)
+            await auto_migrate_stockpile_interface(
+                interaction.guild,
+                interaction.message,
+                interaction.client.app_emojis_dict,
+            )
 
     @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Roles', label='Edit Roles', emoji='✏️')
     async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         if interaction.user.name != interaction.message.embeds[0].footer.text:
-            await interaction.response.send_message('> Only the creator of the interface can do this action',
-                                                    ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                '> Only the creator of the interface can do this action',
+                ephemeral=True,
+                delete_after=5,
+            )
             return
         await interaction.response.send_modal(StockpileEditRolesModal(interaction))
 
@@ -139,8 +151,11 @@ class StockpilesViewMenu(discord.ui.View):
         Then the association id is retrieved and sent in an ephemeral message.
         """
         if interaction.user.name != interaction.message.embeds[0].footer.text:
-            await interaction.response.send_message('> Only the creator of the interface can do this action',
-                                                    ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                '> Only the creator of the interface can do this action',
+                ephemeral=True,
+                delete_after=5,
+            )
             return
         OisolLogger('oisol').interface(f'share id interaction by {interaction.user.name} on {interaction.guild.name}')
 
@@ -361,8 +376,11 @@ class StockpileEditDropDownSelect(discord.ui.Select):
                 emoji=self.__emojis_dict[f'{stockpile_type}_{faction}'.lower()],
             ))
 
-        super().__init__(placeholder='Choose the stockpiles you want to edit', options=options,
-                         max_values=len(options) if len(options) < 5 else 5)
+        super().__init__(
+            placeholder='Choose the stockpiles you want to edit',
+            options=options,
+            max_values=len(options) if len(options) < 5 else 5,
+        )
 
     async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_modal(StockpileEditModal(
