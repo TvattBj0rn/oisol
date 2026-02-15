@@ -17,7 +17,7 @@ from src.utils import (
     DataFilesPath,
     InterfacesTypes,
     Shard,
-    get_user_access_level,
+    get_user_access_level, OisolLogger,
 )
 
 from .stockpile_view_menu import (
@@ -83,7 +83,7 @@ class ModuleStockpiles(commands.Cog):
         """
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             user_level = get_user_access_level(conn, user_roles, guild_id, channel_id, message_id)
-
+            OisolLogger('oisol').info(f'User level is {user_level}')
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
                 'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ? ORDER BY Region, Subregion',
@@ -263,6 +263,8 @@ class ModuleStockpiles(commands.Cog):
             interface_association_id,
         )
 
+        self.bot.logger.info(f'available stockpiles are: {available_user_stockpiles}')
+
         # Case where there is no stockpiles to refresh or no stockpiles the user has access to available for deletion
         if len(available_user_stockpiles) == 0:
             await interaction.response.send_message('> There are currently no stockpiles available for refresh', ephemeral=True, delete_after=5)
@@ -315,7 +317,7 @@ class ModuleStockpiles(commands.Cog):
             interaction: discord.Interaction,
             interface_name: str,
             code: str,
-            localisation: str,
+            location: str,
             stockpile_name: str,
             level: Literal['5', '4', '3', '2', '1'] = '1',
             stockpile_creator: discord.User | None = None,
@@ -327,7 +329,7 @@ class ModuleStockpiles(commands.Cog):
 
         if any(validations := (
                 self._validate_stockpile_code(code),
-                self._validate_stockpile_localisation(localisation),
+                self._validate_stockpile_localisation(location),
                 self._validate_stockpile_ids(ids_list),
                 'Access level is invalid' if str(level) not in ['1', '2', '3', '4', '5'] else None,
         )):
@@ -362,7 +364,7 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
-        region, subregion = localisation.split(' | ')  # Only one '|' -> 2 splits
+        region, subregion = location.split(' | ')  # Only one '|' -> 2 splits
         shard_name = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', code)
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             # Retrieve zone entry with building type
@@ -542,7 +544,7 @@ class ModuleStockpiles(commands.Cog):
         await interaction.response.send_modal(display_modal)
 
     # AUTOCOMPLETE METHODS
-    @stockpile_create.autocomplete('localisation')
+    @stockpile_create.autocomplete('location')
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
         :param interaction: discord command interaction object
