@@ -17,7 +17,7 @@ from src.utils import (
     DataFilesPath,
     InterfacesTypes,
     Shard,
-    get_user_access_level,
+    get_user_access_level, OisolLogger,
 )
 
 from .stockpile_view_menu import (
@@ -83,7 +83,7 @@ class ModuleStockpiles(commands.Cog):
         """
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             user_level = get_user_access_level(conn, user_roles, guild_id, channel_id, message_id)
-
+            OisolLogger('oisol').info(f'User level is {user_level}')
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
                 'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ? ORDER BY Region, Subregion',
@@ -262,6 +262,8 @@ class ModuleStockpiles(commands.Cog):
             interface_message_id,
             interface_association_id,
         )
+
+        self.bot.logger.info(f'available stockpiles are: {available_user_stockpiles}')
 
         # Case where there is no stockpiles to refresh or no stockpiles the user has access to available for deletion
         if len(available_user_stockpiles) == 0:

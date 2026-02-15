@@ -376,6 +376,8 @@ class StockpileEditDropDownSelect(discord.ui.Select):
                 emoji=self.__emojis_dict[f'{stockpile_type}_{faction}'.lower()],
             ))
 
+        OisolLogger('oisol').info(f'Options are: {options}')
+
         super().__init__(
             placeholder='Choose the stockpiles you want to edit',
             options=options,
@@ -757,8 +759,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
         emoji='📥',
     )
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OisolLogger('oisol').interface(
-            f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
+        OisolLogger('oisol').interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
