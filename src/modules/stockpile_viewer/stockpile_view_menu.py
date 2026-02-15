@@ -665,7 +665,7 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
                 value_string += f'### **{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{guild_faction}'.lower()]})\n'
                 for name, code_level in vv.items():
                     code, level, owner_id = code_level.split('_')
-                    value_string += f'- {name} ({level})'
+                    value_string += f'> {name} ({level})'
                     if owner_id != 'None':
                         value_string += f' **|** <@{owner_id}>'
                     value_string += f' **|** `{code}`\n'
