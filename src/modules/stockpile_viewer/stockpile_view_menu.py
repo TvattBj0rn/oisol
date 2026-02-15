@@ -8,6 +8,7 @@ from thefuzz import process
 
 from src.utils import (
     OISOL_HOME_PATH,
+    STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
     DataFilesPath,
     DiscordIdType,
     Faction,
@@ -23,6 +24,7 @@ class StockpilesViewMenu(discord.ui.View):
     """
     Main menu interface of the stockpiles module
     """
+
     def __init__(self):
         super().__init__(timeout=None)
 
@@ -30,12 +32,12 @@ class StockpilesViewMenu(discord.ui.View):
     def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str, emojis_dict: dict) -> list:
         # Group stockpiles by regions
         grouped_stockpiles = {}
-        for region, subregion, code, name, building_type, level in guild_stockpiles:
+        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
             if region not in grouped_stockpiles:
                 grouped_stockpiles[region] = {}
             if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
                 grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
-            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}'
+            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
 
         # Sort all keys in dict and subdicts by key
         sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
@@ -47,10 +49,13 @@ class StockpilesViewMenu(discord.ui.View):
             for subregion_type, vv in v.items():
                 value_string += f'**{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'.lower()]})\n'
                 for name, code_level in vv.items():
-                    code, level = code_level.split('_')
-                    value_string += f'{name} **|** ({level}) {code}\n'
+                    code, level, owner_id = code_level.split('_')
+                    value_string += f'{name} ({level}) **|** {code}'
+                    if owner_id != 'None':
+                        value_string += f' **|** <@{owner_id}>'
+                    value_string += '\n'
                 value_string += '\n'
-            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
+            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': False})
         return embed_fields
 
     def generate_stockpile_embed_data(
@@ -66,9 +71,11 @@ class StockpilesViewMenu(discord.ui.View):
             'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction, emojis_dict),
         }
 
-    @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:View', label='View Stockpiles', emoji='📥')
+    @discord.ui.button(style=discord.ButtonStyle.blurple, custom_id='Stockpile:View', label='View Stockpiles',
+                       emoji='📥')
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OisolLogger('oisol').interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
+        OisolLogger('oisol').interface(
+            f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -89,11 +96,12 @@ class StockpilesViewMenu(discord.ui.View):
 
             # Retrieve the interface's stockpiles, using the user's level access level
             access_level_stockpiles = cursor.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level, Owner From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
                 (user_level, association_id),
             ).fetchall()
         if not access_level_stockpiles:
-            await interaction.response.send_message('> There are currently no stockpiles for your access level', ephemeral=True, delete_after=5)
+            await interaction.response.send_message('> There are currently no stockpiles for your access level',
+                                                    ephemeral=True, delete_after=5)
             return
 
         # Get group faction
@@ -110,14 +118,18 @@ class StockpilesViewMenu(discord.ui.View):
             )),
             ephemeral=True,
         )
+        # First live tests will be on FCF
+        if interaction.guild_id == 1125790880922607616:
+            await auto_migrate_stockpile_interface(interaction.guild, interaction.message,
+                                                   interaction.client.app_emojis_dict)
 
     @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Roles', label='Edit Roles', emoji='✏️')
     async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         if interaction.user.name != interaction.message.embeds[0].footer.text:
-            await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True, delete_after=5)
+            await interaction.response.send_message('> Only the creator of the interface can do this action',
+                                                    ephemeral=True, delete_after=5)
             return
         await interaction.response.send_modal(StockpileEditRolesModal(interaction))
-
 
     @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Share', label='Share ID', emoji='🔗')
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
@@ -127,7 +139,8 @@ class StockpilesViewMenu(discord.ui.View):
         Then the association id is retrieved and sent in an ephemeral message.
         """
         if interaction.user.name != interaction.message.embeds[0].footer.text:
-            await interaction.response.send_message('> Only the creator of the interface can do this action', ephemeral=True, delete_after=5)
+            await interaction.response.send_message('> Only the creator of the interface can do this action',
+                                                    ephemeral=True, delete_after=5)
             return
         OisolLogger('oisol').interface(f'share id interaction by {interaction.user.name} on {interaction.guild.name}')
 
@@ -138,7 +151,6 @@ class StockpilesViewMenu(discord.ui.View):
                 (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
-
 
 
 class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
@@ -173,7 +185,8 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
             ))
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        OisolLogger('oisol').interface(f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
+        OisolLogger('oisol').interface(
+            f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
         interface_new_roles = []
 
         # Create the parameters for the SQL query
@@ -181,13 +194,14 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
             roles_select_input = self.find_item(level_value)
             # The case this prevents should not exist, but it properly integrates the typing
             if not (
-                isinstance(roles_select_input, discord.ui.Label)
-                and isinstance(roles_select_input.component, discord.ui.RoleSelect)
+                    isinstance(roles_select_input, discord.ui.Label)
+                    and isinstance(roles_select_input.component, discord.ui.RoleSelect)
             ):
                 continue
             # There can be multiple selected roles, here all available role are added within a generator
             interface_new_roles.extend(
-                (interaction.guild_id, interaction.channel_id, interaction.message.id, role.id, DiscordIdType.ROLE.name, level_value)
+                (interaction.guild_id, interaction.channel_id, interaction.message.id, role.id, DiscordIdType.ROLE.name,
+                 level_value)
                 for role in roles_select_input.component.values
             )
 
@@ -206,8 +220,8 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
 
             conn.commit()
 
-        await interaction.response.send_message('> The interface roles were properly updated', ephemeral=True, delete_after=5)
-
+        await interaction.response.send_message('> The interface roles were properly updated', ephemeral=True,
+                                                delete_after=5)
 
     @staticmethod
     def __fetch_role(guild_roles: list[discord.Role], role_id: int) -> discord.Role | None:
@@ -215,6 +229,7 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
             if role.id == role_id:
                 return role
         return None
+
 
 class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
     def __init__(self, user_access_level: int, association_id: str):
@@ -225,26 +240,28 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
     user_information = discord.ui.TextDisplay(
         content='Separator is `|`\n'
                 'Each row a different stockpile, in the following format:\n'
-                '`name | code | region | subregion | level`\n\n'
+                '`name | code | region | subregion | level | owner`\n\n'
                 '`name`: name of your stockpile (required)\n'
                 '`code`: code of your stockpile (required)\n'
                 '`region`: region name of your stockpile (required)\n'
                 '`subregion`: subregion name of your stockpile (required)\n'
-                '`level`: level of access of your stockpile (optional)\n',
+                '`level`: level of access of your stockpile (optional)\n'
+                '`owner`: discord username owning the stock, you by default (optional)'
+        ,
     )
 
     stockpiles_input = discord.ui.TextInput(
         label='User input',
         style=discord.TextStyle.long,
         required=True,
-        placeholder='name | code | region | subregion | level',
+        placeholder='name | code | region | subregion | level | owner',
     )
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         stockpile_rows = self.stockpiles_input.value.split('\n')
 
-        valid_stockpiles = [] # list[tuple[str]]
-        invalid_stockpiles = [] # list[tuple[str, str]]
+        valid_stockpiles = []  # list[tuple[str]]
+        invalid_stockpiles = []  # list[tuple[str, str]]
 
         # Retrieve shard of the guild the command is run from
         config = configparser.ConfigParser()
@@ -262,12 +279,31 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
 
         for stockpile_raw_info in stockpile_rows:
             split_info = [striped_field.strip() for striped_field in stockpile_raw_info.split('|')]
+            name, code, region, subregion, owner, access_level, owner_discord_user = None, None, None, None, None, None, None
+            match len(split_info):
+                case 4:
+                    name, code, region, subregion = split_info
+                    access_level = '1'
+                    owner = interaction.user.name
+                case 5:
+                    # Assume that if last is a digit, it is an access level, not a username
+                    if split_info[-1].isdigit():
+                        name, code, region, subregion, access_level = split_info
+                        owner = interaction.user.name
+                    else:
+                        name, code, region, subregion, owner = split_info
+                        access_level = '1'
+                case 6:
+                    name, code, region, subregion, access_level, owner = split_info
+                case _:
+                    # Ensure the correct amount of info was given
+                    invalid_stockpiles.append((stockpile_raw_info, 'incorrect number of parameters'))
+                    continue
 
-            # Ensure the correct amount of info was given
-            if len(split_info) != 5:
-                invalid_stockpiles.append((stockpile_raw_info, 'incorrect number of parameters'))
+            # Validate owner
+            if owner is not None and (owner_discord_user := interaction.guild.get_member_named(owner)) is None:
+                invalid_stockpiles.append((stockpile_raw_info, 'invalid owner'))
                 continue
-            name, code, region, subregion, access_level = split_info
 
             # Validate code
             if len(code) != 6 or not code.isdigit():
@@ -285,13 +321,13 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
             region = subregions_to_region[subregion]
 
             valid_stockpiles.append(
-                (self._association_id, region, subregion, code, name, subregion_to_type[subregion], access_level),
+                (self._association_id, region, subregion, code, name, subregion_to_type[subregion], access_level, owner_discord_user.id if owner_discord_user is not None else None),
             )
 
         # Add validated stockpiles to the db
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             conn.cursor().executemany(
-                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 valid_stockpiles,
             )
             conn.commit()
@@ -325,7 +361,8 @@ class StockpileEditDropDownSelect(discord.ui.Select):
                 emoji=self.__emojis_dict[f'{stockpile_type}_{faction}'.lower()],
             ))
 
-        super().__init__(placeholder='Choose the stockpiles you want to edit', options=options, max_values=len(options) if len(options) < 5 else 5)
+        super().__init__(placeholder='Choose the stockpiles you want to edit', options=options,
+                         max_values=len(options) if len(options) < 5 else 5)
 
     async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.send_modal(StockpileEditModal(
@@ -356,7 +393,8 @@ class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
             )
 
             # save stockpile infos to be used on submit
-            self._selected_stockpiles_buffer[text_input.custom_id.__hash__()] = [association_id, region, subregion, name]
+            self._selected_stockpiles_buffer[text_input.custom_id.__hash__()] = [association_id, region, subregion,
+                                                                                 name]
 
             self.add_item(text_input)
 
@@ -414,7 +452,7 @@ class StockpileBulkDeleteModalStockpileDisplay(discord.ui.Modal, title='Stockpil
             value=f'{name}@{region}@{subregion}@{code}@{access_level}',
             emoji=emojis_dict[f'{stockpile_type}_{faction}'.lower()],
         ) for region, subregion, code, name, stockpile_type, access_level in stockpiles_info],
-        25))
+            25))
 
         # Each chunk is added as a separate field
         for i, chunk in enumerate(options_list):
@@ -447,7 +485,8 @@ class StockpileBulkDeleteModalStockpileDisplay(discord.ui.Modal, title='Stockpil
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True, delete_after=5)
+        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True,
+                                                delete_after=5)
 
 
 class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
@@ -502,7 +541,9 @@ class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpil
 
             for selected_subregion in modal_select.values:
                 selected_subregion = selected_subregion.split(' (in ')
-                stockpiles_to_delete.append((selected_subregion[1].removesuffix(')'), selected_subregion[0], self.__association_id, self.__level))
+                stockpiles_to_delete.append(
+                    (selected_subregion[1].removesuffix(')'), selected_subregion[0], self.__association_id,
+                     self.__level))
 
         # Delete all user selected stockpiles from subregion
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -512,7 +553,8 @@ class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpil
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True, delete_after=5)
+        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True,
+                                                delete_after=5)
 
 
 class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
@@ -574,4 +616,253 @@ class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile b
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True, delete_after=5)
+        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True,
+                                                delete_after=5)
+
+
+class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
+    def __init__(
+            self,
+            emojis_dict: dict[str, str],
+            stockpile_data: list[tuple],
+            guild_faction: str,
+            user_access_level: int,
+    ):
+        super().__init__(timeout=None)
+        stockpiles_content = self.__generate_stockpiles_content(emojis_dict, stockpile_data, guild_faction)
+        display_stockpiles_container = discord.ui.Container(
+            # Title
+            discord.ui.TextDisplay(content=f'## Access Level {user_access_level}'),
+            discord.ui.Separator(),
+            *stockpiles_content,
+        )
+
+        # Color cannot be set as named parameter after a star expression
+        faction_color_code = Faction[guild_faction].value
+        display_stockpiles_container.accent_colour = faction_color_code
+
+        self.add_item(display_stockpiles_container)
+
+    @staticmethod
+    def __generate_stockpile_embed_fields(emojis_dict: dict, guild_stockpiles: list[tuple], guild_faction: str) -> list:
+        # Group stockpiles by regions
+        grouped_stockpiles = {}
+        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
+            if region not in grouped_stockpiles:
+                grouped_stockpiles[region] = {}
+            if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
+                grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
+            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
+
+        # Sort all keys in dict and subdicts by key
+        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
+
+        # Set stockpiles to discord fields format
+        regions_strings = []
+        for region, v in sorted_grouped_stockpiles.items():
+            value_string = f'## **__{region.upper()}__**\n'
+            for subregion_type, vv in v.items():
+                value_string += f'### **{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{guild_faction}'.lower()]})\n'
+                for name, code_level in vv.items():
+                    code, level, owner_id = code_level.split('_')
+                    value_string += f'> {name} ({level})'
+                    if owner_id != 'None':
+                        value_string += f' **|** <@{owner_id}>'
+                    value_string += f' **|** `{code}`\n'
+                value_string += '\n'
+            regions_strings.append(value_string)
+        return regions_strings
+
+    def __generate_stockpiles_content(
+            self,
+            emojis_dict: dict[str, str],
+            stockpile_data: list[tuple],
+            guild_faction: str,
+    ) -> list[discord.TextDisplay]:
+        merged_strings = []
+        buffer = ''
+
+        for region_string in self.__generate_stockpile_embed_fields(emojis_dict, stockpile_data, guild_faction):
+            if len(buffer) + len(region_string) >= 4000:
+                merged_strings.append(buffer)
+                buffer = region_string
+            else:
+                buffer += region_string
+        merged_strings.append(buffer)
+
+        return [discord.ui.TextDisplay(region_string) for region_string in merged_strings]
+
+
+class StockpileMainInterface(discord.ui.LayoutView):
+    __stockpile_main_interface_buttons = discord.ui.ActionRow()
+
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    def reset_interface(
+            self,
+            emojis_dict: dict,
+            stockpile_interface_name: str,
+            user: discord.User | discord.Member,
+            guild_faction: str,
+    ) -> None:
+        self.clear_items()
+        self.add_item(
+            discord.ui.Container(
+                # Title
+                discord.ui.TextDisplay(
+                    content=f'## {emojis_dict.get('region')} | Stockpiles | {stockpile_interface_name}',
+                ),
+                discord.ui.Separator(),
+                # Main content
+                discord.ui.TextDisplay(
+                    content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
+                            '- **Edit Roles**: available only to the creator of the interface, edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
+                            '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
+                ),
+                discord.ui.Separator(),
+                # Interface editor
+                discord.ui.TextDisplay(
+                    content=f'> Interface editor: {user.mention}',
+                    id=STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
+                ),
+                discord.ui.Separator(),
+                # Buttons row
+                self.__stockpile_main_interface_buttons,
+                accent_colour=Faction[guild_faction].value,
+            ),
+        )
+
+    @__stockpile_main_interface_buttons.button(
+        style=discord.ButtonStyle.blurple,
+        custom_id='view_stockpiles',
+        label='View Stockpiles',
+        emoji='📥',
+    )
+    async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        OisolLogger('oisol').interface(
+            f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+
+            # Retrieve the maximum level of the author's interaction
+            user_level = get_user_access_level(
+                conn,
+                interaction.user.roles,
+                str(interaction.guild_id),
+                str(interaction.channel_id),
+                str(interaction.message.id),
+            )
+
+            # Retrieve the interface association id
+            association_id = cursor.execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (interaction.guild_id, interaction.channel_id, interaction.message.id),
+            ).fetchone()[0]
+
+            # Retrieve the interface's stockpiles, using the user's level access level
+            access_level_stockpiles = cursor.execute(
+                'SELECT Region, Subregion, Code, Name, Type, Level, Owner From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
+                (user_level, association_id),
+            ).fetchall()
+        if not access_level_stockpiles:
+            await interaction.response.send_message(
+                '> There are currently no stockpiles for your access level',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+
+        # Get group faction
+        config = configparser.ConfigParser()
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
+        group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
+
+        await interaction.response.send_message(
+            view=StockpileMainInterfaceViewStockpiles(interaction.client.app_emojis_dict, access_level_stockpiles,
+                                                      group_faction, user_level),
+            ephemeral=True,
+        )
+
+    @__stockpile_main_interface_buttons.button(
+        style=discord.ButtonStyle.grey,
+        custom_id='stockpiles_edit_roles',
+        label='Edit Roles',
+        emoji='✏️',
+    )
+    async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        # Stockpile main interface contains a single container component with multiple children
+        editor_container = next(component for component in interaction.message.components[0].children if
+                                component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
+
+        # editor_container is of type discord.components.TextDisplay here
+        if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
+            await interaction.response.send_message(
+                '> Only the creator of the interface can do this action',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        await interaction.response.send_modal(StockpileEditRolesModal(interaction))
+
+    @__stockpile_main_interface_buttons.button(
+        style=discord.ButtonStyle.grey,
+        custom_id='stockpile_share_id',
+        label='Share ID',
+        emoji='🔗',
+    )
+    async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        """
+        Interaction when the Share button is clicked. Since only the user that created the interface can do this action,
+        a check is made to ensure the interaction author is the same as the username in the interface footer.
+        Then the association id is retrieved and sent in an ephemeral message.
+        """
+        # Stockpile main interface contains a single container component with multiple children
+        editor_container = next(component for component in interaction.message.components[0].children if
+                                component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
+
+        # editor_container is of type discord.components.TextDisplay here
+        if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
+            await interaction.response.send_message(
+                '> Only the creator of the interface can do this action',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        OisolLogger('oisol').interface(f'share id interaction by {interaction.user.name} on {interaction.guild.name}')
+
+        # Retrieve the association id using the interface guild, channel & message ids
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            association_id = conn.cursor().execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
+                (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
+            ).fetchone()
+        await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
+
+
+async def auto_migrate_stockpile_interface(
+        guild: discord.Guild,
+        interface_message: discord.Message,
+        emoji_dict: dict,
+) -> None:
+    oisol_logger = OisolLogger('oisol')
+    new_interface = StockpileMainInterface()
+
+    # Retrieve guild faction, for embed color
+    config = configparser.ConfigParser()
+    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini')
+    guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
+
+    # There can only be one embed
+    old_interface = interface_message.embeds[0]
+    interface_title = old_interface.title.split(' | ')[-1]
+    user = guild.get_member_named(old_interface.footer.text)
+
+    if user is None:
+        oisol_logger.warning(f'Could not migrate interface on {guild.name}')
+        return
+
+    new_interface.reset_interface(emoji_dict, interface_title, user, guild_faction)
+
+    await interface_message.edit(embed=None, view=new_interface)
+    oisol_logger.info(f'Stockpile interface was properly migrated on {guild.name}')

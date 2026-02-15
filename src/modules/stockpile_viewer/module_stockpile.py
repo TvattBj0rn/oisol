@@ -15,7 +15,6 @@ from discord.ext import commands
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    Faction,
     InterfacesTypes,
     Shard,
     get_user_access_level,
@@ -27,7 +26,7 @@ from .stockpile_view_menu import (
     StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
     StockpileEditDropDownView,
-    StockpilesViewMenu,
+    StockpileMainInterface,
 )
 
 if TYPE_CHECKING:
@@ -169,16 +168,13 @@ class ModuleStockpiles(commands.Cog):
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
+        main_interface_view = StockpileMainInterface()
+        main_interface_view.reset_interface(self.bot.app_emojis_dict, name, interaction.user, guild_faction)
+
         # Send default interface
         interface_message = await interaction.channel.send(
-            embed=discord.Embed.from_dict({
-                'title': f'{self.bot.app_emojis_dict.get('region')} | Stockpiles | {name}',
-                'color': Faction[guild_faction].value,
-                'description': '- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
-                               '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
-                'footer': {'text': interaction.user.name, 'icon_url': interaction.user.display_avatar.url},
-            }),
-            view=StockpilesViewMenu(),
+            view=main_interface_view,
+            silent=True,
         )
 
         # Create the stockpile interface on the table
@@ -314,7 +310,16 @@ class ModuleStockpiles(commands.Cog):
         name='stockpile-create',
         description=app_commands.locale_str('Create a new stockpile on a given interface/network'),
     )
-    async def stockpile_create(self, interaction: discord.Interaction, interface_name: str, code: str, localisation: str, stockpile_name: str, level: Literal['5', '4', '3', '2', '1'] = '1') -> None:
+    async def stockpile_create(
+            self,
+            interaction: discord.Interaction,
+            interface_name: str,
+            code: str,
+            localisation: str,
+            stockpile_name: str,
+            level: Literal['5', '4', '3', '2', '1'] = '1',
+            stockpile_creator: discord.User | None = None,
+    ) -> None:
         self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
@@ -332,6 +337,10 @@ class ModuleStockpiles(commands.Cog):
                 delete_after=5,
             )
             return
+
+        # Ensures stockpiles_creator is of type discord.User
+        if stockpile_creator is None:
+            stockpile_creator = interaction.user
 
         interface_guild_id, interface_channel_id, interface_message_id, _ = ids_list
 
@@ -365,8 +374,8 @@ class ModuleStockpiles(commands.Cog):
 
             # Insert new stockpile to db
             cursor.execute(
-                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level)),
+                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level), stockpile_creator.id),
             )
             conn.commit()
 
