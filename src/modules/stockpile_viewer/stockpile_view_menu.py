@@ -123,6 +123,7 @@ class StockpilesViewMenu(discord.ui.View):
                 interaction.client.app_emojis_dict,
             )),
             ephemeral=True,
+            silent=True,
         )
         # First live tests will be on FCF
         if interaction.guild_id == 1125790880922607616:
@@ -813,6 +814,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 user_level,
             ),
             ephemeral=True,
+            silent=True,
         )
 
     @__stockpile_main_interface_buttons.button(
@@ -848,8 +850,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
         Then the association id is retrieved and sent in an ephemeral message.
         """
         # Stockpile main interface contains a single container component with multiple children
-        editor_container = next(component for component in interaction.message.components[0].children if
-                                component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
+        editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
 
         # editor_container is of type discord.components.TextDisplay here
         if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
