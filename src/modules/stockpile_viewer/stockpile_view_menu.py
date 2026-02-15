@@ -200,8 +200,7 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
             ))
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        OisolLogger('oisol').interface(
-            f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
+        OisolLogger('oisol').interface(f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
         interface_new_roles = []
 
         # Create the parameters for the SQL query
@@ -227,16 +226,17 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
                 'DELETE FROM GroupsInterfacesAccess WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
                 (interaction.guild_id, interaction.channel_id, interaction.message.id),
             )
-
             cursor.executemany(
                 'INSERT INTO GroupsInterfacesAccess (GroupId, ChannelId, MessageId, DiscordId, DiscordIdType, Level) VALUES (?, ?, ?, ?, ?, ?)',
                 interface_new_roles,
             )
-
             conn.commit()
 
-        await interaction.response.send_message('> The interface roles were properly updated', ephemeral=True,
-                                                delete_after=5)
+        await interaction.response.send_message(
+            '> The interface roles were properly updated',
+            ephemeral=True,
+            delete_after=5,
+        )
 
     @staticmethod
     def __fetch_role(guild_roles: list[discord.Role], role_id: int) -> discord.Role | None:
@@ -505,8 +505,11 @@ class StockpileBulkDeleteModalStockpileDisplay(discord.ui.Modal, title='Stockpil
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True,
-                                                delete_after=5)
+        await interaction.response.send_message(
+            '> The stockpiles were properly deleted',
+            ephemeral=True,
+            delete_after=5,
+        )
 
 
 class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
@@ -573,8 +576,11 @@ class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpil
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True,
-                                                delete_after=5)
+        await interaction.response.send_message(
+            '> The stockpiles were properly deleted',
+            ephemeral=True,
+            delete_after=5,
+        )
 
 
 class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
@@ -636,8 +642,11 @@ class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile b
             )
             conn.commit()
 
-        await interaction.response.send_message('> The stockpiles were properly deleted', ephemeral=True,
-                                                delete_after=5)
+        await interaction.response.send_message(
+            '> The stockpiles were properly deleted',
+            ephemeral=True,
+            delete_after=5,
+        )
 
 
 class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
@@ -797,8 +806,12 @@ class StockpileMainInterface(discord.ui.LayoutView):
         group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
         await interaction.response.send_message(
-            view=StockpileMainInterfaceViewStockpiles(interaction.client.app_emojis_dict, access_level_stockpiles,
-                                                      group_faction, user_level),
+            view=StockpileMainInterfaceViewStockpiles(
+                interaction.client.app_emojis_dict,
+                access_level_stockpiles,
+                group_faction,
+                user_level,
+            ),
             ephemeral=True,
         )
 
@@ -810,8 +823,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
     )
     async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         # Stockpile main interface contains a single container component with multiple children
-        editor_container = next(component for component in interaction.message.components[0].children if
-                                component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
+        editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
 
         # editor_container is of type discord.components.TextDisplay here
         if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
