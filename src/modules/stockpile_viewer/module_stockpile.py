@@ -315,7 +315,7 @@ class ModuleStockpiles(commands.Cog):
             interaction: discord.Interaction,
             interface_name: str,
             code: str,
-            localisation: str,
+            location: str,
             stockpile_name: str,
             level: Literal['5', '4', '3', '2', '1'] = '1',
             stockpile_creator: discord.User | None = None,
@@ -327,7 +327,7 @@ class ModuleStockpiles(commands.Cog):
 
         if any(validations := (
                 self._validate_stockpile_code(code),
-                self._validate_stockpile_localisation(localisation),
+                self._validate_stockpile_localisation(location),
                 self._validate_stockpile_ids(ids_list),
                 'Access level is invalid' if str(level) not in ['1', '2', '3', '4', '5'] else None,
         )):
@@ -362,7 +362,7 @@ class ModuleStockpiles(commands.Cog):
             )
             return
 
-        region, subregion = localisation.split(' | ')  # Only one '|' -> 2 splits
+        region, subregion = location.split(' | ')  # Only one '|' -> 2 splits
         shard_name = get_current_shard(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', code)
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             # Retrieve zone entry with building type
@@ -542,7 +542,7 @@ class ModuleStockpiles(commands.Cog):
         await interaction.response.send_modal(display_modal)
 
     # AUTOCOMPLETE METHODS
-    @stockpile_create.autocomplete('localisation')
+    @stockpile_create.autocomplete('location')
     async def region_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
         """
         :param interaction: discord command interaction object
