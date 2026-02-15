@@ -55,7 +55,7 @@ class StockpilesViewMenu(discord.ui.View):
                         value_string += f' **|** <@{owner_id}>'
                     value_string += '\n'
                 value_string += '\n'
-            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': False})
+            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
         return embed_fields
 
     def generate_stockpile_embed_data(
