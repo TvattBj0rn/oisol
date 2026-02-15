@@ -34,7 +34,7 @@ class ProductionTemplate:
         is_short_mpf = False
 
         # For vehicles, base cost depend on the number of vehicles per output crate
-        if mpf_parameters.get('Source', '') == 'Garage':
+        if mpf_parameters.get('Source', '') in ['Garage', 'Construction Yard']:
             is_short_mpf = True
             cost_multiplier = 5 if mpf_parameters['CrateCapacity'] == '5' else 3
             for i in range(1, 7):
@@ -106,7 +106,7 @@ class ProductionTemplate:
             })
 
             self.__output.append(structure_embed)
-            if production_method.get('IsMPFable', False) == '1' and production_method['Source'] in ['Garage', 'Factory']:
+            if production_method.get('IsMPFable', False) == '1' and production_method['Source'] in ['Garage', 'Factory', 'Construction Yard']:
                 available_structs.add('Mass Production Factory')
                 self.__process_mpf(production_method.copy())
 
