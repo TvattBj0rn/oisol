@@ -687,7 +687,6 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
                     if owner_id != 'None':
                         value_string += f' **|** <@{owner_id}>'
                     value_string += f' **|** `{code}`\n'
-                value_string += '\n'
             regions_strings.append(value_string)
         return regions_strings
 
