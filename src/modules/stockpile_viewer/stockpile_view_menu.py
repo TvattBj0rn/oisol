@@ -125,13 +125,12 @@ class StockpilesViewMenu(discord.ui.View):
             ephemeral=True,
             silent=True,
         )
-        # First live tests will be on FCF
-        if interaction.guild_id == 1125790880922607616:
-            await auto_migrate_stockpile_interface(
-                interaction.guild,
-                interaction.message,
-                interaction.client.app_emojis_dict,
-            )
+
+        await auto_migrate_stockpile_interface(
+            interaction.guild,
+            interaction.message,
+            interaction.client.app_emojis_dict,
+        )
 
     @discord.ui.button(style=discord.ButtonStyle.grey, custom_id='Stockpile:Roles', label='Edit Roles', emoji='✏️')
     async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
