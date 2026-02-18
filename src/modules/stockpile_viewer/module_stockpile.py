@@ -16,8 +16,9 @@ from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     InterfacesTypes,
+    OisolLogger,
     Shard,
-    get_user_access_level, OisolLogger,
+    get_user_access_level,
 )
 
 from .stockpile_view_menu import (
