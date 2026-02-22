@@ -848,8 +848,18 @@ class StockpileMainInterface(discord.ui.LayoutView):
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
+        # await interaction.response.send_message(
+        #     view=StockpileMainInterfaceViewStockpiles(interaction.client.app_emojis_dict, access_level_stockpiles, group_faction, user_level),
+        #     ephemeral=True,
+        #     silent=True,
+        # )
         await interaction.response.send_message(
-            view=StockpileMainInterfaceViewStockpiles(interaction.client.app_emojis_dict, access_level_stockpiles, group_faction, user_level),
+            embed=discord.Embed.from_dict(self.__generate_stockpile_embed_data(
+                access_level_stockpiles,
+                user_level,
+                group_faction,
+                interaction.client.app_emojis_dict,
+            )),
             ephemeral=True,
             silent=True,
         )
