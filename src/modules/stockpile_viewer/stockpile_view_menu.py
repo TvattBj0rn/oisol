@@ -413,8 +413,7 @@ class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
             )
 
             # save stockpile infos to be used on submit
-            self._selected_stockpiles_buffer[text_input.custom_id.__hash__()] = [association_id, region, subregion,
-                                                                                 name]
+            self._selected_stockpiles_buffer[text_input.custom_id.__hash__()] = [association_id, region, subregion, name]
 
             self.add_item(text_input)
 
@@ -761,49 +760,6 @@ class StockpileMainInterface(discord.ui.LayoutView):
             ),
         )
 
-    @staticmethod
-    def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str, emojis_dict: dict) -> list:
-        # Group stockpiles by regions
-        grouped_stockpiles = {}
-        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
-            if region not in grouped_stockpiles:
-                grouped_stockpiles[region] = {}
-            if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
-                grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
-            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
-
-        # Sort all keys in dict and subdicts by key
-        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
-
-        # Set stockpiles to discord fields format
-        embed_fields = []
-        for region, v in sorted_grouped_stockpiles.items():
-            value_string = ''
-            for subregion_type, vv in v.items():
-                value_string += f'**{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'.lower()]})\n'
-                for name, code_level in vv.items():
-                    code, level, owner_id = code_level.split('_')
-                    value_string += f'- {name} ({level})'
-                    if owner_id != 'None':
-                        value_string += f' **|** <@{owner_id}>'
-                    value_string += f' **|** `{code}`\n'
-                value_string += '\n'
-            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
-        return embed_fields
-
-    def __generate_stockpile_embed_data(
-            self,
-            stockpiles_data: list[tuple],
-            user_access_level: int,
-            group_faction: str,
-            emojis_dict: dict,
-    ) -> dict[str, str | list]:
-        return {
-            'title': f'Access Level {user_access_level}',
-            'color': Faction[group_faction].value,
-            'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction, emojis_dict),
-        }
-
     @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.blurple,
         custom_id='view_stockpiles',
@@ -858,16 +814,6 @@ class StockpileMainInterface(discord.ui.LayoutView):
             ephemeral=True,
             silent=True,
         )
-        # await interaction.response.send_message(
-        #     embed=discord.Embed.from_dict(self.__generate_stockpile_embed_data(
-        #         access_level_stockpiles,
-        #         user_level,
-        #         group_faction,
-        #         interaction.client.app_emojis_dict,
-        #     )),
-        #     ephemeral=True,
-        #     silent=True,
-        # )
 
     @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.grey,
