@@ -849,7 +849,12 @@ class StockpileMainInterface(discord.ui.LayoutView):
         group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
         await interaction.response.send_message(
-            view=StockpileMainInterfaceViewStockpiles(interaction.client.app_emojis_dict, access_level_stockpiles, group_faction, user_level),
+            view=StockpileMainInterfaceViewStockpiles(
+                interaction.client.app_emojis_dict,
+                access_level_stockpiles,
+                group_faction,
+                user_level,
+            ),
             ephemeral=True,
             silent=True,
         )
