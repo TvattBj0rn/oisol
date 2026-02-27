@@ -711,7 +711,7 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
         buffer = ''
 
         for region_string in self.__generate_stockpile_embed_fields(emojis_dict, stockpile_data, guild_faction):
-            if len(buffer) + len(region_string) >= 3000:
+            if len(buffer) + len(region_string) >= 2750:
                 merged_strings.append(buffer)
                 buffer = region_string
             else:
@@ -848,21 +848,26 @@ class StockpileMainInterface(discord.ui.LayoutView):
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
-        # await interaction.response.send_message(
-        #     view=StockpileMainInterfaceViewStockpiles(interaction.client.app_emojis_dict, access_level_stockpiles, group_faction, user_level),
-        #     ephemeral=True,
-        #     silent=True,
-        # )
         await interaction.response.send_message(
-            embed=discord.Embed.from_dict(self.__generate_stockpile_embed_data(
-                access_level_stockpiles,
-                user_level,
-                group_faction,
+            view=StockpileMainInterfaceViewStockpiles(
                 interaction.client.app_emojis_dict,
-            )),
+                access_level_stockpiles,
+                group_faction,
+                user_level,
+            ),
             ephemeral=True,
             silent=True,
         )
+        # await interaction.response.send_message(
+        #     embed=discord.Embed.from_dict(self.__generate_stockpile_embed_data(
+        #         access_level_stockpiles,
+        #         user_level,
+        #         group_faction,
+        #         interaction.client.app_emojis_dict,
+        #     )),
+        #     ephemeral=True,
+        #     silent=True,
+        # )
 
     @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.grey,
