@@ -355,6 +355,41 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
         await interaction.response.send_message(response_string, ephemeral=True)
 
 
+class StockpileRefreshCodesModal(discord.ui.Modal):
+    def __init__(
+            self,
+            stockpiles_data: list[tuple],
+            group_faction: str,
+            emojis_dict: dict,
+    ):
+        super().__init__(timeout=None, title='Stockpiles refresh codes')
+
+        stockpiles_string_display = ''
+        previous_region = None
+        previous_subregion = None
+
+        for region, subregion, code, name, storage_type, _ in stockpiles_data:
+            if region != previous_region:
+                stockpiles_string_display += f'# {region}\n'
+                previous_region = region
+            if subregion != previous_subregion:
+                stockpiles_string_display += f'## {subregion}\n'
+                previous_subregion = subregion
+            stockpiles_string_display += f'{name} | `{code}`\n'
+
+        print(len(stockpiles_string_display))
+        self.add_item(
+            discord.ui.TextDisplay(content=stockpiles_string_display),
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                label='Update existing codes, one stockpile per row',
+                placeholder='111111 222222\n777777 888888\n...',
+                style=discord.TextStyle.long,
+            )
+        )
+
+
 class StockpileEditDropDownView(discord.ui.View):
     def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
         super().__init__(timeout=None)

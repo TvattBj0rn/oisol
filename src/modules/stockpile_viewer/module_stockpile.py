@@ -27,7 +27,7 @@ from .stockpile_view_menu import (
     StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
     StockpileEditDropDownView,
-    StockpileMainInterface,
+    StockpileMainInterface, StockpileRefreshCodesModal,
 )
 
 if TYPE_CHECKING:
@@ -264,8 +264,6 @@ class ModuleStockpiles(commands.Cog):
             interface_association_id,
         )
 
-        self.bot.logger.info(f'available stockpiles are: {available_user_stockpiles}')
-
         # Case where there is no stockpiles to refresh or no stockpiles the user has access to available for deletion
         if len(available_user_stockpiles) == 0:
             await interaction.response.send_message('> There are currently no stockpiles available for refresh', ephemeral=True, delete_after=5)
@@ -273,9 +271,12 @@ class ModuleStockpiles(commands.Cog):
 
         guild_faction = self._get_guild_faction(interaction.guild_id)
 
-        await interaction.response.send_message(
-            view=StockpileEditDropDownView(available_user_stockpiles, guild_faction, interface_association_id, self.bot.app_emojis_dict),
-            ephemeral=True,
+        await interaction.response.send_modal(
+            StockpileRefreshCodesModal(
+                available_user_stockpiles,
+                guild_faction,
+                self.bot.app_emojis_dict,
+            ),
         )
 
     @app_commands.command(
