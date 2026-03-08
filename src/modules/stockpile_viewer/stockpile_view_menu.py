@@ -4,7 +4,6 @@ import warnings
 
 import discord
 from discord import Interaction
-from discord._types import ClientT
 from thefuzz import process
 
 from src.utils import (
@@ -17,7 +16,8 @@ from src.utils import (
     OisolLogger,
     chunks,
     get_user_access_level,
-    sort_nested_dicts_by_key, validate_stockpile_code,
+    sort_nested_dicts_by_key,
+    validate_stockpile_code,
 )
 
 
@@ -367,7 +367,7 @@ class StockpileRefreshCodesModal(discord.ui.Modal):
         previous_region = None
         previous_subregion = None
 
-        for region, subregion, code, name, storage_type, _ in stockpiles_data:
+        for region, subregion, code, name, _, _ in stockpiles_data:
             if region != previous_region:
                 stockpiles_string_display += f'# {region}\n'
                 previous_region = region
@@ -385,7 +385,7 @@ class StockpileRefreshCodesModal(discord.ui.Modal):
                 placeholder='111111 222222\n777777 888888\n...',
                 style=discord.TextStyle.long,
                 id=778866,
-            )
+            ),
         )
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
