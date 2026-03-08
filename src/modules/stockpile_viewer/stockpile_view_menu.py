@@ -438,42 +438,6 @@ class StockpileRefreshCodesModal(discord.ui.Modal):
         await interaction.response.send_message(response_string, ephemeral=True)
 
 
-class StockpileEditDropDownView(discord.ui.View):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
-        super().__init__(timeout=None)
-        self.add_item(StockpileEditDropDownSelect(stockpiles_info, faction, association_id, emojis_dict))
-
-
-class StockpileEditDropDownSelect(discord.ui.Select):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emoji_dict: dict):
-        self.interaction_association_id = association_id
-        self.stockpiles_info = stockpiles_info
-        self.__emojis_dict = emoji_dict
-
-        # Add user interactions
-        options = []
-        for region, subregion, code, name, stockpile_type, access_level in stockpiles_info:
-            options.append(discord.SelectOption(
-                label=f'{name} | {subregion} in {region} | {code} ({access_level})',
-                value=f'{region}@{subregion}@{code}@{name}@{access_level}',
-                emoji=self.__emojis_dict[f'{stockpile_type}_{faction}'.lower()],
-            ))
-
-        OisolLogger('oisol').info(f'Options are: {options}')
-
-        super().__init__(
-            placeholder='Choose the stockpiles you want to edit',
-            options=options,
-            max_values=len(options) if len(options) < 5 else 5,
-        )
-
-    async def callback(self, interaction: discord.Interaction) -> None:
-        await interaction.response.send_modal(StockpileEditModal(
-            [selected_option.split('@') for selected_option in self.values],
-            self.interaction_association_id,
-        ))
-
-
 class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
     def __init__(self, selected_stockpiles_data: list[list[str]], association_id: str):
         super().__init__()

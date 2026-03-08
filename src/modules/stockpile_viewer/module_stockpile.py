@@ -26,7 +26,8 @@ from .stockpile_view_menu import (
     StockpileBulkDeleteModalStockpileDisplay,
     StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
-    StockpileMainInterface, StockpileRefreshCodesModal,
+    StockpileMainInterface,
+    StockpileRefreshCodesModal,
 )
 
 if TYPE_CHECKING:
