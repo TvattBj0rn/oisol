@@ -4,6 +4,7 @@ import warnings
 
 import discord
 from discord import Interaction
+from discord._types import ClientT
 from thefuzz import process
 
 from src.utils import (
@@ -16,7 +17,7 @@ from src.utils import (
     OisolLogger,
     chunks,
     get_user_access_level,
-    sort_nested_dicts_by_key,
+    sort_nested_dicts_by_key, validate_stockpile_code,
 )
 
 
@@ -356,13 +357,11 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
 
 
 class StockpileRefreshCodesModal(discord.ui.Modal):
-    def __init__(
-            self,
-            stockpiles_data: list[tuple],
-            group_faction: str,
-            emojis_dict: dict,
-    ):
+    def __init__(self, stockpiles_data: list[tuple], association_id: str):
         super().__init__(timeout=None, title='Stockpiles refresh codes')
+
+        self.__interaction_association_id = association_id
+        self.__user_stockpiles_data = stockpiles_data
 
         stockpiles_string_display = ''
         previous_region = None
@@ -377,7 +376,6 @@ class StockpileRefreshCodesModal(discord.ui.Modal):
                 previous_subregion = subregion
             stockpiles_string_display += f'{name} | `{code}`\n'
 
-        print(len(stockpiles_string_display))
         self.add_item(
             discord.ui.TextDisplay(content=stockpiles_string_display),
         )
@@ -386,8 +384,58 @@ class StockpileRefreshCodesModal(discord.ui.Modal):
                 label='Update existing codes, one stockpile per row',
                 placeholder='111111 222222\n777777 888888\n...',
                 style=discord.TextStyle.long,
+                id=778866,
             )
         )
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        # refreshed_codes_user_input is guaranteed to be of type discord.TextInput, as referred by the custom id
+        refreshed_codes_user_input = self.find_item(778866).value
+        all_refreshed_codes = refreshed_codes_user_input.split('\n')
+
+        # This prevent codes the user has no access to, to be overwritten
+        existing_user_codes = {stockpile_tuple[2] for stockpile_tuple in self.__user_stockpiles_data}
+
+        valid_refreshes = []
+        invalid_refreshes = []
+
+        # Validate retrieved codes, this does not ensure the validated codes are in the database
+        for refreshed_code in all_refreshed_codes:
+            old_new_codes = refreshed_code.split(' ')
+            if (
+                len(old_new_codes) != 2
+                or validate_stockpile_code(old_new_codes[0]) is not None
+                or validate_stockpile_code(old_new_codes[1]) is not None
+                or old_new_codes[0] not in existing_user_codes
+            ):
+                invalid_refreshes.append(refreshed_code)
+            else:
+                # Add as formatted data ready to be used in SQL query below
+                valid_refreshes.append((old_new_codes[1], old_new_codes[0], self.__interaction_association_id))
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Replace old codes with new codes in a given network (association_id)
+            # Currently, it is assumed that the probability of having two different stockpiles with same code is near
+            # impossible, with 100 stockpiles on a network, with codes between 0 and 999999, the probability of
+            # having two at least two exact matches is 0.00000049496865108080689886%
+            # https://www.dcode.fr/loi-binomiale: N=100 & p=1/999999 & K=2, P(X >= 2) = 0.00000049496865108080689886%
+            # TLDR: this should not be a problem, even on a large coalition scale with 100 stockpiles simultaneously
+            cursor.executemany(
+                'UPDATE GroupsStockpilesList SET Code = ? WHERE Code == ? AND AssociationId == ?',
+                valid_refreshes,
+            )
+            conn.commit()
+
+        response_string = ''
+        if not invalid_refreshes and not valid_refreshes:
+            response_string = 'No codes were given for update'
+        else:
+            if invalid_refreshes:
+                response_string += f'The following code combinations could not be updated:\n- {'\n- '.join(comb for comb in invalid_refreshes)}\n'
+            if valid_refreshes:
+                response_string += f'The following codes were properly updated:\n- {'\n- '.join(f'{comb[1]} {comb[0]}' for comb in valid_refreshes)}'
+        await interaction.response.send_message(response_string, ephemeral=True)
 
 
 class StockpileEditDropDownView(discord.ui.View):

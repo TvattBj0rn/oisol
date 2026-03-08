@@ -16,9 +16,9 @@ from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     InterfacesTypes,
-    OisolLogger,
     Shard,
     get_user_access_level,
+    validate_stockpile_code,
 )
 
 from .stockpile_view_menu import (
@@ -26,7 +26,6 @@ from .stockpile_view_menu import (
     StockpileBulkDeleteModalStockpileDisplay,
     StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
-    StockpileEditDropDownView,
     StockpileMainInterface, StockpileRefreshCodesModal,
 )
 
@@ -269,14 +268,8 @@ class ModuleStockpiles(commands.Cog):
             await interaction.response.send_message('> There are currently no stockpiles available for refresh', ephemeral=True, delete_after=5)
             return
 
-        guild_faction = self._get_guild_faction(interaction.guild_id)
-
         await interaction.response.send_modal(
-            StockpileRefreshCodesModal(
-                available_user_stockpiles,
-                guild_faction,
-                self.bot.app_emojis_dict,
-            ),
+            StockpileRefreshCodesModal(available_user_stockpiles, interface_association_id),
         )
 
     @app_commands.command(
@@ -330,7 +323,7 @@ class ModuleStockpiles(commands.Cog):
         ids_list = interface_name.split('.')
 
         if any(validations := (
-                self._validate_stockpile_code(code),
+                validate_stockpile_code(code),
                 self._validate_stockpile_localisation(location),
                 self._validate_stockpile_ids(ids_list),
                 'Access level is invalid' if str(level) not in ['1', '2', '3', '4', '5'] else None,
@@ -427,7 +420,7 @@ class ModuleStockpiles(commands.Cog):
         ids_list = interface_name.split('.')
 
         if any(validations := (
-            self._validate_stockpile_code(stockpile_code),
+            validate_stockpile_code(stockpile_code),
             self._validate_stockpile_ids(ids_list),
         )):
             await interaction.response.send_message(
@@ -616,22 +609,7 @@ class ModuleStockpiles(commands.Cog):
             if current in interface_name
         ]
 
-    @staticmethod
-    def _validate_stockpile_code(code: str) -> str | None:
-        """
-        Ensure the validity of a Foxhole stockpile code by checking its length and its content (all digits is expected).
-        :param code: The code to test
-        :return: None if valid, the error message to send back to the user otherwise.
-        """
-        # Case where a user entered an invalid sized code
-        if len(code) != 6:
-            return '> The code must be a 6-digits code'
 
-        # Case where a user entered a code without digits only
-        if not code.isdigit():
-            return '> The code contains non digit characters'
-
-        return None
 
     @staticmethod
     def _validate_stockpile_localisation(localisation: str) -> str | None:
