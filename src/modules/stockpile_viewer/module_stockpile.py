@@ -370,6 +370,12 @@ class ModuleStockpiles(commands.Cog):
                 (shard_name, subregion),
             ).fetchone()[0]
 
+            # Try to fetch existing stockpile
+            existing_stockpile = cursor.execute(
+                'SELECT * FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?'
+            ).fetchone()
+
+            print(existing_stockpile)
             # Insert new stockpile to db
             cursor.execute(
                 'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
