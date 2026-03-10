@@ -732,6 +732,8 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
         # Sort all keys in dict and subdicts by key
         sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
 
+        print(grouped_stockpiles)
+
         # Set stockpiles to discord fields format
         regions_strings = []
         for region, v in sorted_grouped_stockpiles.items():
@@ -835,9 +837,10 @@ class StockpileMainInterface(discord.ui.LayoutView):
 
             # Retrieve the interface's stockpiles, using the user's level access level
             access_level_stockpiles = cursor.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level, Owner From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level, Owner From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ? ORDER BY Region ASC, Subregion ASC, Name ASC',
                 (user_level, association_id),
             ).fetchall()
+
         if not access_level_stockpiles:
             await interaction.response.send_message(
                 '> There are currently no stockpiles for your access level',
