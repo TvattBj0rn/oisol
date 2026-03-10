@@ -340,7 +340,7 @@ class ModuleStockpiles(commands.Cog):
         if stockpile_creator is None:
             stockpile_creator = interaction.user
 
-        interface_guild_id, interface_channel_id, interface_message_id, _ = ids_list
+        interface_guild_id, interface_channel_id, interface_message_id, association_id = ids_list
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             user_access_level = get_user_access_level(
@@ -372,15 +372,36 @@ class ModuleStockpiles(commands.Cog):
 
             # Try to fetch existing stockpile
             existing_stockpile = cursor.execute(
-                'SELECT * FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?'
-            ).fetchone()
+                'SELECT * FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                (association_id, subregion, stockpile_name),
+            ).fetchall()
 
-            print(existing_stockpile)
-            # Insert new stockpile to db
-            cursor.execute(
-                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level), stockpile_creator.id),
-            )
+            # Case where the stockpile already exists, code & level are updated, the other columns are "fixed" values
+            if existing_stockpile:
+                if len(existing_stockpile) == 1:
+                    cursor.execute(
+                        'UPDATE GroupsStockpilesList SET Code = ?, Level = ? WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                        (code, str(level), association_id, subregion, stockpile_name),
+                    )
+                # Case where existing_stockpile has more than one element (duplicate),
+                # all duplicates are cleared and the stockpile is added using the "new" process
+                # todo: is there a better way to do this into a single SQL statement ?
+                else:
+                    cursor.execute(
+                        'DELETE * FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                        (association_id, subregion, stockpile_name),
+                    )
+                    cursor.execute(
+                        'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                        (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level),
+                         stockpile_creator.id),
+                    )
+            # Case where the stockpile is new, then everything is added as is
+            else:
+                cursor.execute(
+                    'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level), stockpile_creator.id),
+                )
             conn.commit()
 
         await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
