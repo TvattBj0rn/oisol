@@ -689,15 +689,15 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
         # Set stockpiles to discord fields format
         regions_strings = []
         for region, v in sorted_grouped_stockpiles.items():
-            value_string = f'## **__{region.upper()}__**\n'
+            value_string = f'## __{region.upper()}__\n'
             for subregion_type, vv in v.items():
-                value_string += f'### **{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{guild_faction}'.lower()]})\n'
+                value_string += f'### {subregion_type.split('_')[0]} ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{guild_faction}'.lower()]})\n'
                 for name, code_level in vv.items():
                     code, level, owner_id = code_level.split('_')
                     value_string += f'> {name} ({level})'
                     if owner_id != 'None':
-                        value_string += f' **|** <@{owner_id}>'
-                    value_string += f' **|** `{code}`\n'
+                        value_string += f' | <@{owner_id}>'
+                    value_string += f' | `{code}`\n'
             regions_strings.append(value_string)
         return regions_strings
 
