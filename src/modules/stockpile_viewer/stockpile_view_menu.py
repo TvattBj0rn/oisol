@@ -732,8 +732,6 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
         # Sort all keys in dict and subdicts by key
         sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
 
-        print(grouped_stockpiles)
-
         # Set stockpiles to discord fields format
         regions_strings = []
         for region, v in sorted_grouped_stockpiles.items():
