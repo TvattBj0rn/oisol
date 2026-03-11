@@ -388,7 +388,7 @@ class ModuleStockpiles(commands.Cog):
                 # todo: is there a better way to do this into a single SQL statement ?
                 else:
                     cursor.execute(
-                        'DELETE * FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                        'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
                         (association_id, subregion, stockpile_name),
                     )
                     cursor.execute(
