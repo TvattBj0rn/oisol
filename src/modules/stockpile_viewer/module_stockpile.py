@@ -371,6 +371,7 @@ class ModuleStockpiles(commands.Cog):
             ).fetchone()[0]
 
             # Try to fetch existing stockpile
+            # Condition is on a given network, with a specific name at a specific place
             existing_stockpile = cursor.execute(
                 'SELECT * FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
                 (association_id, subregion, stockpile_name),
