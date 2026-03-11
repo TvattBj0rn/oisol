@@ -379,13 +379,24 @@ class ModuleStockpiles(commands.Cog):
 
             # Case where the stockpile already exists, code & level are updated, the other columns are "fixed" values
             if existing_stockpile:
+                # Case edit stockpile
                 if len(existing_stockpile) == 1:
+                    # Ensure the user access level is enough to edit the existing stockpile
+                    if int(existing_stockpile[0][6]) > user_access_level:
+                        await interaction.response.send_message(
+                            '> You do not have the access level to edit this stockpile',
+                            ephemeral=True,
+                            delete_after=5,
+                        )
+                        return
                     cursor.execute(
                         'UPDATE GroupsStockpilesList SET Code = ?, Level = ? WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
                         (code, str(level), association_id, subregion, stockpile_name),
                     )
+                    response_message = '> Stockpile was properly edited'
                 # Case where existing_stockpile has more than one element (duplicate),
                 # all duplicates are cleared and the stockpile is added using the "new" process
+                # It is assumed that this case is unlikely to happen
                 # todo: is there a better way to do this into a single SQL statement ?
                 else:
                     cursor.execute(
@@ -397,15 +408,17 @@ class ModuleStockpiles(commands.Cog):
                         (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level),
                          stockpile_creator.id),
                     )
+                    response_message = '> Duplicated stockpiles were replaced into the stockpile you provided'
             # Case where the stockpile is new, then everything is added as is
             else:
                 cursor.execute(
                     'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                     (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level), stockpile_creator.id),
                 )
+                response_message = '> Stockpile was properly added'
             conn.commit()
 
-        await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
+        await interaction.response.send_message(response_message, ephemeral=True, delete_after=5)
 
     @app_commands.command(
         name='stockpile-bulk-create',
