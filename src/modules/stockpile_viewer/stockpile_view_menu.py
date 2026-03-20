@@ -276,7 +276,7 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         stockpile_rows = self.stockpiles_input.value.split('\n')
 
-        valid_stockpiles = []  # list[tuple[str]]
+        valid_stockpiles = set()  # set[tuple[str]], ensure no duplicate is added
         invalid_stockpiles = []  # list[tuple[str, str]]
 
         # Retrieve shard of the guild the command is run from
@@ -293,6 +293,7 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
         subregion_to_type = {subregion: subregion_type for _, subregion, subregion_type in region_subregion_list}
         shard_all_subregions = list(subregions_to_region)
 
+        # Iterate on user provided stockpile rows
         for stockpile_raw_info in stockpile_rows:
             split_info = [striped_field.strip() for striped_field in stockpile_raw_info.split('|')]
             name, code, region, subregion, owner, access_level, owner_discord_user = None, None, None, None, None, None, None
@@ -336,13 +337,34 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
             subregion = process.extract(subregion, shard_all_subregions)[0][0]
             region = subregions_to_region[subregion]
 
-            valid_stockpiles.append(
+            valid_stockpiles.add(
                 (self._association_id, region, subregion, code, name, subregion_to_type[subregion], access_level, owner_discord_user.id if owner_discord_user is not None else None),
             )
 
         # Add validated stockpiles to the db
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            conn.cursor().executemany(
+            # Pull all stockpile of the association id network
+            network_stockpiles = conn.execute(
+                'SELECT * FROM GroupsStockpilesList WHERE AssociationId == ?',
+                (self._association_id,),
+            ).fetchall()
+
+            # Create set of network stockpiles with necessary info to find duplicates
+            existing_keys = {(self._association_id, stockpile_subregion, stockpile_name) for _, _, stockpile_subregion, _, stockpile_name, _, _, _ in network_stockpiles}
+
+            # Find the duplicated stockpiles
+            duplicated_stockpiles = [(stockpile[0], stockpile[2], stockpile[4]) for stockpile in valid_stockpiles if (stockpile[2], (stockpile[4]) in existing_keys)]
+
+            cursor = conn.cursor()
+            # If duplicates exist, all stockpiles matching the requirements are removed and
+            # the single target stockpile is then added with the "normal" process
+            if duplicated_stockpiles:
+                cursor.executemany(
+                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                    duplicated_stockpiles,
+                )
+
+            cursor.executemany(
                 'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 valid_stockpiles,
             )
