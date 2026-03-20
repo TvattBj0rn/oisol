@@ -396,7 +396,7 @@ class ModuleStockpiles(commands.Cog):
                     response_message = '> Stockpile was properly edited'
                 # Case where existing_stockpile has more than one element (duplicate),
                 # all duplicates are cleared and the stockpile is added using the "new" process
-                # It is assumed that this case is unlikely to happen
+                # It is assumed that this case is unlikely to happen post update-refresh-codes corrections
                 # todo: is there a better way to do this into a single SQL statement ?
                 else:
                     cursor.execute(
