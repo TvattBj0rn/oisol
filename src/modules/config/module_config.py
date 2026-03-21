@@ -18,6 +18,7 @@ from src.utils import (
 )
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
+from ..stockpile_viewer import StockpileMainInterface
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -192,12 +193,11 @@ class ModuleConfig(commands.Cog):
             channel = self.bot.get_channel(int(channel_id))
             message = await channel.fetch_message(int(message_id))
 
-            # It is guaranteed that there is only a single embed
-            embed_dict = message.embeds[0].to_dict()
-
-            embed_dict['color'] = faction.value
-
-            await message.edit(embed=discord.Embed.from_dict(embed_dict))
+            if message.embeds:
+                # It is guaranteed that there is only a single embed
+                embed_dict = message.embeds[0].to_dict()
+                embed_dict['color'] = faction.value
+                await message.edit(embed=discord.Embed.from_dict(embed_dict))
 
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
 
