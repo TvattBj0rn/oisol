@@ -726,6 +726,7 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
             user_access_level: int,
     ):
         super().__init__(timeout=None)
+        print(stockpile_data)
         stockpiles_content = self.__generate_stockpiles_content(emojis_dict, stockpile_data, guild_faction)
         display_stockpiles_container = discord.ui.Container(
             # Title
@@ -741,33 +742,45 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
         self.add_item(display_stockpiles_container)
 
     @staticmethod
-    def __generate_stockpile_embed_fields(emojis_dict: dict, guild_stockpiles: list[tuple], guild_faction: str) -> list:
-        # Group stockpiles by regions
-        grouped_stockpiles = {}
-        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
-            if region not in grouped_stockpiles:
-                grouped_stockpiles[region] = {}
-            if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
-                grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
-            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
+    def __generate_stockpile_embed_fields(
+            emojis_dict: dict,
+            guild_stockpiles: list[tuple],
+            guild_faction: str,
+    ) -> list[str]:
+        # List of formatted stockpiles, with each string in the list corresponding to a foxhole region
+        region_strings = []
 
-        # Sort all keys in dict and subdicts by key
-        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
+        # Region string can be updated on multiple loop iterations, as there can be multiple stockpiles on a given subregion,
+        # hence the var declaration outside the loop
+        region_string = ''
 
-        # Set stockpiles to discord fields format
-        regions_strings = []
-        for region, v in sorted_grouped_stockpiles.items():
-            value_string = f'## __{region.upper()}__\n'
-            for subregion_type, vv in v.items():
-                value_string += f'### {subregion_type.split('_')[0]} ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{guild_faction}'.lower()]})\n'
-                for name, code_level in vv.items():
-                    code, level, owner_id = code_level.split('_')
-                    value_string += f'> {name} ({level})'
-                    if owner_id != 'None':
-                        value_string += f' | <@{owner_id}>'
-                    value_string += f' | `{code}`\n'
-            regions_strings.append(value_string)
-        return regions_strings
+        # Buffers for titles reset
+        previous_region = None
+        previous_subregion = None
+
+        for region_name, subregion_name, code, stockpile_name, stockpile_building_type, access_level, owner_id in guild_stockpiles:
+            # Main region changed, new "field"
+            if region_name != previous_region:
+                region_strings.append(region_string)
+                region_string = f'## __{region_name.upper()}__\n'
+            # Subregion change, new subtitle
+            if subregion_name != previous_subregion:
+                region_string += f'### {subregion_name} ({emojis_dict[f'{stockpile_building_type}_{guild_faction}'.lower()]})\n'
+
+            # Singular stockpile addition, owner can be null, order is Name (level) | owner id (optional) | code
+            region_string += f'> {stockpile_name} ({access_level})'
+            if owner_id != 'None':
+                region_string += f' | <@{owner_id}>'
+            region_string += f' | `{code}`\n'
+
+            # Update buffers
+            previous_region = region_name
+            previous_subregion = subregion_name
+
+        # Ensure the last region worked on is also added
+        region_strings.append(region_string)
+
+        return region_strings
 
     def __generate_stockpiles_content(
             self,
