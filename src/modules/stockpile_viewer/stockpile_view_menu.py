@@ -768,7 +768,7 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
 
             # Singular stockpile addition, owner can be null, order is Name (level) | owner id (optional) | code
             region_string += f'> {stockpile_name} ({access_level})'
-            if owner_id != 'None':
+            if owner_id:
                 region_string += f' | <@{owner_id}>'
             region_string += f' | `{code}`\n'
 
