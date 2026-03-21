@@ -726,7 +726,6 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
             user_access_level: int,
     ):
         super().__init__(timeout=None)
-        print(stockpile_data)
         stockpiles_content = self.__generate_stockpiles_content(emojis_dict, stockpile_data, guild_faction)
         display_stockpiles_container = discord.ui.Container(
             # Title

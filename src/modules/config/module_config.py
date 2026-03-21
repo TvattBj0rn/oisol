@@ -18,7 +18,6 @@ from src.utils import (
 )
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView
-from ..stockpile_viewer import StockpileMainInterface
 
 if TYPE_CHECKING:
     from main import Oisol

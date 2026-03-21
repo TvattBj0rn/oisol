@@ -9,7 +9,13 @@ from typing import TYPE_CHECKING
 import aiohttp
 from discord.ext import commands, tasks
 
-from src.utils import OISOL_HOME_PATH, FoxholeAsyncAPIWrapper, MapIcon, Shard, OisolLogger
+from src.utils import (
+    OISOL_HOME_PATH,
+    FoxholeAsyncAPIWrapper,
+    MapIcon,
+    OisolLogger,
+    Shard,
+)
 
 if TYPE_CHECKING:
     from main import Oisol
