@@ -9,7 +9,13 @@ from typing import TYPE_CHECKING
 import aiohttp
 from discord.ext import commands, tasks
 
-from src.utils import OISOL_HOME_PATH, FoxholeAsyncAPIWrapper, MapIcon, Shard
+from src.utils import (
+    OISOL_HOME_PATH,
+    FoxholeAsyncAPIWrapper,
+    MapIcon,
+    OisolLogger,
+    Shard,
+)
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -105,12 +111,21 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
 
     @tasks.loop(minutes=2)
     async def refresh_able_shard_stockpiles_subregions(self) -> None:
-        await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper())
+        try:
+            await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper())
+        except TimeoutError:
+            OisolLogger('oisol').warning('Timeout for Able stockpiles zones update')
 
     @tasks.loop(minutes=2)
     async def refresh_baker_shard_stockpiles_subregions(self) -> None:
-        await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
+        try:
+            await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
+        except TimeoutError:
+            OisolLogger('oisol').warning('Timeout for Baker stockpiles zones update')
 
     @tasks.loop(minutes=2)
     async def refresh_charlie_shard_stockpiles_subregions(self) -> None:
-        await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
+        try:
+            await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
+        except TimeoutError:
+            OisolLogger('oisol').warning('Timeout for Charlie stockpiles zones update')

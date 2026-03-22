@@ -16,9 +16,9 @@ from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
     InterfacesTypes,
-    OisolLogger,
     Shard,
     get_user_access_level,
+    validate_stockpile_code,
 )
 
 from .stockpile_view_menu import (
@@ -26,8 +26,8 @@ from .stockpile_view_menu import (
     StockpileBulkDeleteModalStockpileDisplay,
     StockpileBulkDeleteModalSubregionDisplay,
     StockpileCreateModal,
-    StockpileEditDropDownView,
     StockpileMainInterface,
+    StockpileRefreshCodesModal,
 )
 
 if TYPE_CHECKING:
@@ -84,7 +84,7 @@ class ModuleStockpiles(commands.Cog):
         """
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             user_level = get_user_access_level(conn, user_roles, guild_id, channel_id, message_id)
-            OisolLogger('oisol').info(f'User level is {user_level}')
+
             # Retrieve the stockpiles the user has access to
             available_user_stockpiles = conn.execute(
                 'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ? ORDER BY Region, Subregion',
@@ -264,18 +264,13 @@ class ModuleStockpiles(commands.Cog):
             interface_association_id,
         )
 
-        self.bot.logger.info(f'available stockpiles are: {available_user_stockpiles}')
-
         # Case where there is no stockpiles to refresh or no stockpiles the user has access to available for deletion
         if len(available_user_stockpiles) == 0:
             await interaction.response.send_message('> There are currently no stockpiles available for refresh', ephemeral=True, delete_after=5)
             return
 
-        guild_faction = self._get_guild_faction(interaction.guild_id)
-
-        await interaction.response.send_message(
-            view=StockpileEditDropDownView(available_user_stockpiles, guild_faction, interface_association_id, self.bot.app_emojis_dict),
-            ephemeral=True,
+        await interaction.response.send_modal(
+            StockpileRefreshCodesModal(available_user_stockpiles, interface_association_id),
         )
 
     @app_commands.command(
@@ -329,7 +324,7 @@ class ModuleStockpiles(commands.Cog):
         ids_list = interface_name.split('.')
 
         if any(validations := (
-                self._validate_stockpile_code(code),
+                validate_stockpile_code(code),
                 self._validate_stockpile_localisation(location),
                 self._validate_stockpile_ids(ids_list),
                 'Access level is invalid' if str(level) not in ['1', '2', '3', '4', '5'] else None,
@@ -345,7 +340,7 @@ class ModuleStockpiles(commands.Cog):
         if stockpile_creator is None:
             stockpile_creator = interaction.user
 
-        interface_guild_id, interface_channel_id, interface_message_id, _ = ids_list
+        interface_guild_id, interface_channel_id, interface_message_id, association_id = ids_list
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             user_access_level = get_user_access_level(
@@ -375,14 +370,55 @@ class ModuleStockpiles(commands.Cog):
                 (shard_name, subregion),
             ).fetchone()[0]
 
-            # Insert new stockpile to db
-            cursor.execute(
-                'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level), stockpile_creator.id),
-            )
+            # Try to fetch existing stockpile
+            # Condition is on a given network, with a specific name at a specific place
+            existing_stockpile = cursor.execute(
+                'SELECT * FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                (association_id, subregion, stockpile_name),
+            ).fetchall()
+
+            # Case where the stockpile already exists, code & level are updated, the other columns are "fixed" values
+            if existing_stockpile:
+                # Case edit stockpile
+                if len(existing_stockpile) == 1:
+                    # Ensure the user access level is enough to edit the existing stockpile
+                    if int(existing_stockpile[0][6]) > user_access_level:
+                        await interaction.response.send_message(
+                            '> You do not have the access level to edit this stockpile',
+                            ephemeral=True,
+                            delete_after=5,
+                        )
+                        return
+                    cursor.execute(
+                        'UPDATE GroupsStockpilesList SET Code = ?, Level = ? WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                        (code, str(level), association_id, subregion, stockpile_name),
+                    )
+                    response_message = '> Stockpile was properly edited'
+                # Case where existing_stockpile has more than one element (duplicate),
+                # all duplicates are cleared and the stockpile is added using the "new" process
+                # It is assumed that this case is unlikely to happen post update-refresh-codes corrections
+                # todo: is there a better way to do this into a single SQL statement ?
+                else:
+                    cursor.execute(
+                        'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                        (association_id, subregion, stockpile_name),
+                    )
+                    cursor.execute(
+                        'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                        (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level),
+                         stockpile_creator.id),
+                    )
+                    response_message = '> Duplicated stockpiles were replaced into the stockpile you provided'
+            # Case where the stockpile is new, then everything is added as is
+            else:
+                cursor.execute(
+                    'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (ids_list[3], region, subregion, code, stockpile_name, stockpile_type, str(level), stockpile_creator.id),
+                )
+                response_message = '> Stockpile was properly added'
             conn.commit()
 
-        await interaction.response.send_message('> Stockpile was properly added', ephemeral=True, delete_after=5)
+        await interaction.response.send_message(response_message, ephemeral=True, delete_after=5)
 
     @app_commands.command(
         name='stockpile-bulk-create',
@@ -426,7 +462,7 @@ class ModuleStockpiles(commands.Cog):
         ids_list = interface_name.split('.')
 
         if any(validations := (
-            self._validate_stockpile_code(stockpile_code),
+            validate_stockpile_code(stockpile_code),
             self._validate_stockpile_ids(ids_list),
         )):
             await interaction.response.send_message(
@@ -615,22 +651,7 @@ class ModuleStockpiles(commands.Cog):
             if current in interface_name
         ]
 
-    @staticmethod
-    def _validate_stockpile_code(code: str) -> str | None:
-        """
-        Ensure the validity of a Foxhole stockpile code by checking its length and its content (all digits is expected).
-        :param code: The code to test
-        :return: None if valid, the error message to send back to the user otherwise.
-        """
-        # Case where a user entered an invalid sized code
-        if len(code) != 6:
-            return '> The code must be a 6-digits code'
 
-        # Case where a user entered a code without digits only
-        if not code.isdigit():
-            return '> The code contains non digit characters'
-
-        return None
 
     @staticmethod
     def _validate_stockpile_localisation(localisation: str) -> str | None:

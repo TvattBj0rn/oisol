@@ -17,6 +17,7 @@ from src.utils import (
     chunks,
     get_user_access_level,
     sort_nested_dicts_by_key,
+    validate_stockpile_code,
 )
 
 
@@ -275,7 +276,7 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         stockpile_rows = self.stockpiles_input.value.split('\n')
 
-        valid_stockpiles = []  # list[tuple[str]]
+        valid_stockpiles = set()  # set[tuple[str]], ensure no duplicate is added
         invalid_stockpiles = []  # list[tuple[str, str]]
 
         # Retrieve shard of the guild the command is run from
@@ -292,6 +293,7 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
         subregion_to_type = {subregion: subregion_type for _, subregion, subregion_type in region_subregion_list}
         shard_all_subregions = list(subregions_to_region)
 
+        # Iterate on user provided stockpile rows
         for stockpile_raw_info in stockpile_rows:
             split_info = [striped_field.strip() for striped_field in stockpile_raw_info.split('|')]
             name, code, region, subregion, owner, access_level, owner_discord_user = None, None, None, None, None, None, None
@@ -335,13 +337,34 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
             subregion = process.extract(subregion, shard_all_subregions)[0][0]
             region = subregions_to_region[subregion]
 
-            valid_stockpiles.append(
+            valid_stockpiles.add(
                 (self._association_id, region, subregion, code, name, subregion_to_type[subregion], access_level, owner_discord_user.id if owner_discord_user is not None else None),
             )
 
         # Add validated stockpiles to the db
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            conn.cursor().executemany(
+            # Pull all stockpile of the association id network
+            network_stockpiles = conn.execute(
+                'SELECT * FROM GroupsStockpilesList WHERE AssociationId == ?',
+                (self._association_id,),
+            ).fetchall()
+
+            # Create set of network stockpiles with necessary info to find duplicates
+            existing_keys = {(self._association_id, stockpile_subregion, stockpile_name) for _, _, stockpile_subregion, _, stockpile_name, _, _, _ in network_stockpiles}
+
+            # Find the duplicated stockpiles
+            duplicated_stockpiles = [(stockpile[0], stockpile[2], stockpile[4]) for stockpile in valid_stockpiles if (stockpile[2], (stockpile[4]) in existing_keys)]
+
+            cursor = conn.cursor()
+            # If duplicates exist, all stockpiles matching the requirements are removed and
+            # the single target stockpile is then added with the "normal" process
+            if duplicated_stockpiles:
+                cursor.executemany(
+                    'DELETE FROM GroupsStockpilesList WHERE AssociationId == ? AND Subregion == ? AND Name == ?',
+                    duplicated_stockpiles,
+                )
+
+            cursor.executemany(
                 'INSERT INTO GroupsStockpilesList (AssociationId, Region, Subregion, Code, Name, Type, Level, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 valid_stockpiles,
             )
@@ -355,40 +378,86 @@ class StockpileCreateModal(discord.ui.Modal, title='Stockpile bulk creation'):
         await interaction.response.send_message(response_string, ephemeral=True)
 
 
-class StockpileEditDropDownView(discord.ui.View):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emojis_dict: dict):
-        super().__init__(timeout=None)
-        self.add_item(StockpileEditDropDownSelect(stockpiles_info, faction, association_id, emojis_dict))
+class StockpileRefreshCodesModal(discord.ui.Modal):
+    def __init__(self, stockpiles_data: list[tuple], association_id: str):
+        super().__init__(timeout=None, title='Stockpiles refresh codes')
 
+        self.__interaction_association_id = association_id
+        self.__user_stockpiles_data = stockpiles_data
 
-class StockpileEditDropDownSelect(discord.ui.Select):
-    def __init__(self, stockpiles_info: list[tuple[str]], faction: str, association_id: str, emoji_dict: dict):
-        self.interaction_association_id = association_id
-        self.stockpiles_info = stockpiles_info
-        self.__emojis_dict = emoji_dict
+        stockpiles_string_display = ''
+        previous_region = None
+        previous_subregion = None
 
-        # Add user interactions
-        options = []
-        for region, subregion, code, name, stockpile_type, access_level in stockpiles_info:
-            options.append(discord.SelectOption(
-                label=f'{name} | {subregion} in {region} | {code} ({access_level})',
-                value=f'{region}@{subregion}@{code}@{name}@{access_level}',
-                emoji=self.__emojis_dict[f'{stockpile_type}_{faction}'.lower()],
-            ))
+        for region, subregion, code, name, _, _ in stockpiles_data:
+            if region != previous_region:
+                stockpiles_string_display += f'# {region}\n'
+                previous_region = region
+            if subregion != previous_subregion:
+                stockpiles_string_display += f'## {subregion}\n'
+                previous_subregion = subregion
+            stockpiles_string_display += f'{name} | `{code}`\n'
 
-        OisolLogger('oisol').info(f'Options are: {options}')
-
-        super().__init__(
-            placeholder='Choose the stockpiles you want to edit',
-            options=options,
-            max_values=len(options) if len(options) < 5 else 5,
+        self.add_item(
+            discord.ui.TextDisplay(content=stockpiles_string_display),
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                label='Update existing codes, one stockpile per row',
+                placeholder='111111 222222\n777777 888888\n...',
+                style=discord.TextStyle.long,
+                id=778866,
+            ),
         )
 
-    async def callback(self, interaction: discord.Interaction) -> None:
-        await interaction.response.send_modal(StockpileEditModal(
-            [selected_option.split('@') for selected_option in self.values],
-            self.interaction_association_id,
-        ))
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        # refreshed_codes_user_input is guaranteed to be of type discord.TextInput, as referred by the custom id
+        refreshed_codes_user_input = self.find_item(778866).value
+        all_refreshed_codes = refreshed_codes_user_input.split('\n')
+
+        # This prevent codes the user has no access to, to be overwritten
+        existing_user_codes = {stockpile_tuple[2] for stockpile_tuple in self.__user_stockpiles_data}
+
+        valid_refreshes = []
+        invalid_refreshes = []
+
+        # Validate retrieved codes, this does not ensure the validated codes are in the database
+        for refreshed_code in all_refreshed_codes:
+            old_new_codes = refreshed_code.split(' ')
+            if (
+                len(old_new_codes) != 2
+                or validate_stockpile_code(old_new_codes[0]) is not None
+                or validate_stockpile_code(old_new_codes[1]) is not None
+                or old_new_codes[0] not in existing_user_codes
+            ):
+                invalid_refreshes.append(refreshed_code)
+            else:
+                # Add as formatted data ready to be used in SQL query below
+                valid_refreshes.append((old_new_codes[1], old_new_codes[0], self.__interaction_association_id))
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            # Replace old codes with new codes in a given network (association_id)
+            # Currently, it is assumed that the probability of having two different stockpiles with same code is near
+            # impossible, with 100 stockpiles on a network, with codes between 0 and 999999, the probability of
+            # having two at least two exact matches is 0.00000049496865108080689886%
+            # https://www.dcode.fr/loi-binomiale: N=100 & p=1/999999 & K=2, P(X >= 2) = 0.00000049496865108080689886%
+            # TLDR: this should not be a problem, even on a large coalition scale with 100 stockpiles simultaneously
+            cursor.executemany(
+                'UPDATE GroupsStockpilesList SET Code = ? WHERE Code == ? AND AssociationId == ?',
+                valid_refreshes,
+            )
+            conn.commit()
+
+        response_string = ''
+        if not invalid_refreshes and not valid_refreshes:
+            response_string = 'No codes were given for update'
+        else:
+            if invalid_refreshes:
+                response_string += f'The following code combinations could not be updated:\n- {'\n- '.join(comb for comb in invalid_refreshes)}\n'
+            if valid_refreshes:
+                response_string += f'The following codes were properly updated:\n- {'\n- '.join(f'{comb[1]} {comb[0]}' for comb in valid_refreshes)}'
+        await interaction.response.send_message(response_string, ephemeral=True)
 
 
 class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
@@ -413,8 +482,7 @@ class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
             )
 
             # save stockpile infos to be used on submit
-            self._selected_stockpiles_buffer[text_input.custom_id.__hash__()] = [association_id, region, subregion,
-                                                                                 name]
+            self._selected_stockpiles_buffer[text_input.custom_id.__hash__()] = [association_id, region, subregion, name]
 
             self.add_item(text_input)
 
@@ -673,33 +741,45 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
         self.add_item(display_stockpiles_container)
 
     @staticmethod
-    def __generate_stockpile_embed_fields(emojis_dict: dict, guild_stockpiles: list[tuple], guild_faction: str) -> list:
-        # Group stockpiles by regions
-        grouped_stockpiles = {}
-        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
-            if region not in grouped_stockpiles:
-                grouped_stockpiles[region] = {}
-            if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
-                grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
-            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
+    def __generate_stockpile_embed_fields(
+            emojis_dict: dict,
+            guild_stockpiles: list[tuple],
+            guild_faction: str,
+    ) -> list[str]:
+        # List of formatted stockpiles, with each string in the list corresponding to a foxhole region
+        region_strings = []
 
-        # Sort all keys in dict and subdicts by key
-        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
+        # Region string can be updated on multiple loop iterations, as there can be multiple stockpiles on a given subregion,
+        # hence the var declaration outside the loop
+        region_string = ''
 
-        # Set stockpiles to discord fields format
-        regions_strings = []
-        for region, v in sorted_grouped_stockpiles.items():
-            value_string = f'## __{region.upper()}__\n'
-            for subregion_type, vv in v.items():
-                value_string += f'### {subregion_type.split('_')[0]} ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{guild_faction}'.lower()]})\n'
-                for name, code_level in vv.items():
-                    code, level, owner_id = code_level.split('_')
-                    value_string += f'> {name} ({level})'
-                    if owner_id != 'None':
-                        value_string += f' | <@{owner_id}>'
-                    value_string += f' | `{code}`\n'
-            regions_strings.append(value_string)
-        return regions_strings
+        # Buffers for titles reset
+        previous_region = None
+        previous_subregion = None
+
+        for region_name, subregion_name, code, stockpile_name, stockpile_building_type, access_level, owner_id in guild_stockpiles:
+            # Main region changed, new "field"
+            if region_name != previous_region:
+                region_strings.append(region_string)
+                region_string = f'## __{region_name.upper()}__\n'
+            # Subregion change, new subtitle
+            if subregion_name != previous_subregion:
+                region_string += f'### {subregion_name} ({emojis_dict[f'{stockpile_building_type}_{guild_faction}'.lower()]})\n'
+
+            # Singular stockpile addition, owner can be null, order is Name (level) | owner id (optional) | code
+            region_string += f'> {stockpile_name} ({access_level})'
+            if owner_id:
+                region_string += f' | <@{owner_id}>'
+            region_string += f' | `{code}`\n'
+
+            # Update buffers
+            previous_region = region_name
+            previous_subregion = subregion_name
+
+        # Ensure the last region worked on is also added
+        region_strings.append(region_string)
+
+        return region_strings
 
     def __generate_stockpiles_content(
             self,
@@ -761,49 +841,6 @@ class StockpileMainInterface(discord.ui.LayoutView):
             ),
         )
 
-    @staticmethod
-    def generate_stockpile_embed_fields(guild_stockpiles: list[tuple], group_faction: str, emojis_dict: dict) -> list:
-        # Group stockpiles by regions
-        grouped_stockpiles = {}
-        for region, subregion, code, name, building_type, level, owner_id in guild_stockpiles:
-            if region not in grouped_stockpiles:
-                grouped_stockpiles[region] = {}
-            if f'{subregion}_{building_type}' not in grouped_stockpiles[region]:
-                grouped_stockpiles[region][f'{subregion}_{building_type}'] = {}
-            grouped_stockpiles[region][f'{subregion}_{building_type}'][name] = f'{code}_{level}_{owner_id}'
-
-        # Sort all keys in dict and subdicts by key
-        sorted_grouped_stockpiles = sort_nested_dicts_by_key(grouped_stockpiles)
-
-        # Set stockpiles to discord fields format
-        embed_fields = []
-        for region, v in sorted_grouped_stockpiles.items():
-            value_string = ''
-            for subregion_type, vv in v.items():
-                value_string += f'**{subregion_type.split('_')[0]}** ({emojis_dict[f'{'_'.join(subregion_type.split('_')[1:])}_{group_faction}'.lower()]})\n'
-                for name, code_level in vv.items():
-                    code, level, owner_id = code_level.split('_')
-                    value_string += f'- {name} ({level})'
-                    if owner_id != 'None':
-                        value_string += f' **|** <@{owner_id}>'
-                    value_string += f' **|** `{code}`\n'
-                value_string += '\n'
-            embed_fields.append({'name': f'‎\n**__{region.upper()}__**', 'value': value_string, 'inline': True})
-        return embed_fields
-
-    def __generate_stockpile_embed_data(
-            self,
-            stockpiles_data: list[tuple],
-            user_access_level: int,
-            group_faction: str,
-            emojis_dict: dict,
-    ) -> dict[str, str | list]:
-        return {
-            'title': f'Access Level {user_access_level}',
-            'color': Faction[group_faction].value,
-            'fields': self.generate_stockpile_embed_fields(stockpiles_data, group_faction, emojis_dict),
-        }
-
     @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.blurple,
         custom_id='view_stockpiles',
@@ -832,9 +869,10 @@ class StockpileMainInterface(discord.ui.LayoutView):
 
             # Retrieve the interface's stockpiles, using the user's level access level
             access_level_stockpiles = cursor.execute(
-                'SELECT Region, Subregion, Code, Name, Type, Level, Owner From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ?',
+                'SELECT Region, Subregion, Code, Name, Type, Level, Owner From GroupsStockpilesList WHERE Level <= ? AND AssociationId == ? ORDER BY Region ASC, Subregion ASC, Name ASC',
                 (user_level, association_id),
             ).fetchall()
+
         if not access_level_stockpiles:
             await interaction.response.send_message(
                 '> There are currently no stockpiles for your access level',
@@ -858,16 +896,6 @@ class StockpileMainInterface(discord.ui.LayoutView):
             ephemeral=True,
             silent=True,
         )
-        # await interaction.response.send_message(
-        #     embed=discord.Embed.from_dict(self.__generate_stockpile_embed_data(
-        #         access_level_stockpiles,
-        #         user_level,
-        #         group_faction,
-        #         interaction.client.app_emojis_dict,
-        #     )),
-        #     ephemeral=True,
-        #     silent=True,
-        # )
 
     @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.grey,

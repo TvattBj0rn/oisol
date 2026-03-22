@@ -110,3 +110,20 @@ def get_user_access_level(
 def chunks(object_list: list, chunk_size: int) -> Generator[list[list[SelectOption]]]:
     for i in range(0, len(object_list), chunk_size):
         yield object_list[i:i + chunk_size]
+
+
+def validate_stockpile_code(code: str) -> str | None:
+    """
+    Ensure the validity of a Foxhole stockpile code by checking its length and its content (all digits is expected).
+    :param code: The code to test
+    :return: None if valid, the error message to send back to the user otherwise.
+    """
+    # Case where a user entered an invalid sized code
+    if len(code) != 6:
+        return '> The code must be a 6-digits code'
+
+    # Case where a user entered a code without digits only
+    if not code.isdigit():
+        return '> The code contains non digit characters'
+
+    return None
