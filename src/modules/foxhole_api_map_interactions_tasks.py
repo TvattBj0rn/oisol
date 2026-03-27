@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import aiohttp
 from discord.ext import commands, tasks
 
-from src.utils import CacheKeys, MapIcon, Shard
+from src.utils import OISOL_LOGGER, CacheKeys, MapIcon, Shard
 from src.utils.foxhole_api_handler import FoxholeAsyncAPIWrapper
 
 if TYPE_CHECKING:
@@ -76,7 +76,7 @@ class WorldSpawnsStatus(commands.Cog):
                 available_regions_list = await shard_api.get_regions_list(session)
                 res = await asyncio.gather(*(self._get_region_world_spawn_status(session, shard_api, region) for region in available_regions_list))
         except TimeoutError:
-            self.bot.logger.warning(f'Update world spawn cache timed out for {shard_api.shard_name}')
+            OISOL_LOGGER.warning(f'Update world spawn cache timed out for {shard_api.shard_name}')
             return
 
         # Update bot shard cache

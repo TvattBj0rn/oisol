@@ -16,7 +16,6 @@ from src.modules.registre import ModuleRegister, RegisterViewMenu
 from src.modules.stockpile_viewer import (
     ModuleStockpiles,
     StockpileMainInterface,
-    StockpilesViewMenu,
     TaskUpdateAvailableStockpiles,
 )
 from src.modules.todolist import (
@@ -28,9 +27,9 @@ from src.modules.translation import ModuleTranslation
 from src.modules.wiki import ModuleWiki
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     DataFilesPath,
     OisolFormatter,
-    OisolLogger,
     Shard,
     repair_default_config_dict,
 )
@@ -57,7 +56,7 @@ class Oisol(commands.Bot):
         self.app_emojis_dict = {}
 
         # Custom logger with colors for tasks, commands, buttons interactions, joins, ...
-        self.logger = OisolLogger('oisol')
+        self.logger = OISOL_LOGGER
 
         # Cache for non-persistent data (e.g. world spawns status such as town bases levels)
         self.cache = {}
@@ -106,9 +105,6 @@ class Oisol(commands.Bot):
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
         self.add_view(StockpileMainInterface())
-
-        # This should be removed once all interface are migrated or next war (133), replace by StockpileMainInterface
-        self.add_view(StockpilesViewMenu())
 
         self.add_dynamic_items(TodolistButtonCheckmark)
         await self.tree.set_translator(OisolTranslator())

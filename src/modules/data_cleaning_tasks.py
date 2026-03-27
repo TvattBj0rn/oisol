@@ -12,6 +12,7 @@ from discord.ext import commands, tasks
 
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     DataFilesPath,
     FoxholeAsyncAPIWrapper,
     InterfacesTypes,
@@ -77,7 +78,7 @@ class DatabaseCleaner(commands.Cog):
                 except (discord.Forbidden, discord.HTTPException):
                     # Rights of the bot have been removed or fail on network part
                     continue
-        self.bot.logger.task(f'remove_non_existing_interface task complete in {time.time() - start_time}s')
+        OISOL_LOGGER.task(f'remove_non_existing_interface task complete in {time.time() - start_time}s')
 
 
     async def _clear_stockpiles_new_war(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
@@ -85,7 +86,7 @@ class DatabaseCleaner(commands.Cog):
             try:
                 current_state = await shard_api.get_current_war_state(session)
             except TimeoutError:
-                self.bot.logger.warning(f'Clear stockpile task timed out for shard {shard_api.shard_name}')
+                OISOL_LOGGER.warning(f'Clear stockpile task timed out for shard {shard_api.shard_name}')
                 return
         if (
                 current_state.get('conquestEndTime') is None # The war is still active
@@ -115,9 +116,9 @@ class DatabaseCleaner(commands.Cog):
             all_stockpiles_interfaces = cursor.execute(
                 f'''
                 SELECT AssociationId FROM AllInterfacesReferences
-                WHERE InterfaceType IN (?, ?) AND GroupId IN ({', '.join('?' * len(shard_guilds))})
+                WHERE InterfaceType == ? AND GroupId IN ({', '.join('?' * len(shard_guilds))})
                 ''',
-                (InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value, *shard_guilds),
+                (InterfacesTypes.STOCKPILE.value, *shard_guilds),
             ).fetchall()
 
             cursor.executemany(
@@ -125,7 +126,7 @@ class DatabaseCleaner(commands.Cog):
                 all_stockpiles_interfaces,
             )
 
-        self.bot.logger.task(f'Stockpile interfaces were cleared for shard {shard_api.shard_name}')
+        OISOL_LOGGER.task(f'Stockpile interfaces were cleared for shard {shard_api.shard_name}')
 
     @tasks.loop(hours=1)
     async def clear_stockpiles_able(self) -> None:

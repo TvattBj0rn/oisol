@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import configparser
-import operator
 from collections.abc import Generator
 from configparser import ConfigParser
 from sqlite3 import Connection
@@ -48,15 +47,6 @@ def repair_default_config_dict(current_config: ConfigParser | None = None) -> Co
     final_config.set(section_name, 'tag', '' if not current_config or not current_config.has_option(section_name, 'tag') else current_config.get(section_name, 'tag'))
 
     return final_config
-
-
-def sort_nested_dicts_by_key(input_dict: dict) -> dict:
-    return {
-        k: sort_nested_dicts_by_key(v) if isinstance(v, dict) else v for k, v in sorted(
-            input_dict.items(),
-            key=operator.itemgetter(0),
-        )
-    }
 
 
 def convert_time_to_readable_time(value: float) -> str:

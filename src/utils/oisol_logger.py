@@ -36,8 +36,8 @@ class OisolFormatter(logging.Formatter):
 
 
 class OisolLogger(logging.Logger):
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self):
+        super().__init__('oisol')
         self.level = logging.DEBUG
 
         # The logs displayed on the console
