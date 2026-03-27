@@ -19,6 +19,7 @@ from src.utils import (
     Shard,
     get_user_access_level,
     validate_stockpile_code,
+    OISOL_LOGGER,
 )
 
 from .stockpile_view_menu import (
@@ -124,7 +125,7 @@ class ModuleStockpiles(commands.Cog):
             return
 
         # Log only once it is certain the target message is a stockpile interface
-        self.bot.logger.task('stockpile-interface-delete event triggered')
+        OISOL_LOGGER.task('stockpile-interface-delete event triggered')
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -158,7 +159,7 @@ class ModuleStockpiles(commands.Cog):
             interaction: discord.Interaction,
             name: str,
     ) -> None:
-        self.bot.logger.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
 
         # Create interface association id
@@ -199,7 +200,7 @@ class ModuleStockpiles(commands.Cog):
             interface_name: str,
             interface_id: str,
     ) -> None:
-        self.bot.logger.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
@@ -242,7 +243,7 @@ class ModuleStockpiles(commands.Cog):
         description=app_commands.locale_str('Update up to 5 stockpiles codes from a list'),
     )
     async def refresh_codes(self, interaction: discord.Interaction, interface_name: str) -> None:
-        self.bot.logger.command(f'stockpile-refresh-codes command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-refresh-codes command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
@@ -278,7 +279,7 @@ class ModuleStockpiles(commands.Cog):
         description=app_commands.locale_str('Clear a given interface, and its network if connected to other interfaces'),
     )
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
-        self.bot.logger.command(f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
@@ -318,7 +319,7 @@ class ModuleStockpiles(commands.Cog):
             level: Literal['5', '4', '3', '2', '1'] = '1',
             stockpile_creator: discord.User | None = None,
     ) -> None:
-        self.bot.logger.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
@@ -425,7 +426,7 @@ class ModuleStockpiles(commands.Cog):
         description=app_commands.locale_str('Create multiple stockpiles at once on a given interface/network'),
     )
     async def stockpile_bulk_create(self, interaction: discord.Interaction, interface_name: str) -> None:
-        self.bot.logger.command(f'stockpile-bulk-create command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-bulk-create command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
@@ -456,7 +457,7 @@ class ModuleStockpiles(commands.Cog):
         description=app_commands.locale_str('Delete an existing stockpile on a given interface/network'),
     )
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
-        self.bot.logger.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
@@ -505,7 +506,7 @@ class ModuleStockpiles(commands.Cog):
             )
         # This should cover the very unlikely case where a same group has multiple stockpiles with the same code
         else:
-            self.bot.logger.warning(f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
+            OISOL_LOGGER.warning(f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
             await interaction.response.send_message(
                 f'The following stockpiles with code {stockpile_code} were deleted:\n{''.join(f'- {deleted_stockpile[4]}, {deleted_stockpile[2]} in {deleted_stockpile[1]}\n' for deleted_stockpile in deleted_stockpiles)}',
                 ephemeral=True,  # No auto delete in case of a fuck-up
@@ -521,7 +522,7 @@ class ModuleStockpiles(commands.Cog):
             interface_name: str,
             display: Literal['Stockpile', 'Subregion', 'Region'] = 'Stockpile',
     ) -> None:
-        self.bot.logger.command(f'stockpile-bulk-delete command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'stockpile-bulk-delete command by {interaction.user.name} on {interaction.guild.name}')
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')

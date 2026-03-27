@@ -13,7 +13,7 @@ from src.utils import (
     REGIONS_TYPES,
     CacheKeys,
     DataFilesPath,
-    WikiTables,
+    WikiTables, OISOL_LOGGER,
 )
 
 from ...utils.autocompletion import (
@@ -87,7 +87,7 @@ class ModuleWiki(commands.Cog):
         description=app_commands.locale_str('Get a wiki infobox'),
     )
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        self.bot.logger.command(f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
+        OISOL_LOGGER.command(f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
         split_search_request = search_request.split('@')
@@ -111,7 +111,7 @@ class ModuleWiki(commands.Cog):
         description=app_commands.locale_str('List each required ammunition to destroy a given vehicle / structure'),
     )
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        self.bot.logger.command(f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
+        OISOL_LOGGER.command(f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
         split_search_request = search_request.split('@')
@@ -166,7 +166,7 @@ class ModuleWiki(commands.Cog):
         description=app_commands.locale_str('Production cost of a given entry, with all possibilities'),
     )
     async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
-        self.bot.logger.command(f'production command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
+        OISOL_LOGGER.command(f'production command by {interaction.user.name} on {interaction.guild.name} ({search_request})')
 
         # Retrieve search_request & table from autocomplete value: search_request@table
         split_search_request = search_request.split('@')

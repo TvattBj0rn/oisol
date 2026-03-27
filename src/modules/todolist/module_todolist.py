@@ -8,7 +8,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils import OISOL_HOME_PATH, DiscordIdType, InterfaceType
+from src.utils import OISOL_HOME_PATH, DiscordIdType, InterfaceType, OISOL_LOGGER
 
 from .todolist_view_menu import TodolistViewMenu
 
@@ -40,7 +40,7 @@ class ModuleTodolist(commands.Cog):
             member_5: discord.Member = None,
     ) -> None:
 
-        self.bot.logger.command(f'todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'todolist-generate command by {interaction.user.name} on {interaction.guild.name}')
         todolist_id = uuid.uuid4().hex
         todolist_access_list = []
         await interaction.response.defer(ephemeral=True)

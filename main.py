@@ -31,7 +31,7 @@ from src.utils import (
     OisolFormatter,
     OisolLogger,
     Shard,
-    repair_default_config_dict,
+    repair_default_config_dict, OISOL_LOGGER,
 )
 from src.utils.bot_translator import OisolTranslator
 
@@ -56,7 +56,7 @@ class Oisol(commands.Bot):
         self.app_emojis_dict = {}
 
         # Custom logger with colors for tasks, commands, buttons interactions, joins, ...
-        self.logger = OisolLogger('oisol')
+        self.logger = OISOL_LOGGER
 
         # Cache for non-persistent data (e.g. world spawns status such as town bases levels)
         self.cache = {}

@@ -8,6 +8,7 @@ from discord import app_commands
 from discord.ext import commands
 from libretranslatepy import LibreTranslateAPI
 
+from src.utils import OISOL_LOGGER
 from src.utils.languages_per_country import TERRITORY_LANGUAGES
 
 if TYPE_CHECKING:
@@ -51,7 +52,7 @@ class ModuleTranslation(commands.Cog):
         return source_results
 
     async def translate_to_user_language(self, interaction: discord.Interaction, message: discord.Message) -> None:
-        self.bot.logger.command(f'translate command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'translate command by {interaction.user.name} on {interaction.guild.name}')
         await interaction.response.defer(ephemeral=True)
 
         if not message.content:
@@ -65,7 +66,7 @@ class ModuleTranslation(commands.Cog):
             translated_source = self.lt_api.translate(message.content, source_language, target_language)
         except Exception:
             await interaction.followup.send('> This translation is not supported', ephemeral=True)
-            self.bot.logger.error(f'Invalid translation for locale ({str(interaction.locale), str(interaction.locale).split('-')[0].lower()}) and source ({source_language})')
+            OISOL_LOGGER.error(f'Invalid translation for locale ({str(interaction.locale), str(interaction.locale).split('-')[0].lower()}) and source ({source_language})')
             return
 
         channel = await interaction.user.create_dm() if not interaction.app_permissions.send_messages else None

@@ -13,10 +13,10 @@ from src.utils import (
     DiscordIdType,
     Faction,
     InterfacesTypes,
-    OisolLogger,
     chunks,
     get_user_access_level,
     validate_stockpile_code,
+    OISOL_LOGGER,
 )
 
 
@@ -52,7 +52,7 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
             ))
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        OisolLogger('oisol').interface(f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.interface(f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
         interface_new_roles = []
 
         # Create the parameters for the SQL query
@@ -699,7 +699,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
         emoji='📥',
     )
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OisolLogger('oisol').interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -791,7 +791,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 delete_after=5,
             )
             return
-        OisolLogger('oisol').interface(f'share id interaction by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.interface(f'share id interaction by {interaction.user.name} on {interaction.guild.name}')
 
         # Retrieve the association id using the interface guild, channel & message ids
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -807,7 +807,7 @@ async def auto_migrate_stockpile_interface(
         interface_message: discord.Message,
         emoji_dict: dict,
 ) -> None:
-    oisol_logger = OisolLogger('oisol')
+    oisol_logger = OISOL_LOGGER
     new_interface = StockpileMainInterface()
 
     # Retrieve guild faction, for embed color

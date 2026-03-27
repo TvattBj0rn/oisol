@@ -12,7 +12,7 @@ from discord.ext import commands
 from src.utils import (
     OISOL_HOME_PATH,
     DataFilesPath,
-    safeguarded_nickname,
+    safeguarded_nickname, OISOL_LOGGER,
 )
 
 from .register_view_menu import RegisterViewMenu
@@ -30,7 +30,7 @@ class ModuleRegister(commands.Cog):
         description=app_commands.locale_str('Command to display the current list of recruit with the date the got the recruit role'),
     )
     async def register_view(self, interaction: discord.Interaction) -> None:
-        self.bot.logger.command(f'register-view command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(f'register-view command by {interaction.user.name} on {interaction.guild.name}')
 
         # Retrieve config and channel ID if it exists, take the channel the command was executed from otherwise
         config = configparser.ConfigParser()
@@ -95,7 +95,7 @@ class ModuleRegister(commands.Cog):
         except (discord.NotFound, AttributeError):
             return
         except discord.Forbidden:
-            self.bot.logger.warning(f'Register update did not happen because the register interface could not be fetched on {guild_id}')
+            OISOL_LOGGER.warning(f'Register update did not happen because the register interface could not be fetched on {guild_id}')
             return
 
         # Update existing register
@@ -103,7 +103,7 @@ class ModuleRegister(commands.Cog):
         register_view.refresh_register_embed(guild_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
-        self.bot.logger.command(f'register interface was updated on guild {guild_id}')
+        OISOL_LOGGER.command(f'register interface was updated on guild {guild_id}')
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
@@ -130,7 +130,7 @@ class ModuleRegister(commands.Cog):
                 if config.has_option('register', 'input'):
                     await after.edit(nick=safeguarded_nickname(f'{config.get('register', 'input', fallback='')} {after.display_name}'))
             except discord.Forbidden:
-                self.bot.logger.warning(f'Member renaming failed due to missing permissions on {before.guild.id}')
+                OISOL_LOGGER.warning(f'Member renaming failed due to missing permissions on {before.guild.id}')
 
             # Update on db side
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -158,7 +158,7 @@ class ModuleRegister(commands.Cog):
             try:
                 await after.edit(nick=safeguarded_nickname(member_name))
             except discord.Forbidden:
-                self.bot.logger.warning(f'Member renaming failed due to missing permissions on {before.guild.id}')
+                OISOL_LOGGER.warning(f'Member renaming failed due to missing permissions on {before.guild.id}')
 
             # Update on db side
             with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:

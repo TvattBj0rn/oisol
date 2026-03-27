@@ -17,6 +17,7 @@ from src.utils import (
     InterfacesTypes,
     InterfaceType,
     Shard,
+    OISOL_LOGGER,
 )
 
 if TYPE_CHECKING:
@@ -77,7 +78,7 @@ class DatabaseCleaner(commands.Cog):
                 except (discord.Forbidden, discord.HTTPException):
                     # Rights of the bot have been removed or fail on network part
                     continue
-        self.bot.logger.task(f'remove_non_existing_interface task complete in {time.time() - start_time}s')
+        OISOL_LOGGER.task(f'remove_non_existing_interface task complete in {time.time() - start_time}s')
 
 
     async def _clear_stockpiles_new_war(self, shard_api: FoxholeAsyncAPIWrapper) -> None:
@@ -85,7 +86,7 @@ class DatabaseCleaner(commands.Cog):
             try:
                 current_state = await shard_api.get_current_war_state(session)
             except TimeoutError:
-                self.bot.logger.warning(f'Clear stockpile task timed out for shard {shard_api.shard_name}')
+                OISOL_LOGGER.warning(f'Clear stockpile task timed out for shard {shard_api.shard_name}')
                 return
         if (
                 current_state.get('conquestEndTime') is None # The war is still active
@@ -125,7 +126,7 @@ class DatabaseCleaner(commands.Cog):
                 all_stockpiles_interfaces,
             )
 
-        self.bot.logger.task(f'Stockpile interfaces were cleared for shard {shard_api.shard_name}')
+        OISOL_LOGGER.task(f'Stockpile interfaces were cleared for shard {shard_api.shard_name}')
 
     @tasks.loop(hours=1)
     async def clear_stockpiles_able(self) -> None:
