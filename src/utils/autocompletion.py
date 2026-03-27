@@ -2467,7 +2467,7 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
-		'name': '40-45 “Smelter” Heavy Field Gun',
+		'name': '40-45 “Smelter”',
 		'keywords': 'smelterfc',
 		'table': WikiTables.VEHICLES.value,
 	},
@@ -2882,7 +2882,7 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
-		'name': 'King Jester - Mk. I-1',
+		'name': 'King Jester Mk. I-1',
 		'keywords': 'kingkester',
 		'table': WikiTables.VEHICLES.value,
 	},
