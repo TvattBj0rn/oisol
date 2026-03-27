@@ -112,8 +112,8 @@ class ModuleStockpiles(commands.Cog):
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             potential_association_id_as_list = conn.cursor().execute(
-                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType IN (?, ?)',
-                (ids_list[0], ids_list[1], ids_list[2], InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value),
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
+                (ids_list[0], ids_list[1], ids_list[2], InterfacesTypes.STOCKPILE.value),
             ).fetchall()
 
         if not potential_association_id_as_list:
@@ -612,14 +612,14 @@ class ModuleStockpiles(commands.Cog):
         :param current: current user input in command parameter
         :return: list of interfaces names matching with current input
         """
-        # Retrieve all server interfaces of types 'STOCKPILE_VIEW', 'MULTISERVER_STOCKPILE_VIEW'
+        # Retrieve all server interfaces of types 'STOCKPILE_VIEW'
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
             # Get all guild stockpile interfaces
             all_guild_stockpiles_interfaces = cursor.execute(
-                'SELECT ChannelId, MessageId, InterfaceName, AssociationId FROM AllInterfacesReferences WHERE InterfaceType IN (?, ?) AND GroupId == ?',
-                (InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value, interaction.guild_id),
+                'SELECT ChannelId, MessageId, InterfaceName, AssociationId FROM AllInterfacesReferences WHERE InterfaceType == ? AND GroupId == ?',
+                (InterfacesTypes.STOCKPILE.value, interaction.guild_id),
             ).fetchall()
 
             # Get associated permissions

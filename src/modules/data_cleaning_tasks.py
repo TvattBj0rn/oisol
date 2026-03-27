@@ -116,9 +116,9 @@ class DatabaseCleaner(commands.Cog):
             all_stockpiles_interfaces = cursor.execute(
                 f'''
                 SELECT AssociationId FROM AllInterfacesReferences
-                WHERE InterfaceType IN (?, ?) AND GroupId IN ({', '.join('?' * len(shard_guilds))})
+                WHERE InterfaceType == ? AND GroupId IN ({', '.join('?' * len(shard_guilds))})
                 ''',
-                (InterfacesTypes.STOCKPILE.value, InterfacesTypes.MULTISERVER_STOCKPILE.value, *shard_guilds),
+                (InterfacesTypes.STOCKPILE.value, *shard_guilds),
             ).fetchall()
 
             cursor.executemany(
