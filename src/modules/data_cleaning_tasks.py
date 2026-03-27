@@ -12,12 +12,12 @@ from discord.ext import commands, tasks
 
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     DataFilesPath,
     FoxholeAsyncAPIWrapper,
     InterfacesTypes,
     InterfaceType,
     Shard,
-    OISOL_LOGGER,
 )
 
 if TYPE_CHECKING:

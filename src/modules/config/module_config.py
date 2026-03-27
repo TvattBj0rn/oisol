@@ -11,10 +11,11 @@ from discord.ext import commands
 
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     DataFilesPath,
     Faction,
     InterfacesTypes,
-    repair_default_config_dict, OISOL_LOGGER,
+    repair_default_config_dict,
 )
 
 from .config_interfaces import ConfigViewMenu, SelectLanguageView

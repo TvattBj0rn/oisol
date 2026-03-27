@@ -11,8 +11,9 @@ from discord.ext import commands
 
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     DataFilesPath,
-    safeguarded_nickname, OISOL_LOGGER,
+    safeguarded_nickname,
 )
 
 from .register_view_menu import RegisterViewMenu

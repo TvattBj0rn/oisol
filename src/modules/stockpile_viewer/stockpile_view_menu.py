@@ -8,6 +8,7 @@ from thefuzz import process
 
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
     DataFilesPath,
     DiscordIdType,
@@ -16,7 +17,6 @@ from src.utils import (
     chunks,
     get_user_access_level,
     validate_stockpile_code,
-    OISOL_LOGGER,
 )
 
 

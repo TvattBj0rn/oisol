@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import aiohttp
 from discord.ext import commands, tasks
 
-from src.utils import CacheKeys, MapIcon, Shard, OISOL_LOGGER
+from src.utils import OISOL_LOGGER, CacheKeys, MapIcon, Shard
 from src.utils.foxhole_api_handler import FoxholeAsyncAPIWrapper
 
 if TYPE_CHECKING:

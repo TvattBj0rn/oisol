@@ -10,10 +10,11 @@ from discord.ext import commands
 
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     REGIONS_TYPES,
     CacheKeys,
     DataFilesPath,
-    WikiTables, OISOL_LOGGER,
+    WikiTables,
 )
 
 from ...utils.autocompletion import (

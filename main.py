@@ -27,11 +27,11 @@ from src.modules.translation import ModuleTranslation
 from src.modules.wiki import ModuleWiki
 from src.utils import (
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     DataFilesPath,
     OisolFormatter,
-    OisolLogger,
     Shard,
-    repair_default_config_dict, OISOL_LOGGER,
+    repair_default_config_dict,
 )
 from src.utils.bot_translator import OisolTranslator
 
