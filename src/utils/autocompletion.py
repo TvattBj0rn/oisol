@@ -236,22 +236,22 @@ STRUCTURES_DATA = [
 	},
 	{
 		'name': 'A0E-9 Rocket Body',
-		'keywords': 'a0e-9rocketnuke',
+		'keywords': 'a0e-9rocketnukebody',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
 		'name': 'A0E-9 Rocket Booster',
-		'keywords': 'a0e-9rocketnuke',
+		'keywords': 'a0e-9rocketnukebooster',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
 		'name': 'A0E-9 Rocket Platform',
-		'keywords': 'a0e-9rocketnuke',
+		'keywords': 'a0e-9rocketnukeplatform',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
 		'name': 'A0E-9 Rocket Warhead',
-		'keywords': 'a0e-9rocketnuke',
+		'keywords': 'a0e-9rocketnukewarhead',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -266,7 +266,7 @@ STRUCTURES_DATA = [
 	},
 	{
 		'name': 'Anti-Tank Rifle Pillbox',
-		'keywords': 'atanti-tankpillbox',
+		'keywords': 'atantitankpillbox',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -566,7 +566,7 @@ STRUCTURES_DATA = [
 	},
 	{
 		'name': 'Engineering Center',
-		'keywords': 'engineeringcenter',
+		'keywords': 'engineeringtechcenter',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -1379,12 +1379,12 @@ EMPLACED_DATA = [
 	},
 	{
 		'name': 'DAE 5b “Zeal”',
-		'keywords': 'zealantiairemplacementaae',
+		'keywords': 'zealantiairemplacementaaedca',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
 		'name': 'Leary AA-70 Bolas',
-		'keywords': 'learybolasantiairemplacementaae',
+		'keywords': 'learybolasantiairemplacementaaedca',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -2458,12 +2458,12 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': '30-250 “Tisiphone” Field Cannon',
-		'keywords': 'tisiphone',
+		'keywords': 'tisiphonefieldmortar250',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': '40-250 “Alekto” Heavy Cannon',
-		'keywords': 'alekto',
+		'keywords': 'alektofieldmortar250',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2538,7 +2538,7 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'AU-A150 Taurine Rigger',
-		'keywords': 'taurinerigger',
+		'keywords': 'taurineriggerheavydutytruck',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2578,12 +2578,12 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'BMS - Bowhead',
-		'keywords': 'bowhead',
+		'keywords': 'bowheadresourceship',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': 'BMS - Class 2 Mobile Auto-Crane',
-		'keywords': 'mobilecrane',
+		'keywords': 'mobilesmallcrane',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2618,12 +2618,12 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'BMS - Scrap Hauler',
-		'keywords': 'scraphauler',
+		'keywords': 'scraphaulerharvester',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': 'BMS - Universal Assembly Rig',
-		'keywords': 'universalassemblyrigcv',
+		'keywords': 'universalassemblyrigcvconstructionvehicle',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2633,7 +2633,7 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'BMS Bloodtender',
-		'keywords': 'bloodtender',
+		'keywords': 'bloodtenderhospitaltrain',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2688,7 +2688,7 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'Cnute Cliffwrest',
-		'keywords': 'cnutecliffwrest',
+		'keywords': 'cnutecliffwrestheavydutytruck',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2848,12 +2848,12 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'HC-2 “Scorpion”',
-		'keywords': 'scorpion',
+		'keywords': 'scorpionist',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': 'HC-7 “Ballista”',
-		'keywords': 'ballista',
+		'keywords': 'ballistasiegetank',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2873,7 +2873,7 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'Interceptor PA-12',
-		'keywords': 'interceptor',
+		'keywords': 'interceptorlandingship',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2913,7 +2913,7 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'MacConmara Shorerunner',
-		'keywords': 'macconmarashorerunner',
+		'keywords': 'macconmarashorerunnerlandingship',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -2963,37 +2963,37 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': "O'Brien V.101 Freeman",
-		'keywords': "o'brienfreemanac",
+		'keywords': "o'brienfreemanacarmoredarmouredcar",
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': "O'Brien V.110",
-		'keywords': "o'brienac",
+		'keywords': "o'brienacarmoredarmouredcar",
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': "O'Brien V.113 Gravekeeper",
-		'keywords': "o'briengravekeeperacbonewagon",
+		'keywords': "o'briengravekeeperacbonewagonarmoredarmouredcar",
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': "O'Brien V.121 Highlander",
-		'keywords': "o'brienhighlanderac",
+		'keywords': "o'brienhighlanderacarmoredarmouredcar",
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': "O'Brien V.130 Wild Jack",
-		'keywords': "o'brienwildjackac",
+		'keywords': "o'brienwildjackacarmoredarmouredcar",
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': "O'Brien V.190 Knave",
-		'keywords': "o'brienknavegac",
+		'keywords': "o'brienknavegacarmoredarmouredcar",
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': "O'Brien V.200 Squire",
-		'keywords': "o'briensquirerac",
+		'keywords': "o'briensquireracarmoredarmouredcar",
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -3018,7 +3018,7 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'R-15 - “Chariot”',
-		'keywords': 'chariot',
+		'keywords': 'chariotbus',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -3108,17 +3108,17 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'T3 “Xiphos”',
-		'keywords': 'xiphosac',
+		'keywords': 'xiphosacarmoredarmouredcar',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': 'T5 “Percutio”',
-		'keywords': 'percutioatac',
+		'keywords': 'percutioatacarmoredarmouredcar',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': 'T8 “Gemini”',
-		'keywords': 'geminirpgac',
+		'keywords': 'geminirpgacarmoredarmouredcar',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
