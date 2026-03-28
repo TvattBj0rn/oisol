@@ -51,7 +51,24 @@ class ModuleWiki(commands.Cog):
         self.bot = bot
 
     @classmethod
-    def retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str]:
+    def query_armor_attributes(cls, armor_name: str, sql_cursor: sqlite3.Cursor | None = None) -> dict[str, str]:
+        """
+        Query a specific armor to retrieve its damage reduction per category
+        :param sql_cursor: allow to use cursor of larger context
+        :param armor_name: name of the armor to query (e.g. Tier2Structure)
+        :return: e.g. {'Explosive': 0.99, ..., }
+        """
+
+        if sql_cursor is not None:
+            armor_type = sql_cursor.execute(f'SELECT name, {armor_name} FROM damagetypes').fetchall()
+        else:
+            with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+                conn.row_factory = sqlite3.Row
+                armor_type = conn.cursor().execute(f'SELECT name, {armor_name} FROM damagetypes').fetchall()
+        return {row['name']: row[armor_name] for row in armor_type}  # armor_type will always be defined here
+
+    @classmethod
+    def retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str | dict]:
         with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
@@ -67,10 +84,7 @@ class ModuleWiki(commands.Cog):
                 # Entry with armor type but empty value means no armor hence fallback on armor named 'None'
                 if wiki_armor_name == '':
                     wiki_armor_name = 'None'
-                armor_type = cursor.execute(
-                    f'SELECT name, {wiki_armor_name} FROM damagetypes',
-                ).fetchall()
-                wiki_row_data['armor_attributes'] = {row['name']: row[wiki_armor_name] for row in armor_type}
+                wiki_row_data['armor_attributes'] = ModuleWiki.query_armor_attributes(wiki_armor_name, cursor)
 
             # Retrieve damage emitters
             damages_rows = cursor.execute(
@@ -159,6 +173,23 @@ class ModuleWiki(commands.Cog):
 
         # Compute health of search_request & generate embed
         health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
+
+        # Case where a structure has a killable husk
+        if data_dict['husk hp']:
+            data_dict['name'] = f'{data_dict['name']} (Husk)'
+            data_dict['type'] = 'Husk'
+            data_dict['structure hp'] = data_dict['husk hp']
+
+            # It is possible for a husk to have a different amor type than its non husk counterpart
+            if data_dict['armour type'] != data_dict['husk armour type']:
+                data_dict['armor_attributes'] = ModuleWiki.query_armor_attributes(data_dict['husk armour type'])
+                data_dict['armour type'] = data_dict['husk armour type']
+            husk_health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
+            await interaction.response.send_message(
+                embeds=[discord.Embed.from_dict(husk_health_embed), discord.Embed.from_dict(health_embed)],
+                ephemeral=not visible,
+            )
+            return
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
