@@ -63,12 +63,12 @@ class ModuleWiki(commands.Cog):
             armor_type = sql_cursor.execute(f'SELECT name, {armor_name} FROM damagetypes').fetchall()
         else:
             with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+                conn.row_factory = sqlite3.Row
                 armor_type = conn.cursor().execute(f'SELECT name, {armor_name} FROM damagetypes').fetchall()
-
         return {row['name']: row[armor_name] for row in armor_type}  # armor_type will always be defined here
 
     @classmethod
-    def retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str]:
+    def retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str | dict]:
         with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
@@ -173,6 +173,23 @@ class ModuleWiki(commands.Cog):
 
         # Compute health of search_request & generate embed
         health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
+
+        # Case where a structure has a killable husk
+        if data_dict['husk hp']:
+            data_dict['name'] = f'{data_dict['name']} (Husk)'
+            data_dict['type'] = 'Husk'
+            data_dict['structure hp'] = data_dict['husk hp']
+
+            # It is possible for a husk to have a different amor type than its non husk counterpart
+            if data_dict['armour type'] != data_dict['husk armour type']:
+                data_dict['armor_attributes'] = ModuleWiki.query_armor_attributes(data_dict['husk armour type'])
+                data_dict['armour type'] = data_dict['husk armour type']
+            husk_health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
+            await interaction.response.send_message(
+                embeds=[discord.Embed.from_dict(husk_health_embed), discord.Embed.from_dict(health_embed)],
+                ephemeral=not visible,
+            )
+            return
 
         await interaction.response.send_message(embed=discord.Embed.from_dict(health_embed), ephemeral=not visible)
 
