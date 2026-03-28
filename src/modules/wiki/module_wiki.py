@@ -51,6 +51,23 @@ class ModuleWiki(commands.Cog):
         self.bot = bot
 
     @classmethod
+    def query_armor_attributes(cls, armor_name: str, sql_cursor: sqlite3.Cursor | None = None) -> dict[str, str]:
+        """
+        Query a specific armor to retrieve its damage reduction per category
+        :param sql_cursor: allow to use cursor of larger context
+        :param armor_name: name of the armor to query (e.g. Tier2Structure)
+        :return: e.g. {'Explosive': 0.99, ..., }
+        """
+
+        if sql_cursor is not None:
+            armor_type = sql_cursor.execute(f'SELECT name, {armor_name} FROM damagetypes').fetchall()
+        else:
+            with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+                armor_type = conn.cursor().execute(f'SELECT name, {armor_name} FROM damagetypes').fetchall()
+
+        return {row['name']: row[armor_name] for row in armor_type}  # armor_type will always be defined here
+
+    @classmethod
     def retrieve_row_from_name(cls, table_name: str, search_request: str) -> dict[str, str]:
         with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
             conn.row_factory = sqlite3.Row
@@ -67,10 +84,7 @@ class ModuleWiki(commands.Cog):
                 # Entry with armor type but empty value means no armor hence fallback on armor named 'None'
                 if wiki_armor_name == '':
                     wiki_armor_name = 'None'
-                armor_type = cursor.execute(
-                    f'SELECT name, {wiki_armor_name} FROM damagetypes',
-                ).fetchall()
-                wiki_row_data['armor_attributes'] = {row['name']: row[wiki_armor_name] for row in armor_type}
+                wiki_row_data['armor_attributes'] = ModuleWiki.query_armor_attributes(wiki_armor_name, cursor)
 
             # Retrieve damage emitters
             damages_rows = cursor.execute(
