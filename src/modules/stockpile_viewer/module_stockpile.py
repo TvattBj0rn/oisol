@@ -460,7 +460,9 @@ class ModuleStockpiles(commands.Cog):
         description=app_commands.locale_str('Delete an existing stockpile on a given interface/network'),
     )
     async def stockpile_delete(self, interaction: discord.Interaction, interface_name: str, stockpile_code: str) -> None:
-        OISOL_LOGGER.command(f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(
+            f'stockpile-delete command by {interaction.user.name} on {interaction.guild.name}, {stockpile_code=}',
+        )
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
@@ -509,7 +511,10 @@ class ModuleStockpiles(commands.Cog):
             )
         # This should cover the very unlikely case where a same group has multiple stockpiles with the same code
         else:
-            OISOL_LOGGER.warning(f'At least two stockpiles with the same code were deleted on {interaction.guild.name}')
+            OISOL_LOGGER.warning(
+                f'At least two stockpiles with the same code were deleted on {interaction.guild.name}\n'
+                f'{''.join(f'- {deleted_stockpile[4]}, {deleted_stockpile[2]} in {deleted_stockpile[1]}\n' for deleted_stockpile in deleted_stockpiles)}',
+            )
             await interaction.response.send_message(
                 f'The following stockpiles with code {stockpile_code} were deleted:\n{''.join(f'- {deleted_stockpile[4]}, {deleted_stockpile[2]} in {deleted_stockpile[1]}\n' for deleted_stockpile in deleted_stockpiles)}',
                 ephemeral=True,  # No auto delete in case of a fuck-up
