@@ -319,7 +319,10 @@ class ModuleStockpiles(commands.Cog):
             level: Literal['5', '4', '3', '2', '1'] = '1',
             stockpile_creator: discord.User | None = None,
     ) -> None:
-        OISOL_LOGGER.command(f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.command(
+            f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}:\n'
+            f'{code=}, {location=}, {stockpile_name=}, {level=}, {stockpile_creator=}',
+        )
 
         # Convert interface_name to a readable text
         ids_list = interface_name.split('.')
