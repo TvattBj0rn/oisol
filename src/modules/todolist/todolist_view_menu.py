@@ -9,8 +9,8 @@ import discord
 from src.utils import (
     EMOTES_CUSTOM_ID,
     OISOL_HOME_PATH,
+    OISOL_LOGGER,
     TODOLIST_MAXIMUM_TASKS_ON_INTERFACE,
-    OisolLogger,
     PriorityType,
 )
 
@@ -93,7 +93,6 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
         super().__init__()
         self.embed_uuid = embed_uuid
         self.todolist_title = title
-        self.logger = OisolLogger('oisol')
 
     high_priority = discord.ui.TextInput(
         label=f'{PriorityType.HIGH.value} | High Priority',
@@ -115,7 +114,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
     )
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        self.logger.interface(f'todolist tasks added by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.interface(f'todolist tasks added by {interaction.user.name} on {interaction.guild.name}')
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -175,14 +174,13 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
             ),
         )
         self.emoji = list(EMOTES_CUSTOM_ID.keys())[list(EMOTES_CUSTOM_ID.values()).index(f'TodoButton{custom_id[-1]}')]
-        self.logger = OisolLogger('oisol')
 
     @classmethod
     async def from_custom_id(cls, _interaction: discord.Interaction, _item: discord.ui.Button, match: re.Match[str]) -> Self:
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        self.logger.interface(f'todolist button checked by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.interface(f'todolist button checked by {interaction.user.name} on {interaction.guild.name}')
         embed_uuid = interaction.message.embeds[0].footer.text
         title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         guild_id = str(interaction.guild_id)
