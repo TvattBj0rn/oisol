@@ -3,7 +3,7 @@ from __future__ import annotations
 import configparser
 import os
 import sqlite3
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import discord
 from discord import app_commands
@@ -46,7 +46,11 @@ class ModuleConfig(commands.Cog):
             current_config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
             config = repair_default_config_dict(current_config)
 
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
+        with open(
+            OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini',
+            'w',
+            newline='',
+        ) as configfile:
             config.write(configfile)
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
@@ -83,7 +87,11 @@ class ModuleConfig(commands.Cog):
     ) -> None:
         OISOL_LOGGER.command(f'config-register command by {interaction.user.name} on {interaction.guild.name}')
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
-            await interaction.response.send_message('> No changes were made because no option was given', ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                '> No changes were made because no option was given',
+                ephemeral=True,
+                delete_after=5,
+            )
             return
 
         config = configparser.ConfigParser()
@@ -103,7 +111,11 @@ class ModuleConfig(commands.Cog):
         if promotion_gives_symbol is not None:
             config.set('register', 'promoted_get_tag', str(promotion_gives_symbol))
 
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
+        with open(
+            OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini',
+            'w',
+            newline='',
+        ) as configfile:
             config.write(configfile)
         await interaction.response.send_message('> The register config was updated', ephemeral=True, delete_after=5)
 
@@ -202,5 +214,10 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
 
     @config_shard.autocomplete('shard_name')
-    async def available_shard_autocomplete(self, _interaction: discord.Interaction, _current: str) -> list[app_commands.Choice]:
+    async def available_shard_autocomplete(
+        self,
+        _interaction:
+        discord.Interaction,
+        _current: str,
+    ) -> list[app_commands.Choice]:
         return [app_commands.Choice(name=shard_name, value=shard_name) for shard_name in self.bot.connected_shards]
