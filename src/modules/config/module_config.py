@@ -3,9 +3,11 @@ from __future__ import annotations
 import configparser
 import os
 import sqlite3
+from configparser import ConfigParser
 from typing import TYPE_CHECKING, Literal
 
 import discord
+from aiohttp.web_routedef import delete
 from discord import app_commands
 from discord.ext import commands
 
@@ -27,6 +29,29 @@ if TYPE_CHECKING:
 class ModuleConfig(commands.Cog):
     def __init__(self, bot: Oisol):
         self.bot = bot
+
+    @staticmethod
+    def __add_missing_sections(self, guild_config: ConfigParser) -> None:
+        """
+        Ensures all required section of the .ini configfile exist
+        :param guild_config: config object to be checked
+        """
+        required_sections = {'register', 'regiment', 'stockpile', 'logging'}
+        if missing_sections := set(guild_config.sections()) - required_sections:
+            for missing_section in missing_sections:
+                guild_config.add_section(missing_section)
+
+    def _regiment_config_generic(self, guild_id: int, section: str, option: str, value: str) -> None:
+        # Init path to file / Config object
+        config = configparser.ConfigParser()
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
+        self.__add_missing_sections(config)
+
+        config.set(section, option, value)
+
+        # Write updated config to file
+        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini', 'w', newline='') as configfile:
+            config.write(configfile)
 
     @app_commands.command(
         name='repair-oisol',
@@ -130,32 +155,13 @@ class ModuleConfig(commands.Cog):
             ephemeral=True,
         )
 
-    @staticmethod
-    def _regiment_config_generic(guild_id: int, **kwargs: str) -> None:
-        # Init path to file / Config object
-        config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini')
-        if not config.has_section('regiment'):
-            config.add_section('regiment')
-
-        # There should be only one item inside **kwargs when this method is called, so only the first item is retrieved
-        param_name, param_value = next(iter(kwargs.items()))
-        if param_name == 'shard':
-            config.set('default', 'shard', param_value)
-        else:
-            config.set('regiment', param_name, param_value)
-
-        # Write updated config to file
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild_id}.ini', 'w', newline='') as configfile:
-            config.write(configfile)
-
     @app_commands.command(
         name='config-name',
         description=app_commands.locale_str('Set the name of the group using the bot'),
     )
     async def config_name(self, interaction: discord.Interaction, name: str) -> None:
         OISOL_LOGGER.command(f'config-name command by {interaction.user.name} on {interaction.guild.name}')
-        self._regiment_config_generic(interaction.guild_id, name=name)
+        self._regiment_config_generic(interaction.guild_id, 'regiment', 'name', name)
         await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(
@@ -164,7 +170,7 @@ class ModuleConfig(commands.Cog):
     )
     async def config_tag(self, interaction: discord.Interaction, tag: str) -> None:
         OISOL_LOGGER.command(f'config-tag command by {interaction.user.name} on {interaction.guild.name}')
-        self._regiment_config_generic(interaction.guild_id, tag=tag)
+        self._regiment_config_generic(interaction.guild_id, 'regiment', 'tag', tag)
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(
@@ -185,7 +191,7 @@ class ModuleConfig(commands.Cog):
             )
             return
 
-        self._regiment_config_generic(interaction.guild_id, shard=shard_name)
+        self._regiment_config_generic(interaction.guild_id, 'default', 'shard', shard_name)
         await interaction.response.send_message('> Shard was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(
@@ -194,7 +200,7 @@ class ModuleConfig(commands.Cog):
     )
     async def config_faction(self, interaction: discord.Interaction, faction: Faction) -> None:
         OISOL_LOGGER.command(f'config-faction command by {interaction.user.name} on {interaction.guild.name}')
-        self._regiment_config_generic(interaction.guild_id, faction=faction.name)
+        self._regiment_config_generic(interaction.guild_id, 'regiment', 'faction', faction.name)
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             stockpile_interfaces = conn.cursor().execute(
@@ -212,6 +218,39 @@ class ModuleConfig(commands.Cog):
                 await message.edit(embed=discord.Embed.from_dict(embed_dict))
 
         await interaction.response.send_message('> Faction was updated', ephemeral=True, delete_after=5)
+
+    @app_commands.command(
+        name='config-set-logging-channel',
+        description=app_commands.locale_str('Set the logging channel'),
+    )
+    async def config_log_channel(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
+        OISOL_LOGGER.command(f'config-set-logging-channel command by {interaction.user.name} on {interaction.guild.name}')
+        bot_as_member = interaction.guild.get_member(self.bot.application_id)
+
+        # Ensure the bot can send message in provided channel
+        if not channel.permissions_for(bot_as_member).send_messages:
+            await interaction.response.send_message(
+                f'> The bot does not have permission to send messages in {channel.name}',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+
+        self._regiment_config_generic(interaction.guild_id, 'logging', 'channel', str(channel.id))
+
+        await interaction.response.send_message(
+            f'> Logging channel ({channel.name}) was properly set',
+            ephemeral=True,
+            delete_after=5,
+        )
+
+    @app_commands.command(
+        name='config-unset-logging-channel',
+        description=app_commands.locale_str('Unbind existing logging channel'),
+    )
+    async def unbind_log_channel(self, interaction: discord.Interaction) -> None:
+        OISOL_LOGGER.command(f'config-unset-logging-channel command by {interaction.user.name} on {interaction.guild.name}')
+        # todo: only need to check for existing channel in config then try it
 
     @config_shard.autocomplete('shard_name')
     async def available_shard_autocomplete(
