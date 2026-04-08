@@ -250,7 +250,30 @@ class ModuleConfig(commands.Cog):
     )
     async def unbind_log_channel(self, interaction: discord.Interaction) -> None:
         OISOL_LOGGER.command(f'config-unset-logging-channel command by {interaction.user.name} on {interaction.guild.name}')
-        # todo: only need to check for existing channel in config then try it
+        config = configparser.ConfigParser()
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
+
+        if config.has_option('logging', 'channel'):
+            config.remove_option('logging', 'channel')
+            # Write updated config to file
+            with open(
+                OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini',
+                mode='w',
+                newline='',
+            ) as configfile:
+                config.write(configfile)
+            await interaction.response.send_message(
+                '> The logging channel was properly removed, no logs will be sent to this server anymore',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+
+        await interaction.response.send_message(
+            '> There currently is no logging channel set for this server',
+            ephemeral=True,
+            delete_after=5,
+        )
 
     @config_shard.autocomplete('shard_name')
     async def available_shard_autocomplete(
