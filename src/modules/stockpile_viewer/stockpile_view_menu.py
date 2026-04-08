@@ -52,7 +52,10 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
             ))
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        OISOL_LOGGER.interface(f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.interface(
+            f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         interface_new_roles = []
 
         # Create the parameters for the SQL query
@@ -699,7 +702,10 @@ class StockpileMainInterface(discord.ui.LayoutView):
         emoji='📥',
     )
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OISOL_LOGGER.interface(f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.interface(
+            f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -791,7 +797,10 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 delete_after=5,
             )
             return
-        OISOL_LOGGER.interface(f'share id interaction by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.interface(
+            f'share id interaction by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
 
         # Retrieve the association id using the interface guild, channel & message ids
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:

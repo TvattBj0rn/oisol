@@ -58,7 +58,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Command to add missing config, with possibility to reset the existing configuration'),
     )
     async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False) -> None:
-        OISOL_LOGGER.command(f'repair-oisol command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'repair-oisol command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
 
         # Create configs directory
         os.makedirs(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value, exist_ok=True)
@@ -84,7 +87,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Display the current server configuration'),
     )
     async def config(self, interaction: discord.Interaction) -> None:
-        OISOL_LOGGER.command(f'config-display command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-display command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
 
         config = configparser.ConfigParser()
         if not config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini'):
@@ -110,7 +116,10 @@ class ModuleConfig(commands.Cog):
             promoted_recruit_symbol: str | None = None,
             promotion_gives_symbol: bool | None = None,
     ) -> None:
-        OISOL_LOGGER.command(f'config-register command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-register command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
             await interaction.response.send_message(
                 '> No changes were made because no option was given',
@@ -149,7 +158,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Set the language the bot uses for the server'),
     )
     async def config_language(self, interaction: discord.Interaction) -> None:
-        OISOL_LOGGER.command(f'config-language command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-language command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         await interaction.response.send_message(
             view=SelectLanguageView(self.bot.app_emojis_dict),
             ephemeral=True,
@@ -160,7 +172,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Set the name of the group using the bot'),
     )
     async def config_name(self, interaction: discord.Interaction, name: str) -> None:
-        OISOL_LOGGER.command(f'config-name command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-name command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         self._regiment_config_generic(interaction.guild_id, 'regiment', 'name', name)
         await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
 
@@ -169,7 +184,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Set the tag of the regiment group using the bot'),
     )
     async def config_tag(self, interaction: discord.Interaction, tag: str) -> None:
-        OISOL_LOGGER.command(f'config-tag command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-tag command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         self._regiment_config_generic(interaction.guild_id, 'regiment', 'tag', tag)
         await interaction.response.send_message('> Tag was updated', ephemeral=True, delete_after=5)
 
@@ -178,7 +196,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Set the shard of the group (default is Able)'),
     )
     async def config_shard(self, interaction: discord.Interaction, shard_name: str) -> None:
-        OISOL_LOGGER.command(f'config-shard command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-shard command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
 
         # Case where the user still manually input the shard name, ensure conformity with bot's set
         shard_name = shard_name.upper()
@@ -199,7 +220,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Set the faction of the group using the bot, this will impact the color of the stockpile interface'),
     )
     async def config_faction(self, interaction: discord.Interaction, faction: Faction) -> None:
-        OISOL_LOGGER.command(f'config-faction command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-faction command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         self._regiment_config_generic(interaction.guild_id, 'regiment', 'faction', faction.name)
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -224,7 +248,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Set the logging channel'),
     )
     async def config_log_channel(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
-        OISOL_LOGGER.command(f'config-set-logging-channel command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-set-logging-channel command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         bot_as_member = interaction.guild.get_member(self.bot.application_id)
 
         # Ensure the bot can send message in provided channel
@@ -249,7 +276,10 @@ class ModuleConfig(commands.Cog):
         description=app_commands.locale_str('Unbind existing logging channel'),
     )
     async def unbind_log_channel(self, interaction: discord.Interaction) -> None:
-        OISOL_LOGGER.command(f'config-unset-logging-channel command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'config-unset-logging-channel command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
 

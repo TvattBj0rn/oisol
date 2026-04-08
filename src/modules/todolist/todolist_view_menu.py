@@ -114,7 +114,10 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
     )
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        OISOL_LOGGER.interface(f'todolist tasks added by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.interface(
+            f'todolist tasks added by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -180,7 +183,10 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
         return cls(match.string)
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        OISOL_LOGGER.interface(f'todolist button checked by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.interface(
+            f'todolist button checked by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
         embed_uuid = interaction.message.embeds[0].footer.text
         title = interaction.message.embeds[0].title.removeprefix('☑️️ **|** ')
         guild_id = str(interaction.guild_id)
