@@ -4,10 +4,9 @@ import configparser
 import os
 import sqlite3
 from configparser import ConfigParser
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 import discord
-from aiohttp.web_routedef import delete
 from discord import app_commands
 from discord.ext import commands
 
