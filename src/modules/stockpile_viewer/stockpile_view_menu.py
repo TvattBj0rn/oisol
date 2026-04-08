@@ -379,11 +379,11 @@ class StockpileEditModal(discord.ui.Modal, title='Refresh stockpiles code'):
 
 class StockpileBulkDeleteModalStockpileDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
     def __init__(
-            self,
-            stockpiles_info: list[tuple[str]],
-            faction: str,
-            association_id: str,
-            emojis_dict: dict,
+        self,
+        stockpiles_info: list[tuple[str]],
+        faction: str,
+        association_id: str,
+        emojis_dict: dict,
     ):
         super().__init__()
         self.__association_id = association_id
@@ -436,10 +436,10 @@ class StockpileBulkDeleteModalStockpileDisplay(discord.ui.Modal, title='Stockpil
 
 class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
     def __init__(
-            self,
-            stockpiles_info: list[tuple[str]],
-            association_id: str,
-            emojis_dict: dict,
+        self,
+        stockpiles_info: list[tuple[str]],
+        association_id: str,
+        emojis_dict: dict,
     ):
         super().__init__()
         self.__association_id = association_id
@@ -507,10 +507,10 @@ class StockpileBulkDeleteModalSubregionDisplay(discord.ui.Modal, title='Stockpil
 
 class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile bulk delete'):
     def __init__(
-            self,
-            stockpiles_info: list[tuple[str]],
-            association_id: str,
-            emojis_dict: dict,
+        self,
+        stockpiles_info: list[tuple[str]],
+        association_id: str,
+        emojis_dict: dict,
     ):
         super().__init__()
         self.__association_id = association_id
@@ -573,11 +573,11 @@ class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile b
 
 class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
     def __init__(
-            self,
-            emojis_dict: dict[str, str],
-            stockpile_data: list[tuple],
-            guild_faction: str,
-            user_access_level: int,
+        self,
+        emojis_dict: dict[str, str],
+        stockpile_data: list[tuple],
+        guild_faction: str,
+        user_access_level: int,
     ):
         super().__init__(timeout=None)
         stockpiles_content = self.__generate_stockpiles_content(emojis_dict, stockpile_data, guild_faction)
@@ -596,9 +596,9 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
 
     @staticmethod
     def __generate_stockpile_embed_fields(
-            emojis_dict: dict,
-            guild_stockpiles: list[tuple],
-            guild_faction: str,
+        emojis_dict: dict,
+        guild_stockpiles: list[tuple],
+        guild_faction: str,
     ) -> list[str]:
         # List of formatted stockpiles, with each string in the list corresponding to a foxhole region
         region_strings = []
@@ -636,10 +636,10 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
         return region_strings
 
     def __generate_stockpiles_content(
-            self,
-            emojis_dict: dict[str, str],
-            stockpile_data: list[tuple],
-            guild_faction: str,
+        self,
+        emojis_dict: dict[str, str],
+        stockpile_data: list[tuple],
+        guild_faction: str,
     ) -> list[discord.TextDisplay]:
         merged_strings = []
         buffer = ''
