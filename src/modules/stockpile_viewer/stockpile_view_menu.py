@@ -706,6 +706,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
             f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}',
             action_interaction=interaction,
         )
+        await interaction.response.defer(ephemeral=True)
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -731,19 +732,17 @@ class StockpileMainInterface(discord.ui.LayoutView):
             ).fetchall()
 
         if not access_level_stockpiles:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 '> There are currently no stockpiles for your access level',
                 ephemeral=True,
-                delete_after=5,
             )
-            return
 
         # Get group faction
         config = configparser.ConfigParser()
         config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
         group_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             view=StockpileMainInterfaceViewStockpiles(
                 interaction.client.app_emojis_dict,
                 access_level_stockpiles,
