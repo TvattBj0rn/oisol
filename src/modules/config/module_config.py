@@ -31,13 +31,14 @@ class ModuleConfig(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def __add_missing_sections(self, guild_config: ConfigParser) -> None:
+    def __add_missing_sections(guild_config: ConfigParser) -> None:
         """
         Ensures all required section of the .ini configfile exist
         :param guild_config: config object to be checked
         """
-        required_sections = {'register', 'regiment', 'stockpile', 'logging'}
-        if missing_sections := set(guild_config.sections()) - required_sections:
+        required_sections = {'default', 'register', 'regiment', 'stockpile', 'logging'}
+
+        if missing_sections := required_sections - set(guild_config.sections()):
             for missing_section in missing_sections:
                 guild_config.add_section(missing_section)
 
@@ -239,7 +240,7 @@ class ModuleConfig(commands.Cog):
         self._regiment_config_generic(interaction.guild_id, 'logging', 'channel', str(channel.id))
 
         await interaction.response.send_message(
-            f'> Logging channel ({channel.name}) was properly set',
+            f'> Logging channel {channel.mention} was properly set',
             ephemeral=True,
             delete_after=5,
         )
