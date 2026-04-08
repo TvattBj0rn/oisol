@@ -31,7 +31,10 @@ class ModuleRegister(commands.Cog):
         description=app_commands.locale_str('Command to display the current list of recruit with the date the got the recruit role'),
     )
     async def register_view(self, interaction: discord.Interaction) -> None:
-        OISOL_LOGGER.command(f'register-view command by {interaction.user.name} on {interaction.guild.name}')
+        await OISOL_LOGGER.command(
+            f'register-view command by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
 
         # Retrieve config and channel ID if it exists, take the channel the command was executed from otherwise
         config = configparser.ConfigParser()
@@ -104,7 +107,7 @@ class ModuleRegister(commands.Cog):
         register_view.refresh_register_embed(guild_id)
         await message.edit(view=register_view, embed=register_view.get_current_embed())
 
-        OISOL_LOGGER.command(f'register interface was updated on guild {guild_id}')
+        await OISOL_LOGGER.command(f'register interface was updated on guild {guild_id}')
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
