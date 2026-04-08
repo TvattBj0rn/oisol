@@ -1,7 +1,10 @@
+import configparser
 import logging
 from logging import LogRecord
 
-from src.utils import OISOL_HOME_PATH
+import discord
+
+from src.utils import OISOL_HOME_PATH, DataFilesPath
 
 
 class OisolFormatter(logging.Formatter):
@@ -36,6 +39,28 @@ class OisolFormatter(logging.Formatter):
 
 
 class OisolLogger(logging.Logger):
+    @staticmethod
+    async def __guild_logging(msg: str, interaction: discord.Interaction) -> None:
+        """
+        Method used to send logs to their source server
+        :param msg: logger
+        :param interaction: discord interaction object
+        """
+        # This prevents error for new command with old logging system
+        if interaction is None:
+            return
+
+        config = configparser.ConfigParser()
+        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
+
+        # Ensure the option exists
+        if not config.has_option('logging', 'channel'):
+            return
+        logging_channel_id = config.getint('logging', 'channel')
+
+        logging_channel = await interaction.guild.fetch_channel(logging_channel_id)
+        await logging_channel.send(msg)
+
     def __init__(self):
         super().__init__('oisol')
         self.level = logging.DEBUG
@@ -57,10 +82,12 @@ class OisolLogger(logging.Logger):
         logging.addLevelName(23, 'TASK')
         logging.addLevelName(24, 'JOIN')
 
-    def command(self, msg: str, *args, **kwargs) -> None:
+    async def command(self, msg: str, action_interaction: discord.Interaction | None = None, *args, **kwargs) -> None:
+        await self.__guild_logging(msg, action_interaction)
         self.log(21, msg, *args, **kwargs)
 
-    def interface(self, msg: str, *args, **kwargs) -> None:
+    async def interface(self, msg: str, action_interaction: discord.Interaction | None = None, *args, **kwargs) -> None:
+        await self.__guild_logging(msg, action_interaction)
         self.log(22, msg, *args, **kwargs)
 
     def task(self, msg: str, *args, **kwargs) -> None:
