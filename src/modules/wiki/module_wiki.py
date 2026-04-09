@@ -181,7 +181,7 @@ class ModuleWiki(commands.Cog):
         health_embed = HealthEntryEngine(data_dict, self.bot.app_emojis_dict).get_generated_embed()
 
         # Case where a structure has a killable husk
-        if data_dict['husk hp']:
+        if 'husk hp' in data_dict:
             data_dict['name'] = f'{data_dict['name']} (Husk)'
             data_dict['type'] = 'Husk'
             data_dict['structure hp'] = data_dict['husk hp']
