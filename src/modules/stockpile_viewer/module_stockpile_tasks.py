@@ -116,16 +116,16 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
         except TimeoutError:
             OISOL_LOGGER.warning('Timeout for Able stockpiles zones update')
 
-    @tasks.loop(minutes=2)
-    async def refresh_baker_shard_stockpiles_subregions(self) -> None:
-        try:
-            await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
-        except TimeoutError:
-            OISOL_LOGGER.warning('Timeout for Baker stockpiles zones update')
+    # @tasks.loop(minutes=2)
+    # async def refresh_baker_shard_stockpiles_subregions(self) -> None:
+    #     try:
+    #         await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
+    #     except TimeoutError:
+    #         OISOL_LOGGER.warning('Timeout for Baker stockpiles zones update')
 
-    @tasks.loop(minutes=2)
-    async def refresh_charlie_shard_stockpiles_subregions(self) -> None:
-        try:
-            await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
-        except TimeoutError:
-            OISOL_LOGGER.warning('Timeout for Charlie stockpiles zones update')
+    # @tasks.loop(minutes=2)
+    # async def refresh_charlie_shard_stockpiles_subregions(self) -> None:
+    #     try:
+    #         await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
+    #     except TimeoutError:
+    #         OISOL_LOGGER.warning('Timeout for Charlie stockpiles zones update')
