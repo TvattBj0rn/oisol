@@ -2722,6 +2722,11 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
+		'name': 'Sharkey-Devitt Birdeater Mk. I',
+		'keywords': 'devittsharkeybirdeaterltaa',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
 		'name': 'Drummond 100a',
 		'keywords': 'drummondluv',
 		'table': WikiTables.VEHICLES.value,
@@ -2844,6 +2849,11 @@ VEHICLES_DATA = [
 	{
 		'name': 'H-8 “Kranesca”',
 		'keywords': 'kranescalt',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'HA-1 “Sagaris”',
+		'keywords': 'sagarisltaa',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -3154,12 +3164,22 @@ VEHICLES_DATA = [
 	# Planes
 	{
 		'name': 'Luminary Mk. II Harbinger',
-		'keywords': 'luminaryharbingerfighterairplaneaircraftcolonial',
+		'keywords': 'luminaryharbingerfighterairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'A59 Venti “Perdix”',
+		'keywords': 'ventiperdixscoutplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'ALuminary Mk. VI Emissary',
+		'keywords': 'ventiperdixscoutplaneaircraftwarden',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': 'Toxot-902 “Blind Silver”',
-		'keywords': 'toxotblindsilverfighterairplaneaircraftwarden',
+		'keywords': 'toxotblindsilverfighterairplaneaircraftcolonial',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
