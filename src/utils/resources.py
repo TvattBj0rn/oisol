@@ -19,8 +19,6 @@ NUMBER_TO_EQUIPMENT_SLOT = {
     '8': 'Large Item',
 }
 
-TMP = ''
-
 EMOJIS_FROM_DICT = {
     'Small Arms': 'small_arms',
     'Heavy Arms': 'heavy_arms',
