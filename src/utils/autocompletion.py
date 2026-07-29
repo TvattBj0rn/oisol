@@ -2356,6 +2356,16 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
+		'name': 'Tenta Torpedo',
+		'keywords': 'tentatorpedo',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Absol Anti-Aircraft Rounds',
+		'keywords': 'absolaintiaircraftroundsaa',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
 		'name': 'E681-B Hullbreaker Mine',
 		'keywords': 'hullbreakerseanavalmine',
 		'table': WikiTables.ITEM_DATA.value,
