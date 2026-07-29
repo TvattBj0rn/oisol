@@ -3213,7 +3213,7 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
-		'name': 'ALuminary Mk. VI Emissary',
+		'name': 'Luminary Mk. VI Emissary',
 		'keywords': 'ventiperdixscoutplaneaircraftwarden',
 		'table': WikiTables.VEHICLES.value,
 	},
