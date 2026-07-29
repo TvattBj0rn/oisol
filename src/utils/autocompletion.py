@@ -435,6 +435,16 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
+		'name': 'Anti-Air Gun',
+		'keywords': 'antiairaagun',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Crespine Netting',
+		'keywords': 'crespinenettingtorpedonet',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
 		'name': 'Component Mine',
 		'keywords': 'componentautomine',
 		'table': WikiTables.STRUCTURES.value,
@@ -517,6 +527,11 @@ STRUCTURES_DATA = [
 	{
 		'name': 'Deployed Wind Sock',
 		'keywords': 'deployedwindsock',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Deployed Air Raid Siren',
+		'keywords': 'deployedairraidsiren',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -1873,6 +1888,21 @@ ITEMDATA_DATA = [
 	{
 		'name': 'Gas Mask Filter',
 		'keywords': 'gasmaskfilter',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Flight Mask',
+		'keywords': 'flightmask',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Air Raid Siren',
+		'keywords': 'airraidsiren',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Naval Buoy',
+		'keywords': 'navalbuoy',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
