@@ -306,6 +306,7 @@ REGIONS_TYPES = {
 	'Barronswall': WorldSpawnTypes.RELIC_MEDIUM,
 	'Fort Providence': WorldSpawnTypes.RELIC_LARGE,
     # Endless Shore
+	'The Evil Eye': WorldSpawnTypes.RELIC_LARGE,
 	'Iron Junction': WorldSpawnTypes.TOWN_BASE_POST_OFFICE,
 	'Tuatha Watchpost': WorldSpawnTypes.TOWN_BASE_POST_OFFICE,
 	'Wellchurch': WorldSpawnTypes.TOWN_BASE_POST_OFFICE,
