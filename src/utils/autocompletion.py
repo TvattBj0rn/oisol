@@ -435,6 +435,16 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
+		'name': 'Anti-Air Gun',
+		'keywords': 'antiairaagun',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Crespine Netting',
+		'keywords': 'crespinenettingtorpedonet',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
 		'name': 'Component Mine',
 		'keywords': 'componentautomine',
 		'table': WikiTables.STRUCTURES.value,
@@ -517,6 +527,11 @@ STRUCTURES_DATA = [
 	{
 		'name': 'Deployed Wind Sock',
 		'keywords': 'deployedwindsock',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Deployed Air Raid Siren',
+		'keywords': 'deployedairraidsiren',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -1125,8 +1140,8 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Stone Bridge',
-		'keywords': 'stonebridge',
+		'name': 'Concrete Bridge',
+		'keywords': 'concretestonebridge',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -1190,7 +1205,12 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Train Bridge',
+		'name': 'Train Bridge (Long)',
+		'keywords': 'trainbridge',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Train Bridge (Short)',
 		'keywords': 'trainbridge',
 		'table': WikiTables.STRUCTURES.value,
 	},
@@ -1408,7 +1428,7 @@ EMPLACED_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Leary Snare Trap 127',
+		'name': 'Leary Snare Trap 20',
 		'keywords': 'learysnaretrapemg',
 		'table': WikiTables.STRUCTURES.value,
 	},
@@ -1416,8 +1436,8 @@ EMPLACED_DATA = [
 
 ITEMDATA_DATA = [
 	{
-		'name': '.44',
-		'keywords': '.44m',
+		'name': '.44 Mag',
+		'keywords': '.44mmag',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -1873,6 +1893,21 @@ ITEMDATA_DATA = [
 	{
 		'name': 'Gas Mask Filter',
 		'keywords': 'gasmaskfilter',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Flight Mask',
+		'keywords': 'flightmask',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Air Raid Siren',
+		'keywords': 'airraidsiren',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Naval Buoy',
+		'keywords': 'navalbuoy',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
@@ -2356,6 +2391,16 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
+		'name': 'Tenta Torpedo',
+		'keywords': 'tentatorpedo',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
+		'name': 'Absol Anti-Aircraft Rounds',
+		'keywords': 'absolaintiaircraftroundsaa',
+		'table': WikiTables.ITEM_DATA.value,
+	},
+	{
 		'name': 'E681-B Hullbreaker Mine',
 		'keywords': 'hullbreakerseanavalmine',
 		'table': WikiTables.ITEM_DATA.value,
@@ -2722,6 +2767,11 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
+		'name': 'Sharkey-Devitt Birdeater Mk. I',
+		'keywords': 'devittsharkeybirdeaterltaa',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
 		'name': 'Drummond 100a',
 		'keywords': 'drummondluv',
 		'table': WikiTables.VEHICLES.value,
@@ -2844,6 +2894,11 @@ VEHICLES_DATA = [
 	{
 		'name': 'H-8 “Kranesca”',
 		'keywords': 'kranescalt',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'HA-1 “Sagaris”',
+		'keywords': 'sagarisltaa',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
@@ -3154,12 +3209,27 @@ VEHICLES_DATA = [
 	# Planes
 	{
 		'name': 'Luminary Mk. II Harbinger',
-		'keywords': 'luminaryharbingerfighterairplaneaircraftcolonial',
+		'keywords': 'luminaryharbingerfighterairplaneaircraftwarden',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'A59 Venti “Perdix”',
+		'keywords': 'ventiperdixscoutplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Luminary Mk. VI Emissary',
+		'keywords': 'ventiperdixscoutplaneaircraftwarden',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
 		'name': 'Toxot-902 “Blind Silver”',
-		'keywords': 'toxotblindsilverfighterairplaneaircraftwarden',
+		'keywords': 'toxotblindsilverfighterairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Diamon aK-5 “Harpy”',
+		'keywords': 'diamonharpycolonialheavyfighteraircraft',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{

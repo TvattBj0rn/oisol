@@ -1,8 +1,8 @@
-import pathlib
+from pathlib import Path
 
 from . import WorldSpawnTypes
 
-OISOL_HOME_PATH = pathlib.Path('/') / 'oisol'
+OISOL_HOME_PATH = Path.home() / 'AppData' / 'oisol'
 
 TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
 
@@ -18,7 +18,6 @@ NUMBER_TO_EQUIPMENT_SLOT = {
     '7': 'Extra Equipment',
     '8': 'Large Item',
 }
-
 
 EMOJIS_FROM_DICT = {
     'Small Arms': 'small_arms',
@@ -307,6 +306,7 @@ REGIONS_TYPES = {
 	'Barronswall': WorldSpawnTypes.RELIC_MEDIUM,
 	'Fort Providence': WorldSpawnTypes.RELIC_LARGE,
     # Endless Shore
+	'The Evil Eye': WorldSpawnTypes.RELIC_LARGE,
 	'Iron Junction': WorldSpawnTypes.TOWN_BASE_POST_OFFICE,
 	'Tuatha Watchpost': WorldSpawnTypes.TOWN_BASE_POST_OFFICE,
 	'Wellchurch': WorldSpawnTypes.TOWN_BASE_POST_OFFICE,
