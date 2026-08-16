@@ -1,8 +1,12 @@
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 from . import WorldSpawnTypes
 
-OISOL_HOME_PATH = Path.home() / 'AppData' / 'oisol'
+load_dotenv()
+OISOL_HOME_PATH = Path(os.getenv('OISOL_HOME_PATH'))
 
 TODOLIST_MAXIMUM_TASKS_ON_INTERFACE = 24
 
