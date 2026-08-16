@@ -1436,8 +1436,8 @@ EMPLACED_DATA = [
 
 ITEMDATA_DATA = [
 	{
-		'name': '.44',
-		'keywords': '.44m',
+		'name': '.44 Mag',
+		'keywords': '.44mmag',
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
