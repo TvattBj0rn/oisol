@@ -1140,8 +1140,8 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Stone Bridge',
-		'keywords': 'stonebridge',
+		'name': 'Concrete Bridge',
+		'keywords': 'concretestonebridge',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -1205,7 +1205,12 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Train Bridge',
+		'name': 'Train Bridge (Long)',
+		'keywords': 'trainbridge',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Train Bridge (Short)',
 		'keywords': 'trainbridge',
 		'table': WikiTables.STRUCTURES.value,
 	},
@@ -1423,7 +1428,7 @@ EMPLACED_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
-		'name': 'Leary Snare Trap 127',
+		'name': 'Leary Snare Trap 20',
 		'keywords': 'learysnaretrapemg',
 		'table': WikiTables.STRUCTURES.value,
 	},
@@ -3220,6 +3225,11 @@ VEHICLES_DATA = [
 	{
 		'name': 'Toxot-902 “Blind Silver”',
 		'keywords': 'toxotblindsilverfighterairplaneaircraftcolonial',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
+		'name': 'Diamon aK-5 “Harpy”',
+		'keywords': 'diamonharpycolonialheavyfighteraircraft',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
