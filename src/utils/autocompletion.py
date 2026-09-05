@@ -3228,8 +3228,8 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
-		'name': 'Diamon aK-5 “Harpy”',
-		'keywords': 'diamonharpycolonialheavyfighteraircraft',
+		'name': 'Daimon aK-5 “Harpy”',
+		'keywords': 'daimonharpycolonialheavyfighteraircraft',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
