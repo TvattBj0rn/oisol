@@ -232,7 +232,7 @@ class ModuleWiki(commands.Cog):
 
             # Retrieve all production rows using the entry name
             production_rows = cursor.execute(
-                'SELECT * FROM productionmerged3 WHERE Output == ?',
+                'SELECT * FROM Production WHERE Output == ?',
                 (search_request,),
             ).fetchall()
 

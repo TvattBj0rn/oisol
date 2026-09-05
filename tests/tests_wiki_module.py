@@ -48,7 +48,7 @@ def test_production_command(search_request: str):
         ).fetchone()['image']
 
         production_rows = cursor.execute(
-            'SELECT * FROM productionmerged3 WHERE Output == ?',
+            'SELECT * FROM Production WHERE Output == ?',
             (search_request,),
         ).fetchall()
 
