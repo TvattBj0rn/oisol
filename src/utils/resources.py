@@ -188,6 +188,8 @@ EMOJIS_FROM_DICT = {
 	'Coal': 'coal',
 	'Components': 'component',
 	'Oil': 'oil',
+	'Tenta Torpedo': 'tenta_torpedo',
+	'Bomb High Explosive': 'bomb_high_explosive',
 }
 
 
