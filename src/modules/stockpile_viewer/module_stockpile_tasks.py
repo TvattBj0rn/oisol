@@ -33,10 +33,6 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
         # Start tasks
         if Shard.ABLE.name in self.bot.connected_shards:
             self.refresh_able_shard_stockpiles_subregions.start()
-        if Shard.BAKER.name in self.bot.connected_shards:
-            self.refresh_baker_shard_stockpiles_subregions.start()
-        if Shard.CHARLIE.name in self.bot.connected_shards:
-            self.refresh_charlie_shard_stockpiles_subregions.start()
 
     @staticmethod
     async def _prepare_region_data(session: aiohttp.ClientSession, api_wrapper: FoxholeAsyncAPIWrapper, war_data: dict, region: str) -> list[tuple]:
