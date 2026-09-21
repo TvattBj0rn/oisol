@@ -136,6 +136,18 @@ class HealthEntryEngine:
             return damage_result + f'{main_value} **|** {special_value}'
         return damage_result + f'{main_value}-{main_value_rng} **|** {special_value}-{special_value_rng}'
 
+    def __get_mine_to_trigger(self) -> str | None:
+        """
+        Determine if an entry can trigger a mine, if so return its name otherwise return nothing
+        """
+        mine_alias_name = self.__raw_data.get('trigger mines')
+        if mine_alias_name is None:
+            return None
+
+        match mine_alias_name:
+            case 'InfantryMine':
+                return ''
+
     def __process_all_damages(self) -> None:
         """
         Main engine method, that compute all possible damages depending on the case and generates the strings for the
@@ -145,6 +157,26 @@ class HealthEntryEngine:
             category_field = {'name': f'{category_name.upper()}{f' ({emoji})' if (emoji := self.__bot_emojis.get(EMOJIS_FROM_DICT.get(category_name), f'{self.__bot_emojis.get('missing_texture')} ({category_name})')) else ''}', 'value': ''}
 
             for i, damage_dict in enumerate(category_damages):
+                # Ensure only the proper mine is displayed (e.g. no need for sea mine against a tank)
+                if (weapon_name := damage_dict['name']) in list(mine_mapping := {
+                    "Crow's Foot Mine": 'InfantryMine',
+                    'Abisme AT-99': 'Mine',
+                    'E680-S Rudder Lock': 'WaterMine',
+                    'E681-B Hullbreaker Mine': 'WaterMine',
+                }):
+                    # Entry is either a structure or a very light vehicle
+                    if not (mine_type := self.__raw_data.get('trigger mines')):
+                        break
+                    # weapon_name and mine_type not matching mean it is the incorrect mine
+                    if mine_mapping[weapon_name] != mine_type:
+                        break
+                # Ensure torpedoes/Depth charges are shown to naval entries
+                if (
+                        ('Torpedo' in damage_dict['name'] or damage_dict['name'] == 'Model-7 “Evie”')
+                        and self.__raw_data.get('trigger mines') != 'WaterMine'
+                ):
+                    break
+
                 armor_damage_reduction = float(self.__armor_attributes[damage_dict['damage type']])
 
                 # Case where the damage reduction is at a 100%, thus no damage
