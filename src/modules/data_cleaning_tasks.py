@@ -131,11 +131,3 @@ class DatabaseCleaner(commands.Cog):
     @tasks.loop(hours=1)
     async def clear_stockpiles_able(self) -> None:
         await self._clear_stockpiles_new_war(FoxholeAsyncAPIWrapper())
-
-    # @tasks.loop(hours=1)
-    # async def clear_stockpiles_baker(self) -> None:
-    #     await self._clear_stockpiles_new_war(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
-
-    # @tasks.loop(hours=1)
-    # async def clear_stockpiles_charlie(self) -> None:
-    #     await self._clear_stockpiles_new_war(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))

@@ -23,6 +23,7 @@ NUMBER_TO_EQUIPMENT_SLOT = {
     '8': 'Large Item',
 }
 
+# Within this dict, the keys are the name use on the wiki, the values are the emoji names saved on the app
 EMOJIS_FROM_DICT = {
     'Small Arms': 'small_arms',
     'Heavy Arms': 'heavy_arms',
@@ -188,6 +189,9 @@ EMOJIS_FROM_DICT = {
 	'Coal': 'coal',
 	'Components': 'component',
 	'Oil': 'oil',
+	'Tenta Torpedo': 'tenta_torpedo',
+	'Bomb High Explosive': 'bomb_high_explosive',
+	'Absol Anti-Aircraft Rounds': 'light_aa_ammo',
 }
 
 

@@ -33,10 +33,6 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
         # Start tasks
         if Shard.ABLE.name in self.bot.connected_shards:
             self.refresh_able_shard_stockpiles_subregions.start()
-        if Shard.BAKER.name in self.bot.connected_shards:
-            self.refresh_baker_shard_stockpiles_subregions.start()
-        if Shard.CHARLIE.name in self.bot.connected_shards:
-            self.refresh_charlie_shard_stockpiles_subregions.start()
 
     @staticmethod
     async def _prepare_region_data(session: aiohttp.ClientSession, api_wrapper: FoxholeAsyncAPIWrapper, war_data: dict, region: str) -> list[tuple]:
@@ -115,17 +111,3 @@ class TaskUpdateAvailableStockpiles(commands.Cog):
             await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper())
         except TimeoutError:
             OISOL_LOGGER.warning('Timeout for Able stockpiles zones update')
-
-    # @tasks.loop(minutes=2)
-    # async def refresh_baker_shard_stockpiles_subregions(self) -> None:
-    #     try:
-    #         await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
-    #     except TimeoutError:
-    #         OISOL_LOGGER.warning('Timeout for Baker stockpiles zones update')
-
-    # @tasks.loop(minutes=2)
-    # async def refresh_charlie_shard_stockpiles_subregions(self) -> None:
-    #     try:
-    #         await self._update_stockpile_subregions(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
-    #     except TimeoutError:
-    #         OISOL_LOGGER.warning('Timeout for Charlie stockpiles zones update')

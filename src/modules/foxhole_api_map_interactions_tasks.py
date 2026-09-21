@@ -86,11 +86,3 @@ class WorldSpawnsStatus(commands.Cog):
     @tasks.loop(minutes=2)
     async def update_able_world_spawn_cache(self) -> None:
         await self._update_shard_world_spawn_cache(FoxholeAsyncAPIWrapper())
-
-    # @tasks.loop(minutes=2)
-    # async def update_baker_world_spawn_cache(self) -> None:
-    #     await self._update_shard_world_spawn_cache(FoxholeAsyncAPIWrapper(shard=Shard.BAKER))
-
-    # @tasks.loop(minutes=2)
-    # async def update_charlie_world_spawn_cache(self) -> None:
-    #     await self._update_shard_world_spawn_cache(FoxholeAsyncAPIWrapper(shard=Shard.CHARLIE))
