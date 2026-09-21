@@ -191,6 +191,7 @@ EMOJIS_FROM_DICT = {
 	'Oil': 'oil',
 	'Tenta Torpedo': 'tenta_torpedo',
 	'Bomb High Explosive': 'bomb_high_explosive',
+	'Absol Anti-Aircraft Rounds': 'light_aa_ammo',
 }
 
 
