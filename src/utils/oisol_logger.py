@@ -29,6 +29,7 @@ class OisolFormatter(logging.Formatter):
             22: f'{colors.get('cyan')}{log_format}{colors.get('reset')}',
             23: f'{colors.get('purple')}{log_format}{colors.get('reset')}',
             24: f'{colors.get('green')}{log_format}{colors.get('reset')}',
+            25: f'{colors.get('blue')}{log_format}{colors.get('reset')}',
             logging.WARNING: f'{colors.get('yellow')}{log_format}{colors.get('reset')}',
             logging.ERROR: f'{colors.get('red')}{log_format}{colors.get('reset')}',
             logging.CRITICAL: f'{colors.get('bold_red')}{log_format}{colors.get('reset')}',
@@ -81,6 +82,7 @@ class OisolLogger(logging.Logger):
         logging.addLevelName(22, 'INTERFACE')
         logging.addLevelName(23, 'TASK')
         logging.addLevelName(24, 'JOIN')
+        logging.addLevelName(25, 'API')
 
     async def command(self, msg: str, action_interaction: discord.Interaction | None = None, *args, **kwargs) -> None:
         await self.__guild_logging(msg, action_interaction)
@@ -95,3 +97,6 @@ class OisolLogger(logging.Logger):
 
     def join(self, msg: str, *args, **kwargs) -> None:
         self.log(24, msg, *args, *kwargs)
+
+    def api_log(self, msg: str, *args, **kwargs) -> None:
+        self.log(25, msg, *args, *kwargs)
