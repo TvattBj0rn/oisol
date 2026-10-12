@@ -811,6 +811,32 @@ class StockpileMainInterface(discord.ui.LayoutView):
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
 
+    @__stockpile_main_interface_buttons.button(
+            style=discord.ButtonStyle.grey,
+            custom_id='stockpile_add_api_token',
+            label='Add API token',
+            emoji='🤖',
+        )
+    async def add_api_token(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        """
+        """
+        # Stockpile main interface contains a single container component with multiple children
+        editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
+
+        # editor_container is of type discord.components.TextDisplay here
+        if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
+            await interaction.response.send_message(
+                '> Only the creator of the interface can do this action',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        await OISOL_LOGGER.api_log(
+            f'add API token interaction by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
+        # todo: check if the token is valid using the oisol_core.db
+        #if so remove from waitlist and add to main table
 
 async def auto_migrate_stockpile_interface(
         guild: discord.Guild,
