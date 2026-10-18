@@ -1,13 +1,9 @@
 import configparser
 import sqlite3
 import warnings
-from multiprocessing.util import abstract_sockets_supported
-from typing import Optional
 
 import discord
 from discord import Interaction
-from discord._types import ClientT
-from discord.utils import MISSING
 from thefuzz import process
 
 from src.utils import (
@@ -576,7 +572,7 @@ class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile b
 
 
 class StockpileAddAPIModal(discord.ui.Modal, title='Stockpile network API linking'):
-    __desc = discord.ui.TextDisplay(content='Add an API token to allow customized interactions on this stockpile network\'s outside of Discord.\nKeep empty to clear and unlink an existing token')
+    __desc = discord.ui.TextDisplay(content="Add an API token to allow customized interactions on this stockpile network's outside of Discord.\nKeep empty to clear and unlink an existing token")
     __user_token_input_field = discord.ui.TextInput(label='API token', required=False)
 
     def __init__(
@@ -625,7 +621,7 @@ class StockpileAddAPIModal(discord.ui.Modal, title='Stockpile network API linkin
                     )
                     conn_oisol_core.execute(
                         'INSERT INTO NetworkTokens (Token, AuthorizedNetwork) VALUES (?, ?)',
-                        (submitted_user_token, self.__association_id)
+                        (submitted_user_token, self.__association_id),
                     )
                     conn_oisol_core.commit()
                 # 0 -> Invalid token
@@ -645,7 +641,7 @@ class StockpileAddAPIModal(discord.ui.Modal, title='Stockpile network API linkin
             delete_after=5,
         )
 
-    async def __remove_api_token(self, interaction) -> None:
+    async def __remove_api_token(self, interaction: Interaction) -> None:
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol_core.db') as conn:
             delete_result = conn.cursor().execute(
                 'DELETE FROM NetworkTokens WHERE Token == ? AND AuthorizedNetwork == ? RETURNING *',
