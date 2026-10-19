@@ -786,7 +786,6 @@ class StockpileMainInterface(discord.ui.LayoutView):
         await interaction.response.defer(ephemeral=True)
 
         # TODO: TMP check if the API settings button exists, and reset the interface otherwise
-        print(interaction.message.components)
         for c_check in interaction.message.components[0].children:
             if isinstance(c_check, discord.ActionRow) and not any(button for button in c_check.children if button.label == 'API Settings'):
                 await OISOL_LOGGER.interface(f'stockpiles migration interaction by {interaction.user.name} on {interaction.guild.name}')
