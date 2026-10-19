@@ -786,16 +786,24 @@ class StockpileMainInterface(discord.ui.LayoutView):
         await interaction.response.defer(ephemeral=True)
 
         # TODO: TMP check if the API settings button exists, and reset the interface otherwise
+        print(interaction.message.components)
         for c_check in interaction.message.components[0].children:
             if isinstance(c_check, discord.ActionRow) and not any(button for button in c_check.children if button.label == 'API Settings'):
                 await OISOL_LOGGER.interface(f'stockpiles migration interaction by {interaction.user.name} on {interaction.guild.name}')
                 for c in interaction.message.components[0].children:
                     if isinstance(c, discord.TextDisplay) and c.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID:
                         user_editor = c.content.removesuffix('>').removeprefix('> Interface editor: <@')
+                    # DEV OISOL
                     if isinstance(c, discord.TextDisplay) and '## <:region:1443657827724820621> | Stockpiles | ' in c.content:
                         interface_title = c.content.removeprefix('## <:region:1443657827724820621> | Stockpiles | ')
+                    # OISOL
+                    if isinstance(c, discord.TextDisplay) and '## <:region:1443660028098646218> | Stockpiles | ' in c.content:
+                        interface_title = c.content.removeprefix('## <:region:1443660028098646218> | Stockpiles | ')
+
                 faction_color = interaction.message.components[0].accent_colour
 
+                # This should not raise any errors as these var should be guaranteed
+                # If not it should raise an error instead of overwriting data
                 new_interface = StockpileMainInterface()
                 new_interface.reset_interface(
                     interaction.client.app_emojis_dict,
