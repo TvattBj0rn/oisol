@@ -741,8 +741,8 @@ class StockpileMainInterface(discord.ui.LayoutView):
         self,
         emojis_dict: dict,
         stockpile_interface_name: str,
-        user: discord.User | discord.Member,
-        guild_faction: str,
+        user: discord.User | discord.Member | str,
+        guild_faction: str | int,
     ) -> None:
         self.clear_items()
         self.add_item(
@@ -757,18 +757,18 @@ class StockpileMainInterface(discord.ui.LayoutView):
                     content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
                             '- **Edit Roles**: available only to the creator of the interface, edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
                             '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)\n'
-                            ' - **API Settings**: setup of API interactions that can be used outside of Discord\n',
+                            '- **API Settings**: setup of API interactions that can be used outside of Discord\n',
                 ),
                 discord.ui.Separator(),
                 # Interface editor
                 discord.ui.TextDisplay(
-                    content=f'> Interface editor: {user.mention}',
+                    content=f'> Interface editor: {f'<@{user}>' if isinstance(user, str) else user.mention}',
                     id=STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
                 ),
                 discord.ui.Separator(),
                 # Buttons row
                 self.__stockpile_main_interface_buttons,
-                accent_colour=Faction[guild_faction].value,
+                accent_colour=Faction[guild_faction].value if isinstance(guild_faction, str) else guild_faction,
             ),
         )
 
@@ -784,6 +784,26 @@ class StockpileMainInterface(discord.ui.LayoutView):
             action_interaction=interaction,
         )
         await interaction.response.defer(ephemeral=True)
+
+        # TODO: TMP check if the API settings button exists, and reset the interface otherwise
+        for c_check in interaction.message.components[0].children:
+            if isinstance(c_check, discord.ActionRow) and not any(button for button in c_check.children if button.label == 'API Settings'):
+                await OISOL_LOGGER.interface(f'stockpiles migration interaction by {interaction.user.name} on {interaction.guild.name}')
+                for c in interaction.message.components[0].children:
+                    if isinstance(c, discord.TextDisplay) and c.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID:
+                        user_editor = c.content.removesuffix('>').removeprefix('> Interface editor: <@')
+                    if isinstance(c, discord.TextDisplay) and '## <:region:1443657827724820621> | Stockpiles | ' in c.content:
+                        interface_title = c.content.removeprefix('## <:region:1443657827724820621> | Stockpiles | ')
+                faction_color = interaction.message.components[0].accent_colour
+
+                new_interface = StockpileMainInterface()
+                new_interface.reset_interface(
+                    interaction.client.app_emojis_dict,
+                    interface_title,
+                    user_editor,
+                    faction_color.value)
+                await interaction.message.edit(view=new_interface)
+
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -932,31 +952,3 @@ class StockpileMainInterface(discord.ui.LayoutView):
             interaction.channel_id,
             interaction.message.id,
         ))
-
-
-async def auto_migrate_stockpile_interface(
-    guild: discord.Guild,
-    interface_message: discord.Message,
-    emoji_dict: dict,
-) -> None:
-    oisol_logger = OISOL_LOGGER
-    new_interface = StockpileMainInterface()
-
-    # Retrieve guild faction, for embed color
-    config = configparser.ConfigParser()
-    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini')
-    guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
-
-    # There can only be one embed
-    old_interface = interface_message.embeds[0]
-    interface_title = old_interface.title.split(' | ')[-1]
-    user = guild.get_member_named(old_interface.footer.text)
-
-    if user is None:
-        oisol_logger.warning(f'Could not migrate interface on {guild.name}')
-        return
-
-    new_interface.reset_interface(emoji_dict, interface_title, user, guild_faction)
-
-    await interface_message.edit(embed=None, view=new_interface)
-    oisol_logger.info(f'Stockpile interface was properly migrated on {guild.name}')
