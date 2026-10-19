@@ -571,6 +571,101 @@ class StockpileBulkDeleteModalRegionDisplay(discord.ui.Modal, title='Stockpile b
         )
 
 
+class StockpileAddAPIModal(discord.ui.Modal, title='Stockpile network API linking'):
+    __desc = discord.ui.TextDisplay(content="Add an API token to allow customized interactions on this stockpile network's outside of Discord.\nKeep empty to clear and unlink an existing token")
+    __user_token_input_field = discord.ui.TextInput(label='API token', required=False)
+
+    def __init__(
+        self,
+        guild_id: int,
+        channel_id: int,
+        message_id: int,
+    ):
+        super().__init__()
+
+        # Retrieve the interface association id
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            self.__association_id = conn.cursor().execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (guild_id, channel_id, message_id),
+            ).fetchone()[0]
+
+        # Retrieve a potentially existing token
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol_core.db') as conn:
+            self.__token = conn.cursor().execute(
+                'SELECT Token FROM NetworkTokens WHERE AuthorizedNetwork == ?',
+                (self.__association_id,),
+            ).fetchone()
+
+        if self.__token is not None:
+            self.__token = self.__token[0]
+            self.__user_token_input_field.default = self.__token
+
+
+    async def __add_api_token(self, interaction: Interaction, submitted_user_token: str) -> None:
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol_core.db') as conn_oisol_core:
+            cursor_oisol_core = conn_oisol_core.cursor()
+            matching_tokens = cursor_oisol_core.execute(
+                'SELECT Token FROM NewTokensWaitList WHERE Token == ?',
+                (submitted_user_token,),
+            ).fetchall()
+
+            # Ensure user provided token validity
+            match len(matching_tokens):
+                # Valid single token in the proper table
+                case 1:
+                    # Remove the token from the wait list and add it to the validated list
+                    cursor_oisol_core.execute(
+                        'DELETE FROM NewTokensWaitList WHERE Token == ?',
+                        (submitted_user_token,),
+                    )
+                    conn_oisol_core.execute(
+                        'INSERT INTO NetworkTokens (Token, AuthorizedNetwork) VALUES (?, ?)',
+                        (submitted_user_token, self.__association_id),
+                    )
+                    conn_oisol_core.commit()
+                # 0 -> Invalid token
+                # More than one token -> this case should not be possible
+                case _:
+                    if len(matching_tokens) > 1:
+                        OISOL_LOGGER.warning(f'A duplicated token was found: {submitted_user_token}')
+                    await interaction.response.send_message(
+                        '> The token you provided is invalid, you can try to generate another one from the API',
+                        ephemeral=True,
+                        delete_after=5,
+                    )
+                    return
+        await interaction.response.send_message(
+            '> The token was properly added, the stockpile network can now be interacted with using the API',
+            ephemeral=True,
+            delete_after=5,
+        )
+
+    async def __remove_api_token(self, interaction: Interaction) -> None:
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol_core.db') as conn:
+            delete_result = conn.cursor().execute(
+                'DELETE FROM NetworkTokens WHERE Token == ? AND AuthorizedNetwork == ? RETURNING *',
+                (self.__token, self.__association_id),
+            ).fetchall()
+        if not delete_result:
+            await interaction.response.send_message(
+                '> This network was not linked to the API, so nothing happened',
+                ephemeral=True,
+                delete_after=5,
+            )
+        else:
+            await interaction.response.send_message(
+                '> The network was properly unlinked to the API',
+                ephemeral=True,
+                delete_after=5,
+            )
+
+    async def on_submit(self, interaction: Interaction) -> None:
+        if self.__user_token_input_field.value:
+            await self.__add_api_token(interaction, self.__user_token_input_field.value)
+        else:
+            await self.__remove_api_token(interaction)
+
 class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
     def __init__(
         self,
@@ -646,8 +741,8 @@ class StockpileMainInterface(discord.ui.LayoutView):
         self,
         emojis_dict: dict,
         stockpile_interface_name: str,
-        user: discord.User | discord.Member,
-        guild_faction: str,
+        user: discord.User | discord.Member | str,
+        guild_faction: str | int,
     ) -> None:
         self.clear_items()
         self.add_item(
@@ -661,18 +756,19 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 discord.ui.TextDisplay(
                     content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
                             '- **Edit Roles**: available only to the creator of the interface, edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
-                            '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)',
+                            '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)\n'
+                            '- **API Settings**: setup of API interactions that can be used outside of Discord\n',
                 ),
                 discord.ui.Separator(),
                 # Interface editor
                 discord.ui.TextDisplay(
-                    content=f'> Interface editor: {user.mention}',
+                    content=f'> Interface editor: {f'<@{user}>' if isinstance(user, str) else user.mention}',
                     id=STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
                 ),
                 discord.ui.Separator(),
                 # Buttons row
                 self.__stockpile_main_interface_buttons,
-                accent_colour=Faction[guild_faction].value,
+                accent_colour=Faction[guild_faction].value if isinstance(guild_faction, str) else guild_faction,
             ),
         )
 
@@ -688,6 +784,26 @@ class StockpileMainInterface(discord.ui.LayoutView):
             action_interaction=interaction,
         )
         await interaction.response.defer(ephemeral=True)
+
+        # TODO: TMP check if the API settings button exists, and reset the interface otherwise
+        for c_check in interaction.message.components[0].children:
+            if isinstance(c_check, discord.ActionRow) and not any(button for button in c_check.children if button.label == 'API Settings'):
+                await OISOL_LOGGER.interface(f'stockpiles migration interaction by {interaction.user.name} on {interaction.guild.name}')
+                for c in interaction.message.components[0].children:
+                    if isinstance(c, discord.TextDisplay) and c.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID:
+                        user_editor = c.content.removesuffix('>').removeprefix('> Interface editor: <@')
+                    if isinstance(c, discord.TextDisplay) and '## <:region:1443657827724820621> | Stockpiles | ' in c.content:
+                        interface_title = c.content.removeprefix('## <:region:1443657827724820621> | Stockpiles | ')
+                faction_color = interaction.message.components[0].accent_colour
+
+                new_interface = StockpileMainInterface()
+                new_interface.reset_interface(
+                    interaction.client.app_emojis_dict,
+                    interface_title,
+                    user_editor,
+                    faction_color.value)
+                await interaction.message.edit(view=new_interface)
+
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
 
@@ -811,30 +927,28 @@ class StockpileMainInterface(discord.ui.LayoutView):
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
 
+    @__stockpile_main_interface_buttons.button(
+            style=discord.ButtonStyle.grey,
+            custom_id='stockpile_api_settings',
+            label='API Settings',
+            emoji='🤖',
+        )
+    async def api_settings(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        # Stockpile main interface contains a single container component with multiple children
+        editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
 
-async def auto_migrate_stockpile_interface(
-        guild: discord.Guild,
-        interface_message: discord.Message,
-        emoji_dict: dict,
-) -> None:
-    oisol_logger = OISOL_LOGGER
-    new_interface = StockpileMainInterface()
+        # editor_container is of type discord.components.TextDisplay here
+        if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
+            await interaction.response.send_message(
+                '> Only the creator of the interface can do this action',
+                ephemeral=True,
+                delete_after=5,
+            )
+            return
+        OISOL_LOGGER.api_log(f'add API token interaction by {interaction.user.name} on {interaction.guild.name}')
 
-    # Retrieve guild faction, for embed color
-    config = configparser.ConfigParser()
-    config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini')
-    guild_faction = config.get('regiment', 'faction', fallback='NEUTRAL')
-
-    # There can only be one embed
-    old_interface = interface_message.embeds[0]
-    interface_title = old_interface.title.split(' | ')[-1]
-    user = guild.get_member_named(old_interface.footer.text)
-
-    if user is None:
-        oisol_logger.warning(f'Could not migrate interface on {guild.name}')
-        return
-
-    new_interface.reset_interface(emoji_dict, interface_title, user, guild_faction)
-
-    await interface_message.edit(embed=None, view=new_interface)
-    oisol_logger.info(f'Stockpile interface was properly migrated on {guild.name}')
+        await interaction.response.send_modal(StockpileAddAPIModal(
+            interaction.guild_id,
+            interaction.channel_id,
+            interaction.message.id,
+        ))
