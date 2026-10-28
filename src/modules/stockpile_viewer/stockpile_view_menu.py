@@ -3,7 +3,8 @@ import sqlite3
 import warnings
 
 import discord
-from discord import Interaction
+from discord import Interaction, TextStyle
+from discord._types import ClientT
 from thefuzz import process
 
 from src.utils import (
@@ -23,6 +24,7 @@ from src.utils import (
 class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
     def __init__(self, interaction: discord.Interaction):
         super().__init__()
+        self.__main_interaction = interaction
 
         # Retrieve existing roles
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
@@ -67,10 +69,10 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
                     and isinstance(roles_select_input.component, discord.ui.RoleSelect)
             ):
                 continue
+            print(interaction.message.id)
             # There can be multiple selected roles, here all available role are added within a generator
             interface_new_roles.extend(
-                (interaction.guild_id, interaction.channel_id, interaction.message.id, role.id, DiscordIdType.ROLE.name,
-                 level_value)
+                (self.__main_interaction.guild_id, self.__main_interaction.channel_id, self.__main_interaction.message.id, role.id, DiscordIdType.ROLE.name, level_value)
                 for role in roles_select_input.component.values
             )
 
@@ -666,6 +668,49 @@ class StockpileAddAPIModal(discord.ui.Modal, title='Stockpile network API linkin
         else:
             await self.__remove_api_token(interaction)
 
+
+class StockpileEditInterfaceContentModal(discord.ui.Modal, title='Edit interface content'):
+    __desc = discord.ui.TextDisplay(content='Edit the interface title and description.')
+    __user_title_edit_field = discord.ui.TextInput(label='Edit Title', required=False)
+    __user_description_edit_field = discord.ui.TextInput(
+        label='Edit description (support markdown)',
+        style=TextStyle.long,
+        required=False,
+    )
+
+    def __init__(self, main_interaction: discord.Interaction):
+        super().__init__()
+
+        self.__main_interface_interaction = main_interaction
+        self.__user_title_edit_field.default = main_interaction.message.components[0].children[0].content.split('| ')[2]
+        self.__user_description_edit_field.default = main_interaction.message.components[0].children[2].content
+
+
+    async def on_submit(self, interaction: Interaction) -> None:
+        interface_owner = self.__main_interface_interaction.message.components[0].children[4].content.split('<@')[1].removesuffix('>')
+        interface_color = self.__main_interface_interaction.message.components[0].accent_colour
+
+        new_title = self.__user_title_edit_field.value
+        new_desc = self.__user_description_edit_field.value
+
+        # Discord does not allow no chars titles/descs, this ensures it stays a possibility
+        if len(new_title) < 1:
+            new_title += 'ㅤ'
+        if len(new_desc) < 1:
+            new_desc += 'ㅤ'
+
+        updated_interface = StockpileMainInterface()
+        updated_interface.reset_interface(
+            self.__main_interface_interaction.client.app_emojis_dict,
+            new_title,
+            interface_owner,
+            interface_color.value,
+            new_desc,
+        )
+        await self.__main_interface_interaction.message.edit(view=updated_interface)
+        await interaction.response.send_message('> The interface was properly edited', ephemeral=True, delete_after=5)
+
+
 class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
     def __init__(
         self,
@@ -689,6 +734,91 @@ class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
 
         self.add_item(display_stockpiles_container)
 
+
+class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
+    __editor_panel_buttons = discord.ui.ActionRow()
+
+    def __init__(self, main_interface_interaction: discord.Interaction):
+        super().__init__(timeout=None)
+        self.__main_interaction = main_interface_interaction
+
+        self.clear_items()
+        self.add_item(
+            discord.ui.Container(
+                # Title
+                discord.ui.TextDisplay(content='## Editor Panel'),
+                discord.ui.Separator(),
+                # Main content
+                discord.ui.TextDisplay(
+                    content='- **Edit Interface Content**: edit title and description of the interface\n'
+                            '- **Edit Roles**: edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
+                            '- **Network Settings**: View connected stockpiles, share ID and edit the API token\n'
+                ),
+                discord.ui.Separator(),
+                # Buttons row
+                self.__editor_panel_buttons,
+                accent_colour=discord.Colour.red(),
+            )
+        )
+
+    @__editor_panel_buttons.button(
+        style=discord.ButtonStyle.blurple,
+        custom_id='stockpiles_edit_interface',
+        label='Interface Content Settings',
+        emoji='✏️',
+    )
+    async def edit_interface_content(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        await interaction.response.send_modal(StockpileEditInterfaceContentModal(self.__main_interaction))
+
+    @__editor_panel_buttons.button(
+        style=discord.ButtonStyle.blurple,
+        custom_id='stockpiles_edit_roles',
+        label='Roles Settings',
+        emoji='🔰',
+    )
+    async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        print(self.__main_interaction.message.id)
+        await interaction.response.send_modal(StockpileEditRolesModal(self.__main_interaction))
+
+    @__editor_panel_buttons.button(
+        style=discord.ButtonStyle.blurple,
+        custom_id='stockpile_edit_network',
+        label='Network Settings',
+        emoji='📡',
+    )
+    async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        """
+        Interaction when the Share button is clicked. Since only the user that created the interface can do this action,
+        a check is made to ensure the interaction author is the same as the username in the interface footer.
+        Then the association id is retrieved and sent in an ephemeral message.
+        """
+        await OISOL_LOGGER.interface(
+            f'share id interaction by {interaction.user.name} on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
+
+        # Retrieve the association id using the interface guild, channel & message ids
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            association_id = conn.cursor().execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
+                (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
+            ).fetchone()
+        await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
+
+    @__editor_panel_buttons.button(
+        style=discord.ButtonStyle.blurple,
+        custom_id='stockpile_api_settings',
+        label='Stockpile Network Settings',
+        emoji='🤖',
+    )
+    async def api_settings(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        OISOL_LOGGER.api_log(f'add API token interaction by {interaction.user.name} on {interaction.guild.name}')
+
+        await interaction.response.send_modal(StockpileAddAPIModal(
+            interaction.guild_id,
+            interaction.channel_id,
+            interaction.message.id,
+        ))
 
 class StockpileMainInterface(discord.ui.LayoutView):
     __stockpile_main_interface_buttons = discord.ui.ActionRow()
@@ -743,6 +873,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
         stockpile_interface_name: str,
         user: discord.User | discord.Member | str,
         guild_faction: str | int,
+        stockpile_interface_desc: str | None = None,
     ) -> None:
         self.clear_items()
         self.add_item(
@@ -753,11 +884,11 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 ),
                 discord.ui.Separator(),
                 # Main content
+                # By default, the content is as below, but the user can pass a custom content here
                 discord.ui.TextDisplay(
-                    content='- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
-                            '- **Edit Roles**: available only to the creator of the interface, edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
-                            '- **Share ID**: available only to the creator of the interface, get the association ID of the interface to share with other server(s)\n'
-                            '- **API Settings**: setup of API interactions that can be used outside of Discord\n',
+                    content=('- **View Stockpiles**: will display more or less stockpiles to the user depending on its level of access to the interface (5-1), 5 being the highest level and 1 the lowest\n'
+                            '- **Editor Panel**: available only to the creator of the interface, contains various settings (Title, Description, Roles, ...)\n')
+                    if stockpile_interface_desc is None else stockpile_interface_desc
                 ),
                 discord.ui.Separator(),
                 # Interface editor
@@ -786,30 +917,30 @@ class StockpileMainInterface(discord.ui.LayoutView):
         await interaction.response.defer(ephemeral=True)
 
         # TODO: TMP check if the API settings button exists, and reset the interface otherwise
-        for c_check in interaction.message.components[0].children:
-            if isinstance(c_check, discord.ActionRow) and not any(button for button in c_check.children if button.label == 'API Settings'):
-                await OISOL_LOGGER.interface(f'stockpiles migration interaction by {interaction.user.name} on {interaction.guild.name}')
-                for c in interaction.message.components[0].children:
-                    if isinstance(c, discord.TextDisplay) and c.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID:
-                        user_editor = c.content.removesuffix('>').removeprefix('> Interface editor: <@')
-                    # DEV OISOL
-                    if isinstance(c, discord.TextDisplay) and '## <:region:1443657827724820621> | Stockpiles | ' in c.content:
-                        interface_title = c.content.removeprefix('## <:region:1443657827724820621> | Stockpiles | ')
-                    # OISOL
-                    if isinstance(c, discord.TextDisplay) and '## <:region:1443660028098646218> | Stockpiles | ' in c.content:
-                        interface_title = c.content.removeprefix('## <:region:1443660028098646218> | Stockpiles | ')
-
-                faction_color = interaction.message.components[0].accent_colour
-
-                # This should not raise any errors as these var should be guaranteed
-                # If not it should raise an error instead of overwriting data
-                new_interface = StockpileMainInterface()
-                new_interface.reset_interface(
-                    interaction.client.app_emojis_dict,
-                    interface_title,
-                    user_editor,
-                    faction_color.value)
-                await interaction.message.edit(view=new_interface)
+        # for c_check in interaction.message.components[0].children:
+        #     if isinstance(c_check, discord.ActionRow) and not any(button for button in c_check.children if button.label == 'API Settings'):
+        #         await OISOL_LOGGER.interface(f'stockpiles migration interaction by {interaction.user.name} on {interaction.guild.name}')
+        #         for c in interaction.message.components[0].children:
+        #             if isinstance(c, discord.TextDisplay) and c.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID:
+        #                 user_editor = c.content.removesuffix('>').removeprefix('> Interface editor: <@')
+        #             # DEV OISOL
+        #             if isinstance(c, discord.TextDisplay) and '## <:region:1443657827724820621> | Stockpiles | ' in c.content:
+        #                 interface_title = c.content.removeprefix('## <:region:1443657827724820621> | Stockpiles | ')
+        #             # OISOL
+        #             if isinstance(c, discord.TextDisplay) and '## <:region:1443660028098646218> | Stockpiles | ' in c.content:
+        #                 interface_title = c.content.removeprefix('## <:region:1443660028098646218> | Stockpiles | ')
+        #
+        #         faction_color = interaction.message.components[0].accent_colour
+        #
+        #         # This should not raise any errors as these var should be guaranteed
+        #         # If not it should raise an error instead of overwriting data
+        #         new_interface = StockpileMainInterface()
+        #         new_interface.reset_interface(
+        #             interaction.client.app_emojis_dict,
+        #             interface_title,
+        #             user_editor,
+        #             faction_color.value)
+        #         await interaction.message.edit(view=new_interface)
 
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             cursor = conn.cursor()
@@ -880,11 +1011,11 @@ class StockpileMainInterface(discord.ui.LayoutView):
 
     @__stockpile_main_interface_buttons.button(
         style=discord.ButtonStyle.grey,
-        custom_id='stockpiles_edit_roles',
-        label='Edit Roles',
-        emoji='✏️',
+        custom_id='editor_panel',
+        label='Editor Panel',
+        emoji='🛠️',
     )
-    async def edit_interface_roles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+    async def display_editor_panel(self, interaction: discord.Interaction, _button: discord.ui.Button):
         # Stockpile main interface contains a single container component with multiple children
         editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
 
@@ -896,66 +1027,8 @@ class StockpileMainInterface(discord.ui.LayoutView):
                 delete_after=5,
             )
             return
-        await interaction.response.send_modal(StockpileEditRolesModal(interaction))
 
-    @__stockpile_main_interface_buttons.button(
-        style=discord.ButtonStyle.grey,
-        custom_id='stockpile_share_id',
-        label='Share ID',
-        emoji='🔗',
-    )
-    async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        """
-        Interaction when the Share button is clicked. Since only the user that created the interface can do this action,
-        a check is made to ensure the interaction author is the same as the username in the interface footer.
-        Then the association id is retrieved and sent in an ephemeral message.
-        """
-        # Stockpile main interface contains a single container component with multiple children
-        editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
-
-        # editor_container is of type discord.components.TextDisplay here
-        if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
-            await interaction.response.send_message(
-                '> Only the creator of the interface can do this action',
-                ephemeral=True,
-                delete_after=5,
-            )
-            return
-        await OISOL_LOGGER.interface(
-            f'share id interaction by {interaction.user.name} on {interaction.guild.name}',
-            action_interaction=interaction,
+        await interaction.response.send_message(
+            view=StockpileMainInterfaceEditorPanel(main_interface_interaction=interaction),
+            ephemeral=True,
         )
-
-        # Retrieve the association id using the interface guild, channel & message ids
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            association_id = conn.cursor().execute(
-                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
-                (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
-            ).fetchone()
-        await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
-
-    @__stockpile_main_interface_buttons.button(
-            style=discord.ButtonStyle.grey,
-            custom_id='stockpile_api_settings',
-            label='API Settings',
-            emoji='🤖',
-        )
-    async def api_settings(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        # Stockpile main interface contains a single container component with multiple children
-        editor_container = next(component for component in interaction.message.components[0].children if component.id == STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID)
-
-        # editor_container is of type discord.components.TextDisplay here
-        if interaction.user.id != int(editor_container.content.split('<@')[-1].split('>')[0]):
-            await interaction.response.send_message(
-                '> Only the creator of the interface can do this action',
-                ephemeral=True,
-                delete_after=5,
-            )
-            return
-        OISOL_LOGGER.api_log(f'add API token interaction by {interaction.user.name} on {interaction.guild.name}')
-
-        await interaction.response.send_modal(StockpileAddAPIModal(
-            interaction.guild_id,
-            interaction.channel_id,
-            interaction.message.id,
-        ))
