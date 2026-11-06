@@ -12,7 +12,7 @@ from src.utils import (
     Faction,
     get_user_access_level,
 )
-from utils import InterfacesTypes, DiscordIdType
+from utils import DiscordIdType, InterfacesTypes
 
 
 class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
