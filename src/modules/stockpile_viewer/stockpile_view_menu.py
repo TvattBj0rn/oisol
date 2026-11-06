@@ -801,23 +801,23 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
         with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
             association_id = conn.cursor().execute(
                 'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ? AND InterfaceType == ?',
-                (interaction.guild_id, interaction.channel_id, interaction.message.id, InterfacesTypes.STOCKPILE.value),
+                (self.__main_interaction.guild_id, self.__main_interaction.channel_id, self.__main_interaction.message.id, InterfacesTypes.STOCKPILE.value),
             ).fetchone()
         await interaction.response.send_message(f'> The association id is: `{association_id[0]}`', ephemeral=True)
 
     @__editor_panel_buttons.button(
         style=discord.ButtonStyle.blurple,
         custom_id='stockpile_api_settings',
-        label='Stockpile Network Settings',
+        label='Stockpile Network API Settings',
         emoji='🤖',
     )
     async def api_settings(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OISOL_LOGGER.api_log(f'add API token interaction by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.api_log(f'API token interaction by {interaction.user.name} on {interaction.guild.name}')
 
         await interaction.response.send_modal(StockpileAddAPIModal(
-            interaction.guild_id,
-            interaction.channel_id,
-            interaction.message.id,
+            self.__main_interaction.guild_id,
+            self.__main_interaction.channel_id,
+            self.__main_interaction.message.id,
         ))
 
 class StockpileMainInterface(discord.ui.LayoutView):
