@@ -22,7 +22,7 @@ from src.utils import (
     validate_stockpile_code,
 )
 
-from .stockpile_view_menu import (
+from .views import (
     StockpileBulkDeleteModalRegionDisplay,
     StockpileBulkDeleteModalStockpileDisplay,
     StockpileBulkDeleteModalSubregionDisplay,
