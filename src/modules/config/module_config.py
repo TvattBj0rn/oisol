@@ -19,7 +19,7 @@ from src.utils import (
     repair_default_config_dict,
 )
 
-from .config_interfaces import ConfigViewMenu, SelectLanguageView
+from .config_interfaces import ConfigViewMenu
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -59,7 +59,7 @@ class ModuleConfig(commands.Cog):
     )
     async def repair_oisol_config(self, interaction: discord.Interaction, force_reset: bool = False) -> None:
         await OISOL_LOGGER.command(
-            f'repair-oisol command by {interaction.user.name} on {interaction.guild.name}',
+            f'repair-oisol command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -88,7 +88,7 @@ class ModuleConfig(commands.Cog):
     )
     async def config(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.command(
-            f'config-display command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-display command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -117,7 +117,7 @@ class ModuleConfig(commands.Cog):
             promotion_gives_symbol: bool | None = None,
     ) -> None:
         await OISOL_LOGGER.command(
-            f'config-register command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-register command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
@@ -154,26 +154,12 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> The register config was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(
-        name='config-language',
-        description=app_commands.locale_str('Set the language the bot uses for the server'),
-    )
-    async def config_language(self, interaction: discord.Interaction) -> None:
-        await OISOL_LOGGER.command(
-            f'config-language command by {interaction.user.name} on {interaction.guild.name}',
-            action_interaction=interaction,
-        )
-        await interaction.response.send_message(
-            view=SelectLanguageView(self.bot.app_emojis_dict),
-            ephemeral=True,
-        )
-
-    @app_commands.command(
         name='config-name',
         description=app_commands.locale_str('Set the name of the group using the bot'),
     )
     async def config_name(self, interaction: discord.Interaction, name: str) -> None:
         await OISOL_LOGGER.command(
-            f'config-name command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-name command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         self._regiment_config_generic(interaction.guild_id, 'regiment', 'name', name)
@@ -185,7 +171,7 @@ class ModuleConfig(commands.Cog):
     )
     async def config_tag(self, interaction: discord.Interaction, tag: str) -> None:
         await OISOL_LOGGER.command(
-            f'config-tag command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-tag command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         self._regiment_config_generic(interaction.guild_id, 'regiment', 'tag', tag)
@@ -197,7 +183,7 @@ class ModuleConfig(commands.Cog):
     )
     async def config_shard(self, interaction: discord.Interaction, shard_name: str) -> None:
         await OISOL_LOGGER.command(
-            f'config-shard command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-shard command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -221,7 +207,7 @@ class ModuleConfig(commands.Cog):
     )
     async def config_faction(self, interaction: discord.Interaction, faction: Faction) -> None:
         await OISOL_LOGGER.command(
-            f'config-faction command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-faction command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         self._regiment_config_generic(interaction.guild_id, 'regiment', 'faction', faction.name)
@@ -249,7 +235,7 @@ class ModuleConfig(commands.Cog):
     )
     async def config_log_channel(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
         await OISOL_LOGGER.command(
-            f'config-set-logging-channel command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-set-logging-channel command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         bot_as_member = interaction.guild.get_member(self.bot.application_id)
@@ -277,7 +263,7 @@ class ModuleConfig(commands.Cog):
     )
     async def unbind_log_channel(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.command(
-            f'config-unset-logging-channel command by {interaction.user.name} on {interaction.guild.name}',
+            f'config-unset-logging-channel command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         config = configparser.ConfigParser()

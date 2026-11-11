@@ -103,7 +103,7 @@ class ModuleWiki(commands.Cog):
     )
     async def wiki(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         await OISOL_LOGGER.command(
-            f'wiki command by {interaction.user.name} on {interaction.guild.name} ({search_request})',
+            f'wiki command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name} ({search_request})',
             action_interaction=interaction,
         )
 
@@ -130,7 +130,7 @@ class ModuleWiki(commands.Cog):
     )
     async def entities_health(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         await OISOL_LOGGER.command(
-            f'health command by {interaction.user.name} on {interaction.guild.name} ({search_request})',
+            f'health command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name} ({search_request})',
             action_interaction=interaction,
         )
 
@@ -205,7 +205,7 @@ class ModuleWiki(commands.Cog):
     )
     async def production_cost(self, interaction: discord.Interaction, search_request: str, visible: bool = False) -> None:
         await OISOL_LOGGER.command(
-            f'production command by {interaction.user.name} on {interaction.guild.name} ({search_request})',
+            f'production command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name} ({search_request})',
             action_interaction=interaction,
         )
 

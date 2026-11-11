@@ -49,7 +49,7 @@ class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.interface(
-            f'stockpiles role edit interaction by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpiles role edit interaction by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         interface_new_roles = []
@@ -291,7 +291,7 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
         Then the association id is retrieved and sent in an ephemeral message.
         """
         await OISOL_LOGGER.interface(
-            f'share id interaction by {interaction.user.name} on {interaction.guild.name}',
+            f'share id interaction by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -310,7 +310,7 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
         emoji='🤖',
     )
     async def api_settings(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
-        OISOL_LOGGER.api_log(f'API token interaction by {interaction.user.name} on {interaction.guild.name}')
+        OISOL_LOGGER.api_log(f'API token interaction by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}')
 
         await interaction.response.send_modal(StockpileAddAPIModal(
             self.__main_interaction.guild_id,
@@ -433,7 +433,7 @@ class StockpileMainInterface(discord.ui.LayoutView):
     )
     async def display_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         await OISOL_LOGGER.interface(
-            f'stockpiles view interaction by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpiles view interaction by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         await interaction.response.defer(ephemeral=True)
