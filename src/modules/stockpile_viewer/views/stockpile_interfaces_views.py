@@ -250,7 +250,8 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
                 discord.ui.TextDisplay(
                     content='- **Edit Interface Content**: edit title and description of the interface\n'
                             '- **Edit Roles**: edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
-                            '- **Network Settings**: View connected stockpiles, share ID and edit the API token\n',
+                            '- **Get share ID**: Retrieve the share ID\n'
+                            '- **API Settings**: Add, remove or edit token connected to the Oisol API\n',
                 ),
                 discord.ui.Separator(),
                 # Buttons row
@@ -280,7 +281,7 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
     @__editor_panel_buttons.button(
         style=discord.ButtonStyle.blurple,
         custom_id='stockpile_edit_network',
-        label='Network Settings',
+        label='Get share ID',
         emoji='📡',
     )
     async def get_stockpile_association_id(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
@@ -305,7 +306,7 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
     @__editor_panel_buttons.button(
         style=discord.ButtonStyle.blurple,
         custom_id='stockpile_api_settings',
-        label='Stockpile Network API Settings',
+        label='API Settings',
         emoji='🤖',
     )
     async def api_settings(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
