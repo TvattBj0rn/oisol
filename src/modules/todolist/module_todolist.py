@@ -40,7 +40,7 @@ class ModuleTodolist(commands.Cog):
             member_5: discord.Member = None,
     ) -> None:
         await OISOL_LOGGER.command(
-            f'todolist-generate command by {interaction.user.name} on {interaction.guild.name}',
+            f'todolist-generate command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         todolist_id = uuid.uuid4().hex

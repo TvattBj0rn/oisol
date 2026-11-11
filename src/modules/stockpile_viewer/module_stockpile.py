@@ -22,7 +22,7 @@ from src.utils import (
     validate_stockpile_code,
 )
 
-from .stockpile_view_menu import (
+from .views import (
     StockpileBulkDeleteModalRegionDisplay,
     StockpileBulkDeleteModalStockpileDisplay,
     StockpileBulkDeleteModalSubregionDisplay,
@@ -161,7 +161,7 @@ class ModuleStockpiles(commands.Cog):
             name: str,
     ) -> None:
         await OISOL_LOGGER.command(
-            f'stockpile-interface-create command by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpile-interface-create command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         await interaction.response.defer(ephemeral=True)
@@ -205,7 +205,7 @@ class ModuleStockpiles(commands.Cog):
             interface_id: str,
     ) -> None:
         await OISOL_LOGGER.command(
-            f'stockpile-interface-join command by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpile-interface-join command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -251,7 +251,7 @@ class ModuleStockpiles(commands.Cog):
     )
     async def refresh_codes(self, interaction: discord.Interaction, interface_name: str) -> None:
         await OISOL_LOGGER.command(
-            f'stockpile-refresh-codes command by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpile-refresh-codes command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -290,7 +290,7 @@ class ModuleStockpiles(commands.Cog):
     )
     async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
         await OISOL_LOGGER.command(
-            f'stockpile-interface-clear command by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpile-interface-clear command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -333,7 +333,7 @@ class ModuleStockpiles(commands.Cog):
             stockpile_creator: discord.User | None = None,
     ) -> None:
         await OISOL_LOGGER.command(
-            f'stockpile-create command by {interaction.user.name} on {interaction.guild.name}:\n'
+            f'stockpile-create command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}:\n'
             f'{code=}, {location=}, {stockpile_name=}, {level=}, {stockpile_creator=}',
             action_interaction=interaction,
         )
@@ -444,7 +444,7 @@ class ModuleStockpiles(commands.Cog):
     )
     async def stockpile_bulk_create(self, interaction: discord.Interaction, interface_name: str) -> None:
         await OISOL_LOGGER.command(
-            f'stockpile-bulk-create command by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpile-bulk-create command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -549,7 +549,7 @@ class ModuleStockpiles(commands.Cog):
             display: Literal['Stockpile', 'Subregion', 'Region'] = 'Stockpile',
     ) -> None:
         await OISOL_LOGGER.command(
-            f'stockpile-bulk-delete command by {interaction.user.name} on {interaction.guild.name}',
+            f'stockpile-bulk-delete command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 

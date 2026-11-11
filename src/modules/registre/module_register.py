@@ -32,7 +32,7 @@ class ModuleRegister(commands.Cog):
     )
     async def register_view(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.command(
-            f'register-view command by {interaction.user.name} on {interaction.guild.name}',
+            f'register-view command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 

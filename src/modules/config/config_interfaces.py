@@ -39,28 +39,3 @@ class ConfigViewMenu(discord.ui.View):
     async def refresh_embed(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         await self.update_config_embed(interaction)
         await interaction.response.edit_message(view=self, embed=self.embed)
-
-
-class SelectLanguageView(discord.ui.View):
-    def __init__(self, emojis_dict: dict, *, timeout: float | None = None):
-        super().__init__(timeout=timeout)
-        self.add_item(SelectLanguage(emojis_dict))
-
-
-class SelectLanguage(discord.ui.Select):
-    def __init__(self, emojis_dict: dict):
-        options = [
-            discord.SelectOption(label='Français', emoji='🇫🇷', value=Language.FR.name),
-            discord.SelectOption(label='English', emoji=emojis_dict.get('ukus'), value=Language.EN.name),
-        ]
-        super().__init__(placeholder='Choose a language', options=options)
-
-    async def callback(self, interaction: discord.Interaction) -> None:
-        config = configparser.ConfigParser()
-        config.read(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini')
-        config.set('default', 'language', self.values[0])
-
-        with open(OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini', 'w', newline='') as configfile:
-            config.write(configfile)
-
-        await interaction.response.edit_message(content='> Language was correctly updated', delete_after=3, view=None)

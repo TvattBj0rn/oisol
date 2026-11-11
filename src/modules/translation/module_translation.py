@@ -53,7 +53,7 @@ class ModuleTranslation(commands.Cog):
 
     async def translate_to_user_language(self, interaction: discord.Interaction, message: discord.Message) -> None:
         await OISOL_LOGGER.command(
-            f'translate command by {interaction.user.name} on {interaction.guild.name}',
+            f'translate command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         await interaction.response.defer(ephemeral=True)

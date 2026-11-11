@@ -115,7 +115,7 @@ class TodolistModalAdd(discord.ui.Modal, title='Todolist Add'):
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.interface(
-            f'todolist tasks added by {interaction.user.name} on {interaction.guild.name}',
+            f'todolist tasks added by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -184,7 +184,7 @@ class TodolistButtonCheckmark(discord.ui.DynamicItem[discord.ui.Button], templat
 
     async def callback(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.interface(
-            f'todolist button checked by {interaction.user.name} on {interaction.guild.name}',
+            f'todolist button checked by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
         embed_uuid = interaction.message.embeds[0].footer.text
