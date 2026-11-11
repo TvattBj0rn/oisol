@@ -9,10 +9,11 @@ from src.utils import (
     OISOL_LOGGER,
     STOCKPILE_MAIN_INTERFACE_EDITOR_COMPONENT_ID,
     DataFilesPath,
+    DiscordIdType,
     Faction,
+    InterfacesTypes,
     get_user_access_level,
 )
-from utils import DiscordIdType, InterfacesTypes
 
 
 class StockpileEditRolesModal(discord.ui.Modal, title='Edit interface roles'):
