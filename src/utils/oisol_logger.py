@@ -72,7 +72,8 @@ class OisolLogger(logging.Logger):
         # Message is edited to prevent pings
         if ' (' in msg and ')' in msg and ' by ' in msg:
             user_id = msg.split(' (')[1].split(')')[0]
-            msg = f'{msg.split(' by ')[0]} by <@{user_id}> ({user_id})'
+            user_name = msg.split(' by ')[1].split(' (')[0]
+            msg = f'{msg.split(' by ')[0]} by <@{user_id}> ({user_name}, {user_id})'
             await discord_msg.edit(content=msg)
 
     def __init__(self):
