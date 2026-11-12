@@ -41,7 +41,7 @@ class OisolFormatter(logging.Formatter):
 
 class OisolLogger(logging.Logger):
     @staticmethod
-    async def __guild_logging(msg: str, interaction: discord.Interaction) -> None:
+    async def __guild_logging(msg: str, interaction: discord.Interaction | None) -> None:
         """
         Method used to send logs to their source server
         :param msg: logger
@@ -57,10 +57,23 @@ class OisolLogger(logging.Logger):
         # Ensure the option exists
         if not config.has_option('logging', 'channel'):
             return
-        logging_channel_id = config.getint('logging', 'channel')
 
+        # Fetch the channel using ID saved in config file
+        logging_channel_id = config.getint('logging', 'channel')
         logging_channel = await interaction.guild.fetch_channel(logging_channel_id)
-        await logging_channel.send(msg)
+
+        # Remove the server name from the logs sent to the servers directly
+        if ' on ' in msg:
+            msg = msg.split(' on ')[0]
+
+        discord_msg = await logging_channel.send(msg, silent=True)
+
+        # If possible add clickable nickname to the message using a specific pattern
+        # Message is edited to prevent pings
+        if ' (' in msg and ')' in msg and ' by ' in msg:
+            user_id = msg.split(' (')[1].split(')')[0]
+            msg = f'{msg.split(' by ')[0]} by <@{user_id}> ({user_id})'
+            await discord_msg.edit(content=msg)
 
     def __init__(self):
         super().__init__('oisol')
