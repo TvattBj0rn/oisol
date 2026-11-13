@@ -136,18 +136,6 @@ class HealthEntryEngine:
             return damage_result + f'{main_value} **|** {special_value}'
         return damage_result + f'{main_value}-{main_value_rng} **|** {special_value}-{special_value_rng}'
 
-    def __get_mine_to_trigger(self) -> str | None:
-        """
-        Determine if an entry can trigger a mine, if so return its name otherwise return nothing
-        """
-        mine_alias_name = self.__raw_data.get('trigger mines')
-        if mine_alias_name is None:
-            return None
-
-        match mine_alias_name:
-            case 'InfantryMine':
-                return ''
-
     def __process_all_damages(self) -> None:
         """
         Main engine method, that compute all possible damages depending on the case and generates the strings for the
