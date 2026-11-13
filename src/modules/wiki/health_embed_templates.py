@@ -64,7 +64,6 @@ class HealthEntryEngine:
         Format attributes to discord embed format
         """
         self.__embed['title'] = self.__name
-
         self.__embed['description'] = f'__Class__: {self.__class}\n__Health__: **{self.__hp}** HP'
 
         if 'disable' in self.__raw_data:
