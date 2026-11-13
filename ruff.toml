@@ -1,4 +1,4 @@
-target-version = "py313"
+target-version = "py314"
 exclude = [
     "__init__.py",  # Waiting for non preview fixes for F401 & F403
     "tests/"
