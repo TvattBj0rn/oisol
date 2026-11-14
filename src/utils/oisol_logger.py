@@ -74,6 +74,9 @@ class OisolLogger(logging.Logger):
             user_id = msg.split(' (')[1].split(')')[0]
             user_name = msg.split(' by ')[1].split(' (')[0]
             msg = f'{msg.split(' by ')[0]} by <@{user_id}> ({user_name}, {user_id})'
+            # Add link to viewed interface for view interactions
+            if msg.startswith('stockpiles view interaction by '):
+                msg += f' on https://discord.com/channels/{interaction.guild_id}/{interaction.channel_id}/{interaction.message.id}'
             await discord_msg.edit(content=msg)
 
     def __init__(self):
