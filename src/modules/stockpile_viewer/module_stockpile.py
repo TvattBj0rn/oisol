@@ -87,8 +87,7 @@ class ModuleStockpiles(commands.Cog):
             user_level = get_user_access_level(conn, user_roles, guild_id, channel_id, message_id)
 
             # Retrieve the stockpiles the user has access to
-            # todo: recheck why it's conn.execute here instead of cursor -> could be the cause of some error logs
-            available_user_stockpiles = conn.execute(
+            available_user_stockpiles = conn.cursor().execute(
                 'SELECT Region, Subregion, Code, Name, Type, Level FROM GroupsStockpilesList WHERE AssociationId == ? AND Level <= ? ORDER BY Region, Subregion',
                 (association_id, user_level),
             ).fetchall()
