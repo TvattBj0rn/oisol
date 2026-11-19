@@ -1591,7 +1591,7 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Abisme AT-99',
+		'name': 'Abisme AT-99 Mine',
 		'keywords': 'abismeatmine',
 		'table': WikiTables.ITEM_DATA.value,
 	},
