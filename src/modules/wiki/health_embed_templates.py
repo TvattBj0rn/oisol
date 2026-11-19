@@ -140,7 +140,7 @@ class HealthEntryEngine:
         Main engine method, that compute all possible damages depending on the case and generates the strings for the
         embed.
         """
-        for category_name, category_damages in self.__game_damages.items():
+        for category_name, category_damages in dict(sorted(self.__game_damages.items())).items():
             category_field = {'name': f'{category_name.upper()}{f' ({emoji})' if (emoji := self.__bot_emojis.get(EMOJIS_FROM_DICT.get(category_name), f'{self.__bot_emojis.get('missing_texture')} ({category_name})')) else ''}', 'value': ''}
 
             for i, damage_dict in enumerate(category_damages):
@@ -151,18 +151,16 @@ class HealthEntryEngine:
                     'E680-S Rudder Lock': 'WaterMine',
                     'E681-B Hullbreaker Mine': 'WaterMine',
                 }):
-                    # Entry is either a structure or a very light vehicle
-                    if not (mine_type := self.__raw_data.get('trigger mines')):
-                        break
-                    # weapon_name and mine_type not matching mean it is the incorrect mine
-                    if mine_mapping[weapon_name] != mine_type:
-                        break
-                # Ensure torpedoes/Depth charges are shown to naval entries
+                    # Skip mine weapon if entry is a structure or a light vehicle
+                    # or if the mine weapon does not match the vehicle (e.g. sea mine against infantry)
+                    if not (mine_type := self.__raw_data.get('trigger mines')) or mine_mapping[weapon_name] != mine_type:
+                        continue
+                # Skip torpedoes and depth charges if the entry cannot trigger naval mines
                 if (
                         ('Torpedo' in damage_dict['name'] or damage_dict['name'] == 'Model-7 “Evie”')
                         and self.__raw_data.get('trigger mines') != 'WaterMine'
                 ):
-                    break
+                    continue
 
                 armor_damage_reduction = float(self.__armor_attributes[damage_dict['damage type']])
 
