@@ -207,12 +207,12 @@ class StockpileClearConfirmationPrompt(discord.ui.LayoutView):
                 content='Are you sure you want to run a clear command with this interface/network ?\n\n*All discord servers sharing stockpiles with this interface will also have their stockpiles cleared*',
             ),
             discord.ui.Separator(),
-            self.__buttons_row
+            self.__buttons_row,
         ))
 
     @__buttons_row.button(
         style=discord.ButtonStyle.green,
-        label='I\'m sure!',
+        label="I'm sure!",
     )
     async def confirm_clear(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
         await OISOL_LOGGER.interface(

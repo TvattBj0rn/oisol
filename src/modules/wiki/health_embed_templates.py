@@ -145,16 +145,15 @@ class HealthEntryEngine:
 
             for i, damage_dict in enumerate(category_damages):
                 # Ensure only the proper mine is displayed (e.g. no need for sea mine against a tank)
+                # Skip mine weapon if entry is a structure or a light vehicle
+                # or if the mine weapon does not match the vehicle (e.g. sea mine against infantry)
                 if (weapon_name := damage_dict['name']) in list(mine_mapping := {
                     "Crow's Foot Mine": 'InfantryMine',
                     'Abisme AT-99': 'Mine',
                     'E680-S Rudder Lock': 'WaterMine',
                     'E681-B Hullbreaker Mine': 'WaterMine',
-                }):
-                    # Skip mine weapon if entry is a structure or a light vehicle
-                    # or if the mine weapon does not match the vehicle (e.g. sea mine against infantry)
-                    if not (mine_type := self.__raw_data.get('trigger mines')) or mine_mapping[weapon_name] != mine_type:
-                        continue
+                }) and (not (mine_type := self.__raw_data.get('trigger mines')) or mine_mapping[weapon_name] != mine_type):
+                    continue
                 # Skip torpedoes and depth charges if the entry cannot trigger naval mines
                 if (
                         ('Torpedo' in damage_dict['name'] or damage_dict['name'] == 'Model-7 “Evie”')
