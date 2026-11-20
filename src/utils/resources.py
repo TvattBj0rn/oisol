@@ -129,7 +129,7 @@ EMOJIS_FROM_DICT = {
     'BF5 White Ash Flask Grenade': 'flask',
     'Anti-Tank Sticky Bomb': 'sticky',
     'B2 Varsi Anti-Tank Grenade': 'varsi',
-    'Abisme AT-99': 'at_mine',
+    'Abisme AT-99 Mine': 'at_mine',
     "Crow's Foot Mine": 'infantry_mine',
     'Crow&#039;s Foot Mine': 'infantry_mine',
     'MapIconTownBase1': 'townbase_t1',

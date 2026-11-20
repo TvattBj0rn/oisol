@@ -860,6 +860,21 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
+		'name': 'Radar Bunker (Tier 1)',
+		'keywords': 'radarbunkert1tier1',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Radar Bunker (Tier 2)',
+		'keywords': 'radarbunkert2tier2',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Radar Bunker (Tier 3)',
+		'keywords': 'radarbunkert3tier3',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
 		'name': 'Observation Bunker (Tier 1)',
 		'keywords': 'observationbunkert1tier1obs',
 		'table': WikiTables.STRUCTURES.value,
@@ -915,6 +930,11 @@ STRUCTURES_DATA = [
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
+		'name': 'Pipe (Transfer Point)',
+		'keywords': 'pipetransferpoint',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
 		'name': 'Post Office (Tier 1)',
 		'keywords': 'postofficet1tier1townbase',
 		'table': WikiTables.STRUCTURES.value,
@@ -961,12 +981,17 @@ STRUCTURES_DATA = [
 	},
 	{
 		'name': 'Railway Track (Biarc)',
-		'keywords': 'railwaytrack',
+		'keywords': 'railwaytrackbiarc',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
 		'name': 'Railway Track (Foundation)',
-		'keywords': 'railwaytrack',
+		'keywords': 'railwaytrackfoundation',
+		'table': WikiTables.STRUCTURES.value,
+	},
+	{
+		'name': 'Railway Track (Town)',
+		'keywords': 'railwaytracktown',
 		'table': WikiTables.STRUCTURES.value,
 	},
 	{
@@ -1591,7 +1616,7 @@ ITEMDATA_DATA = [
 		'table': WikiTables.ITEM_DATA.value,
 	},
 	{
-		'name': 'Abisme AT-99',
+		'name': 'Abisme AT-99 Mine',
 		'keywords': 'abismeatmine',
 		'table': WikiTables.ITEM_DATA.value,
 	},
@@ -2627,6 +2652,11 @@ VEHICLES_DATA = [
 		'table': WikiTables.VEHICLES.value,
 	},
 	{
+		'name': 'Tümmler by VAC',
+		'keywords': 'tummlerbyvactumlerliquidship',
+		'table': WikiTables.VEHICLES.value,
+	},
+	{
 		'name': 'BMS - Class 2 Mobile Auto-Crane',
 		'keywords': 'mobilesmallcrane',
 		'table': WikiTables.VEHICLES.value,
@@ -2643,7 +2673,7 @@ VEHICLES_DATA = [
 	},
 	{
 		'name': 'BMS - Ironship',
-		'keywords': 'cargoironship',
+		'keywords': 'cargoironshipfreighter',
 		'table': WikiTables.VEHICLES.value,
 	},
 	{

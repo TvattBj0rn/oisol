@@ -284,40 +284,6 @@ class ModuleStockpiles(commands.Cog):
         )
 
     @app_commands.command(
-        name='stockpile-interface-clear',
-        description=app_commands.locale_str('Clear a given interface, and its network if connected to other interfaces'),
-    )
-    async def clear_interface(self, interaction: discord.Interaction, interface_name: str) -> None:
-        await OISOL_LOGGER.command(
-            f'stockpile-interface-clear command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
-            action_interaction=interaction,
-        )
-
-        # Convert interface_name to a readable text
-        ids_list = interface_name.split('.')
-
-        if (error_msg := self._validate_stockpile_ids(ids_list)) is not None:
-            await interaction.response.send_message(
-                error_msg,
-                ephemeral=True,
-                delete_after=5,
-            )
-            return
-
-        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
-            conn.cursor().execute(
-                'DELETE FROM GroupsStockpilesList WHERE AssociationId == ?',
-                (ids_list[3],),
-            )
-            conn.commit()
-
-        await interaction.response.send_message(
-            '> The interface was properly cleared',
-            ephemeral=True,
-            delete_after=5,
-        )
-
-    @app_commands.command(
         name='stockpile-create',
         description=app_commands.locale_str('Create a new stockpile on a given interface/network'),
     )
@@ -627,7 +593,6 @@ class ModuleStockpiles(commands.Cog):
         current_stockpiles = [stockpile for stockpile in stockpiles if current.lower() in stockpile.lower()][:25]
         return [app_commands.Choice(name=city, value=city) for city in current_stockpiles]
 
-    @clear_interface.autocomplete('interface_name')
     @stockpile_delete.autocomplete('interface_name')
     @stockpile_bulk_delete.autocomplete('interface_name')
     @stockpile_create.autocomplete('interface_name')

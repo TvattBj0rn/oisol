@@ -193,6 +193,66 @@ class StockpileAddAPIModal(discord.ui.Modal, title='Stockpile network API linkin
             await self.__remove_api_token(interaction)
 
 
+class StockpileClearConfirmationPrompt(discord.ui.LayoutView):
+    __buttons_row = discord.ui.ActionRow()
+    def __init__(self, main_interface_interaction: Interaction, clear_interface_interaction: Interaction):
+        super().__init__(timeout=None)
+        self.__main_interface_interaction = main_interface_interaction
+        self.__clear_interface_interaction = clear_interface_interaction
+
+        self.clear_items()
+        self.add_item(
+            discord.ui.Container(
+            discord.ui.TextDisplay(
+                content='Are you sure you want to run a clear command with this interface/network ?\n\n*All discord servers sharing stockpiles with this interface will also have their stockpiles cleared*',
+            ),
+            discord.ui.Separator(),
+            self.__buttons_row,
+        ))
+
+    @__buttons_row.button(
+        style=discord.ButtonStyle.green,
+        label="I'm sure!",
+    )
+    async def confirm_clear(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        await OISOL_LOGGER.interface(
+            f'clear interaction by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
+
+        with sqlite3.connect(OISOL_HOME_PATH / 'oisol.db') as conn:
+            cursor = conn.cursor()
+            association_id = cursor.execute(
+                'SELECT AssociationId FROM AllInterfacesReferences WHERE GroupId == ? AND ChannelId == ? AND MessageId == ?',
+                (self.__main_interface_interaction.guild_id, self.__main_interface_interaction.channel_id, self.__main_interface_interaction.message.id),
+            ).fetchone()[0]
+
+            cursor.execute(
+                'DELETE FROM GroupsStockpilesList WHERE AssociationId == ?',
+                (association_id,),
+            )
+            conn.commit()
+
+        await self.__clear_interface_interaction.delete_original_response()
+        await interaction.response.send_message(
+            '> The interface was properly cleared',
+            ephemeral=True,
+            delete_after=5,
+        )
+
+    @__buttons_row.button(
+        style=discord.ButtonStyle.red,
+        label='Cancel',
+    )
+    async def cancel_clear(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        await self.__clear_interface_interaction.delete_original_response()
+        await interaction.response.send_message(
+            '> The clear action was cancelled, your stockpiles are safe :)',
+            ephemeral=True,
+            delete_after=5,
+        )
+
+
 class StockpileEditInterfaceContentModal(discord.ui.Modal, title='Edit interface content'):
     __desc = discord.ui.TextDisplay(content='Edit the interface title and description.')
     __user_title_edit_field = discord.ui.TextInput(label='Edit Title', required=False)
@@ -252,7 +312,8 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
                     content='- **Edit Interface Content**: edit title and description of the interface\n'
                             '- **Edit Roles**: edit access levels of the interface by assigning role(s) to levels 1 to 5\n'
                             '- **Get share ID**: Retrieve the share ID\n'
-                            '- **API Settings**: Add, remove or edit token connected to the Oisol API\n',
+                            '- **API Settings**: Add, remove or edit token connected to the Oisol API\n'
+                            '- **Clear stockpiles**: Clear **all** stockpiles on the interface / network\n',
                 ),
                 discord.ui.Separator(),
                 # Buttons row
@@ -311,6 +372,7 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
         emoji='🤖',
     )
     async def api_settings(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        #todo: remettre l'interaction ici avec le await
         OISOL_LOGGER.api_log(f'API token interaction by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}')
 
         await interaction.response.send_modal(StockpileAddAPIModal(
@@ -318,6 +380,24 @@ class StockpileMainInterfaceEditorPanel(discord.ui.LayoutView):
             self.__main_interaction.channel_id,
             self.__main_interaction.message.id,
         ))
+    @__editor_panel_buttons.button(
+        style=discord.ButtonStyle.red,
+        custom_id='stockpile_clear',
+        label='Clear stockpiles',
+        emoji='🗑️',
+    )
+    async def clear_stockpiles(self, interaction: discord.Interaction, _button: discord.ui.Button) -> None:
+        await OISOL_LOGGER.command(
+            f'stockpile-interface-clear command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
+            action_interaction=interaction,
+        )
+        await interaction.response.send_message(
+            view=StockpileClearConfirmationPrompt(
+                main_interface_interaction=self.__main_interaction,
+                clear_interface_interaction=interaction,
+            ),
+            ephemeral=True,
+        )
 
 
 class StockpileMainInterfaceViewStockpiles(discord.ui.LayoutView):
