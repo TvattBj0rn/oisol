@@ -79,6 +79,13 @@ class ModuleWiki(commands.Cog):
                 (search_request,),
             ).fetchone())
 
+            # Fetch quote from API
+            entry_quote = cursor.execute(
+                f'SELECT Quote FROM quotes WHERE _pageName == ?',
+                (search_request,)
+            ).fetchone()
+            wiki_row_data['quote'] = None if entry_quote is None else dict(entry_quote).get('quote')
+
             # If the entry has an armor, query the armor table to get its attributes
             if (wiki_armor_name := wiki_row_data.get('armour type')) is not None:
                 # Entry with armor type but empty value means no armor hence fallback on armor named 'None'
