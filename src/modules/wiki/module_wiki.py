@@ -11,7 +11,6 @@ from discord.ext import commands
 from src.utils import (
     OISOL_HOME_PATH,
     OISOL_LOGGER,
-    REGIONS_TYPES,
     CacheKeys,
     DataFilesPath,
     WikiTables,
@@ -34,21 +33,23 @@ if TYPE_CHECKING:
     from main import Oisol
 
 
-HEALTH_DATA = EMPLACED_DATA + STRUCTURES_DATA + VEHICLES_DATA +  VEHICLES_STANDALONE_DATA + [
-                {'name': subregion, 'keywords': subregion.lower(), 'table': 'custom_map'} for subregion in REGIONS_TYPES
-            ]
-HEALTH_DATA_KEYS = [entry['name'] for entry in HEALTH_DATA]
-
-PRODUCTION_DATA = ITEMDATA_DATA + VEHICLES_DATA + EMPLACED_DATA
-PRODUCTION_DATA_KEYS = [entry['name'] for entry in PRODUCTION_DATA]
-
-WIKI_DATA = ITEMDATA_DATA + ITEMDATA_STANDALONE_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA + EMPLACED_DATA
-WIKI_DATA_KEYS = [entry['name'] for entry in WIKI_DATA]
-
-
 class ModuleWiki(commands.Cog):
+    HEALTH_DATA = EMPLACED_DATA + STRUCTURES_DATA + VEHICLES_DATA + VEHICLES_STANDALONE_DATA
+    PRODUCTION_DATA = ITEMDATA_DATA + VEHICLES_DATA + EMPLACED_DATA
+    PRODUCTION_DATA_KEYS = [entry['name'] for entry in PRODUCTION_DATA]
+    WIKI_DATA = ITEMDATA_DATA + ITEMDATA_STANDALONE_DATA + MAPS_DATA + STRUCTURES_DATA + VEHICLES_DATA + EMPLACED_DATA
+    WIKI_DATA_KEYS = [entry['name'] for entry in WIKI_DATA]
+
     def __init__(self, bot: Oisol):
         self.bot = bot
+
+        # Add world spawn types to health possible entries
+        with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+            world_spawns_types = conn.cursor().execute('SELECT name, lower(name) as keywords, structure FROM baselocations').fetchall()
+        self.HEALTH_DATA += [
+            {'name': name, 'keywords': keywords, 'table': 'custom_map'} for name, keywords, world_spawn_type in world_spawns_types
+        ]
+        self.HEALTH_DATA_KEYS = [entry['name'] for entry in self.HEALTH_DATA]
 
     @classmethod
     def query_armor_attributes(cls, armor_name: str, sql_cursor: sqlite3.Cursor | None = None) -> dict[str, str]:
@@ -78,6 +79,13 @@ class ModuleWiki(commands.Cog):
                 f'SELECT * FROM {table_name} WHERE name == ?',
                 (search_request,),
             ).fetchone())
+
+            # Fetch quote from API
+            entry_quote = cursor.execute(
+                'SELECT Quote FROM quotes WHERE _pageName == ?',
+                (search_request,),
+            ).fetchone()
+            wiki_row_data['quote'] = None if entry_quote is None else dict(entry_quote).get('quote')
 
             # If the entry has an armor, query the armor table to get its attributes
             if (wiki_armor_name := wiki_row_data.get('armour type')) is not None:
@@ -114,7 +122,7 @@ class ModuleWiki(commands.Cog):
             return
 
         search_request, table_name = split_search_request
-        if search_request not in WIKI_DATA_KEYS:
+        if search_request not in self.WIKI_DATA_KEYS:
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
@@ -141,7 +149,7 @@ class ModuleWiki(commands.Cog):
             return
 
         search_request, health_table = split_search_request
-        if search_request not in HEALTH_DATA_KEYS:
+        if search_request not in self.HEALTH_DATA_KEYS:
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
@@ -164,8 +172,11 @@ class ModuleWiki(commands.Cog):
             # Get base tier level of selected town base / relic
             tier_level = self.bot.cache[CacheKeys.WORLD_SPAWNS_STATUS][guild_shard][search_request]
 
-            # Get base type of selected town base / relic
-            base_type = REGIONS_TYPES[search_request].value
+            with sqlite3.connect(OISOL_HOME_PATH / 'foxhole_wiki_mirror.db') as conn:
+                base_type = conn.cursor().execute(
+                    'SELECT structure FROM baselocations WHERE name == ?',
+                    (search_request,),
+                ).fetchone()[0]
 
             # Convert subregion to associated type & tier (Cuttail Station -> Town Center (Tier 3)
             search_request = f'{base_type}{town_tier_mapping.get(tier_level, '')}'
@@ -216,7 +227,7 @@ class ModuleWiki(commands.Cog):
             return
 
         search_request, entry_table = split_search_request
-        if search_request not in PRODUCTION_DATA_KEYS or entry_table not in (table.value for table in WikiTables):
+        if search_request not in self.PRODUCTION_DATA_KEYS or entry_table not in (table.value for table in WikiTables):
             await interaction.response.send_message('> The entry you provided does not exist', ephemeral=True, delete_after=5)
             return
 
@@ -263,12 +274,12 @@ class ModuleWiki(commands.Cog):
 
     @entities_health.autocomplete('search_request')
     async def health_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
-        return self._generic_autocomplete(HEALTH_DATA, current)
+        return self._generic_autocomplete(self.HEALTH_DATA, current)
 
     @production_cost.autocomplete('search_request')
     async def production_autocomplet(self, _interaction: discord.Interaction, current: str) ->  list[app_commands.Choice]:
-        return self._generic_autocomplete(PRODUCTION_DATA, current)
+        return self._generic_autocomplete(self.PRODUCTION_DATA, current)
 
     @wiki.autocomplete('search_request')
     async def wiki_autocomplete(self, _interaction: discord.Interaction, current: str) -> list[app_commands.Choice]:
-        return self._generic_autocomplete(WIKI_DATA, current)
+        return self._generic_autocomplete(self.WIKI_DATA, current)

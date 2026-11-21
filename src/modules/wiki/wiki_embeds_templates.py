@@ -28,6 +28,13 @@ class WikiTemplate:
         self._bot_emojis = bot_emojis
         self._raw_data = data_dict
         self._categories_attributes = {}
+        self._desc = self.__init_description(data_dict['quote'])
+
+    @staticmethod
+    def __init_description(potential_quote: str | None) -> str:
+        if potential_quote is None:
+            return ''
+        return f'*{potential_quote}*'
 
     @staticmethod
     def _create_formatted_attribute(name: str, value: str, inline: bool = True) -> dict:
@@ -76,7 +83,7 @@ class WikiTemplate:
     def generate_embed_data(self) -> dict:
         return {
             'title': self._raw_data.get('name'),
-            'description': '',
+            'description': self._desc,
             'color': Faction.COLONIAL.value if self._raw_data.get('faction') == 'Col'
             else Faction.WARDEN.value if self._raw_data.get('faction') == 'War'
             else Faction.NEUTRAL.value,
