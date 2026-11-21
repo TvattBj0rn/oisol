@@ -5,12 +5,12 @@ import pytest
 from src.modules.wiki.health_embed_templates import HealthEntryEngine
 from src.modules.wiki.wiki_embeds_templates import WikiTemplateFactory
 from src.modules.wiki.production_embed_templates import ProductionTemplate
-from src.modules.wiki.module_wiki import HEALTH_DATA, ModuleWiki, PRODUCTION_DATA, WIKI_DATA
+from src.modules.wiki.module_wiki import ModuleWiki
 from src.utils import WikiTables, OISOL_HOME_PATH
 
-HEALTH_TEST_DATA = [f'{entry['name']}@{entry['table']}' for entry in HEALTH_DATA if entry['table'] != 'custom_map']
-PRODUCTION_TEST_DATA = [f'{entry['name']}@{entry['table']}' for entry in PRODUCTION_DATA if entry['table'] != 'structures']
-WIKI_TEST_DATA = [f'{entry['name']}@{entry['table']}' for entry in WIKI_DATA if entry['table'] != 'maps']
+HEALTH_TEST_DATA = [f'{entry['name']}@{entry['table']}' for entry in ModuleWiki.HEALTH_DATA if entry['table'] != 'custom_map']
+PRODUCTION_TEST_DATA = [f'{entry['name']}@{entry['table']}' for entry in ModuleWiki.PRODUCTION_DATA if entry['table'] != 'structures']
+WIKI_TEST_DATA = [f'{entry['name']}@{entry['table']}' for entry in ModuleWiki.WIKI_DATA if entry['table'] != 'maps']
 
 
 @pytest.mark.parametrize('search_request', HEALTH_TEST_DATA)
