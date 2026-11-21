@@ -89,7 +89,7 @@ EMOJIS_FROM_DICT = {
     'Heavy Oil': 'hoil',
     'Enriched Oil': 'eoil',
     'Buckshot': 'buckshot',
-    '.44': '_44',
+    '.44 Mag': '_44',
     '7.62mm': '7_62mm',
     '7.92mm': '7_92mm',
     '8mm': '8mm',
