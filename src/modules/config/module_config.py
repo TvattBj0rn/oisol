@@ -19,7 +19,7 @@ from src.utils import (
     repair_default_config_dict,
 )
 
-from .config_interfaces import ConfigViewMenu
+from .config_interfaces_views import ConfigViewInterface
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -86,7 +86,7 @@ class ModuleConfig(commands.Cog):
         name='config-view',
         description=app_commands.locale_str('Display the current server configuration'),
     )
-    async def config(self, interaction: discord.Interaction) -> None:
+    async def config_view(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.command(
             f'config-view command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
@@ -100,9 +100,8 @@ class ModuleConfig(commands.Cog):
                 delete_after=5,
             )
             return
-        config_view = ConfigViewMenu()
-        await config_view.update_config_embed(interaction)
-        await interaction.response.send_message(view=config_view, embed=config_view.embed)
+
+        await interaction.response.send_message(view=ConfigViewInterface(config), ephemeral=True)
 
     @app_commands.command(
         name='config-register',

@@ -8,7 +8,7 @@ from aiohttp import ClientSession
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from src.modules.config import ConfigViewMenu, ModuleConfig
+from src.modules.config import ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.foxhole_api_map_interactions_tasks import WorldSpawnsStatus
 from src.modules.owner_commands import ModuleOwner
@@ -101,7 +101,6 @@ class Oisol(commands.Bot):
         await self.add_cog(WorldSpawnsStatus(self))
 
     async def setup_hook(self) -> None:
-        self.add_view(ConfigViewMenu())
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
         self.add_view(StockpileMainInterface())
