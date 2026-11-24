@@ -2,7 +2,7 @@ import configparser
 
 import discord
 
-from utils import Faction
+from src.utils import Faction
 
 
 class ConfigViewInterface(discord.ui.LayoutView):
