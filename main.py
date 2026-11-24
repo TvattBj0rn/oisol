@@ -117,6 +117,7 @@ class Oisol(commands.Bot):
         # Create oisol/config.ini file with default config
         if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini'):
             config = repair_default_config_dict()
+            config.set('regiment', 'name', guild.name)
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 
