@@ -7,7 +7,7 @@ from sqlite3 import Connection
 
 from discord import Role, SelectOption
 
-from .oisol_enums import Faction, Language, Shard
+from .oisol_enums import Faction, Shard
 
 
 def safeguarded_nickname(nickname: str) -> str:

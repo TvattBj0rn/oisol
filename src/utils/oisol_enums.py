@@ -32,10 +32,6 @@ class Faction(Enum):
     COLONIAL = 0x516C4B
     NEUTRAL = 0xffffff
 
-class Language(Enum):
-    FR = auto()
-    EN = auto()
-
 
 class InterfaceType(Enum):
     """
@@ -125,12 +121,3 @@ class WikiTables(Enum):
     PRODUCTION = 'Production' # Facility crafts (materials) Vehicles & Shippable craft (including both vanilla & facility crafts)
     STRUCTURES = 'structures'
     VEHICLES = 'vehicles'
-
-
-class WorldSpawnTypes(Enum):
-    RELIC_SMALL = 'Relic Base (Small)'
-    RELIC_MEDIUM = 'Relic Base (Medium)'
-    RELIC_LARGE = 'Relic Base (Large)'
-    TOWN_BASE_POST_OFFICE = 'Post Office'
-    TOWN_BASE_SCHOOL = 'School'
-    TOWN_BASE_CENTER = 'Town Center'
