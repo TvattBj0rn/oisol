@@ -11,8 +11,12 @@ class ConfigViewInterface(discord.ui.LayoutView):
         # Retrieve wanted data from the config file
         self.__shard = server_config.get('default', 'shard', fallback='ABLE')
         self.__faction = server_config.get('regiment', 'faction', fallback='NEUTRAL')
-        self.__logging_channel_id = server_config.getint('logging', 'channel', fallback=0)
-        self.__recruit_role_id = server_config.getint('register', 'recruit_id', fallback=0)
+
+        logging_channel_id = server_config.get('logging', 'channel', fallback=None)
+        self.__logging_channel_id = logging_channel_id if isinstance(logging_channel_id, int) else 0
+        potential_recruit_role_id = server_config.get('register', 'recruit_id', fallback=None)
+        self.__recruit_role_id = potential_recruit_role_id if isinstance(potential_recruit_role_id, int) else 0
+
         self.__recruit_symbol = server_config.get('register', 'input', fallback=None)
         self.__promoted_recruit_symbol = server_config.get('register', 'output', fallback=None)
         self.__does_promotion_gives_tag = server_config.getboolean('register', 'promoted_get_tag', fallback=False)
