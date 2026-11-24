@@ -4,7 +4,7 @@ import configparser
 import os
 import sqlite3
 from configparser import ConfigParser
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import discord
 from discord import app_commands
@@ -19,7 +19,7 @@ from src.utils import (
     repair_default_config_dict,
 )
 
-from .config_interfaces import ConfigViewMenu
+from .config_interfaces_views import ConfigViewInterface
 
 if TYPE_CHECKING:
     from main import Oisol
@@ -83,12 +83,12 @@ class ModuleConfig(commands.Cog):
         await interaction.response.send_message('> Configuration has been updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(
-        name='config-display',
+        name='config-view',
         description=app_commands.locale_str('Display the current server configuration'),
     )
-    async def config(self, interaction: discord.Interaction) -> None:
+    async def config_view(self, interaction: discord.Interaction) -> None:
         await OISOL_LOGGER.command(
-            f'config-display command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
+            f'config-view command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
 
@@ -100,9 +100,8 @@ class ModuleConfig(commands.Cog):
                 delete_after=5,
             )
             return
-        config_view = ConfigViewMenu()
-        await config_view.update_config_embed(interaction)
-        await interaction.response.send_message(view=config_view, embed=config_view.embed)
+
+        await interaction.response.send_message(view=ConfigViewInterface(config), ephemeral=True)
 
     @app_commands.command(
         name='config-register',
@@ -114,13 +113,13 @@ class ModuleConfig(commands.Cog):
             recruit_role: discord.Role | None = None,
             recruit_symbol: str | None = None,
             promoted_recruit_symbol: str | None = None,
-            promotion_gives_symbol: bool | None = None,
+            promotion_gives_tag: Literal['Yes', 'No'] | None = None,
     ) -> None:
         await OISOL_LOGGER.command(
             f'config-register command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
             action_interaction=interaction,
         )
-        if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_symbol is None:
+        if recruit_role is None and recruit_symbol is None and promoted_recruit_symbol is None and promotion_gives_tag is None:
             await interaction.response.send_message(
                 '> No changes were made because no option was given',
                 ephemeral=True,
@@ -142,8 +141,8 @@ class ModuleConfig(commands.Cog):
             config.set('register', 'input', recruit_symbol)
         if promoted_recruit_symbol is not None:
             config.set('register', 'output', promoted_recruit_symbol)
-        if promotion_gives_symbol is not None:
-            config.set('register', 'promoted_get_tag', str(promotion_gives_symbol))
+        if promotion_gives_tag is not None:
+            config.set('register', 'promoted_get_tag', str(promotion_gives_tag))
 
         with open(
             OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{interaction.guild_id}.ini',
@@ -152,18 +151,6 @@ class ModuleConfig(commands.Cog):
         ) as configfile:
             config.write(configfile)
         await interaction.response.send_message('> The register config was updated', ephemeral=True, delete_after=5)
-
-    @app_commands.command(
-        name='config-name',
-        description=app_commands.locale_str('Set the name of the group using the bot'),
-    )
-    async def config_name(self, interaction: discord.Interaction, name: str) -> None:
-        await OISOL_LOGGER.command(
-            f'config-name command by {interaction.user.name} ({interaction.user.id}) on {interaction.guild.name}',
-            action_interaction=interaction,
-        )
-        self._regiment_config_generic(interaction.guild_id, 'regiment', 'name', name)
-        await interaction.response.send_message('> Name was updated', ephemeral=True, delete_after=5)
 
     @app_commands.command(
         name='config-tag',

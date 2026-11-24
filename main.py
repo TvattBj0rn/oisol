@@ -8,7 +8,7 @@ from aiohttp import ClientSession
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from src.modules.config import ConfigViewMenu, ModuleConfig
+from src.modules.config import ModuleConfig
 from src.modules.data_cleaning_tasks import DatabaseCleaner
 from src.modules.foxhole_api_map_interactions_tasks import WorldSpawnsStatus
 from src.modules.owner_commands import ModuleOwner
@@ -101,7 +101,6 @@ class Oisol(commands.Bot):
         await self.add_cog(WorldSpawnsStatus(self))
 
     async def setup_hook(self) -> None:
-        self.add_view(ConfigViewMenu())
         self.add_view(RegisterViewMenu())
         self.add_view(TodolistViewMenu())
         self.add_view(StockpileMainInterface())
@@ -118,6 +117,7 @@ class Oisol(commands.Bot):
         # Create oisol/config.ini file with default config
         if not os.path.isfile(config_path := OISOL_HOME_PATH / DataFilesPath.CONFIG_DIR.value / f'{guild.id}.ini'):
             config = repair_default_config_dict()
+            config.set('regiment', 'name', guild.name)
             with open(config_path, 'w', newline='') as configfile:
                 config.write(configfile)
 

@@ -7,7 +7,7 @@ from sqlite3 import Connection
 
 from discord import Role, SelectOption
 
-from .oisol_enums import Faction, Language, Shard
+from .oisol_enums import Faction, Shard
 
 
 def safeguarded_nickname(nickname: str) -> str:
@@ -30,7 +30,6 @@ def repair_default_config_dict(current_config: ConfigParser | None = None) -> Co
 
     section_name = 'default'
     final_config.add_section(section_name)
-    final_config.set(section_name, 'language', Language.EN.name if not current_config or not current_config.has_option(section_name, 'language') else current_config.get(section_name, 'language'))
     final_config.set(section_name, 'shard', Shard.ABLE.name if not current_config or not current_config.has_option(section_name, 'shard') else current_config.get(section_name, 'shard'))
 
     section_name = 'register'
